@@ -2,234 +2,80 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MatchApp | The Premium Streaming Concierge</title>
     <link rel="stylesheet" href="style.css">
     
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-2ECND229RR');
-    </script>
-
-    <!-- AUTO-DETECT DEVICE LANGUAGE -->
-    <script>
-        (function autoSetLanguage() {
-            if (!document.cookie.includes('googtrans')) {
-                let userLang = (navigator.language || navigator.userLanguage).split('-')[0];
-                const supported = ['en','zh-CN','hi','es','fr','ar','bn','ru','pt','ur','id'];
-                if(supported.includes(userLang) && userLang !== 'en'){
-                    document.cookie = `googtrans=/en/${userLang}; path=/`;
-                }
-            }
-        })();
-    </script>
-    
-    <!-- Supabase CDN with fallback safety -->
+    <!-- Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="luxury-bg"></div>
-    <div id="toast-container"></div>
 
-    <div class="container">
+    <div class="container" style="max-width: 500px; margin: 30px auto; padding: 20px;">
         
-        <header class="app-header">
-            <div class="logo" id="dev-reset-btn" title="Click to reset limit">Match<span>App</span></div>
-            <div class="translate-wrapper" id="google_translate_element"></div>
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div style="font-size: 24px; font-weight: 800; color: #fff;">Match<span style="color: #D4AF37;">App</span></div>
+            <button onclick="window.location.href='register.html'" style="background: #D4AF37; color: #000; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer;">Register VIP</button>
         </header>
 
-        <!-- TOP AD: Adsterra 728x90 -->
-        <div class="ad-wrapper-top">
-            <script>
-                atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };
-            </script>
-            <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
-        </div>
+        <!-- QUESTIONNAIRE BOX -->
+        <div id="questionnaire-box" style="background: rgba(20,20,35,0.9); border: 1px solid rgba(212,175,55,0.3); padding: 25px; border-radius: 16px;">
+            <h2 style="color: #fff; margin-top: 0;">Find Your Match</h2>
+            <p style="color: #A0A0B5; font-size: 13px;">Select your preferences below:</p>
 
-        <div class="rule-banner" id="rule-banner">
-            <p>✨ <strong>First Match is FREE!</strong> <a href="register.html" style="color: var(--gold); font-weight: bold;">Register here</a> to unlock unlimited concierge access.</p>
-        </div>
-
-        <!-- LOGIN BOX -->
-        <div id="auth-section" class="premium-card auth-box">
-            <h3>🔐 Member Login</h3>
-            <input type="email" id="login-email" placeholder="Email address">
-            <input type="password" id="login-password" placeholder="Password">
-            <div class="auth-buttons">
-                <button class="secondary-btn" type="button" onclick="window.location.href='register.html'">Create VIP Profile</button>
-                <button id="login-btn" class="primary-btn" type="button">Log In</button>
+            <div style="margin-bottom: 15px;">
+                <label style="color: #A0A0B5; font-size: 11px; text-transform: uppercase; font-weight: bold;">Age (Min 16)</label>
+                <input type="number" id="input-age" value="25" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
             </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="color: #A0A0B5; font-size: 11px; text-transform: uppercase; font-weight: bold;">Country</label>
+                <input type="text" id="input-country" value="Brazil" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="color: #A0A0B5; font-size: 11px; text-transform: uppercase; font-weight: bold;">Format</label>
+                <select id="input-format" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
+                    <option value="movie">Movie</option>
+                    <option value="series">Series</option>
+                    <option value="telenovela">Telenovela</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="color: #A0A0B5; font-size: 11px; text-transform: uppercase; font-weight: bold;">Mood</label>
+                <select id="input-mood" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
+                    <option value="drama">Deep Drama</option>
+                    <option value="comedy">Comedy</option>
+                    <option value="action">Action / Thriller</option>
+                    <option value="scifi">Sci-Fi</option>
+                    <option value="romance">Romance</option>
+                </select>
+            </div>
+
+            <button id="btn-generate" style="width: 100%; background: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728); color: #000; border: none; padding: 14px; font-weight: 800; border-radius: 8px; cursor: pointer;">⚡ Curate My Match</button>
         </div>
 
-        <!-- USER DASHBOARD -->
-        <div id="user-info-section" class="hidden premium-card auth-box">
-            <h3 id="user-greeting">✨ Welcome back!</h3>
-            <p id="user-profile-meta" style="font-size: 12px; color: #A0A0B5; margin-bottom: 15px;"></p>
-            <button id="logout-btn" class="secondary-btn" type="button" style="width: 100%;">Log Out</button>
-        </div>
-
-        <!-- MAIN INTERACTIVE CARD -->
-        <div class="premium-card bubble-container">
+        <!-- RESULT BOX (Initially hidden using direct style.display) -->
+        <div id="result-box" style="display: none; background: rgba(20,20,35,0.95); border: 2px solid #D4AF37; padding: 25px; border-radius: 16px; margin-top: 20px;">
+            <div style="color: #D4AF37; font-size: 11px; font-weight: bold; text-transform: uppercase;">✨ Curated Match Found</div>
+            <h2 id="res-title" style="color: #fff; margin: 5px 0 15px 0; font-size: 24px;">Title</h2>
             
-            <!-- STATE 1: QUESTIONNAIRE -->
-            <div id="questionnaire-screen" style="padding: 25px;">
-                <h1 class="card-title">Find Your Perfect Watch</h1>
-                <p class="subtitle">Let our concierge algorithm curate your night.</p>
-                
-                <form id="match-form">
-                    <div class="input-grid">
-                        <div class="input-group">
-                            <label>Age (Min 16)</label>
-                            <input type="number" id="age" min="16" max="120" placeholder="e.g., 28">
-                        </div>
-                        <div class="input-group">
-                            <label>Country</label>
-                            <input type="text" id="country" placeholder="e.g., USA, Brazil">
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Format</label>
-                        <select id="format">
-                            <option value="movie">Movie</option>
-                            <option value="series">Series</option>
-                            <option value="telenovela">Telenovela</option>
-                        </select>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Current Mood</label>
-                        <select id="mood">
-                            <option value="drama">Deep Drama</option>
-                            <option value="comedy">Comedy / Laughs</option>
-                            <option value="action">Action / Thriller</option>
-                            <option value="scifi">Sci-Fi / Fantasy</option>
-                            <option value="romance">Romance</option>
-                        </select>
-                    </div>
-
-                    <div class="input-grid">
-                        <div class="input-group">
-                            <label>Era</label>
-                            <select id="era">
-                                <option value="modern">Modern (2010+)</option>
-                                <option value="classic">Classic (Pre-2010)</option>
-                                <option value="any">Any Era</option>
-                            </select>
-                        </div>
-                        <div class="input-group">
-                            <label>Audio</label>
-                            <select id="langpref">
-                                <option value="subtitled">Subtitled</option>
-                                <option value="dubbed">Dubbed</option>
-                                <option value="english">English Original</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Platform</label>
-                        <select id="platform">
-                            <option value="any">Anywhere (Best Match)</option>
-                            <option value="Netflix">Netflix</option>
-                            <option value="Max">Max</option>
-                            <option value="Prime Video">Prime Video</option>
-                            <option value="Disney+">Disney+</option>
-                            <option value="Globoplay">Globoplay</option>
-                            <option value="Apple TV+">Apple TV+</option>
-                        </select>
-                    </div>
-
-                    <button type="button" id="submit-match-btn" class="gold-btn">Curate My Match</button>
-                </form>
-
-                <!-- ADSTERRA NATIVE BANNER -->
-                <div class="ad-spacing">
-                    <script async="async" data-cfasync="false" src="https://pl30907929.effectivecpmnetwork.com/24c070776b5f8b41dda874f495a807d2/invoke.js"></script>
-                    <div id="container-24c070776b5f8b41dda874f495a807d2"></div>
-                </div>
+            <img id="res-poster" src="" alt="Poster" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 15px;">
+            
+            <p id="res-desc" style="color: #A0A0B5; font-size: 13px; line-height: 1.5; margin-bottom: 15px;"></p>
+            
+            <div style="background: rgba(212,175,55,0.1); padding: 12px; border-radius: 8px; margin-bottom: 15px;">
+                <div style="font-size: 11px; color: #A0A0B5; text-transform: uppercase;">Where to Watch:</div>
+                <div id="res-platform" style="color: #fff; font-weight: 800; font-size: 16px; margin-top: 3px;">Netflix</div>
             </div>
 
-            <!-- STATE 2: LOADING SCREEN -->
-            <div id="loading-screen" class="hidden loading-bubble" style="padding: 40px 20px; text-align: center;">
-                <div class="loading-icon">🍿</div>
-                <h2 id="loading-text" style="font-size: 15px; margin-bottom: 25px; color: var(--gold-glow);">Analyzing global catalogs...</h2>
-                <div class="progress-bar-container">
-                    <div id="progress-bar" class="progress-bar-fill"></div>
-                </div>
-            </div>
-
-            <!-- STATE 3: RESULT BUBBLE (Stays on same page, zero 404 risks) -->
-            <div id="result-screen" class="hidden result-bubble">
-                <button id="close-bubble-btn" class="close-x" type="button">&times;</button>
-                
-                <div class="result-poster-wrapper">
-                    <img id="result-poster" src="" alt="Poster">
-                    <div class="poster-vignette"></div>
-                </div>
-
-                <div class="result-content">
-                    <div class="gold-badge-header">✨ Your Curated Match</div>
-                    <h2 id="result-title">Title</h2>
-                    
-                    <div class="meta-tags">
-                        <span id="result-imdb" class="meta-tag">⭐</span>
-                        <span id="result-length" class="meta-tag">⏱️</span>
-                        <span id="result-age" class="meta-tag">🔞</span>
-                    </div>
-
-                    <p id="result-desc" class="result-desc"></p>
-                    
-                    <div class="streaming-info-box">
-                        <h4>📺 Streaming in <span id="result-country"></span>:</h4>
-                        <p id="result-platform" class="platform-text"></p>
-                        <p id="result-audio" class="audio-text"></p>
-                    </div>
-
-                    <!-- SOCIAL SHARE -->
-                    <div class="social-box">
-                        <p>📤 Share your match:</p>
-                        <div class="social-grid">
-                            <button id="share-wa" class="s-btn wa" type="button">WhatsApp</button>
-                            <button id="share-x" class="s-btn xx" type="button">X</button>
-                            <button id="share-fb" class="s-btn fb" type="button">Facebook</button>
-                            <button id="share-more" class="s-btn more" type="button">More...</button>
-                        </div>
-                    </div>
-
-                    <!-- GOOGLE ADSENSE -->
-                    <div class="ad-spacing">
-                        <ins class="adsbygoogle"
-                             style="display:block"
-                             data-ad-client="ca-pub-9541435081010948"
-                             data-ad-slot="3127478321"
-                             data-ad-format="auto"
-                             data-full-width-responsive="true"></ins>
-                        <script>
-                             (adsbygoogle = window.adsbygoogle || []).push({});
-                        </script>
-                    </div>
-                </div>
-            </div>
-
+            <button onclick="location.reload()" style="width: 100%; background: #333; color: #fff; border: none; padding: 12px; font-weight: bold; border-radius: 8px; cursor: pointer;">🔄 Search Again</button>
         </div>
+
     </div>
-    
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({ 
-                pageLanguage: 'en', 
-                includedLanguages: 'en,zh-CN,hi,es,fr,ar,bn,ru,pt,ur,id',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE 
-            }, 'google_translate_element');
-        }
-    </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
     <script src="app.js"></script>
 </body>
 </html>
