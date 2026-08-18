@@ -34,7 +34,6 @@ body {
 /* Headers & Banners */
 .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 
-/* BRAND NEW LOGO STYLING */
 .logo { display: flex; align-items: center; cursor: pointer; }
 .brand-logo {
     height: 45px; 
