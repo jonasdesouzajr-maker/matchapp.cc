@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MatchApp | Your Curated Match Result</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="luxury-bg"></div>
+    <div id="toast-container"></div>
+
+    <div class="container" style="max-width: 500px; margin-top: 20px; margin-bottom: 40px;">
+        
+        <header class="app-header">
+            <div class="logo" onclick="window.location.href='index.html'" style="cursor: pointer;">Match<span>App</span></div>
+            <button class="secondary-btn" onclick="window.location.href='index.html'" style="padding: 6px 14px; font-size: 12px;">🔄 Find Another Match</button>
+        </header>
+
+        <div class="premium-card result-bubble" style="overflow: hidden; border-radius: 18px;">
+            <div class="result-poster-wrapper" style="height: 280px; position: relative;">
+                <img id="result-poster" src="" alt="Poster" style="width: 100%; height: 100%; object-fit: cover;">
+                <div class="poster-vignette"></div>
+            </div>
+
+            <div class="result-content" style="padding: 25px;">
+                <div class="gold-badge-header">✨ Verified Perfect Match</div>
+                <h2 id="result-title" style="margin: 5px 0 12px 0; font-size: 26px;">Title</h2>
+                
+                <div class="meta-tags">
+                    <span id="result-imdb" class="meta-tag">⭐ IMDb</span>
+                    <span id="result-length" class="meta-tag">⏱️ Length</span>
+                    <span id="result-age" class="meta-tag">🔞 Age</span>
+                </div>
+
+                <p id="result-desc" class="result-desc"></p>
+                
+                <div class="streaming-info-box">
+                    <h4>📺 Where to Watch in <span id="result-country">Your Region</span>:</h4>
+                    <p id="result-platform" class="platform-text"></p>
+                    <p id="result-audio" class="audio-text"></p>
+                </div>
+
+                <!-- SOCIAL SHARE -->
+                <div class="social-box" style="margin-top: 20px;">
+                    <p>📤 Share this match:</p>
+                    <div class="social-grid">
+                        <button id="share-wa" class="s-btn wa" type="button">WhatsApp</button>
+                        <button id="share-x" class="s-btn xx" type="button">X</button>
+                        <button id="share-fb" class="s-btn fb" type="button">Facebook</button>
+                        <button id="share-more" class="s-btn more" type="button">More...</button>
+                    </div>
+                </div>
+
+                <!-- GOOGLE ADSENSE -->
+                <div class="ad-spacing">
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-9541435081010948"
+                         data-ad-slot="3127478321"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                    <script>
+                         (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="result.js"></script>
+</body>
+</html>
