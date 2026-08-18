@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfect Match: Movies, Series & Telenovelas</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Supabase Database CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="container">
+        
+        <!-- AUTHENTICATION SECTION -->
+        <div id="auth-section" class="auth-box">
+            <h3>Create an account for daily matches!</h3>
+            <input type="email" id="email" placeholder="Email address" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button id="register-btn">Register</button>
+            <button id="login-btn">Log In</button>
+            <p id="auth-message"></p>
+        </div>
+
+        <!-- LOGGED IN STATE -->
+        <div id="user-info-section" class="hidden auth-box">
+            <p id="user-info"></p>
+            <button id="logout-btn">Log Out</button>
+        </div>
+
+        <!-- SCREEN 1: The Questionnaire -->
+        <div id="questionnaire-screen">
+            <h1>Find Your Perfect Watch 🍿</h1>
+            <form id="match-form">
+                <label for="format">What are you looking for?</label>
+                <select id="format" name="format">
+                    <option value="telenovela">Telenovela</option>
+                    <option value="series">Series</option>
+                    <option value="movie">Movie</option>
+                </select>
+
+                <label for="mood">What's your current mood?</label>
+                <select id="mood" name="mood">
+                    <option value="drama">I want to cry (Drama)</option>
+                    <option value="comedy">I want to laugh (Comedy)</option>
+                    <option value="action">I want a thrill (Action/Suspense)</option>
+                </select>
+
+                <button type="submit">Find My Match</button>
+            </form>
+        </div>
+
+        <!-- SCREEN 2: The Interstitial (Ad Screen) -->
+        <div id="loading-screen" class="hidden">
+            <h2>Loading the best option for your needs...</h2>
+            <p>Please wait while our algorithm finds your perfect match.</p>
+            
+            <!-- Your Ad Network Code will go inside this box -->
+            <div class="ad-placeholder" id="admob-container">
+                [ AdMob Advertisement Space ]
+            </div>
+            
+            <div class="spinner"></div>
+        </div>
+
+        <!-- SCREEN 3: The Result -->
+        <div id="result-screen" class="hidden">
+            <h2>We found your match! 🎉</h2>
+            <h3 id="match-title">Title will appear here</h3>
+            <p id="match-description">Description will appear here.</p>
+            
+            <div class="register-prompt" id="register-prompt">
+                <p>Want another match right now? Register to unlock 1 more free choice every 24 hours!</p>
+            </div>
+        </div>
+
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
