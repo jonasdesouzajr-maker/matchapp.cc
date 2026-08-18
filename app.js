@@ -1,6 +1,6 @@
-console.log("Mastercode 10.0: App Engine Initialized");
+console.log("Mastercode: App Engine Initialized");
 
-let globalMatchTitle = "MatchApp";
+let globalMatchTitle = "Match App";
 let supabaseClient = null;
 let isUserLoggedIn = false;
 
@@ -126,12 +126,12 @@ window.handleSearchAgain = function() {
 };
 
 // 4. SOCIAL SHARE SUITE
-window.shareWA = () => window.open(`https://api.whatsapp.com/send?text=I got matched with ${encodeURIComponent(globalMatchTitle)} on MatchApp! Curate your own night at https://matchapp.cc`, '_blank');
-window.shareX = () => window.open(`https://twitter.com/intent/tweet?text=I got matched with ${encodeURIComponent(globalMatchTitle)} on MatchApp! Curate your own night at https://matchapp.cc`, '_blank');
+window.shareWA = () => window.open(`https://api.whatsapp.com/send?text=I got matched with ${encodeURIComponent(globalMatchTitle)} on Match App! Curate your own night at https://matchapp.cc`, '_blank');
+window.shareX = () => window.open(`https://twitter.com/intent/tweet?text=I got matched with ${encodeURIComponent(globalMatchTitle)} on Match App! Curate your own night at https://matchapp.cc`, '_blank');
 window.shareFB = () => window.open(`https://www.facebook.com/sharer/sharer.php?u=https://matchapp.cc`, '_blank');
 window.shareMore = async () => {
     if (navigator.share) {
-        await navigator.share({ title: 'MatchApp', text: `My tailored match is: ${globalMatchTitle}`, url: 'https://matchapp.cc' });
+        await navigator.share({ title: 'Match App', text: `My tailored match is: ${globalMatchTitle}`, url: 'https://matchapp.cc' });
     } else {
         navigator.clipboard.writeText('https://matchapp.cc');
         alert("Link Copied to clipboard!");
