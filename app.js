@@ -10,7 +10,25 @@ try {
     console.warn("Supabase initialization skipped. Proceeding in local mode.");
 }
 
-// 2. THE PREMIUM CATALOG
+// 2. TOAST NOTIFICATION HELPER
+function showToast(message, type = 'error') {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+    
+    const toast = document.createElement('div');
+    toast.className = `toast-message ${type === 'success' ? 'toast-success' : 'toast-error'}`;
+    toast.innerText = message;
+    
+    container.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }, 4000);
+}
+
+// 3. THE PREMIUM CATALOG
 const contentCatalog = [
     { title: "Avenida Brasil", format: "telenovela", mood: "drama", era: "modern", minAge: 14, length: "179 Episodes", imdb: "8.3/10", streamingOn: ["Globoplay"], poster: "https://images.unsplash.com/photo-1514306191717-452ec28c7814?auto=format&fit=crop&w=800&q=80", description: "A gripping story of revenge, family secrets, and intense drama set in Rio de Janeiro." },
     { title: "O Clone", format: "telenovela", mood: "drama", era: "classic", minAge: 12, length: "221 Episodes", imdb: "8.1/10", streamingOn: ["Globoplay"], poster: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80", description: "A classic tale of forbidden love, cloning, and cultural clashes." },
@@ -28,10 +46,10 @@ const contentCatalog = [
 let currentUser = null;
 let currentMatchTitle = "";
 
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("MatchApp Initialized Successfully");
+// 4. BULLETPROOF INITIALIZATION (Runs immediately if DOM is ready, or on DOMContentLoaded)
+function runApp() {
+    console.log("MatchApp Initialized with Error Toasts");
 
-    // UI ELEMENTS
     const authSection = document.getElementById('auth-section');
     const registerScreen = document.getElementById('register-screen');
     const userInfoSection = document.getElementById('user-info-section');
@@ -41,23 +59,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const rScreen = document.getElementById('result-screen');
     
     const submitBtn = document.getElementById('submit-match-btn');
-    const errBox = document.getElementById('form-error');
 
     // DEV RESET TRICK
     const devResetBtn = document.getElementById('dev-reset-btn');
     if (devResetBtn) {
         devResetBtn.addEventListener('click', () => {
             localStorage.removeItem('hasUsedFreeMatch');
-            if (errBox) errBox.classList.add('hidden');
-            alert("🔧 Limit Reset! You can test the app again.");
+            showToast("🔧 Limit Reset! You can test the app again.", "success");
         });
     }
 
-    // --- SESSION CHECK ---
+    // SESSION CHECK
     async function checkSession() {
         if (!supabase) return;
         try {
-            const { data: { session } } = await supabase.auth.getSession();
+            const { data: { session }, error } = await supabase.auth.getSession();
+            if (error) throw error;
             if (session) {
                 currentUser = session.user;
                 const profileData = currentUser.user_metadata || {};
@@ -77,11 +94,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const meta = document.getElementById('user-profile-meta');
                 if (meta) meta.innerText = `📍 ${location} | Algorithm Active`;
             }
-        } catch (e) { console.warn("Auth check failed.", e); }
+        } catch (e) {
+            console.warn("Auth check warning:", e.message);
+        }
     }
     checkSession();
 
-    // --- NAVIGATION & TOGGLES ---
+    // NAVIGATION
     const showRegBtn = document.getElementById('show-register-btn');
     if (showRegBtn) {
         showRegBtn.addEventListener('click', () => {
@@ -98,84 +117,94 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- VIP REGISTRATION ---
+    // VIP REGISTRATION
     const submitRegBtn = document.getElementById('submit-register-btn');
     if (submitRegBtn) {
         submitRegBtn.addEventListener('click', async () => {
-            if (!supabase) return alert("Database disconnected.");
+            if (!supabase) {
+                showToast("Database connection offline. Please check network.", "error");
+                return;
+            }
             
-            const emailField = document.getElementById('reg-email');
-            const passField = document.getElementById('reg-password');
-            const nameField = document.getElementById('reg-name');
-            const msgBox = document.getElementById('register-message');
-
-            if (!emailField || !passField || !nameField) return;
-
-            const email = emailField.value;
-            const password = passField.value;
-            const firstName = nameField.value;
-            const country = document.getElementById('reg-country')?.value || "";
-            const city = document.getElementById('reg-city')?.value || "";
-            const history = document.getElementById('reg-history')?.value || "";
+            const email = document.getElementById('reg-email')?.value.trim();
+            const password = document.getElementById('reg-password')?.value;
+            const firstName = document.getElementById('reg-name')?.value.trim();
+            const country = document.getElementById('reg-country')?.value.trim() || "";
+            const city = document.getElementById('reg-city')?.value.trim() || "";
+            const history = document.getElementById('reg-history')?.value.trim() || "";
             const genreSelect = document.getElementById('reg-genres');
             const selectedGenres = genreSelect ? Array.from(genreSelect.selectedOptions).map(opt => opt.value) : [];
 
             if (!email || !password || !firstName) {
-                if (msgBox) msgBox.innerText = "Please fill in Name, Email, and Password.";
+                showToast("Please enter your Name, Email, and Password.", "error");
+                return;
+            }
+
+            if (password.length < 6) {
+                showToast("Password must be at least 6 characters long.", "error");
                 return;
             }
 
             submitRegBtn.innerText = "Creating Profile...";
 
-            const { error } = await supabase.auth.signUp({ 
-                email, 
-                password,
-                options: {
-                    data: {
-                        first_name: firstName,
-                        country: country,
-                        city: city,
-                        favorite_genres: selectedGenres,
-                        watch_history: history
+            try {
+                const { error } = await supabase.auth.signUp({ 
+                    email, 
+                    password,
+                    options: {
+                        data: {
+                            first_name: firstName,
+                            country: country,
+                            city: city,
+                            favorite_genres: selectedGenres,
+                            watch_history: history
+                        }
                     }
-                }
-            });
+                });
 
-            if (error) {
-                if (msgBox) msgBox.innerText = error.message;
-                submitRegBtn.innerText = "Unlock VIP Access";
-            } else {
-                if (msgBox) {
-                    msgBox.innerText = "Success! Please log in now.";
-                    msgBox.style.color = "#4cd137";
-                }
+                if (error) throw error;
+
+                showToast("VIP Profile created successfully! Please log in.", "success");
                 setTimeout(() => {
                     if (registerScreen) registerScreen.classList.add('hidden');
                     if (authSection) authSection.classList.remove('hidden');
                 }, 2000);
+            } catch (err) {
+                showToast(`Registration Error: ${err.message}`, "error");
+            } finally {
+                submitRegBtn.innerText = "Unlock VIP Access";
             }
         });
     }
 
-    // --- LOGIN ---
+    // LOGIN
     const loginBtn = document.getElementById('login-btn');
     if (loginBtn) {
         loginBtn.addEventListener('click', async () => {
-            if (!supabase) return alert("Database disconnected.");
-            const email = document.getElementById('login-email')?.value;
+            if (!supabase) {
+                showToast("Database connection offline.", "error");
+                return;
+            }
+            const email = document.getElementById('login-email')?.value.trim();
             const password = document.getElementById('login-password')?.value;
-            const msgBox = document.getElementById('login-message');
 
-            const { error } = await supabase.auth.signInWithPassword({ email, password });
-            if (error && msgBox) {
-                msgBox.innerText = error.message;
-            } else {
-                location.reload();
+            if (!email || !password) {
+                showToast("Please enter both email and password.", "error");
+                return;
+            }
+
+            try {
+                const { error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+                showToast("Login successful!", "success");
+                setTimeout(() => location.reload(), 1000);
+            } catch (err) {
+                showToast(`Login Error: ${err.message}`, "error");
             }
         });
     }
 
-    // --- LOGOUT ---
+    // LOGOUT
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async () => {
@@ -184,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- CLOSE RESULT BUBBLE ---
+    // CLOSE BUBBLE
     const closeBubbleBtn = document.getElementById('close-bubble-btn');
     if (closeBubbleBtn) {
         closeBubbleBtn.addEventListener('click', () => {
@@ -194,35 +223,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- MATCHMAKING ENGINE ---
+    // MATCHMAKING ENGINE
     if (submitBtn) {
         submitBtn.addEventListener('click', async (e) => {
             e.preventDefault();
             
-            if (errBox) errBox.classList.add('hidden');
             submitBtn.innerText = "Processing Request...";
 
             try {
                 // LIMIT CHECK
                 if (!currentUser) {
                     if (localStorage.getItem('hasUsedFreeMatch') === 'true') {
-                        if (errBox) {
-                            errBox.innerText = "🔒 You have already used your free match! Please register above to unlock daily matches.";
-                            errBox.classList.remove('hidden');
-                        }
+                        showToast("🔒 Free match used! Please register or log in above.", "error");
                         submitBtn.innerText = "Curate My Match";
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                         return; 
                     }
                 } else if (supabase) {
-                    const { data } = await supabase.from('user_matches').select('last_match_timestamp').eq('id', currentUser.id).single();
-                    if (data && data.last_match_timestamp) {
+                    const { data, error } = await supabase.from('user_matches').select('last_match_timestamp').eq('id', currentUser.id).single();
+                    if (!error && data && data.last_match_timestamp) {
                         const diffHours = Math.abs(new Date() - new Date(data.last_match_timestamp)) / 36e5;
                         if (diffHours < 24) {
-                            if (errBox) {
-                                errBox.innerText = `⏳ Please wait ${Math.ceil(24 - diffHours)} hours for your next match.`;
-                                errBox.classList.remove('hidden');
-                            }
+                            showToast(`⏳ Please wait ${Math.ceil(24 - diffHours)} hours for your next match.`, "error");
                             submitBtn.innerText = "Curate My Match";
                             return; 
                         }
@@ -231,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // GATHER INPUTS
                 const age = parseInt(document.getElementById('age')?.value) || 18; 
-                const country = document.getElementById('country')?.value || "Global";
+                const country = document.getElementById('country')?.value.trim() || "Global";
                 const format = document.getElementById('format')?.value || "movie";
                 const mood = document.getElementById('mood')?.value || "drama";
                 const era = document.getElementById('era')?.value || "any";
@@ -257,11 +279,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const text = document.getElementById('loading-text');
                 let width = 0;
                 
-                if (text) setTimeout(() => text.innerText = "Scanning global catalogs...", 1000);
-                if (text) setTimeout(() => text.innerText = "Locating streaming rights...", 2000);
+                if (text) setTimeout(() => text.innerText = "Scanning global catalogs...", 800);
+                if (text) setTimeout(() => text.innerText = "Locating streaming rights...", 1600);
 
                 let interval = setInterval(async () => {
-                    width += 2; 
+                    width += 4; 
                     if (bar) bar.style.width = width + '%';
                     
                     if (width >= 100) {
@@ -305,20 +327,17 @@ document.addEventListener('DOMContentLoaded', () => {
                             await supabase.from('user_matches').upsert({ id: currentUser.id, last_match_timestamp: new Date().toISOString() });
                         }
                     }
-                }, 60); 
+                }, 40); 
 
             } catch (error) {
-                console.error("Engine Error:", error);
-                if (errBox) {
-                    errBox.innerText = "⚠️ An error occurred. Please refresh the page.";
-                    errBox.classList.remove('hidden');
-                }
+                console.error("Match Engine Error:", error);
+                showToast("⚠️ Server or network error occurred. Please try again.", "error");
                 submitBtn.innerText = "Curate My Match";
             }
         });
     }
 
-    // --- SOCIAL SHARES ---
+    // SOCIAL SHARES
     const waBtn = document.getElementById('share-wa');
     if (waBtn) waBtn.addEventListener('click', () => window.open(`https://api.whatsapp.com/send?text=I got ${currentMatchTitle} on MatchApp! https://matchapp.cc`, '_blank'));
     
@@ -332,7 +351,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (moreBtn) {
         moreBtn.addEventListener('click', async () => {
             if (navigator.share) await navigator.share({ title: 'MatchApp', text: `My match: ${currentMatchTitle}`, url: 'https://matchapp.cc' });
-            else { navigator.clipboard.writeText('https://matchapp.cc'); alert("Link Copied!"); }
+            else { navigator.clipboard.writeText('https://matchapp.cc'); showToast("Link copied to clipboard!", "success"); }
         });
     }
-});
+}
+
+// EXECUTE IMMEDIATELY OR ON DOMREADY
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', runApp);
+} else {
+    runApp();
+}
