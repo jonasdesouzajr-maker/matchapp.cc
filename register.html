@@ -5,14 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MatchApp | VIP Registration & Lifestyle Profile</title>
     <link rel="stylesheet" href="style.css">
-    
-    <!-- Supabase Database CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div class="luxury-bg"></div>
-
-    <!-- TOAST NOTIFICATION CONTAINER -->
     <div id="toast-container"></div>
 
     <div class="container" style="max-width: 600px; margin-top: 20px; margin-bottom: 40px;">
@@ -28,7 +24,6 @@
             
             <form id="register-form">
                 
-                <!-- SECTION 1: ACCOUNT CREDENTIALS -->
                 <div class="form-section-title">1. Account Information</div>
                 <div class="input-grid">
                     <div class="input-group">
@@ -36,8 +31,8 @@
                         <input type="text" id="reg-name" placeholder="Your Name" required>
                     </div>
                     <div class="input-group">
-                        <label>Age *</label>
-                        <input type="number" id="reg-age" min="1" max="120" placeholder="e.g. 28" required>
+                        <label>Age * (Min 16)</label>
+                        <input type="number" id="reg-age" min="16" max="120" placeholder="e.g. 28" required>
                     </div>
                 </div>
 
@@ -52,7 +47,6 @@
                     </div>
                 </div>
 
-                <!-- SECTION 2: LOCATION & DEMOGRAPHICS -->
                 <div class="form-section-title" style="margin-top: 20px;">2. Location & Demographics</div>
                 <div class="input-grid">
                     <div class="input-group">
@@ -81,11 +75,10 @@
                     </select>
                 </div>
 
-                <!-- SECTION 3: LIFESTYLE & VIEWING HABITS -->
                 <div class="form-section-title" style="margin-top: 20px;">3. Lifestyle & Viewing Habits</div>
                 
                 <div class="input-group">
-                    <label>Viewing Style (Multiple choice / primary habit)</label>
+                    <label>Viewing Style</label>
                     <select id="reg-viewing-style">
                         <option value="binge">Binge Watcher (Finish a season in a weekend)</option>
                         <option value="casual">Casual Viewer (1-2 episodes per week)</option>
@@ -112,7 +105,6 @@
                     <input type="text" id="reg-history" placeholder="e.g., Breaking Bad, Avenida Brasil, Interstellar...">
                 </div>
 
-                <!-- SUBMIT BUTTON -->
                 <button type="button" id="submit-register-btn" class="gold-btn" style="margin-top: 25px;">Complete VIP Registration & Login</button>
             </form>
         </div>
