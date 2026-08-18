@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfect Match: Global Movies, Series & Telenovelas</title>
+    <title>MatchApp | Premium Global Streaming Matchmaker</title>
     <link rel="stylesheet" href="style.css">
     
     <!-- Supabase Database CDN -->
@@ -13,135 +13,221 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
 </head>
 <body>
+    <div class="app-background-glow"></div>
+
     <div class="container">
         
-        <!-- GLOBAL LANGUAGE TRANSLATOR -->
-        <div id="google_translate_element"></div>
+        <!-- HEADER & TRANSLATOR BAR -->
+        <header class="app-header">
+            <!-- Secret Dev Trick: Clicking the logo clears your limit so you can test! -->
+            <div class="logo" id="dev-reset-btn" title="Click to reset test limit">🎬 Match<span>App</span></div>
+            <div class="translate-wrapper" id="google_translate_element" title="Select your language"></div>
+        </header>
+
+        <!-- ADSTERRA TOP BANNER (728x90) -->
+        <div class="ad-container-top">
+            <script>
+                atOptions = {
+                    'key' : '0ffd8484dc13e2d5967d0d70f61fc753',
+                    'format' : 'iframe',
+                    'height' : 90,
+                    'width' : 728,
+                    'params' : {}
+                };
+            </script>
+            <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
+        </div>
 
         <!-- FREEMIUM RULE BANNER -->
         <div class="rule-banner">
-            <p>🎁 <strong>Your first match is completely FREE!</strong> Register after your first match to unlock 1 free recommendation every 24 hours.</p>
+            <p>🎁 <strong>Your first match is 100% FREE!</strong> Register after your recommendation to unlock daily 24h matches.</p>
         </div>
 
         <!-- AUTHENTICATION SECTION -->
         <div id="auth-section" class="auth-box">
-            <h3>Register to unlock daily matches!</h3>
+            <h3>🔐 Member Portal</h3>
             <input type="email" id="email" placeholder="Email address" required>
             <input type="password" id="password" placeholder="Password" required>
-            <button id="register-btn">Register</button>
-            <button id="login-btn">Log In</button>
+            <div class="auth-buttons">
+                <button id="register-btn" class="secondary-btn">Register</button>
+                <button id="login-btn">Log In</button>
+            </div>
             <p id="auth-message"></p>
         </div>
 
         <!-- LOGGED IN STATE -->
         <div id="user-info-section" class="hidden auth-box">
             <p id="user-info"></p>
-            <button id="logout-btn">Log Out</button>
+            <button id="logout-btn" class="secondary-btn">Log Out</button>
         </div>
 
         <!-- SCREEN 1: The Questionnaire -->
-        <div id="questionnaire-screen">
-            <h1>Find Your Perfect Watch 🍿</h1>
-            <p class="subtitle">Answer a few questions and our algorithm will search the global catalog.</p>
+        <div id="questionnaire-screen" class="glass-card">
+            <h1>Find Your Cinematic Match</h1>
+            <p class="subtitle">Tell our AI algorithm what you're craving tonight.</p>
             
             <form id="match-form">
-                <label for="age">1. Your Age:</label>
-                <input type="number" id="age" name="age" min="1" max="120" placeholder="e.g., 30" required>
+                <div class="input-group">
+                    <label for="age">1. Your Age</label>
+                    <input type="number" id="age" name="age" min="1" max="120" placeholder="e.g., 28" required>
+                </div>
 
-                <label for="country">2. Country of Birth / Residence:</label>
-                <input type="text" id="country" name="country" placeholder="e.g., Brazil, USA" required>
+                <div class="input-group">
+                    <label for="country">2. Country of Residence</label>
+                    <input type="text" id="country" name="country" placeholder="e.g., Brazil, USA" required>
+                </div>
 
-                <label for="format">3. What are you looking for?</label>
-                <select id="format" name="format">
-                    <option value="movie">Movie</option>
-                    <option value="series">Series</option>
-                    <option value="telenovela">Telenovela</option>
-                </select>
+                <div class="input-group">
+                    <label for="format">3. What are you looking for?</label>
+                    <select id="format" name="format">
+                        <option value="movie">Movie</option>
+                        <option value="series">Series</option>
+                        <option value="telenovela">Telenovela</option>
+                    </select>
+                </div>
 
-                <label for="mood">4. What's your current vibe?</label>
-                <select id="mood" name="mood">
-                    <option value="drama">Deep Drama (I want to feel something)</option>
-                    <option value="comedy">Comedy (Make me laugh)</option>
-                    <option value="action">Action / Thriller (Keep me on the edge)</option>
-                    <option value="scifi">Sci-Fi / Fantasy (Take me to another world)</option>
-                    <option value="romance">Romance (Love stories)</option>
-                </select>
+                <div class="input-group">
+                    <label for="mood">4. What's your current vibe?</label>
+                    <select id="mood" name="mood">
+                        <option value="drama">Deep Drama (I want to feel something)</option>
+                        <option value="comedy">Comedy (Make me laugh)</option>
+                        <option value="action">Action / Thriller (Keep me on the edge)</option>
+                        <option value="scifi">Sci-Fi / Fantasy (Take me to another world)</option>
+                        <option value="romance">Romance (Love stories)</option>
+                    </select>
+                </div>
 
-                <label for="era">5. Classic or Modern?</label>
-                <select id="era" name="era">
-                    <option value="modern">Modern (2010s to Now)</option>
-                    <option value="classic">Classic (Before 2010)</option>
-                    <option value="any">I don't mind!</option>
-                </select>
+                <div class="input-group">
+                    <label for="era">5. Era Preference</label>
+                    <select id="era" name="era">
+                        <option value="modern">Modern (2010s to Now)</option>
+                        <option value="classic">Classic (Before 2010)</option>
+                        <option value="any">Any Era</option>
+                    </select>
+                </div>
 
-                <label for="langpref">6. Language / Audio Preference:</label>
-                <select id="langpref" name="langpref">
-                    <option value="subtitled">Subtitled (Original Audio)</option>
-                    <option value="dubbed">Dubbed (In my language)</option>
-                    <option value="english">English Original</option>
-                </select>
+                <div class="input-group">
+                    <label for="langpref">6. Audio & Format Preference</label>
+                    <select id="langpref" name="langpref">
+                        <option value="subtitled">Subtitled (Original Audio)</option>
+                        <option value="dubbed">Dubbed (In my language)</option>
+                        <option value="english">English Original</option>
+                    </select>
+                </div>
 
-                <label for="platform">7. Where do you want to watch it?</label>
-                <select id="platform" name="platform">
-                    <option value="any">Anywhere (Show me the best)</option>
-                    <option value="Netflix">Netflix</option>
-                    <option value="Max">Max (HBO)</option>
-                    <option value="Prime Video">Amazon Prime Video</option>
-                    <option value="Disney+">Disney+</option>
-                    <option value="Globoplay">Globoplay</option>
-                    <option value="Apple TV+">Apple TV+</option>
-                </select>
+                <div class="input-group">
+                    <label for="platform">7. Preferred Streaming Service</label>
+                    <select id="platform" name="platform">
+                        <option value="any">Anywhere (Best Match)</option>
+                        <option value="Netflix">Netflix</option>
+                        <option value="Max">Max (HBO)</option>
+                        <option value="Prime Video">Amazon Prime Video</option>
+                        <option value="Disney+">Disney+</option>
+                        <option value="Globoplay">Globoplay</option>
+                        <option value="Apple TV+">Apple TV+</option>
+                    </select>
+                </div>
 
-                <button type="submit" id="submit-match-btn">Find My Match</button>
+                <button type="submit" id="submit-match-btn" class="primary-btn">⚡ Generate Match</button>
             </form>
+
+            <!-- ADSTERRA NATIVE BANNER -->
+            <div class="secondary-ad-wrapper">
+                <script async="async" data-cfasync="false" src="https://pl30907929.effectivecpmnetwork.com/24c070776b5f8b41dda874f495a807d2/invoke.js"></script>
+                <div id="container-24c070776b5f8b41dda874f495a807d2"></div>
+            </div>
         </div>
 
-        <!-- SCREEN 2: The Interstitial (Ad Screen) -->
-        <div id="loading-screen" class="hidden">
-            <h2>Analyzing your profile...</h2>
-            <p>Searching global streaming catalogs for your perfect match.</p>
+        <!-- SCREEN 2: The Loading Screen -->
+        <div id="loading-screen" class="hidden glass-card loading-box">
+            <div class="spinner-ring"></div>
+            <h2>Curating Your Catalog...</h2>
+            <p>Scanning global streaming rights and user preferences.</p>
             
-            <!-- Google AdSense Responsive Ad Unit -->
-            <div class="ad-container" id="adsense-container">
-                <ins class="adsbygoogle"
-                     style="display:block"
-                     data-ad-client="ca-pub-9541435081010948"
-                     data-ad-slot="3127478321"
-                     data-ad-format="auto"
-                     data-full-width-responsive="true"></ins>
+            <!-- ADSTERRA 300x250 INTERSTITIAL -->
+            <div class="ad-container">
                 <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
+                    atOptions = {
+                        'key' : 'a993f73724a261dce748b6f9319072d5',
+                        'format' : 'iframe',
+                        'height' : 250,
+                        'width' : 300,
+                        'params' : {}
+                    };
                 </script>
-            </div>
-            
-            <div class="spinner"></div>
-        </div>
-
-        <!-- SCREEN 3: The Result -->
-        <div id="result-screen" class="hidden">
-            <h2>We found your match! 🎉</h2>
-            <h3 id="match-title">Title will appear here</h3>
-            <p id="match-description">Description will appear here.</p>
-            
-            <div class="where-to-watch">
-                <h4>📺 Where to Watch:</h4>
-                <p id="match-streaming">Netflix</p>
-                <p id="match-details-meta" style="font-size: 13px; color: #555; margin-top: 5px;"></p>
-            </div>
-
-            <button id="new-search-btn" style="background-color: #333; margin-top: 10px;">Search Again</button>
-            
-            <div class="register-prompt" id="register-prompt">
-                <p>You used your free match! <strong>Register above</strong> to unlock your next free match right now (and 1 free match every 24 hours)!</p>
+                <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
             </div>
         </div>
 
+    </div>
+
+    <!-- SCREEN 3: ANIMATED CINEMATIC POP-UP MODAL RESULT -->
+    <div id="result-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-poster-container">
+                <img id="modal-poster" src="" alt="Movie Poster">
+                <div class="poster-gradient-overlay"></div>
+                <span id="close-modal-btn" class="close-btn">&times;</span>
+            </div>
+            
+            <div class="modal-body">
+                <div class="modal-badge-header">✨ Verified Perfect Match</div>
+                <h2 id="modal-title">Title Here</h2>
+                
+                <div class="meta-badges">
+                    <span id="modal-imdb" class="badge imdb-badge">⭐ IMDb</span>
+                    <span id="modal-length" class="badge length-badge">⏱️ Length</span>
+                    <span id="modal-age" class="badge age-badge">🔞 Age</span>
+                </div>
+
+                <p id="modal-description" class="modal-desc">Synopsis will appear here...</p>
+                
+                <div class="modal-streaming-box">
+                    <h4>📺 Where to Watch in <span id="modal-user-country">Your Region</span>:</h4>
+                    <p id="modal-streaming">Netflix</p>
+                    <p id="modal-audio-pref" class="audio-note"></p>
+                </div>
+
+                <!-- GOOGLE ADSENSE MONETIZATION IN MODAL -->
+                <div class="ad-container" style="margin: 10px 0;">
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-9541435081010948"
+                         data-ad-slot="3127478321"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                    <script>
+                         (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
+
+                <!-- SOCIAL SHARING SUITE -->
+                <div class="social-share-section">
+                    <p class="share-title">📤 Share this match with friends:</p>
+                    <div class="share-buttons-grid">
+                        <button id="share-whatsapp" class="share-btn whatsapp-btn">💬 WhatsApp</button>
+                        <button id="share-twitter" class="share-btn x-btn">✖️ X</button>
+                        <button id="share-facebook" class="share-btn fb-btn">f Facebook</button>
+                        <button id="share-native" class="share-btn native-btn">🔗 Native Share</button>
+                    </div>
+                </div>
+
+                <button id="modal-search-again-btn" class="primary-btn">🔄 Find Another Match</button>
+                
+                <div class="register-prompt" id="register-prompt">
+                    <p>You used your free match! <strong>Register above</strong> to unlock your next recommendation right now (and 1 free match every 24 hours)!</p>
+                </div>
+            </div>
+        </div>
     </div>
     
     <!-- Google Translate Script -->
     <script type="text/javascript">
         function googleTranslateElementInit() {
-            new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+            new google.translate.TranslateElement({
+                pageLanguage: 'en', 
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
         }
     </script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
