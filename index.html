@@ -18,9 +18,14 @@
         <!-- GLOBAL LANGUAGE TRANSLATOR -->
         <div id="google_translate_element"></div>
 
+        <!-- FREEMIUM RULE BANNER -->
+        <div class="rule-banner">
+            <p>🎁 <strong>Your first match is completely FREE!</strong> Register after your first match to unlock 1 free recommendation every 24 hours.</p>
+        </div>
+
         <!-- AUTHENTICATION SECTION -->
         <div id="auth-section" class="auth-box">
-            <h3>Create an account for daily matches!</h3>
+            <h3>Register to unlock daily matches!</h3>
             <input type="email" id="email" placeholder="Email address" required>
             <input type="password" id="password" placeholder="Password" required>
             <button id="register-btn">Register</button>
@@ -40,14 +45,20 @@
             <p class="subtitle">Answer a few questions and our algorithm will search the global catalog.</p>
             
             <form id="match-form">
-                <label for="format">1. What are you looking for?</label>
+                <label for="age">1. Your Age:</label>
+                <input type="number" id="age" name="age" min="1" max="120" placeholder="e.g., 30" required>
+
+                <label for="country">2. Country of Birth / Residence:</label>
+                <input type="text" id="country" name="country" placeholder="e.g., Brazil, USA" required>
+
+                <label for="format">3. What are you looking for?</label>
                 <select id="format" name="format">
                     <option value="movie">Movie</option>
                     <option value="series">Series</option>
                     <option value="telenovela">Telenovela</option>
                 </select>
 
-                <label for="mood">2. What's your current vibe?</label>
+                <label for="mood">4. What's your current vibe?</label>
                 <select id="mood" name="mood">
                     <option value="drama">Deep Drama (I want to feel something)</option>
                     <option value="comedy">Comedy (Make me laugh)</option>
@@ -56,14 +67,21 @@
                     <option value="romance">Romance (Love stories)</option>
                 </select>
 
-                <label for="era">3. Classic or Modern?</label>
+                <label for="era">5. Classic or Modern?</label>
                 <select id="era" name="era">
                     <option value="modern">Modern (2010s to Now)</option>
                     <option value="classic">Classic (Before 2010)</option>
                     <option value="any">I don't mind!</option>
                 </select>
 
-                <label for="platform">4. Where do you want to watch it?</label>
+                <label for="langpref">6. Language / Audio Preference:</label>
+                <select id="langpref" name="langpref">
+                    <option value="subtitled">Subtitled (Original Audio)</option>
+                    <option value="dubbed">Dubbed (In my language)</option>
+                    <option value="english">English Original</option>
+                </select>
+
+                <label for="platform">7. Where do you want to watch it?</label>
                 <select id="platform" name="platform">
                     <option value="any">Anywhere (Show me the best)</option>
                     <option value="Netflix">Netflix</option>
@@ -74,7 +92,7 @@
                     <option value="Apple TV+">Apple TV+</option>
                 </select>
 
-                <button type="submit">Find My Match</button>
+                <button type="submit" id="submit-match-btn">Find My Match</button>
             </form>
         </div>
 
@@ -111,10 +129,13 @@
             <div class="where-to-watch">
                 <h4>📺 Where to Watch:</h4>
                 <p id="match-streaming">Netflix</p>
+                <p id="match-details-meta" style="font-size: 13px; color: #555; margin-top: 5px;"></p>
             </div>
+
+            <button id="new-search-btn" style="background-color: #333; margin-top: 10px;">Search Again</button>
             
             <div class="register-prompt" id="register-prompt">
-                <p>Want another match right now? Register to unlock 1 more free choice every 24 hours!</p>
+                <p>You used your free match! <strong>Register above</strong> to unlock your next free match right now (and 1 free match every 24 hours)!</p>
             </div>
         </div>
 
