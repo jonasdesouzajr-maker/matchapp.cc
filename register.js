@@ -1,4 +1,4 @@
-console.log("Mastercode 10.0: Auth Controller Initialized");
+console.log("Mastercode: Auth Controller Initialized");
 
 let supabaseClient = null;
 try {
