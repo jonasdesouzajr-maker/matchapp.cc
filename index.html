@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MatchApp | The Premium Streaming Concierge</title>
     <link rel="stylesheet" href="style.css">
-    
-    <!-- Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div class="luxury-bg"></div>
 
-    <div class="container" style="max-width: 500px; margin: 30px auto; padding: 20px;">
+    <div class="container" style="max-width: 500px; margin: 30px auto; padding: 20px; position: relative; z-index: 1;">
         
         <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <div style="font-size: 24px; font-weight: 800; color: #fff;">Match<span style="color: #D4AF37;">App</span></div>
@@ -54,10 +52,11 @@
                 </select>
             </div>
 
-            <button id="btn-generate" style="width: 100%; background: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728); color: #000; border: none; padding: 14px; font-weight: 800; border-radius: 8px; cursor: pointer;">⚡ Curate My Match</button>
+            <!-- DIRECT INLINE CLICK HANDLER -->
+            <button onclick="triggerMatch()" style="width: 100%; background: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728); color: #000; border: none; padding: 14px; font-weight: 800; border-radius: 8px; cursor: pointer;">⚡ Curate My Match</button>
         </div>
 
-        <!-- RESULT BOX (Initially hidden using direct style.display) -->
+        <!-- RESULT BOX -->
         <div id="result-box" style="display: none; background: rgba(20,20,35,0.95); border: 2px solid #D4AF37; padding: 25px; border-radius: 16px; margin-top: 20px;">
             <div style="color: #D4AF37; font-size: 11px; font-weight: bold; text-transform: uppercase;">✨ Curated Match Found</div>
             <h2 id="res-title" style="color: #fff; margin: 5px 0 15px 0; font-size: 24px;">Title</h2>
