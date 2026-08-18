@@ -3,74 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MatchApp | The Premium Streaming Concierge</title>
+    <title>MatchApp | The Ultimate Entertainment Concierge</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div class="luxury-bg"></div>
 
-    <div class="container" style="max-width: 500px; margin: 30px auto; padding: 20px; position: relative; z-index: 1;">
+    <div class="container" style="max-width: 550px; margin: 30px auto; padding: 20px; position: relative; z-index: 1;">
         
         <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <div style="font-size: 24px; font-weight: 800; color: #fff;">Match<span style="color: #D4AF37;">App</span></div>
-            <button onclick="window.location.href='register.html'" style="background: #D4AF37; color: #000; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer;">Register VIP</button>
+            <div id="header-auth-area">
+                <button onclick="window.location.href='register.html'" style="background: #D4AF37; color: #000; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer;">Register VIP</button>
+            </div>
         </header>
 
-        <!-- QUESTIONNAIRE BOX -->
-        <div id="questionnaire-box" style="background: rgba(20,20,35,0.9); border: 1px solid rgba(212,175,55,0.3); padding: 25px; border-radius: 16px;">
-            <h2 style="color: #fff; margin-top: 0;">Find Your Match</h2>
-            <p style="color: #A0A0B5; font-size: 13px;">Select your preferences below:</p>
+        <!-- FREEMIUM BANNER -->
+        <div id="freemium-banner" style="background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.3); padding: 12px 15px; border-radius: 10px; color: #F3E5AB; font-size: 13px; margin-bottom: 20px; text-align: center;">
+            ✨ <strong>First Match is FREE!</strong> Register after your search to unlock unlimited VIP concierge access.
+        </div>
 
-            <div style="margin-bottom: 15px;">
-                <label style="color: #A0A0B5; font-size: 11px; text-transform: uppercase; font-weight: bold;">Age (Min 16)</label>
-                <input type="number" id="input-age" value="25" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
-            </div>
+        <!-- 5-QUESTION QUESTIONNAIRE BOX -->
+        <div id="questionnaire-box" style="background: rgba(20,20,35,0.95); border: 1px solid rgba(212,175,55,0.3); padding: 25px; border-radius: 16px;">
+            <h2 style="color: #fff; margin-top: 0; font-size: 22px;">Precision Concierge Algorithm</h2>
+            <p style="color: #A0A0B5; font-size: 13px; margin-bottom: 20px;">Answer 5 quick questions to discover your tailored entertainment match.</p>
 
+            <!-- Q1: Category -->
             <div style="margin-bottom: 15px;">
-                <label style="color: #A0A0B5; font-size: 11px; text-transform: uppercase; font-weight: bold;">Country</label>
-                <input type="text" id="input-country" value="Brazil" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
-            </div>
-
-            <div style="margin-bottom: 15px;">
-                <label style="color: #A0A0B5; font-size: 11px; text-transform: uppercase; font-weight: bold;">Format</label>
-                <select id="input-format" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
-                    <option value="movie">Movie</option>
-                    <option value="series">Series</option>
-                    <option value="telenovela">Telenovela</option>
+                <label style="color: #D4AF37; font-size: 11px; text-transform: uppercase; font-weight: bold;">1. What format are you craving?</label>
+                <select id="q-category" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
+                    <option value="any">Surprise Me (Anything)</option>
+                    <option value="movie">Blockbuster Movie / Film</option>
+                    <option value="series">Bingeable TV Series</option>
+                    <option value="telenovela">Engrossing Telenovela</option>
+                    <option value="spotify">Curated Spotify Playlist</option>
                 </select>
             </div>
 
+            <!-- Q2: Mood -->
+            <div style="margin-bottom: 15px;">
+                <label style="color: #D4AF37; font-size: 11px; text-transform: uppercase; font-weight: bold;">2. What is your current mood/energy?</label>
+                <select id="q-mood" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
+                    <option value="relax">Relaxed & Chill</option>
+                    <option value="intense">Intense & Gripping</option>
+                    <option value="laugh">Funny & Upbeat</option>
+                    <option value="romantic">Romantic & Emotional</option>
+                    <option value="mindbending">Mind-Bending & Epic</option>
+                </select>
+            </div>
+
+            <!-- Q3: Era -->
+            <div style="margin-bottom: 15px;">
+                <label style="color: #D4AF37; font-size: 11px; text-transform: uppercase; font-weight: bold;">3. Preferred Era or Release Period</label>
+                <select id="q-era" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
+                    <option value="any">Any Era / Timeless</option>
+                    <option value="modern">Modern Masterpieces (2015+)</option>
+                    <option value="classic">2000s Classic Era</option>
+                    <option value="retro">Retro Vintage (90s / 80s)</option>
+                </select>
+            </div>
+
+            <!-- Q4: Pacing -->
+            <div style="margin-bottom: 15px;">
+                <label style="color: #D4AF37; font-size: 11px; text-transform: uppercase; font-weight: bold;">4. Desired Narrative Pacing</label>
+                <select id="q-pacing" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
+                    <option value="fast">Fast-paced & Action-driven</option>
+                    <option value="slow">Slow Burn & Character-driven</option>
+                    <option value="episodic">Episodic & Easy to Follow</option>
+                    <option value="epic">Grand Epic Scale</option>
+                </select>
+            </div>
+
+            <!-- Q5: Tone -->
             <div style="margin-bottom: 20px;">
-                <label style="color: #A0A0B5; font-size: 11px; text-transform: uppercase; font-weight: bold;">Mood</label>
-                <select id="input-mood" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
-                    <option value="drama">Deep Drama</option>
-                    <option value="comedy">Comedy</option>
-                    <option value="action">Action / Thriller</option>
-                    <option value="scifi">Sci-Fi</option>
-                    <option value="romance">Romance</option>
+                <label style="color: #D4AF37; font-size: 11px; text-transform: uppercase; font-weight: bold;">5. Core Atmospheric Tone</label>
+                <select id="q-tone" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
+                    <option value="dark">Dark, Gritty & Atmospheric</option>
+                    <option value="light">Lighthearted, Warm & Uplifting</option>
+                    <option value="surreal">Surreal, Artistic & Thought-provoking</option>
+                    <option value="dramatic">Dramatic, Passionate & High-stakes</option>
                 </select>
             </div>
 
-            <!-- DIRECT INLINE CLICK HANDLER -->
             <button onclick="triggerMatch()" style="width: 100%; background: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728); color: #000; border: none; padding: 14px; font-weight: 800; border-radius: 8px; cursor: pointer;">⚡ Curate My Match</button>
+        </div>
+
+        <!-- FREEMIUM BLOCKED STATE (Hidden by default) -->
+        <div id="blocked-box" style="display: none; background: rgba(42,18,21,0.95); border: 2px solid #ff5252; padding: 30px; border-radius: 16px; text-align: center; margin-top: 20px;">
+            <div style="font-size: 36px; margin-bottom: 10px;">🔒</div>
+            <h2 style="color: #ff8787; margin-top: 0;">Free Limit Reached</h2>
+            <p style="color: #fff; font-size: 14px; line-height: 1.5; margin-bottom: 20px;">You have successfully used your free trial match! To protect our concierge catalog and unlock unlimited daily searches, please register your VIP account.</p>
+            <button onclick="window.location.href='register.html'" style="background: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728); color: #000; border: none; padding: 14px 20px; font-weight: 800; border-radius: 8px; cursor: pointer; width: 100%;">⭐ Register VIP Account Now</button>
         </div>
 
         <!-- RESULT BOX -->
         <div id="result-box" style="display: none; background: rgba(20,20,35,0.95); border: 2px solid #D4AF37; padding: 25px; border-radius: 16px; margin-top: 20px;">
-            <div style="color: #D4AF37; font-size: 11px; font-weight: bold; text-transform: uppercase;">✨ Curated Match Found</div>
+            <div id="res-badge" style="color: #D4AF37; font-size: 11px; font-weight: bold; text-transform: uppercase;">✨ Curated Match Found</div>
             <h2 id="res-title" style="color: #fff; margin: 5px 0 15px 0; font-size: 24px;">Title</h2>
             
-            <img id="res-poster" src="" alt="Poster" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 15px;">
+            <div id="poster-container">
+                <img id="res-poster" src="" alt="Poster" style="width: 100%; height: 220px; object-fit: cover; border-radius: 8px; margin-bottom: 15px;">
+            </div>
+
+            <!-- Spotify Embed Container -->
+            <div id="spotify-container" style="display: none; margin-bottom: 15px;">
+                <iframe id="spotify-iframe" src="" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" style="border-radius:12px;"></iframe>
+            </div>
             
             <p id="res-desc" style="color: #A0A0B5; font-size: 13px; line-height: 1.5; margin-bottom: 15px;"></p>
             
             <div style="background: rgba(212,175,55,0.1); padding: 12px; border-radius: 8px; margin-bottom: 15px;">
-                <div style="font-size: 11px; color: #A0A0B5; text-transform: uppercase;">Where to Watch:</div>
+                <div style="font-size: 11px; color: #A0A0B5; text-transform: uppercase;">Platform / Source:</div>
                 <div id="res-platform" style="color: #fff; font-weight: 800; font-size: 16px; margin-top: 3px;">Netflix</div>
             </div>
 
-            <button onclick="location.reload()" style="width: 100%; background: #333; color: #fff; border: none; padding: 12px; font-weight: bold; border-radius: 8px; cursor: pointer;">🔄 Search Again</button>
+            <button onclick="handleSearchAgain()" style="width: 100%; background: #333; color: #fff; border: none; padding: 12px; font-weight: bold; border-radius: 8px; cursor: pointer;">🔄 Search Again</button>
         </div>
 
     </div>
