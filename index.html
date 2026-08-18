@@ -2,49 +2,82 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MatchApp | The Ultimate Entertainment Concierge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MatchApp | VIP Streaming Concierge</title>
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2ECND229RR');
+    </script>
+
+    <!-- Language Auto-Detect -->
+    <script>
+        (function autoSetLanguage() {
+            if (!document.cookie.includes('googtrans')) {
+                let userLang = (navigator.language || navigator.userLanguage).split('-')[0];
+                const supported = ['en','zh-CN','hi','es','fr','ar','bn','ru','pt','ur','id'];
+                if(supported.includes(userLang) && userLang !== 'en'){ document.cookie = `googtrans=/en/${userLang}; path=/`; }
+            }
+        })();
+    </script>
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="luxury-bg"></div>
 
-    <div class="container" style="max-width: 550px; margin: 30px auto; padding: 20px; position: relative; z-index: 1;">
+    <div class="container">
         
-        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <div style="font-size: 24px; font-weight: 800; color: #fff;">Match<span style="color: #D4AF37;">App</span></div>
-            <div id="header-auth-area">
-                <button onclick="window.location.href='register.html'" style="background: #D4AF37; color: #000; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer;">Register VIP</button>
+        <header class="app-header">
+            <div class="logo" id="dev-reset-btn" title="Click to reset test limit">Match<span>App</span></div>
+            <div id="header-auth-area" style="display: flex; gap: 10px; align-items: center;">
+                <div class="translate-wrapper" id="google_translate_element"></div>
+                <button id="nav-reg-btn" onclick="window.location.href='register.html'" style="background: #D4AF37; color: #000; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer;">Register VIP</button>
             </div>
         </header>
 
-        <!-- FREEMIUM BANNER -->
-        <div id="freemium-banner" style="background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.3); padding: 12px 15px; border-radius: 10px; color: #F3E5AB; font-size: 13px; margin-bottom: 20px; text-align: center;">
-            ✨ <strong>First Match is FREE!</strong> Register after your search to unlock unlimited VIP concierge access.
+        <div class="ad-spacing" style="margin-top: 0; margin-bottom: 15px;">
+            <script>
+                atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };
+            </script>
+            <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
         </div>
 
-        <!-- 5-QUESTION QUESTIONNAIRE BOX -->
-        <div id="questionnaire-box" style="background: rgba(20,20,35,0.95); border: 1px solid rgba(212,175,55,0.3); padding: 25px; border-radius: 16px;">
-            <h2 style="color: #fff; margin-top: 0; font-size: 22px;">Precision Concierge Algorithm</h2>
-            <p style="color: #A0A0B5; font-size: 13px; margin-bottom: 20px;">Answer 5 quick questions to discover your tailored entertainment match.</p>
+        <div id="freemium-banner" class="rule-banner fade-in">
+            ✨ <strong>First Match is FREE!</strong> Register below to unlock unlimited concierge access.
+        </div>
 
-            <!-- Q1: Category -->
-            <div style="margin-bottom: 15px;">
-                <label style="color: #D4AF37; font-size: 11px; text-transform: uppercase; font-weight: bold;">1. What format are you craving?</label>
-                <select id="q-category" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
-                    <option value="any">Surprise Me (Anything)</option>
-                    <option value="movie">Blockbuster Movie / Film</option>
-                    <option value="series">Bingeable TV Series</option>
-                    <option value="telenovela">Engrossing Telenovela</option>
-                    <option value="spotify">Curated Spotify Playlist</option>
-                </select>
+        <!-- STAGE 1: QUESTIONNAIRE -->
+        <div id="questionnaire-box" class="premium-card fade-in">
+            <h2 style="margin: 0 0 5px 0; font-size: 24px;">Precision Algorithm</h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Answer to discover your tailored entertainment match.</p>
+
+            <div class="input-grid">
+                <div class="input-group">
+                    <label>Age (Min 16)</label>
+                    <input type="number" id="q-age" min="16" placeholder="e.g. 25">
+                </div>
+                <div class="input-group">
+                    <label>Format</label>
+                    <select id="q-category">
+                        <option value="any">Surprise Me</option>
+                        <option value="movie">Movies</option>
+                        <option value="series">Series</option>
+                        <option value="telenovela">Telenovelas</option>
+                        <option value="spotify">Spotify Playlist</option>
+                    </select>
+                </div>
             </div>
 
-            <!-- Q2: Mood -->
-            <div style="margin-bottom: 15px;">
-                <label style="color: #D4AF37; font-size: 11px; text-transform: uppercase; font-weight: bold;">2. What is your current mood/energy?</label>
-                <select id="q-mood" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
+            <div class="input-group">
+                <label>Energy / Mood</label>
+                <select id="q-mood">
                     <option value="relax">Relaxed & Chill</option>
                     <option value="intense">Intense & Gripping</option>
                     <option value="laugh">Funny & Upbeat</option>
@@ -53,76 +86,94 @@
                 </select>
             </div>
 
-            <!-- Q3: Era -->
-            <div style="margin-bottom: 15px;">
-                <label style="color: #D4AF37; font-size: 11px; text-transform: uppercase; font-weight: bold;">3. Preferred Era or Release Period</label>
-                <select id="q-era" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
-                    <option value="any">Any Era / Timeless</option>
-                    <option value="modern">Modern Masterpieces (2015+)</option>
-                    <option value="classic">2000s Classic Era</option>
-                    <option value="retro">Retro Vintage (90s / 80s)</option>
-                </select>
+            <div class="input-grid">
+                <div class="input-group">
+                    <label>Era</label>
+                    <select id="q-era">
+                        <option value="any">Any Era</option>
+                        <option value="modern">Modern (2015+)</option>
+                        <option value="classic">2000s Classic</option>
+                        <option value="retro">Retro Vintage</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Tone</label>
+                    <select id="q-tone">
+                        <option value="dark">Dark & Gritty</option>
+                        <option value="light">Lighthearted</option>
+                        <option value="surreal">Surreal & Thoughtful</option>
+                        <option value="dramatic">Passionate Drama</option>
+                    </select>
+                </div>
             </div>
 
-            <!-- Q4: Pacing -->
-            <div style="margin-bottom: 15px;">
-                <label style="color: #D4AF37; font-size: 11px; text-transform: uppercase; font-weight: bold;">4. Desired Narrative Pacing</label>
-                <select id="q-pacing" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
-                    <option value="fast">Fast-paced & Action-driven</option>
-                    <option value="slow">Slow Burn & Character-driven</option>
-                    <option value="episodic">Episodic & Easy to Follow</option>
-                    <option value="epic">Grand Epic Scale</option>
-                </select>
-            </div>
-
-            <!-- Q5: Tone -->
-            <div style="margin-bottom: 20px;">
-                <label style="color: #D4AF37; font-size: 11px; text-transform: uppercase; font-weight: bold;">5. Core Atmospheric Tone</label>
-                <select id="q-tone" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
-                    <option value="dark">Dark, Gritty & Atmospheric</option>
-                    <option value="light">Lighthearted, Warm & Uplifting</option>
-                    <option value="surreal">Surreal, Artistic & Thought-provoking</option>
-                    <option value="dramatic">Dramatic, Passionate & High-stakes</option>
-                </select>
-            </div>
-
-            <button onclick="triggerMatch()" style="width: 100%; background: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728); color: #000; border: none; padding: 14px; font-weight: 800; border-radius: 8px; cursor: pointer;">⚡ Curate My Match</button>
+            <button onclick="triggerMatch()" class="gold-btn">⚡ Curate My Match</button>
         </div>
 
-        <!-- FREEMIUM BLOCKED STATE (Hidden by default) -->
-        <div id="blocked-box" style="display: none; background: rgba(42,18,21,0.95); border: 2px solid #ff5252; padding: 30px; border-radius: 16px; text-align: center; margin-top: 20px;">
-            <div style="font-size: 36px; margin-bottom: 10px;">🔒</div>
-            <h2 style="color: #ff8787; margin-top: 0;">Free Limit Reached</h2>
-            <p style="color: #fff; font-size: 14px; line-height: 1.5; margin-bottom: 20px;">You have successfully used your free trial match! To protect our concierge catalog and unlock unlimited daily searches, please register your VIP account.</p>
-            <button onclick="window.location.href='register.html'" style="background: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728); color: #000; border: none; padding: 14px 20px; font-weight: 800; border-radius: 8px; cursor: pointer; width: 100%;">⭐ Register VIP Account Now</button>
+        <!-- STAGE 2: LOADING -->
+        <div id="loading-box" class="premium-card fade-in" style="display: none; text-align: center; padding: 40px 20px;">
+            <div class="loading-icon">🍿</div>
+            <h3 id="loading-text" style="color: var(--gold-glow); margin-bottom: 20px;">Scanning global catalogs...</h3>
+            <div class="progress-bar-container">
+                <div id="progress-bar" class="progress-bar-fill"></div>
+            </div>
         </div>
 
-        <!-- RESULT BOX -->
-        <div id="result-box" style="display: none; background: rgba(20,20,35,0.95); border: 2px solid #D4AF37; padding: 25px; border-radius: 16px; margin-top: 20px;">
-            <div id="res-badge" style="color: #D4AF37; font-size: 11px; font-weight: bold; text-transform: uppercase;">✨ Curated Match Found</div>
-            <h2 id="res-title" style="color: #fff; margin: 5px 0 15px 0; font-size: 24px;">Title</h2>
+        <!-- STAGE 3: BLOCKED -->
+        <div id="blocked-box" class="premium-card fade-in" style="display: none; text-align: center; border-color: #ff5252;">
+            <div style="font-size: 40px; margin-bottom: 10px;">🔒</div>
+            <h2 style="color: #ff8787; margin: 0 0 10px 0;">Free Limit Reached</h2>
+            <p style="color: #fff; font-size: 14px; margin-bottom: 20px;">You have successfully used your free trial match! Register your VIP account to unlock unlimited daily searches.</p>
+            <button onclick="window.location.href='register.html'" class="gold-btn">⭐ Register VIP Account Now</button>
+        </div>
+
+        <!-- STAGE 4: RESULT -->
+        <div id="result-box" class="premium-card fade-in" style="display: none; border-color: var(--gold);">
+            <div style="color: var(--gold); font-size: 11px; font-weight: bold; text-transform: uppercase;">✨ Curated Match Found</div>
+            <h2 id="res-title" style="margin: 5px 0 15px 0; font-size: 26px;">Title</h2>
             
             <div id="poster-container">
-                <img id="res-poster" src="" alt="Poster" style="width: 100%; height: 220px; object-fit: cover; border-radius: 8px; margin-bottom: 15px;">
+                <img id="res-poster" src="" style="width: 100%; height: 240px; object-fit: cover; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.5);">
             </div>
 
-            <!-- Spotify Embed Container -->
             <div id="spotify-container" style="display: none; margin-bottom: 15px;">
                 <iframe id="spotify-iframe" src="" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" style="border-radius:12px;"></iframe>
             </div>
             
-            <p id="res-desc" style="color: #A0A0B5; font-size: 13px; line-height: 1.5; margin-bottom: 15px;"></p>
+            <p id="res-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6; margin-bottom: 15px;"></p>
             
-            <div style="background: rgba(212,175,55,0.1); padding: 12px; border-radius: 8px; margin-bottom: 15px;">
-                <div style="font-size: 11px; color: #A0A0B5; text-transform: uppercase;">Platform / Source:</div>
-                <div id="res-platform" style="color: #fff; font-weight: 800; font-size: 16px; margin-top: 3px;">Netflix</div>
+            <div style="background: rgba(212,175,55,0.08); padding: 15px; border-radius: 10px; border-left: 3px solid var(--gold); margin-bottom: 20px;">
+                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: bold;">Platform / Source:</div>
+                <div id="res-platform" style="color: #fff; font-weight: 800; font-size: 18px; margin-top: 5px;">Netflix</div>
             </div>
 
-            <button onclick="handleSearchAgain()" style="width: 100%; background: #333; color: #fff; border: none; padding: 12px; font-weight: bold; border-radius: 8px; cursor: pointer;">🔄 Search Again</button>
+            <!-- SOCIAL SHARES -->
+            <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: bold;">📤 Share Your Match:</div>
+                <div class="social-grid">
+                    <button onclick="shareWA()" class="s-btn btn-wa">💬 WhatsApp</button>
+                    <button onclick="shareX()" class="s-btn btn-x">𝕏 Post</button>
+                    <button onclick="shareFB()" class="s-btn btn-fb">📘 Facebook</button>
+                    <button onclick="shareMore()" class="s-btn btn-more">🔗 More...</button>
+                </div>
+            </div>
+
+            <button onclick="handleSearchAgain()" class="secondary-btn" style="width: 100%;">🔄 Find Another Match</button>
+
+            <!-- RESULT ADSENSE -->
+            <div class="ad-spacing">
+                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="3127478321" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            </div>
         </div>
-
     </div>
-
+    
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'en,zh-CN,hi,es,fr,ar,bn,ru,pt,ur,id', layout: google.translate.TranslateElement.InlineLayout.SIMPLE }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <script src="app.js"></script>
 </body>
 </html>
