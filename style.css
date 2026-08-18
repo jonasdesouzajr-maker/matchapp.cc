@@ -12,9 +12,20 @@ body {
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    max-width: 450px;
+    max-width: 480px;
     width: 100%;
     text-align: center;
+}
+
+.rule-banner {
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    color: #856404;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-bottom: 20px;
+    text-align: left;
 }
 
 .subtitle {
@@ -26,21 +37,23 @@ body {
 form {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     text-align: left;
 }
 
 label {
     font-weight: bold;
-    font-size: 14px;
-    margin-top: 5px;
+    font-size: 13px;
+    margin-top: 3px;
 }
 
-select, button {
-    padding: 12px;
-    font-size: 15px;
+input[type="number"], input[type="text"], select, button {
+    padding: 10px;
+    font-size: 14px;
     border-radius: 6px;
     border: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 button {
@@ -73,6 +86,7 @@ button:hover {
     padding: 15px;
     margin: 20px 0;
     border-radius: 8px;
+    text-align: left;
 }
 
 .where-to-watch h4 {
@@ -82,15 +96,16 @@ button:hover {
 
 .where-to-watch p {
     font-weight: bold;
-    font-size: 18px;
+    font-size: 16px;
     margin: 0;
     color: #333;
 }
 
 .register-prompt {
-    margin-top: 30px;
-    padding-top: 20px;
+    margin-top: 20px;
+    padding-top: 15px;
     border-top: 1px solid #eee;
+    font-size: 14px;
 }
 
 .auth-box {
@@ -103,21 +118,23 @@ button:hover {
 
 .auth-box input {
     display: block;
-    width: 90%;
-    margin: 10px auto;
+    width: 100%;
+    margin: 8px 0;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    box-sizing: border-box;
 }
 
 #auth-message { 
     color: #e50914; 
-    font-size: 14px; 
+    font-size: 13px; 
+    margin-top: 5px;
 }
 
 /* Google Translate styling adjustments */
 #google_translate_element {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 .goog-te-gadget-simple {
     border-radius: 5px !important;
