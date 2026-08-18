@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MatchApp | The Premium Streaming Concierge</title>
     <link rel="stylesheet" href="style.css">
     
@@ -12,8 +12,20 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-2ECND229RR');
+    </script>
+
+    <!-- AUTO-DETECT DEVICE LANGUAGE SCRIPT -->
+    <script>
+        (function autoSetLanguage() {
+            if (!document.cookie.includes('googtrans')) {
+                let userLang = (navigator.language || navigator.userLanguage).split('-')[0];
+                const supported = ['en','zh-CN','hi','es','fr','ar','bn','ru','pt','ur','id'];
+                if(supported.includes(userLang) && userLang !== 'en'){
+                    document.cookie = `googtrans=/en/${userLang}; path=/`;
+                }
+            }
+        })();
     </script>
     
     <!-- Supabase Database CDN -->
@@ -23,14 +35,12 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
 </head>
 <body>
-    <!-- Animated Luxury Background -->
     <div class="luxury-bg"></div>
 
     <div class="container">
         
         <!-- HEADER -->
         <header class="app-header">
-            <!-- Dev Reset Trick: Click the logo to clear your limits during testing! -->
             <div class="logo" id="dev-reset-btn" title="Click to reset limit">Match<span>App</span></div>
             <div class="translate-wrapper" id="google_translate_element"></div>
         </header>
@@ -38,38 +48,74 @@
         <!-- TOP AD: Adsterra 728x90 -->
         <div class="ad-wrapper-top">
             <script>
-                atOptions = {
-                    'key' : '0ffd8484dc13e2d5967d0d70f61fc753',
-                    'format' : 'iframe',
-                    'height' : 90,
-                    'width' : 728,
-                    'params' : {}
-                };
+                atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };
             </script>
             <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
         </div>
 
         <!-- FREEMIUM BANNER -->
         <div class="rule-banner" id="rule-banner">
-            <p>✨ <strong>First Match is FREE!</strong> Register below to unlock your daily unlimited concierge access.</p>
+            <p>✨ <strong>First Match is FREE!</strong> Become a VIP below to unlock unlimited concierge access and save your watch history.</p>
         </div>
 
-        <!-- AUTHENTICATION SECTION -->
+        <!-- STANDARD LOGIN SECTION -->
         <div id="auth-section" class="premium-card auth-box">
-            <h3>VIP Access</h3>
-            <input type="email" id="email" placeholder="Email address">
-            <input type="password" id="password" placeholder="Password">
+            <h3>🔐 Member Login</h3>
+            <input type="email" id="login-email" placeholder="Email address">
+            <input type="password" id="login-password" placeholder="Password">
             <div class="auth-buttons">
-                <button id="register-btn" class="secondary-btn">Register</button>
+                <button id="show-register-btn" class="secondary-btn">Create VIP Profile</button>
                 <button id="login-btn" class="primary-btn">Log In</button>
             </div>
-            <p id="auth-message"></p>
+            <p id="login-message" class="error-text"></p>
         </div>
 
-        <!-- LOGGED IN SECTION -->
+        <!-- NEW: VIP REGISTRATION PROFILE SCREEN -->
+        <div id="register-screen" class="hidden premium-card auth-box">
+            <h3>⭐ Create VIP Profile</h3>
+            <p class="subtitle">Personalize your algorithm.</p>
+            
+            <div class="input-grid">
+                <input type="text" id="reg-name" placeholder="First Name" required>
+                <input type="email" id="reg-email" placeholder="Email Address" required>
+            </div>
+            
+            <input type="password" id="reg-password" placeholder="Create Password" required>
+
+            <div class="input-grid" style="margin-top: 10px;">
+                <input type="text" id="reg-country" placeholder="Country" required>
+                <input type="text" id="reg-city" placeholder="City">
+            </div>
+
+            <div style="margin-top: 10px;">
+                <label>Favorite Genres (Select top 2)</label>
+                <select id="reg-genres" multiple style="height: 70px;">
+                    <option value="Action">Action</option>
+                    <option value="Comedy">Comedy</option>
+                    <option value="Drama">Drama</option>
+                    <option value="Sci-Fi">Sci-Fi / Fantasy</option>
+                    <option value="Romance">Romance</option>
+                    <option value="Horror">Horror</option>
+                </select>
+            </div>
+
+            <div style="margin-top: 10px;">
+                <label>Recently Watched & Loved</label>
+                <input type="text" id="reg-history" placeholder="e.g., Breaking Bad, The Matrix...">
+            </div>
+
+            <div class="auth-buttons" style="margin-top: 15px;">
+                <button id="cancel-register-btn" class="secondary-btn">Cancel</button>
+                <button id="submit-register-btn" class="gold-btn">Unlock VIP Access</button>
+            </div>
+            <p id="register-message" class="error-text"></p>
+        </div>
+
+        <!-- LOGGED IN SECTION (VIP PROFILE DASHBOARD) -->
         <div id="user-info-section" class="hidden premium-card auth-box">
-            <p id="user-info"></p>
-            <button id="logout-btn" class="secondary-btn">Log Out</button>
+            <h3 id="user-greeting">✨ Welcome back!</h3>
+            <p id="user-profile-meta" style="font-size: 12px; color: #A0A0B5; margin-bottom: 15px;"></p>
+            <button id="logout-btn" class="secondary-btn" style="width: 100%;">Log Out</button>
         </div>
 
         <!-- MAIN INTERACTIVE BUBBLE -->
@@ -84,7 +130,6 @@
                     <div class="input-grid">
                         <div class="input-group">
                             <label>Age</label>
-                            <!-- Removed required tags to prevent silent browser blocking -->
                             <input type="number" id="age" min="1" max="120" placeholder="e.g., 28">
                         </div>
                         <div class="input-group">
@@ -145,10 +190,7 @@
                         </select>
                     </div>
 
-                    <!-- On-screen error message so it never silently fails -->
-                    <p id="form-error" class="hidden" style="color: #ff5252; font-size: 13px; font-weight: bold; text-align: center; margin: 10px 0;"></p>
-                    
-                    <!-- Changed from type="submit" to type="button" to force our custom logic -->
+                    <p id="form-error" class="hidden error-text" style="text-align: center; margin: 10px 0;"></p>
                     <button type="button" id="submit-match-btn" class="gold-btn">Curate My Match</button>
                 </form>
 
@@ -170,13 +212,7 @@
                 <!-- ADSTERRA 300x250 INTERSTITIAL -->
                 <div class="ad-wrapper-loading">
                     <script>
-                        atOptions = {
-                            'key' : 'a993f73724a261dce748b6f9319072d5',
-                            'format' : 'iframe',
-                            'height' : 250,
-                            'width' : 300,
-                            'params' : {}
-                        };
+                        atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
                     </script>
                     <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
                 </div>
@@ -238,10 +274,14 @@
         </div>
     </div>
     
-    <!-- Google Translate Script -->
+    <!-- Google Translate Script (Restricted to Top 10 + PT) -->
     <script type="text/javascript">
         function googleTranslateElementInit() {
-            new google.translate.TranslateElement({ pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE }, 'google_translate_element');
+            new google.translate.TranslateElement({ 
+                pageLanguage: 'en', 
+                includedLanguages: 'en,zh-CN,hi,es,fr,ar,bn,ru,pt,ur,id',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE 
+            }, 'google_translate_element');
         }
     </script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
