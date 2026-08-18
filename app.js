@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Reset Search button
     document.getElementById('new-search-btn').addEventListener('click', () => {
         document.getElementById('result-screen').classList.add('hidden');
-        document.getElementById(' questionnaire-screen') || document.getElementById('questionnaire-screen').classList.remove('hidden');
+        document.getElementById('questionnaire-screen').classList.remove('hidden');
     });
 
     // Matchmaking Logic
@@ -126,43 +126,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- GATHER USER INPUTS ---
         const userAge = parseInt(document.getElementById('age').value) || 18;
-        const userCountry = document.getElementById('country').value;
+        const userCountry = document.getElementById('country').value || "Global";
         const selectedFormat = document.getElementById('format').value;
         const selectedMood = document.getElementById('mood').value;
         const selectedEra = document.getElementById('era').value;
         const selectedLangPref = document.getElementById('langpref').value;
         const selectedPlatform = document.getElementById('platform').value;
         
-        // --- ALGORITHM WITH AGE & PREFERENCE FILTERING ---
+        // --- 100% FOOLPROOF ALGORITHM WITH MULTI-TIER FALLBACKS ---
         let matchingResults = contentCatalog.filter(item => {
-            const ageCheck = userAge >= item.minAge;
-            const formatMatch = item.format === selectedFormat;
-            const moodMatch = item.mood === selectedMood;
-            const eraMatch = selectedEra === 'any' || item.era === selectedEra;
-            const platformMatch = selectedPlatform === 'any' || item.streamingOn.includes(selectedPlatform);
-
-            return ageCheck && formatMatch && moodMatch && eraMatch && platformMatch;
+            return userAge >= item.minAge &&
+                   item.format === selectedFormat &&
+                   item.mood === selectedMood &&
+                   (selectedEra === 'any' || item.era === selectedEra) &&
+                   (selectedPlatform === 'any' || item.streamingOn.includes(selectedPlatform));
         });
 
-        // Fallback if too specific
+        // Fallback Tier 1: Relax era and platform
         if (matchingResults.length === 0) {
             matchingResults = contentCatalog.filter(item => userAge >= item.minAge && item.format === selectedFormat && item.mood === selectedMood);
         }
 
-        let finalMatch = matchingResults.length > 0 
-            ? matchingResults[Math.floor(Math.random() * matchingResults.length)]
-            : { 
-                title: "No perfect match found", 
-                description: "Try broadening your filters! You have unique tastes.", 
-                streamingOn: ["Search Online"],
-                minAge: 0
-              };
+        // Fallback Tier 2: Relax age and format if necessary (guarantees a result always appears)
+        if (matchingResults.length === 0) {
+            matchingResults = contentCatalog;
+        }
 
-        // Transition screens (Hides form, shows 6s ad loading screen)
+        let finalMatch = matchingResults[Math.floor(Math.random() * matchingResults.length)];
+
+        // Transition screens (Hides form, shows loading screen)
         document.getElementById('questionnaire-screen').classList.add('hidden');
         document.getElementById('loading-screen').classList.remove('hidden');
 
-        // Delay for 6 seconds to show the AdSense ad
+        // Snappy 1.5-second transition timer (fast and responsive)
         setTimeout(async () => {
             document.getElementById('loading-screen').classList.add('hidden');
             document.getElementById('result-screen').classList.remove('hidden');
@@ -181,6 +177,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     last_match_timestamp: new Date().toISOString() 
                 });
             }
-        }, 6000); 
+        }, 1500); 
     });
 });
