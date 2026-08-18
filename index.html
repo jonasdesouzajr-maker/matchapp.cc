@@ -67,51 +67,11 @@
             <input type="email" id="login-email" placeholder="Email address">
             <input type="password" id="login-password" placeholder="Password">
             <div class="auth-buttons">
-                <button id="show-register-btn" class="secondary-btn" type="button">Create VIP Profile</button>
+                <!-- Links to the new separate registration page -->
+                <button id="goToRegisterBtn" class="secondary-btn" type="button" onclick="window.location.href='register.html'">Create VIP Profile</button>
                 <button id="login-btn" class="primary-btn" type="button">Log In</button>
             </div>
             <p id="login-message" class="error-text"></p>
-        </div>
-
-        <!-- VIP REGISTRATION PROFILE SCREEN -->
-        <div id="register-screen" class="hidden premium-card auth-box">
-            <h3>⭐ Create VIP Profile</h3>
-            <p class="subtitle">Personalize your algorithm.</p>
-            
-            <div class="input-grid">
-                <input type="text" id="reg-name" placeholder="First Name">
-                <input type="email" id="reg-email" placeholder="Email Address">
-            </div>
-            
-            <input type="password" id="reg-password" placeholder="Create Password">
-
-            <div class="input-grid" style="margin-top: 10px;">
-                <input type="text" id="reg-country" placeholder="Country">
-                <input type="text" id="reg-city" placeholder="City">
-            </div>
-
-            <div style="margin-top: 10px;">
-                <label>Favorite Genres (Select top 2)</label>
-                <select id="reg-genres" multiple style="height: 70px;">
-                    <option value="Action">Action</option>
-                    <option value="Comedy">Comedy</option>
-                    <option value="Drama">Drama</option>
-                    <option value="Sci-Fi">Sci-Fi / Fantasy</option>
-                    <option value="Romance">Romance</option>
-                    <option value="Horror">Horror</option>
-                </select>
-            </div>
-
-            <div style="margin-top: 10px;">
-                <label>Recently Watched & Loved</label>
-                <input type="text" id="reg-history" placeholder="e.g., Breaking Bad, The Matrix...">
-            </div>
-
-            <div class="auth-buttons" style="margin-top: 15px;">
-                <button id="cancel-register-btn" class="secondary-btn" type="button">Cancel</button>
-                <button id="submit-register-btn" class="gold-btn" type="button">Unlock VIP Access</button>
-            </div>
-            <p id="register-message" class="error-text"></p>
         </div>
 
         <!-- LOGGED IN SECTION (VIP PROFILE DASHBOARD) -->
