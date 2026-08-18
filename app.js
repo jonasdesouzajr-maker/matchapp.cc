@@ -1,364 +1,100 @@
-// 1. INITIALIZE SUPABASE SAFELY
 let supabase = null;
 try {
     const supabaseUrl = 'https://zkymvqrmbabngsqblyye.supabase.co';
     const supabaseKey = 'sb_publishable_j3kQUhd_9JHfWdfiV3iWog_RpEltrOU';
-    if (window.supabase) {
-        supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-    }
-} catch (e) {
-    console.warn("Supabase initialization skipped. Proceeding in local mode.");
-}
+    if (window.supabase) supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+} catch (e) { console.warn("Supabase init warning."); }
 
-// 2. TOAST NOTIFICATION HELPER
 function showToast(message, type = 'error') {
     const container = document.getElementById('toast-container');
     if (!container) return;
-    
     const toast = document.createElement('div');
     toast.className = `toast-message ${type === 'success' ? 'toast-success' : 'toast-error'}`;
     toast.innerText = message;
-    
     container.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transition = 'opacity 0.3s ease';
-        setTimeout(() => toast.remove(), 300);
-    }, 4000);
+    setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 4000);
 }
 
-// 3. THE PREMIUM CATALOG
-const contentCatalog = [
-    { title: "Avenida Brasil", format: "telenovela", mood: "drama", era: "modern", minAge: 14, length: "179 Episodes", imdb: "8.3/10", streamingOn: ["Globoplay"], poster: "https://images.unsplash.com/photo-1514306191717-452ec28c7814?auto=format&fit=crop&w=800&q=80", description: "A gripping story of revenge, family secrets, and intense drama set in Rio de Janeiro." },
-    { title: "O Clone", format: "telenovela", mood: "drama", era: "classic", minAge: 12, length: "221 Episodes", imdb: "8.1/10", streamingOn: ["Globoplay"], poster: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80", description: "A classic tale of forbidden love, cloning, and cultural clashes." },
-    { title: "Yo soy Betty, la fea", format: "telenovela", mood: "comedy", era: "classic", minAge: 10, length: "335 Episodes", imdb: "8.2/10", streamingOn: ["Prime Video"], poster: "https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?auto=format&fit=crop&w=800&q=80", description: "The iconic Colombian comedy about a brilliant but socially awkward secretary." },
-    { title: "Parasite", format: "movie", mood: "drama", era: "modern", minAge: 16, length: "2h 12m", imdb: "8.5/10", streamingOn: ["Max"], poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80", description: "A South Korean masterpiece exploring class discrimination with dark humor." },
-    { title: "The Matrix", format: "movie", mood: "scifi", era: "classic", minAge: 14, length: "2h 16m", imdb: "8.7/10", streamingOn: ["Max", "Prime Video"], poster: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80", description: "A hacker discovers the shocking truth about reality." },
-    { title: "Crazy Stupid Love", format: "movie", mood: "romance", era: "modern", minAge: 14, length: "1h 58m", imdb: "7.4/10", streamingOn: ["Prime Video", "Apple TV+"], poster: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=800&q=80", description: "A middle-aged husband's life changes dramatically when his wife asks for a divorce." },
-    { title: "Superbad", format: "movie", mood: "comedy", era: "classic", minAge: 16, length: "1h 53m", imdb: "7.6/10", streamingOn: ["Netflix"], poster: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=800&q=80", description: "Two high school seniors deal with separation anxiety before a wild party." },
-    { title: "Interstellar", format: "movie", mood: "scifi", era: "modern", minAge: 12, length: "2h 49m", imdb: "8.7/10", streamingOn: ["Max", "Prime Video"], poster: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80", description: "A team of explorers travel through a wormhole in space to save humanity." },
-    { title: "Breaking Bad", format: "series", mood: "drama", era: "modern", minAge: 18, length: "5 Seasons", imdb: "9.5/10", streamingOn: ["Netflix"], poster: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80", description: "A chemistry teacher turns to manufacturing methamphetamine." },
-    { title: "The Office", format: "series", mood: "comedy", era: "classic", minAge: 12, length: "9 Seasons", imdb: "9.0/10", streamingOn: ["Netflix", "Peacock"], poster: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=800&q=80", description: "A mockumentary on a group of typical office workers." },
-    { title: "The Boys", format: "series", mood: "action", era: "modern", minAge: 18, length: "4 Seasons", imdb: "8.7/10", streamingOn: ["Prime Video"], poster: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=800&q=80", description: "Vigilantes set out to take down corrupt superheroes." }
-];
-
-let currentUser = null;
-let currentMatchTitle = "";
-
-// 4. BULLETPROOF INITIALIZATION (Runs immediately if DOM is ready, or on DOMContentLoaded)
-function runApp() {
-    console.log("MatchApp Initialized with Error Toasts");
-
-    const authSection = document.getElementById('auth-section');
-    const registerScreen = document.getElementById('register-screen');
-    const userInfoSection = document.getElementById('user-info-section');
-    
-    const qScreen = document.getElementById('questionnaire-screen');
-    const lScreen = document.getElementById('loading-screen');
-    const rScreen = document.getElementById('result-screen');
-    
-    const submitBtn = document.getElementById('submit-match-btn');
-
-    // DEV RESET TRICK
+document.addEventListener('DOMContentLoaded', () => {
     const devResetBtn = document.getElementById('dev-reset-btn');
     if (devResetBtn) {
         devResetBtn.addEventListener('click', () => {
             localStorage.removeItem('hasUsedFreeMatch');
-            showToast("🔧 Limit Reset! You can test the app again.", "success");
+            showToast("🔧 Limit Reset! You can test again.", "success");
         });
     }
 
-    // SESSION CHECK
+    // Session check
     async function checkSession() {
         if (!supabase) return;
         try {
-            const { data: { session }, error } = await supabase.auth.getSession();
-            if (error) throw error;
+            const { data: { session } } = await supabase.auth.getSession();
             if (session) {
-                currentUser = session.user;
-                const profileData = currentUser.user_metadata || {};
-                const firstName = profileData.first_name || currentUser.email.split('@')[0];
-                const location = profileData.city ? `From ${profileData.city}, ${profileData.country}` : 'VIP Member';
-
-                if (authSection) authSection.classList.add('hidden');
-                if (registerScreen) registerScreen.classList.add('hidden');
-                if (userInfoSection) userInfoSection.classList.remove('hidden');
-                
-                const ruleBanner = document.getElementById('rule-banner');
-                if (ruleBanner) ruleBanner.classList.add('hidden');
-                
-                const greeting = document.getElementById('user-greeting');
-                if (greeting) greeting.innerText = `✨ Welcome back, ${firstName}!`;
-                
-                const meta = document.getElementById('user-profile-meta');
-                if (meta) meta.innerText = `📍 ${location} | Algorithm Active`;
+                const user = session.user;
+                const profile = user.user_metadata || {};
+                const name = profile.first_name || user.email.split('@')[0];
+                document.getElementById('auth-section')?.classList.add('hidden');
+                document.getElementById('user-info-section')?.classList.remove('hidden');
+                document.getElementById('rule-banner')?.classList.add('hidden');
+                document.getElementById('user-greeting').innerText = `✨ Welcome back, ${name}!`;
+                document.getElementById('user-profile-meta').innerText = `📍 ${profile.city || 'VIP Member'}`;
             }
-        } catch (e) {
-            console.warn("Auth check warning:", e.message);
-        }
+        } catch (e) {}
     }
     checkSession();
 
-    // NAVIGATION
-    const showRegBtn = document.getElementById('show-register-btn');
-    if (showRegBtn) {
-        showRegBtn.addEventListener('click', () => {
-            if (authSection) authSection.classList.add('hidden');
-            if (registerScreen) registerScreen.classList.remove('hidden');
-        });
-    }
+    document.getElementById('login-btn')?.addEventListener('click', async () => {
+        const email = document.getElementById('login-email')?.value.trim();
+        const password = document.getElementById('login-password')?.value;
+        if (!email || !password) return showToast("Please enter email and password.", "error");
+        
+        try {
+            const { error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error) throw error;
+            showToast("Login successful!", "success");
+            setTimeout(() => location.reload(), 1000);
+        } catch (err) {
+            showToast(`Login Error: ${err.message}`, "error");
+        }
+    });
 
-    const cancelRegBtn = document.getElementById('cancel-register-btn');
-    if (cancelRegBtn) {
-        cancelRegBtn.addEventListener('click', () => {
-            if (registerScreen) registerScreen.classList.add('hidden');
-            if (authSection) authSection.classList.remove('hidden');
-        });
-    }
+    document.getElementById('logout-btn')?.addEventListener('click', async () => {
+        if (supabase) await supabase.auth.signOut();
+        location.reload();
+    });
 
-    // VIP REGISTRATION
-    const submitRegBtn = document.getElementById('submit-register-btn');
-    if (submitRegBtn) {
-        submitRegBtn.addEventListener('click', async () => {
-            if (!supabase) {
-                showToast("Database connection offline. Please check network.", "error");
-                return;
-            }
-            
-            const email = document.getElementById('reg-email')?.value.trim();
-            const password = document.getElementById('reg-password')?.value;
-            const firstName = document.getElementById('reg-name')?.value.trim();
-            const country = document.getElementById('reg-country')?.value.trim() || "";
-            const city = document.getElementById('reg-city')?.value.trim() || "";
-            const history = document.getElementById('reg-history')?.value.trim() || "";
-            const genreSelect = document.getElementById('reg-genres');
-            const selectedGenres = genreSelect ? Array.from(genreSelect.selectedOptions).map(opt => opt.value) : [];
+    // MATCHMAKING SUBMISSION -> REDIRECTS TO LOADING PAGE
+    const submitBtn = document.getElementById('submit-match-btn');
+    const ageErrorBanner = document.getElementById('age-error-banner');
 
-            if (!email || !password || !firstName) {
-                showToast("Please enter your Name, Email, and Password.", "error");
-                return;
-            }
-
-            if (password.length < 6) {
-                showToast("Password must be at least 6 characters long.", "error");
-                return;
-            }
-
-            submitRegBtn.innerText = "Creating Profile...";
-
-            try {
-                const { error } = await supabase.auth.signUp({ 
-                    email, 
-                    password,
-                    options: {
-                        data: {
-                            first_name: firstName,
-                            country: country,
-                            city: city,
-                            favorite_genres: selectedGenres,
-                            watch_history: history
-                        }
-                    }
-                });
-
-                if (error) throw error;
-
-                showToast("VIP Profile created successfully! Please log in.", "success");
-                setTimeout(() => {
-                    if (registerScreen) registerScreen.classList.add('hidden');
-                    if (authSection) authSection.classList.remove('hidden');
-                }, 2000);
-            } catch (err) {
-                showToast(`Registration Error: ${err.message}`, "error");
-            } finally {
-                submitRegBtn.innerText = "Unlock VIP Access";
-            }
-        });
-    }
-
-    // LOGIN
-    const loginBtn = document.getElementById('login-btn');
-    if (loginBtn) {
-        loginBtn.addEventListener('click', async () => {
-            if (!supabase) {
-                showToast("Database connection offline.", "error");
-                return;
-            }
-            const email = document.getElementById('login-email')?.value.trim();
-            const password = document.getElementById('login-password')?.value;
-
-            if (!email || !password) {
-                showToast("Please enter both email and password.", "error");
-                return;
-            }
-
-            try {
-                const { error } = await supabase.auth.signInWithPassword({ email, password });
-                if (error) throw error;
-                showToast("Login successful!", "success");
-                setTimeout(() => location.reload(), 1000);
-            } catch (err) {
-                showToast(`Login Error: ${err.message}`, "error");
-            }
-        });
-    }
-
-    // LOGOUT
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', async () => {
-            if (supabase) await supabase.auth.signOut();
-            location.reload();
-        });
-    }
-
-    // CLOSE BUBBLE
-    const closeBubbleBtn = document.getElementById('close-bubble-btn');
-    if (closeBubbleBtn) {
-        closeBubbleBtn.addEventListener('click', () => {
-            if (rScreen) rScreen.classList.add('hidden');
-            if (qScreen) qScreen.classList.remove('hidden');
-            if (submitBtn) submitBtn.innerText = "Curate My Match";
-        });
-    }
-
-    // MATCHMAKING ENGINE
     if (submitBtn) {
-        submitBtn.addEventListener('click', async (e) => {
+        submitBtn.addEventListener('click', (e) => {
             e.preventDefault();
+            if (ageErrorBanner) ageErrorBanner.classList.add('hidden');
+
+            const age = parseInt(document.getElementById('age')?.value) || 0;
             
-            submitBtn.innerText = "Processing Request...";
-
-            try {
-                // LIMIT CHECK
-                if (!currentUser) {
-                    if (localStorage.getItem('hasUsedFreeMatch') === 'true') {
-                        showToast("🔒 Free match used! Please register or log in above.", "error");
-                        submitBtn.innerText = "Curate My Match";
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                        return; 
-                    }
-                } else if (supabase) {
-                    const { data, error } = await supabase.from('user_matches').select('last_match_timestamp').eq('id', currentUser.id).single();
-                    if (!error && data && data.last_match_timestamp) {
-                        const diffHours = Math.abs(new Date() - new Date(data.last_match_timestamp)) / 36e5;
-                        if (diffHours < 24) {
-                            showToast(`⏳ Please wait ${Math.ceil(24 - diffHours)} hours for your next match.`, "error");
-                            submitBtn.innerText = "Curate My Match";
-                            return; 
-                        }
-                    }
-                }
-
-                // GATHER INPUTS
-                const age = parseInt(document.getElementById('age')?.value) || 18; 
-                const country = document.getElementById('country')?.value.trim() || "Global";
-                const format = document.getElementById('format')?.value || "movie";
-                const mood = document.getElementById('mood')?.value || "drama";
-                const era = document.getElementById('era')?.value || "any";
-                const lang = document.getElementById('langpref')?.value || "subtitled";
-                const platform = document.getElementById('platform')?.value || "any";
-                
-                let results = contentCatalog.filter(i => 
-                    age >= i.minAge && i.format === format && i.mood === mood &&
-                    (era === 'any' || i.era === era) && (platform === 'any' || i.streamingOn.includes(platform))
-                );
-
-                if (results.length === 0) results = contentCatalog.filter(i => age >= i.minAge && i.format === format && i.mood === mood);
-                if (results.length === 0) results = contentCatalog;
-
-                let match = results[Math.floor(Math.random() * results.length)];
-                currentMatchTitle = match.title;
-
-                // LOADING ANIMATION
-                if (qScreen) qScreen.classList.add('hidden');
-                if (lScreen) lScreen.classList.remove('hidden');
-                
-                const bar = document.getElementById('progress-bar');
-                const text = document.getElementById('loading-text');
-                let width = 0;
-                
-                if (text) setTimeout(() => text.innerText = "Scanning global catalogs...", 800);
-                if (text) setTimeout(() => text.innerText = "Locating streaming rights...", 1600);
-
-                let interval = setInterval(async () => {
-                    width += 4; 
-                    if (bar) bar.style.width = width + '%';
-                    
-                    if (width >= 100) {
-                        clearInterval(interval);
-                        
-                        // SHOW RESULT
-                        if (lScreen) lScreen.classList.add('hidden');
-                        if (rScreen) rScreen.classList.remove('hidden');
-                        
-                        const poster = document.getElementById('result-poster');
-                        if (poster) poster.src = match.poster;
-                        
-                        const titleEl = document.getElementById('result-title');
-                        if (titleEl) titleEl.innerText = match.title;
-                        
-                        const imdbEl = document.getElementById('result-imdb');
-                        if (imdbEl) imdbEl.innerText = `⭐ ${match.imdb}`;
-                        
-                        const lenEl = document.getElementById('result-length');
-                        if (lenEl) lenEl.innerText = `⏱️ ${match.length}`;
-                        
-                        const ageEl = document.getElementById('result-age');
-                        if (ageEl) ageEl.innerText = `🔞 ${match.minAge}+`;
-                        
-                        const descEl = document.getElementById('result-desc');
-                        if (descEl) descEl.innerText = match.description;
-                        
-                        const countryEl = document.getElementById('result-country');
-                        if (countryEl) countryEl.innerText = country;
-                        
-                        const platEl = document.getElementById('result-platform');
-                        if (platEl) platEl.innerText = match.streamingOn.join(" • ");
-                        
-                        const audioEl = document.getElementById('result-audio');
-                        if (audioEl) audioEl.innerText = `Audio: ${lang.toUpperCase()}`;
-
-                        // Save usage
-                        if (!currentUser) {
-                            localStorage.setItem('hasUsedFreeMatch', 'true');
-                        } else if (supabase) {
-                            await supabase.from('user_matches').upsert({ id: currentUser.id, last_match_timestamp: new Date().toISOString() });
-                        }
-                    }
-                }, 40); 
-
-            } catch (error) {
-                console.error("Match Engine Error:", error);
-                showToast("⚠️ Server or network error occurred. Please try again.", "error");
-                submitBtn.innerText = "Curate My Match";
+            // STRICT MINIMUM AGE 16 CHECK
+            if (age < 16) {
+                if (ageErrorBanner) ageErrorBanner.classList.remove('hidden');
+                showToast("⚠️ You must be at least 16 years old to use MatchApp.", "error");
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                return;
             }
+
+            const formData = {
+                age: age,
+                country: document.getElementById('country')?.value.trim() || "Global",
+                format: document.getElementById('format')?.value || "movie",
+                mood: document.getElementById('mood')?.value || "drama",
+                era: document.getElementById('era')?.value || "any",
+                lang: document.getElementById('langpref')?.value || "subtitled",
+                platform: document.getElementById('platform')?.value || "any"
+            };
+
+            // Save form parameters to localStorage and navigate to loading page
+            localStorage.setItem('matchQuery', JSON.stringify(formData));
+            window.location.href = 'loading.html';
         });
     }
-
-    // SOCIAL SHARES
-    const waBtn = document.getElementById('share-wa');
-    if (waBtn) waBtn.addEventListener('click', () => window.open(`https://api.whatsapp.com/send?text=I got ${currentMatchTitle} on MatchApp! https://matchapp.cc`, '_blank'));
-    
-    const xBtn = document.getElementById('share-x');
-    if (xBtn) xBtn.addEventListener('click', () => window.open(`https://twitter.com/intent/tweet?text=I got ${currentMatchTitle} on MatchApp! https://matchapp.cc`, '_blank'));
-    
-    const fbBtn = document.getElementById('share-fb');
-    if (fbBtn) fbBtn.addEventListener('click', () => window.open(`https://www.facebook.com/sharer/sharer.php?u=https://matchapp.cc`, '_blank'));
-    
-    const moreBtn = document.getElementById('share-more');
-    if (moreBtn) {
-        moreBtn.addEventListener('click', async () => {
-            if (navigator.share) await navigator.share({ title: 'MatchApp', text: `My match: ${currentMatchTitle}`, url: 'https://matchapp.cc' });
-            else { navigator.clipboard.writeText('https://matchapp.cc'); showToast("Link copied to clipboard!", "success"); }
-        });
-    }
-}
-
-// EXECUTE IMMEDIATELY OR ON DOMREADY
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', runApp);
-} else {
-    runApp();
-}
+});
