@@ -1,4 +1,4 @@
-console.log("App script running.");
+console.log("app.js loaded successfully.");
 
 const catalog = [
     { title: "Avenida Brasil", format: "telenovela", mood: "drama", minAge: 14, streaming: ["Globoplay"], poster: "https://images.unsplash.com/photo-1514306191717-452ec28c7814?auto=format&fit=crop&w=800&q=80", desc: "A gripping story of revenge and family secrets in Rio de Janeiro." },
@@ -7,33 +7,30 @@ const catalog = [
     { title: "Breaking Bad", format: "series", mood: "drama", minAge: 18, streaming: ["Netflix"], poster: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80", desc: "A chemistry teacher turns to manufacturing methamphetamine." }
 ];
 
-window.addEventListener('DOMContentLoaded', () => {
-    const btn = document.getElementById('btn-generate');
-    if (!btn) return;
+// Defined globally so the HTML onclick="triggerMatch()" can call it instantly
+window.triggerMatch = function() {
+    console.log("triggerMatch called!");
+    
+    const age = parseInt(document.getElementById('input-age').value) || 18;
+    const format = document.getElementById('input-format').value;
+    const mood = document.getElementById('input-mood').value;
 
-    btn.addEventListener('click', () => {
-        const age = parseInt(document.getElementById('input-age').value) || 18;
-        const format = document.getElementById('input-format').value;
-        const mood = document.getElementById('input-mood').value;
+    if (age < 16) {
+        alert("⚠️ You must be at least 16 years old.");
+        return;
+    }
 
-        if (age < 16) {
-            alert("⚠️ You must be at least 16 years old.");
-            return;
-        }
+    let matches = catalog.filter(item => age >= item.minAge && item.format === format && item.mood === mood);
+    if (matches.length === 0) matches = catalog;
 
-        // Filter catalog
-        let matches = catalog.filter(item => age >= item.minAge && item.format === format && item.mood === mood);
-        if (matches.length === 0) matches = catalog;
+    const selected = matches[Math.floor(Math.random() * matches.length)];
 
-        const selected = matches[Math.floor(Math.random() * matches.length)];
+    // Direct DOM manipulation
+    document.getElementById('questionnaire-box').style.display = 'none';
+    document.getElementById('result-box').style.display = 'block';
 
-        // Direct DOM unhide (Guaranteed to show result)
-        document.getElementById('questionnaire-box').style.display = 'none';
-        document.getElementById('result-box').style.display = 'block';
-
-        document.getElementById('res-title').innerText = selected.title;
-        document.getElementById('res-poster').src = selected.poster;
-        document.getElementById('res-desc').innerText = selected.desc;
-        document.getElementById('res-platform').innerText = selected.streaming.join(" • ");
-    });
-});
+    document.getElementById('res-title').innerText = selected.title;
+    document.getElementById('res-poster').src = selected.poster;
+    document.getElementById('res-desc').innerText = selected.desc;
+    document.getElementById('res-platform').innerText = selected.streaming.join(" • ");
+};
