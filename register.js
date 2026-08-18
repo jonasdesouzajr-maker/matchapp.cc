@@ -7,22 +7,24 @@ try {
             'https://zkymvqrmbabngsqblyye.supabase.co',
             'sb_publishable_j3kQUhd_9JHfWdfiV3iWog_RpEltrOU'
         );
+        console.log("Supabase connected on registration page.");
     }
 } catch (e) {
     console.warn("Supabase init error:", e);
 }
 
-// Defined globally so HTML onclick="triggerRegister()" executes instantly
 window.triggerRegister = async function() {
-    console.log("triggerRegister called!");
-
     const name = document.getElementById('reg-name').value.trim();
     const age = parseInt(document.getElementById('reg-age').value) || 0;
+    const country = document.getElementById('reg-country').value.trim();
     const email = document.getElementById('reg-email').value.trim();
     const password = document.getElementById('reg-password').value;
+    const orientation = document.getElementById('reg-orientation').value;
+    const viewing = document.getElementById('reg-viewing').value;
+    const history = document.getElementById('reg-history').value.trim();
 
-    if (!name || !email || !password) {
-        alert("Please fill in Name, Email, and Password.");
+    if (!name || !email || !password || !country) {
+        alert("⚠️ Please fill in all required fields marked with *.");
         return;
     }
 
@@ -31,22 +33,38 @@ window.triggerRegister = async function() {
         return;
     }
 
-    if (supabaseClient) {
-        try {
-            const { error } = await supabaseClient.auth.signUp({
-                email,
-                password,
-                options: { data: { first_name: name, age: age } }
-            });
-            if (error) throw error;
-            alert("🎉 Registration successful! Redirecting to home.");
-            window.location.href = 'index.html';
-            return;
-        } catch (err) {
-            console.warn("Supabase error:", err.message);
-        }
+    if (password.length < 6) {
+        alert("⚠️ Password must be at least 6 characters long.");
+        return;
     }
 
-    alert("🎉 VIP Profile registered successfully!");
-    window.location.href = 'index.html';
+    if (!supabaseClient) {
+        alert("❌ Database client is offline. Check your connection or ad-blocker.");
+        return;
+    }
+
+    try {
+        const { error } = await supabaseClient.auth.signUp({
+            email,
+            password,
+            options: {
+                data: {
+                    first_name: name,
+                    age: age,
+                    country: country,
+                    sexual_orientation: orientation,
+                    viewing_style: viewing,
+                    watch_history: history
+                }
+            }
+        });
+
+        if (error) throw error;
+
+        alert("🎉 VIP Profile registered successfully! You can now log in.");
+        window.location.href = 'index.html';
+
+    } catch (err) {
+        alert("❌ Registration Failed: " + err.message);
+    }
 };
