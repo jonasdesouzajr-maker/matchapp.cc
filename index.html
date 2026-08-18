@@ -3,14 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfect Match: Movies, Series & Telenovelas</title>
+    <title>Perfect Match: Global Movies, Series & Telenovelas</title>
     <link rel="stylesheet" href="style.css">
+    
     <!-- Supabase Database CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Google AdSense Verification Code -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="container">
         
+        <!-- GLOBAL LANGUAGE TRANSLATOR -->
+        <div id="google_translate_element"></div>
+
         <!-- AUTHENTICATION SECTION -->
         <div id="auth-section" class="auth-box">
             <h3>Create an account for daily matches!</h3>
@@ -27,22 +34,44 @@
             <button id="logout-btn">Log Out</button>
         </div>
 
-        <!-- SCREEN 1: The Questionnaire -->
+        <!-- SCREEN 1: The Deep Questionnaire -->
         <div id="questionnaire-screen">
             <h1>Find Your Perfect Watch 🍿</h1>
+            <p class="subtitle">Answer a few questions and our algorithm will search the global catalog.</p>
+            
             <form id="match-form">
-                <label for="format">What are you looking for?</label>
+                <label for="format">1. What are you looking for?</label>
                 <select id="format" name="format">
-                    <option value="telenovela">Telenovela</option>
-                    <option value="series">Series</option>
                     <option value="movie">Movie</option>
+                    <option value="series">Series</option>
+                    <option value="telenovela">Telenovela</option>
                 </select>
 
-                <label for="mood">What's your current mood?</label>
+                <label for="mood">2. What's your current vibe?</label>
                 <select id="mood" name="mood">
-                    <option value="drama">I want to cry (Drama)</option>
-                    <option value="comedy">I want to laugh (Comedy)</option>
-                    <option value="action">I want a thrill (Action/Suspense)</option>
+                    <option value="drama">Deep Drama (I want to feel something)</option>
+                    <option value="comedy">Comedy (Make me laugh)</option>
+                    <option value="action">Action / Thriller (Keep me on the edge)</option>
+                    <option value="scifi">Sci-Fi / Fantasy (Take me to another world)</option>
+                    <option value="romance">Romance (Love stories)</option>
+                </select>
+
+                <label for="era">3. Classic or Modern?</label>
+                <select id="era" name="era">
+                    <option value="modern">Modern (2010s to Now)</option>
+                    <option value="classic">Classic (Before 2010)</option>
+                    <option value="any">I don't mind!</option>
+                </select>
+
+                <label for="platform">4. Where do you want to watch it?</label>
+                <select id="platform" name="platform">
+                    <option value="any">Anywhere (Show me the best)</option>
+                    <option value="Netflix">Netflix</option>
+                    <option value="Max">Max (HBO)</option>
+                    <option value="Prime Video">Amazon Prime Video</option>
+                    <option value="Disney+">Disney+</option>
+                    <option value="Globoplay">Globoplay</option>
+                    <option value="Apple TV+">Apple TV+</option>
                 </select>
 
                 <button type="submit">Find My Match</button>
@@ -51,12 +80,18 @@
 
         <!-- SCREEN 2: The Interstitial (Ad Screen) -->
         <div id="loading-screen" class="hidden">
-            <h2>Loading the best option for your needs...</h2>
-            <p>Please wait while our algorithm finds your perfect match.</p>
+            <h2>Analyzing your profile...</h2>
+            <p>Searching global streaming catalogs for your perfect match.</p>
             
-            <!-- Your Ad Network Code will go inside this box -->
-            <div class="ad-placeholder" id="admob-container">
-                [ AdMob Advertisement Space ]
+            <!-- Google AdSense Display Unit -->
+            <div class="ad-placeholder" id="adsense-container">
+                <ins class="adsbygoogle"
+                     style="display:inline-block;width:300px;height:250px"
+                     data-ad-client="ca-pub-9541435081010948"
+                     data-ad-slot="ENTER_YOUR_AD_SLOT_ID_HERE"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
             </div>
             
             <div class="spinner"></div>
@@ -68,12 +103,25 @@
             <h3 id="match-title">Title will appear here</h3>
             <p id="match-description">Description will appear here.</p>
             
+            <div class="where-to-watch">
+                <h4>📺 Where to Watch:</h4>
+                <p id="match-streaming">Netflix</p>
+            </div>
+            
             <div class="register-prompt" id="register-prompt">
                 <p>Want another match right now? Register to unlock 1 more free choice every 24 hours!</p>
             </div>
         </div>
 
     </div>
+    
+    <!-- Google Translate Script -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     
     <script src="app.js"></script>
 </body>
