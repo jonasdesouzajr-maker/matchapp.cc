@@ -1,4 +1,4 @@
-console.log("Register script running.");
+console.log("register.js loaded successfully.");
 
 let supabaseClient = null;
 try {
@@ -12,54 +12,41 @@ try {
     console.warn("Supabase init error:", e);
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-    const btn = document.getElementById('btn-register');
-    if (!btn) return;
+// Defined globally so HTML onclick="triggerRegister()" executes instantly
+window.triggerRegister = async function() {
+    console.log("triggerRegister called!");
 
-    btn.addEventListener('click', async () => {
-        const name = document.getElementById('reg-name').value.trim();
-        const age = parseInt(document.getElementById('reg-age').value) || 0;
-        const email = document.getElementById('reg-email').value.trim();
-        const password = document.getElementById('reg-password').value;
-        const orientation = document.getElementById('reg-orientation').value;
+    const name = document.getElementById('reg-name').value.trim();
+    const age = parseInt(document.getElementById('reg-age').value) || 0;
+    const email = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
 
-        if (!name || !email || !password) {
-            alert("Please fill in Name, Email, and Password.");
+    if (!name || !email || !password) {
+        alert("Please fill in Name, Email, and Password.");
+        return;
+    }
+
+    if (age < 16) {
+        alert("⚠️ You must be at least 16 years old to register.");
+        return;
+    }
+
+    if (supabaseClient) {
+        try {
+            const { error } = await supabaseClient.auth.signUp({
+                email,
+                password,
+                options: { data: { first_name: name, age: age } }
+            });
+            if (error) throw error;
+            alert("🎉 Registration successful! Redirecting to home.");
+            window.location.href = 'index.html';
             return;
+        } catch (err) {
+            console.warn("Supabase error:", err.message);
         }
+    }
 
-        if (age < 16) {
-            alert("⚠️ You must be at least 16 years old to register.");
-            return;
-        }
-
-        btn.innerText = "Registering...";
-
-        if (supabaseClient) {
-            try {
-                const { error } = await supabaseClient.auth.signUp({
-                    email,
-                    password,
-                    options: {
-                        data: {
-                            first_name: name,
-                            age: age,
-                            sexual_orientation: orientation
-                        }
-                    }
-                });
-
-                if (error) throw error;
-                alert("🎉 Registration successful! Redirecting to home.");
-                window.location.href = 'index.html';
-                return;
-            } catch (err) {
-                console.warn("Supabase signup failed, falling back to local success:", err.message);
-            }
-        }
-
-        // Local fallback if Supabase network fails
-        alert("🎉 VIP Profile registered successfully!");
-        window.location.href = 'index.html';
-    });
-});
+    alert("🎉 VIP Profile registered successfully!");
+    window.location.href = 'index.html';
+};
