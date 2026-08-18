@@ -7,7 +7,7 @@ try {
         supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
     }
 } catch (e) {
-    console.warn("Supabase failed to initialize. Proceeding safely.");
+    console.warn("Supabase initialization skipped. Proceeding in local mode.");
 }
 
 // 2. THE PREMIUM CATALOG
@@ -29,6 +29,8 @@ let currentUser = null;
 let currentMatchTitle = "";
 
 document.addEventListener('DOMContentLoaded', () => {
+    console.log("MatchApp Initialized Successfully");
+
     // UI ELEMENTS
     const authSection = document.getElementById('auth-section');
     const registerScreen = document.getElementById('register-screen');
@@ -41,228 +43,296 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitBtn = document.getElementById('submit-match-btn');
     const errBox = document.getElementById('form-error');
 
-    // DEV TRICK: Click the Logo to clear test limits
-    document.getElementById('dev-reset-btn').addEventListener('click', () => {
-        localStorage.removeItem('hasUsedFreeMatch');
-        errBox.classList.add('hidden');
-        alert("🔧 Limit Reset! You can test the app again.");
-    });
+    // DEV RESET TRICK
+    const devResetBtn = document.getElementById('dev-reset-btn');
+    if (devResetBtn) {
+        devResetBtn.addEventListener('click', () => {
+            localStorage.removeItem('hasUsedFreeMatch');
+            if (errBox) errBox.classList.add('hidden');
+            alert("🔧 Limit Reset! You can test the app again.");
+        });
+    }
 
-    // --- AUTHENTICATION & PROFILES ---
+    // --- SESSION CHECK ---
     async function checkSession() {
         if (!supabase) return;
         try {
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
                 currentUser = session.user;
-                
-                // Pull data from Supabase user_metadata
                 const profileData = currentUser.user_metadata || {};
                 const firstName = profileData.first_name || currentUser.email.split('@')[0];
                 const location = profileData.city ? `From ${profileData.city}, ${profileData.country}` : 'VIP Member';
 
-                authSection.classList.add('hidden');
-                registerScreen.classList.add('hidden');
-                userInfoSection.classList.remove('hidden');
-                document.getElementById('rule-banner').classList.add('hidden');
+                if (authSection) authSection.classList.add('hidden');
+                if (registerScreen) registerScreen.classList.add('hidden');
+                if (userInfoSection) userInfoSection.classList.remove('hidden');
                 
-                // Display custom greeting
-                document.getElementById('user-greeting').innerText = `✨ Welcome back, ${firstName}!`;
-                document.getElementById('user-profile-meta').innerText = `📍 ${location} | Algorithm Active`;
+                const ruleBanner = document.getElementById('rule-banner');
+                if (ruleBanner) ruleBanner.classList.add('hidden');
+                
+                const greeting = document.getElementById('user-greeting');
+                if (greeting) greeting.innerText = `✨ Welcome back, ${firstName}!`;
+                
+                const meta = document.getElementById('user-profile-meta');
+                if (meta) meta.innerText = `📍 ${location} | Algorithm Active`;
             }
-        } catch (e) { console.warn("Auth check failed."); }
+        } catch (e) { console.warn("Auth check failed.", e); }
     }
     checkSession();
 
-    // Toggle Registration Screen
-    document.getElementById('show-register-btn').addEventListener('click', () => {
-        authSection.classList.add('hidden');
-        registerScreen.classList.remove('hidden');
-    });
-    document.getElementById('cancel-register-btn').addEventListener('click', () => {
-        registerScreen.classList.add('hidden');
-        authSection.classList.remove('hidden');
-    });
+    // --- NAVIGATION & TOGGLES ---
+    const showRegBtn = document.getElementById('show-register-btn');
+    if (showRegBtn) {
+        showRegBtn.addEventListener('click', () => {
+            if (authSection) authSection.classList.add('hidden');
+            if (registerScreen) registerScreen.classList.remove('hidden');
+        });
+    }
 
-    // Handle VIP Registration (Saving to User Metadata)
-    document.getElementById('submit-register-btn').addEventListener('click', async () => {
-        if (!supabase) return alert("Database disconnected.");
-        
-        const email = document.getElementById('reg-email').value;
-        const password = document.getElementById('reg-password').value;
-        
-        // Grab custom profile data
-        const firstName = document.getElementById('reg-name').value;
-        const country = document.getElementById('reg-country').value;
-        const city = document.getElementById('reg-city').value;
-        const history = document.getElementById('reg-history').value;
-        
-        // Get selected genres
-        const genreSelect = document.getElementById('reg-genres');
-        const selectedGenres = Array.from(genreSelect.selectedOptions).map(opt => opt.value);
+    const cancelRegBtn = document.getElementById('cancel-register-btn');
+    if (cancelRegBtn) {
+        cancelRegBtn.addEventListener('click', () => {
+            if (registerScreen) registerScreen.classList.add('hidden');
+            if (authSection) authSection.classList.remove('hidden');
+        });
+    }
 
-        if(!email || !password || !firstName) {
-            document.getElementById('register-message').innerText = "Please fill in Name, Email, and Password.";
-            return;
-        }
+    // --- VIP REGISTRATION ---
+    const submitRegBtn = document.getElementById('submit-register-btn');
+    if (submitRegBtn) {
+        submitRegBtn.addEventListener('click', async () => {
+            if (!supabase) return alert("Database disconnected.");
+            
+            const emailField = document.getElementById('reg-email');
+            const passField = document.getElementById('reg-password');
+            const nameField = document.getElementById('reg-name');
+            const msgBox = document.getElementById('register-message');
 
-        document.getElementById('submit-register-btn').innerText = "Creating Profile...";
+            if (!emailField || !passField || !nameField) return;
 
-        // Supabase SignUp with Data Injection
-        const { error } = await supabase.auth.signUp({ 
-            email, 
-            password,
-            options: {
-                data: {
-                    first_name: firstName,
-                    country: country,
-                    city: city,
-                    favorite_genres: selectedGenres,
-                    watch_history: history
+            const email = emailField.value;
+            const password = passField.value;
+            const firstName = nameField.value;
+            const country = document.getElementById('reg-country')?.value || "";
+            const city = document.getElementById('reg-city')?.value || "";
+            const history = document.getElementById('reg-history')?.value || "";
+            const genreSelect = document.getElementById('reg-genres');
+            const selectedGenres = genreSelect ? Array.from(genreSelect.selectedOptions).map(opt => opt.value) : [];
+
+            if (!email || !password || !firstName) {
+                if (msgBox) msgBox.innerText = "Please fill in Name, Email, and Password.";
+                return;
+            }
+
+            submitRegBtn.innerText = "Creating Profile...";
+
+            const { error } = await supabase.auth.signUp({ 
+                email, 
+                password,
+                options: {
+                    data: {
+                        first_name: firstName,
+                        country: country,
+                        city: city,
+                        favorite_genres: selectedGenres,
+                        watch_history: history
+                    }
                 }
+            });
+
+            if (error) {
+                if (msgBox) msgBox.innerText = error.message;
+                submitRegBtn.innerText = "Unlock VIP Access";
+            } else {
+                if (msgBox) {
+                    msgBox.innerText = "Success! Please log in now.";
+                    msgBox.style.color = "#4cd137";
+                }
+                setTimeout(() => {
+                    if (registerScreen) registerScreen.classList.add('hidden');
+                    if (authSection) authSection.classList.remove('hidden');
+                }, 2000);
             }
         });
+    }
 
-        if (error) {
-            document.getElementById('register-message').innerText = error.message;
-            document.getElementById('submit-register-btn').innerText = "Unlock VIP Access";
-        } else {
-            document.getElementById('register-message').innerText = "Success! Please log in now.";
-            document.getElementById('register-message').style.color = "#4cd137";
-            setTimeout(() => {
-                registerScreen.classList.add('hidden');
-                authSection.classList.remove('hidden');
-            }, 2000);
-        }
-    });
+    // --- LOGIN ---
+    const loginBtn = document.getElementById('login-btn');
+    if (loginBtn) {
+        loginBtn.addEventListener('click', async () => {
+            if (!supabase) return alert("Database disconnected.");
+            const email = document.getElementById('login-email')?.value;
+            const password = document.getElementById('login-password')?.value;
+            const msgBox = document.getElementById('login-message');
 
-    // Handle Login
-    document.getElementById('login-btn').addEventListener('click', async () => {
-        if (!supabase) return alert("Database disconnected.");
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        error ? (document.getElementById('login-message').innerText = error.message) : location.reload();
-    });
+            const { error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error && msgBox) {
+                msgBox.innerText = error.message;
+            } else {
+                location.reload();
+            }
+        });
+    }
 
-    // Handle Logout
-    document.getElementById('logout-btn').addEventListener('click', async () => {
-        if (supabase) await supabase.auth.signOut();
-        location.reload();
-    });
+    // --- LOGOUT ---
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+            if (supabase) await supabase.auth.signOut();
+            location.reload();
+        });
+    }
 
-    // --- BUBBLE NAVIGATION (Close Button) ---
-    document.getElementById('close-bubble-btn').addEventListener('click', () => {
-        rScreen.classList.add('hidden');
-        qScreen.classList.remove('hidden');
-        submitBtn.innerText = "Curate My Match";
-    });
+    // --- CLOSE RESULT BUBBLE ---
+    const closeBubbleBtn = document.getElementById('close-bubble-btn');
+    if (closeBubbleBtn) {
+        closeBubbleBtn.addEventListener('click', () => {
+            if (rScreen) rScreen.classList.add('hidden');
+            if (qScreen) qScreen.classList.remove('hidden');
+            if (submitBtn) submitBtn.innerText = "Curate My Match";
+        });
+    }
 
-    // --- THE MATCH ENGINE ---
-    submitBtn.addEventListener('click', async (e) => {
-        e.preventDefault();
-        
-        errBox.classList.add('hidden');
-        submitBtn.innerText = "Processing Request...";
+    // --- MATCHMAKING ENGINE ---
+    if (submitBtn) {
+        submitBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            if (errBox) errBox.classList.add('hidden');
+            submitBtn.innerText = "Processing Request...";
 
-        try {
-            // LIMIT CHECK
-            if (!currentUser) {
-                if (localStorage.getItem('hasUsedFreeMatch') === 'true') {
-                    errBox.innerText = "🔒 You have already used your free match! Please register above to unlock daily matches.";
-                    errBox.classList.remove('hidden');
-                    submitBtn.innerText = "Curate My Match";
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                    return; 
-                }
-            } else if (supabase) {
-                const { data } = await supabase.from('user_matches').select('last_match_timestamp').eq('id', currentUser.id).single();
-                if (data && data.last_match_timestamp) {
-                    const diffHours = Math.abs(new Date() - new Date(data.last_match_timestamp)) / 36e5;
-                    if (diffHours < 24) {
-                        errBox.innerText = `⏳ Please wait ${Math.ceil(24 - diffHours)} hours for your next match.`;
-                        errBox.classList.remove('hidden');
+            try {
+                // LIMIT CHECK
+                if (!currentUser) {
+                    if (localStorage.getItem('hasUsedFreeMatch') === 'true') {
+                        if (errBox) {
+                            errBox.innerText = "🔒 You have already used your free match! Please register above to unlock daily matches.";
+                            errBox.classList.remove('hidden');
+                        }
                         submitBtn.innerText = "Curate My Match";
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
                         return; 
                     }
-                }
-            }
-
-            // FILTERING
-            const age = parseInt(document.getElementById('age').value) || 18; 
-            const country = document.getElementById('country').value || "Global";
-            const format = document.getElementById('format').value;
-            const mood = document.getElementById('mood').value;
-            const era = document.getElementById('era').value;
-            const lang = document.getElementById('langpref').value;
-            const platform = document.getElementById('platform').value;
-            
-            let results = contentCatalog.filter(i => 
-                age >= i.minAge && i.format === format && i.mood === mood &&
-                (era === 'any' || i.era === era) && (platform === 'any' || i.streamingOn.includes(platform))
-            );
-
-            if (results.length === 0) results = contentCatalog.filter(i => age >= i.minAge && i.format === format && i.mood === mood);
-            if (results.length === 0) results = contentCatalog;
-
-            let match = results[Math.floor(Math.random() * results.length)];
-            currentMatchTitle = match.title;
-
-            // LOADING BAR ANIMATION
-            qScreen.classList.add('hidden');
-            lScreen.classList.remove('hidden');
-            
-            const bar = document.getElementById('progress-bar');
-            const text = document.getElementById('loading-text');
-            let width = 0;
-            
-            setTimeout(() => text.innerText = "Scanning global catalogs...", 1000);
-            setTimeout(() => text.innerText = "Locating streaming rights...", 2000);
-
-            let interval = setInterval(async () => {
-                width += 2; 
-                bar.style.width = width + '%';
-                
-                if (width >= 100) {
-                    clearInterval(interval);
-                    
-                    // SHOW RESULT
-                    lScreen.classList.add('hidden');
-                    rScreen.classList.remove('hidden');
-                    
-                    document.getElementById('result-poster').src = match.poster;
-                    document.getElementById('result-title').innerText = match.title;
-                    document.getElementById('result-imdb').innerText = `⭐ ${match.imdb}`;
-                    document.getElementById('result-length').innerText = `⏱️ ${match.length}`;
-                    document.getElementById('result-age').innerText = `🔞 ${match.minAge}+`;
-                    document.getElementById('result-desc').innerText = match.description;
-                    document.getElementById('result-country').innerText = country;
-                    document.getElementById('result-platform').innerText = match.streamingOn.join(" • ");
-                    document.getElementById('result-audio').innerText = `Audio: ${lang.toUpperCase()}`;
-
-                    // Save usage
-                    if (!currentUser) {
-                        localStorage.setItem('hasUsedFreeMatch', 'true');
-                    } else if (supabase) {
-                        await supabase.from('user_matches').upsert({ id: currentUser.id, last_match_timestamp: new Date().toISOString() });
+                } else if (supabase) {
+                    const { data } = await supabase.from('user_matches').select('last_match_timestamp').eq('id', currentUser.id).single();
+                    if (data && data.last_match_timestamp) {
+                        const diffHours = Math.abs(new Date() - new Date(data.last_match_timestamp)) / 36e5;
+                        if (diffHours < 24) {
+                            if (errBox) {
+                                errBox.innerText = `⏳ Please wait ${Math.ceil(24 - diffHours)} hours for your next match.`;
+                                errBox.classList.remove('hidden');
+                            }
+                            submitBtn.innerText = "Curate My Match";
+                            return; 
+                        }
                     }
                 }
-            }, 60); 
 
-        } catch (error) {
-            console.error("Engine Error:", error);
-            errBox.innerText = "⚠️ An error occurred. Please refresh the page.";
-            errBox.classList.remove('hidden');
-            submitBtn.innerText = "Curate My Match";
-        }
-    });
+                // GATHER INPUTS
+                const age = parseInt(document.getElementById('age')?.value) || 18; 
+                const country = document.getElementById('country')?.value || "Global";
+                const format = document.getElementById('format')?.value || "movie";
+                const mood = document.getElementById('mood')?.value || "drama";
+                const era = document.getElementById('era')?.value || "any";
+                const lang = document.getElementById('langpref')?.value || "subtitled";
+                const platform = document.getElementById('platform')?.value || "any";
+                
+                let results = contentCatalog.filter(i => 
+                    age >= i.minAge && i.format === format && i.mood === mood &&
+                    (era === 'any' || i.era === era) && (platform === 'any' || i.streamingOn.includes(platform))
+                );
 
-    // 7. SOCIAL SHARES
-    document.getElementById('share-wa').addEventListener('click', () => window.open(`https://api.whatsapp.com/send?text=I got ${currentMatchTitle} on MatchApp! https://matchapp.cc`, '_blank'));
-    document.getElementById('share-x').addEventListener('click', () => window.open(`https://twitter.com/intent/tweet?text=I got ${currentMatchTitle} on MatchApp! https://matchapp.cc`, '_blank'));
-    document.getElementById('share-fb').addEventListener('click', () => window.open(`https://www.facebook.com/sharer/sharer.php?u=https://matchapp.cc`, '_blank'));
-    document.getElementById('share-more').addEventListener('click', async () => {
-        if (navigator.share) await navigator.share({ title: 'MatchApp', text: `My match: ${currentMatchTitle}`, url: 'https://matchapp.cc' });
-        else { navigator.clipboard.writeText('https://matchapp.cc'); alert("Link Copied!"); }
-    });
+                if (results.length === 0) results = contentCatalog.filter(i => age >= i.minAge && i.format === format && i.mood === mood);
+                if (results.length === 0) results = contentCatalog;
+
+                let match = results[Math.floor(Math.random() * results.length)];
+                currentMatchTitle = match.title;
+
+                // LOADING ANIMATION
+                if (qScreen) qScreen.classList.add('hidden');
+                if (lScreen) lScreen.classList.remove('hidden');
+                
+                const bar = document.getElementById('progress-bar');
+                const text = document.getElementById('loading-text');
+                let width = 0;
+                
+                if (text) setTimeout(() => text.innerText = "Scanning global catalogs...", 1000);
+                if (text) setTimeout(() => text.innerText = "Locating streaming rights...", 2000);
+
+                let interval = setInterval(async () => {
+                    width += 2; 
+                    if (bar) bar.style.width = width + '%';
+                    
+                    if (width >= 100) {
+                        clearInterval(interval);
+                        
+                        // SHOW RESULT
+                        if (lScreen) lScreen.classList.add('hidden');
+                        if (rScreen) rScreen.classList.remove('hidden');
+                        
+                        const poster = document.getElementById('result-poster');
+                        if (poster) poster.src = match.poster;
+                        
+                        const titleEl = document.getElementById('result-title');
+                        if (titleEl) titleEl.innerText = match.title;
+                        
+                        const imdbEl = document.getElementById('result-imdb');
+                        if (imdbEl) imdbEl.innerText = `⭐ ${match.imdb}`;
+                        
+                        const lenEl = document.getElementById('result-length');
+                        if (lenEl) lenEl.innerText = `⏱️ ${match.length}`;
+                        
+                        const ageEl = document.getElementById('result-age');
+                        if (ageEl) ageEl.innerText = `🔞 ${match.minAge}+`;
+                        
+                        const descEl = document.getElementById('result-desc');
+                        if (descEl) descEl.innerText = match.description;
+                        
+                        const countryEl = document.getElementById('result-country');
+                        if (countryEl) countryEl.innerText = country;
+                        
+                        const platEl = document.getElementById('result-platform');
+                        if (platEl) platEl.innerText = match.streamingOn.join(" • ");
+                        
+                        const audioEl = document.getElementById('result-audio');
+                        if (audioEl) audioEl.innerText = `Audio: ${lang.toUpperCase()}`;
+
+                        // Save usage
+                        if (!currentUser) {
+                            localStorage.setItem('hasUsedFreeMatch', 'true');
+                        } else if (supabase) {
+                            await supabase.from('user_matches').upsert({ id: currentUser.id, last_match_timestamp: new Date().toISOString() });
+                        }
+                    }
+                }, 60); 
+
+            } catch (error) {
+                console.error("Engine Error:", error);
+                if (errBox) {
+                    errBox.innerText = "⚠️ An error occurred. Please refresh the page.";
+                    errBox.classList.remove('hidden');
+                }
+                submitBtn.innerText = "Curate My Match";
+            }
+        });
+    }
+
+    // --- SOCIAL SHARES ---
+    const waBtn = document.getElementById('share-wa');
+    if (waBtn) waBtn.addEventListener('click', () => window.open(`https://api.whatsapp.com/send?text=I got ${currentMatchTitle} on MatchApp! https://matchapp.cc`, '_blank'));
+    
+    const xBtn = document.getElementById('share-x');
+    if (xBtn) xBtn.addEventListener('click', () => window.open(`https://twitter.com/intent/tweet?text=I got ${currentMatchTitle} on MatchApp! https://matchapp.cc`, '_blank'));
+    
+    const fbBtn = document.getElementById('share-fb');
+    if (fbBtn) fbBtn.addEventListener('click', () => window.open(`https://www.facebook.com/sharer/sharer.php?u=https://matchapp.cc`, '_blank'));
+    
+    const moreBtn = document.getElementById('share-more');
+    if (moreBtn) {
+        moreBtn.addEventListener('click', async () => {
+            if (navigator.share) await navigator.share({ title: 'MatchApp', text: `My match: ${currentMatchTitle}`, url: 'https://matchapp.cc' });
+            else { navigator.clipboard.writeText('https://matchapp.cc'); alert("Link Copied!"); }
+        });
+    }
 });
