@@ -7,7 +7,7 @@ try {
         supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
     }
 } catch (e) {
-    console.warn("Supabase failed to initialize. Proceeding with LocalStorage mode.");
+    console.warn("Supabase failed to initialize. Proceeding safely.");
 }
 
 // 2. THE PREMIUM CATALOG
@@ -30,20 +30,22 @@ let currentMatchTitle = "";
 
 document.addEventListener('DOMContentLoaded', () => {
     // 3. UI ELEMENTS
-    const form = document.getElementById('match-form');
     const authSection = document.getElementById('auth-section');
     const userInfoSection = document.getElementById('user-info-section');
     const qScreen = document.getElementById('questionnaire-screen');
     const lScreen = document.getElementById('loading-screen');
     const rScreen = document.getElementById('result-screen');
+    const submitBtn = document.getElementById('submit-match-btn');
+    const errBox = document.getElementById('form-error');
 
     // DEV RESET TRICK
     document.getElementById('dev-reset-btn').addEventListener('click', () => {
         localStorage.removeItem('hasUsedFreeMatch');
+        errBox.classList.add('hidden');
         alert("🔧 Limit Reset! You can test the app again.");
     });
 
-    // 4. AUTHENTICATION & SESSIONS
+    // 4. AUTHENTICATION
     async function checkSession() {
         if (!supabase) return;
         try {
@@ -84,17 +86,25 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('close-bubble-btn').addEventListener('click', () => {
         rScreen.classList.add('hidden');
         qScreen.classList.remove('hidden');
+        submitBtn.innerText = "Curate My Match";
     });
 
     // 6. THE BULLETPROOF MATCH ENGINE
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault(); // STOP PAGE FROM RELOADING INSTANTLY
+    // We bind directly to the button click now, completely ignoring browser form quirks.
+    submitBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        
+        // Reset button and hide errors to show activity instantly
+        errBox.classList.add('hidden');
+        submitBtn.innerText = "Processing Request...";
 
         try {
             // --- LIMIT CHECK ---
             if (!currentUser) {
                 if (localStorage.getItem('hasUsedFreeMatch') === 'true') {
-                    alert("🔒 You have already used your free match!\nRegister below to unlock unlimited matches.");
+                    errBox.innerText = "🔒 You have already used your free match! Please register or log in above to unlock daily matches.";
+                    errBox.classList.remove('hidden');
+                    submitBtn.innerText = "Curate My Match";
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                     return; 
                 }
@@ -103,14 +113,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (data && data.last_match_timestamp) {
                     const diffHours = Math.abs(new Date() - new Date(data.last_match_timestamp)) / 36e5;
                     if (diffHours < 24) {
-                        alert(`⏳ Wait ${Math.ceil(24 - diffHours)} hours for your next match.`);
+                        errBox.innerText = `⏳ Please wait ${Math.ceil(24 - diffHours)} hours for your next match.`;
+                        errBox.classList.remove('hidden');
+                        submitBtn.innerText = "Curate My Match";
                         return; 
                     }
                 }
             }
 
-            // --- FILTERING ---
-            const age = parseInt(document.getElementById('age').value) || 18;
+            // --- FILTERING (Defaults applied so it never fails) ---
+            const ageInput = document.getElementById('age').value;
+            const age = parseInt(ageInput) || 18; 
             const country = document.getElementById('country').value || "Global";
             const format = document.getElementById('format').value;
             const mood = document.getElementById('mood').value;
@@ -137,7 +150,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const text = document.getElementById('loading-text');
             let width = 0;
             
-            // Texts that change as the bar fills
             setTimeout(() => text.innerText = "Scanning global catalogs...", 1000);
             setTimeout(() => text.innerText = "Locating streaming rights...", 2000);
 
@@ -169,12 +181,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         await supabase.from('user_matches').upsert({ id: currentUser.id, last_match_timestamp: new Date().toISOString() });
                     }
                 }
-            }, 60); // 60ms * 50 ticks = 3000ms (3 seconds total)
+            }, 60); 
 
         } catch (error) {
             console.error("Match Engine Error:", error);
-            alert("Something went wrong! Please try again.");
-            location.reload();
+            errBox.innerText = "⚠️ An error occurred. Please refresh the page.";
+            errBox.classList.remove('hidden');
+            submitBtn.innerText = "Curate My Match";
         }
     });
 
