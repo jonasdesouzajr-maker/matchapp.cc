@@ -30,7 +30,7 @@
         
         <!-- HEADER -->
         <header class="app-header">
-            <!-- Dev Reset Trick -->
+            <!-- Dev Reset Trick: Click the logo to clear your limits during testing! -->
             <div class="logo" id="dev-reset-btn" title="Click to reset limit">Match<span>App</span></div>
             <div class="translate-wrapper" id="google_translate_element"></div>
         </header>
@@ -57,8 +57,8 @@
         <!-- AUTHENTICATION SECTION -->
         <div id="auth-section" class="premium-card auth-box">
             <h3>VIP Access</h3>
-            <input type="email" id="email" placeholder="Email address" required>
-            <input type="password" id="password" placeholder="Password" required>
+            <input type="email" id="email" placeholder="Email address">
+            <input type="password" id="password" placeholder="Password">
             <div class="auth-buttons">
                 <button id="register-btn" class="secondary-btn">Register</button>
                 <button id="login-btn" class="primary-btn">Log In</button>
@@ -84,11 +84,12 @@
                     <div class="input-grid">
                         <div class="input-group">
                             <label>Age</label>
-                            <input type="number" id="age" min="1" max="120" placeholder="e.g., 28" required>
+                            <!-- Removed required tags to prevent silent browser blocking -->
+                            <input type="number" id="age" min="1" max="120" placeholder="e.g., 28">
                         </div>
                         <div class="input-group">
                             <label>Country</label>
-                            <input type="text" id="country" placeholder="e.g., USA" required>
+                            <input type="text" id="country" placeholder="e.g., USA">
                         </div>
                     </div>
 
@@ -144,7 +145,11 @@
                         </select>
                     </div>
 
-                    <button type="submit" id="submit-match-btn" class="gold-btn">Curate My Match</button>
+                    <!-- On-screen error message so it never silently fails -->
+                    <p id="form-error" class="hidden" style="color: #ff5252; font-size: 13px; font-weight: bold; text-align: center; margin: 10px 0;"></p>
+                    
+                    <!-- Changed from type="submit" to type="button" to force our custom logic -->
+                    <button type="button" id="submit-match-btn" class="gold-btn">Curate My Match</button>
                 </form>
 
                 <!-- ADSTERRA NATIVE BANNER -->
