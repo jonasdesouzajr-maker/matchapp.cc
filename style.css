@@ -71,7 +71,7 @@ button:hover {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 .ad-container {
