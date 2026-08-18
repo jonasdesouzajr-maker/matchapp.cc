@@ -61,16 +61,10 @@ button:hover {
     display: none;
 }
 
-.ad-placeholder {
-    background-color: #eaeaea;
-    border: 2px dashed #bbb;
-    padding: 10px;
+.ad-container {
     margin: 20px auto;
-    width: 300px;
-    height: 250px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 100%;
+    min-height: 100px;
 }
 
 .where-to-watch {
