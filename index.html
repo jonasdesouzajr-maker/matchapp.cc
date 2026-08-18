@@ -37,6 +37,9 @@
 <body>
     <div class="luxury-bg"></div>
 
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container"></div>
+
     <div class="container">
         
         <!-- HEADER -->
@@ -64,26 +67,26 @@
             <input type="email" id="login-email" placeholder="Email address">
             <input type="password" id="login-password" placeholder="Password">
             <div class="auth-buttons">
-                <button id="show-register-btn" class="secondary-btn">Create VIP Profile</button>
-                <button id="login-btn" class="primary-btn">Log In</button>
+                <button id="show-register-btn" class="secondary-btn" type="button">Create VIP Profile</button>
+                <button id="login-btn" class="primary-btn" type="button">Log In</button>
             </div>
             <p id="login-message" class="error-text"></p>
         </div>
 
-        <!-- NEW: VIP REGISTRATION PROFILE SCREEN -->
+        <!-- VIP REGISTRATION PROFILE SCREEN -->
         <div id="register-screen" class="hidden premium-card auth-box">
             <h3>⭐ Create VIP Profile</h3>
             <p class="subtitle">Personalize your algorithm.</p>
             
             <div class="input-grid">
-                <input type="text" id="reg-name" placeholder="First Name" required>
-                <input type="email" id="reg-email" placeholder="Email Address" required>
+                <input type="text" id="reg-name" placeholder="First Name">
+                <input type="email" id="reg-email" placeholder="Email Address">
             </div>
             
-            <input type="password" id="reg-password" placeholder="Create Password" required>
+            <input type="password" id="reg-password" placeholder="Create Password">
 
             <div class="input-grid" style="margin-top: 10px;">
-                <input type="text" id="reg-country" placeholder="Country" required>
+                <input type="text" id="reg-country" placeholder="Country">
                 <input type="text" id="reg-city" placeholder="City">
             </div>
 
@@ -105,8 +108,8 @@
             </div>
 
             <div class="auth-buttons" style="margin-top: 15px;">
-                <button id="cancel-register-btn" class="secondary-btn">Cancel</button>
-                <button id="submit-register-btn" class="gold-btn">Unlock VIP Access</button>
+                <button id="cancel-register-btn" class="secondary-btn" type="button">Cancel</button>
+                <button id="submit-register-btn" class="gold-btn" type="button">Unlock VIP Access</button>
             </div>
             <p id="register-message" class="error-text"></p>
         </div>
@@ -115,7 +118,7 @@
         <div id="user-info-section" class="hidden premium-card auth-box">
             <h3 id="user-greeting">✨ Welcome back!</h3>
             <p id="user-profile-meta" style="font-size: 12px; color: #A0A0B5; margin-bottom: 15px;"></p>
-            <button id="logout-btn" class="secondary-btn" style="width: 100%;">Log Out</button>
+            <button id="logout-btn" class="secondary-btn" type="button" style="width: 100%;">Log Out</button>
         </div>
 
         <!-- MAIN INTERACTIVE BUBBLE -->
@@ -190,7 +193,6 @@
                         </select>
                     </div>
 
-                    <p id="form-error" class="hidden error-text" style="text-align: center; margin: 10px 0;"></p>
                     <button type="button" id="submit-match-btn" class="gold-btn">Curate My Match</button>
                 </form>
 
@@ -220,7 +222,7 @@
 
             <!-- STATE 3: RESULT BUBBLE -->
             <div id="result-screen" class="hidden result-bubble">
-                <button id="close-bubble-btn" class="close-x">&times;</button>
+                <button id="close-bubble-btn" class="close-x" type="button">&times;</button>
                 
                 <div class="result-poster-wrapper">
                     <img id="result-poster" src="" alt="Poster">
@@ -249,10 +251,10 @@
                     <div class="social-box">
                         <p>📤 Share your match:</p>
                         <div class="social-grid">
-                            <button id="share-wa" class="s-btn wa">WhatsApp</button>
-                            <button id="share-x" class="s-btn xx">X</button>
-                            <button id="share-fb" class="s-btn fb">Facebook</button>
-                            <button id="share-more" class="s-btn more">More...</button>
+                            <button id="share-wa" class="s-btn wa" type="button">WhatsApp</button>
+                            <button id="share-x" class="s-btn xx" type="button">X</button>
+                            <button id="share-fb" class="s-btn fb" type="button">Facebook</button>
+                            <button id="share-more" class="s-btn more" type="button">More...</button>
                         </div>
                     </div>
 
@@ -274,7 +276,7 @@
         </div>
     </div>
     
-    <!-- Google Translate Script (Restricted to Top 10 + PT) -->
+    <!-- Google Translate Script -->
     <script type="text/javascript">
         function googleTranslateElementInit() {
             new google.translate.TranslateElement({ 
