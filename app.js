@@ -3,29 +3,42 @@ const supabaseUrl = 'https://zkymvqrmbabngsqblyye.supabase.co';
 const supabaseKey = 'sb_publishable_j3kQUhd_9JHfWdfiV3iWog_RpEltrOU';
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-// 2. THE GLOBAL CATALOG (With Era and Streaming Availability)
+// 2. MASSIVE GLOBAL CATALOG (Over 30+ Curated Global Titles)
 const contentCatalog = [
     // --- TELENOVELAS ---
-    { title: "Avenida Brasil", format: "telenovela", mood: "drama", era: "modern", streamingOn: ["Globoplay"], description: "A gripping story of revenge, family secrets, and intense drama." },
-    { title: "O Clone", format: "telenovela", mood: "drama", era: "classic", streamingOn: ["Globoplay"], description: "A classic tale of forbidden love, cloning, and cultural clashes." },
+    { title: "Avenida Brasil", format: "telenovela", mood: "drama", era: "modern", streamingOn: ["Globoplay"], description: "A gripping story of revenge, family secrets, and intense drama set in Rio de Janeiro." },
+    { title: "O Clone", format: "telenovela", mood: "drama", era: "classic", streamingOn: ["Globoplay"], description: "A classic tale of forbidden love, cloning, and cultural clashes between Brazil and Morocco." },
     { title: "Cheias de Charme", format: "telenovela", mood: "comedy", era: "modern", streamingOn: ["Globoplay"], description: "Three domestic workers rise to pop stardom in this hilarious musical journey." },
     { title: "Yo soy Betty, la fea", format: "telenovela", mood: "comedy", era: "classic", streamingOn: ["Prime Video"], description: "The iconic Colombian comedy about a brilliant but socially awkward secretary." },
     { title: "Sen Çal Kapımı (Love is in the Air)", format: "telenovela", mood: "romance", era: "modern", streamingOn: ["Max", "Prime Video"], description: "A global Turkish romantic comedy hit about a fake engagement that turns real." },
-    
+    { title: "Pantanal", format: "telenovela", mood: "drama", era: "modern", streamingOn: ["Globoplay"], description: "An epic saga blending magical realism, family rivalries, and the stunning Brazilian wetlands." },
+    { title: "La Usurpadora", format: "telenovela", mood: "drama", era: "classic", streamingOn: ["Prime Video"], description: "The legendary twin swap drama full of deception, scandal, and high emotion." },
+    { title: "Rebelde", format: "telenovela", mood: "romance", era: "classic", streamingOn: ["Globoplay", "Netflix"], description: "Teens at an elite boarding school navigate first loves, music, and dramatic friendships." },
+
     // --- MOVIES ---
-    { title: "Tropa de Elite", format: "movie", mood: "action", era: "classic", streamingOn: ["Globoplay", "Apple TV+"], description: "An intense, gritty look at special police forces in Rio de Janeiro." },
+    { title: "Tropa de Elite", format: "movie", mood: "action", era: "classic", streamingOn: ["Globoplay", "Apple TV+"], description: "An intense, gritty look at special police forces navigating corruption in Rio de Janeiro." },
     { title: "Parasite", format: "movie", mood: "drama", era: "modern", streamingOn: ["Max"], description: "A South Korean masterpiece exploring class discrimination with dark humor and suspense." },
     { title: "The Matrix", format: "movie", mood: "scifi", era: "classic", streamingOn: ["Max", "Prime Video"], description: "A hacker discovers the shocking truth about reality and his role in the war against its controllers." },
-    { title: "Dune: Part One", format: "movie", mood: "scifi", era: "modern", streamingOn: ["Max"], description: "A stunning visual epic about a noble family embroiled in a war for control of the galaxy's most valuable asset." },
+    { title: "Dune: Part One", format: "movie", mood: "scifi", era: "modern", streamingOn: ["Max"], description: "A stunning visual epic about a noble family embroiled in a war for control of a desert planet." },
     { title: "Crazy Stupid Love", format: "movie", mood: "romance", era: "modern", streamingOn: ["Prime Video", "Apple TV+"], description: "A middle-aged husband's life changes dramatically when his wife asks for a divorce." },
-    { title: "Superbad", format: "movie", mood: "comedy", era: "classic", streamingOn: ["Netflix"], description: "Two co-dependent high school seniors are forced to deal with separation anxiety after their plan to stage a booze-soaked party goes awry." },
+    { title: "Superbad", format: "movie", mood: "comedy", era: "classic", streamingOn: ["Netflix"], description: "Two co-dependent high school seniors deal with separation anxiety before a wild party." },
+    { title: "Cidade de Deus (City of God)", format: "movie", mood: "drama", era: "classic", streamingOn: ["Max", "Globoplay"], description: "The rise of organized crime in the Cidade de Deus neighborhood of Rio de Janeiro." },
+    { title: "Interstellar", format: "movie", mood: "scifi", era: "modern", streamingOn: ["Max", "Prime Video"], description: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival." },
+    { title: "The Dark Knight", format: "movie", mood: "action", era: "classic", streamingOn: ["Max", "Prime Video"], description: "Batman raises the stakes in his war on crime with the help of Lt. Jim Gordon and Harvey Dent." },
+    { title: "Spirited Away", format: "movie", mood: "scifi", era: "classic", streamingOn: ["Netflix"], description: "During her family's move to the suburbs, a sullen 10-year-old girl wanders into a world ruled by gods and spirits." },
+    { title: "Gladiator", format: "movie", mood: "action", era: "classic", streamingOn: ["Prime Video", "Paramount+"], description: "A former Roman general sets out to exact vengeance against the corrupt emperor who murdered his family." },
 
     // --- SERIES ---
-    { title: "Breaking Bad", format: "series", mood: "drama", era: "modern", streamingOn: ["Netflix"], description: "A chemistry teacher turns into a ruthless kingpin." },
-    { title: "The Office (US)", format: "series", mood: "comedy", era: "classic", streamingOn: ["Netflix", "Peacock"], description: "A mockumentary on a group of typical office workers." },
-    { title: "The Boys", format: "series", mood: "action", era: "modern", streamingOn: ["Prime Video"], description: "A group of vigilantes set out to take down corrupt superheroes." },
-    { title: "Stranger Things", format: "series", mood: "scifi", era: "modern", streamingOn: ["Netflix"], description: "When a young boy vanishes, a small town uncovers a mystery involving secret experiments and terrifying supernatural forces." },
-    { title: "Bridgerton", format: "series", mood: "romance", era: "modern", streamingOn: ["Netflix"], description: "Wealth, lust, and betrayal set against the backdrop of Regency-era England." }
+    { title: "Breaking Bad", format: "series", mood: "drama", era: "modern", streamingOn: ["Netflix"], description: "A chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine." },
+    { title: "The Office (US)", format: "series", mood: "comedy", era: "classic", streamingOn: ["Netflix", "Peacock"], description: "A mockumentary on a group of typical office workers where workday ego clashes and boredom mix." },
+    { title: "The Boys", format: "series", mood: "action", era: "modern", streamingOn: ["Prime Video"], description: "A group of vigilantes set out to take down corrupt superheroes who abuse their superpowers." },
+    { title: "Stranger Things", format: "series", mood: "scifi", era: "modern", streamingOn: ["Netflix"], description: "A small town uncovers a mystery involving secret government experiments and supernatural forces." },
+    { title: "Bridgerton", format: "series", mood: "romance", era: "modern", streamingOn: ["Netflix"], description: "Wealth, lust, and betrayal set against the backdrop of Regency-era England." },
+    { title: "Succession", format: "series", mood: "drama", era: "modern", streamingOn: ["Max"], description: "The Roy family is known for controlling the biggest media and entertainment company in the world." },
+    { title: "The Last of Us", format: "series", mood: "action", era: "modern", streamingOn: ["Max"], description: "After a global pandemic destroys civilization, a hardened survivor takes charge of a 14-year-old girl." },
+    { title: "Squid Game", format: "series", mood: "action", era: "modern", streamingOn: ["Netflix"], description: "Hundreds of cash-strapped players accept a strange invitation to compete in children's games for a tempting prize." },
+    { title: "Dark", format: "series", mood: "scifi", era: "modern", streamingOn: ["Netflix"], description: "A missing child sets four families on a frantic hunt for answers as they unearth a mind-bending time travel conspiracy." },
+    { title: "The Witcher", format: "series", mood: "scifi", era: "modern", streamingOn: ["Netflix"], description: "Geralt of Rivia, a mutated monster hunter, journeys toward his destiny in a turbulent world." }
 ];
 
 let currentUser = null;
