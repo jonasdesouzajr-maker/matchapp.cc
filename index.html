@@ -28,21 +28,15 @@
         })();
     </script>
     
-    <!-- Supabase Database CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="luxury-bg"></div>
-
-    <!-- TOAST NOTIFICATION CONTAINER -->
     <div id="toast-container"></div>
 
     <div class="container">
         
-        <!-- HEADER -->
         <header class="app-header">
             <div class="logo" id="dev-reset-btn" title="Click to reset limit">Match<span>App</span></div>
             <div class="translate-wrapper" id="google_translate_element"></div>
@@ -56,48 +50,43 @@
             <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
         </div>
 
-        <!-- FREEMIUM BANNER -->
         <div class="rule-banner" id="rule-banner">
-            <p>✨ <strong>First Match is FREE!</strong> Become a VIP below to unlock unlimited concierge access and save your watch history.</p>
+            <p>✨ <strong>First Match is FREE!</strong> Register below to unlock unlimited concierge access.</p>
         </div>
 
-        <!-- STANDARD LOGIN SECTION -->
+        <!-- LOGIN BOX -->
         <div id="auth-section" class="premium-card auth-box">
             <h3>🔐 Member Login</h3>
             <input type="email" id="login-email" placeholder="Email address">
             <input type="password" id="login-password" placeholder="Password">
             <div class="auth-buttons">
-                <!-- Links to the new separate registration page -->
-                <button id="goToRegisterBtn" class="secondary-btn" type="button" onclick="window.location.href='register.html'">Create VIP Profile</button>
+                <button class="secondary-btn" type="button" onclick="window.location.href='register.html'">Create VIP Profile</button>
                 <button id="login-btn" class="primary-btn" type="button">Log In</button>
             </div>
-            <p id="login-message" class="error-text"></p>
         </div>
 
-        <!-- LOGGED IN SECTION (VIP PROFILE DASHBOARD) -->
+        <!-- USER DASHBOARD -->
         <div id="user-info-section" class="hidden premium-card auth-box">
             <h3 id="user-greeting">✨ Welcome back!</h3>
             <p id="user-profile-meta" style="font-size: 12px; color: #A0A0B5; margin-bottom: 15px;"></p>
             <button id="logout-btn" class="secondary-btn" type="button" style="width: 100%;">Log Out</button>
         </div>
 
-        <!-- MAIN INTERACTIVE BUBBLE -->
+        <!-- MAIN QUESTIONNAIRE -->
         <div class="premium-card bubble-container">
-            
-            <!-- STATE 1: QUESTIONNAIRE -->
-            <div id="questionnaire-screen">
+            <div id="questionnaire-screen" style="padding: 25px;">
                 <h1 class="card-title">Find Your Perfect Watch</h1>
                 <p class="subtitle">Let our concierge algorithm curate your night.</p>
                 
                 <form id="match-form">
                     <div class="input-grid">
                         <div class="input-group">
-                            <label>Age</label>
-                            <input type="number" id="age" min="1" max="120" placeholder="e.g., 28">
+                            <label>Age (Min 16)</label>
+                            <input type="number" id="age" min="16" max="120" placeholder="e.g., 28" required>
                         </div>
                         <div class="input-group">
                             <label>Country</label>
-                            <input type="text" id="country" placeholder="e.g., USA">
+                            <input type="text" id="country" placeholder="e.g., USA" required>
                         </div>
                     </div>
 
@@ -153,7 +142,12 @@
                         </select>
                     </div>
 
-                    <button type="button" id="submit-match-btn" class="gold-btn">Curate My Match</button>
+                    <!-- AGE WARNING BANNER -->
+                    <div id="age-error-banner" class="hidden" style="background: #2a1215; border: 1px solid #ff5252; color: #ff8787; padding: 12px; border-radius: 8px; font-size: 13px; font-weight: bold; text-align: center; margin-top: 15px;">
+                        ⚠️ You must be at least 16 years old to use MatchApp.
+                    </div>
+
+                    <button type="submit" id="submit-match-btn" class="gold-btn">Curate My Match</button>
                 </form>
 
                 <!-- ADSTERRA NATIVE BANNER -->
@@ -162,81 +156,9 @@
                     <div id="container-24c070776b5f8b41dda874f495a807d2"></div>
                 </div>
             </div>
-
-            <!-- STATE 2: LOADING BAR -->
-            <div id="loading-screen" class="hidden loading-bubble">
-                <div class="loading-icon">🍿</div>
-                <h2 id="loading-text">Analyzing your preferences...</h2>
-                <div class="progress-bar-container">
-                    <div id="progress-bar" class="progress-bar-fill"></div>
-                </div>
-                
-                <!-- ADSTERRA 300x250 INTERSTITIAL -->
-                <div class="ad-wrapper-loading">
-                    <script>
-                        atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
-                    </script>
-                    <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
-                </div>
-            </div>
-
-            <!-- STATE 3: RESULT BUBBLE -->
-            <div id="result-screen" class="hidden result-bubble">
-                <button id="close-bubble-btn" class="close-x" type="button">&times;</button>
-                
-                <div class="result-poster-wrapper">
-                    <img id="result-poster" src="" alt="Poster">
-                    <div class="poster-vignette"></div>
-                </div>
-
-                <div class="result-content">
-                    <div class="gold-badge-header">✨ Your Curated Match</div>
-                    <h2 id="result-title">Title</h2>
-                    
-                    <div class="meta-tags">
-                        <span id="result-imdb" class="meta-tag">⭐</span>
-                        <span id="result-length" class="meta-tag">⏱️</span>
-                        <span id="result-age" class="meta-tag">🔞</span>
-                    </div>
-
-                    <p id="result-desc" class="result-desc"></p>
-                    
-                    <div class="streaming-info-box">
-                        <h4>📺 Streaming in <span id="result-country"></span>:</h4>
-                        <p id="result-platform" class="platform-text"></p>
-                        <p id="result-audio" class="audio-text"></p>
-                    </div>
-
-                    <!-- SOCIAL SHARE -->
-                    <div class="social-box">
-                        <p>📤 Share your match:</p>
-                        <div class="social-grid">
-                            <button id="share-wa" class="s-btn wa" type="button">WhatsApp</button>
-                            <button id="share-x" class="s-btn xx" type="button">X</button>
-                            <button id="share-fb" class="s-btn fb" type="button">Facebook</button>
-                            <button id="share-more" class="s-btn more" type="button">More...</button>
-                        </div>
-                    </div>
-
-                    <!-- GOOGLE ADSENSE -->
-                    <div class="ad-spacing">
-                        <ins class="adsbygoogle"
-                             style="display:block"
-                             data-ad-client="ca-pub-9541435081010948"
-                             data-ad-slot="3127478321"
-                             data-ad-format="auto"
-                             data-full-width-responsive="true"></ins>
-                        <script>
-                             (adsbygoogle = window.adsbygoogle || []).push({});
-                        </script>
-                    </div>
-                </div>
-            </div>
-            
         </div>
     </div>
     
-    <!-- Google Translate Script -->
     <script type="text/javascript">
         function googleTranslateElementInit() {
             new google.translate.TranslateElement({ 
