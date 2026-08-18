@@ -102,25 +102,22 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // --- NEW ALGORITHM ---
+        // --- ALGORITHM ---
         const selectedFormat = document.getElementById('format').value;
         const selectedMood = document.getElementById('mood').value;
         const selectedEra = document.getElementById('era').value;
         const selectedPlatform = document.getElementById('platform').value;
         
         let matchingResults = contentCatalog.filter(item => {
-            // Mandatory match
             const formatMatch = item.format === selectedFormat;
             const moodMatch = item.mood === selectedMood;
-            
-            // Optional match (if user selected 'any', skip the check)
             const eraMatch = selectedEra === 'any' || item.era === selectedEra;
             const platformMatch = selectedPlatform === 'any' || item.streamingOn.includes(selectedPlatform);
 
             return formatMatch && moodMatch && eraMatch && platformMatch;
         });
 
-        // Fallback: If the user was too specific and got 0 results, loosen the era/platform restrictions to give them *something*
+        // Fallback
         if (matchingResults.length === 0) {
             matchingResults = contentCatalog.filter(item => item.format === selectedFormat && item.mood === selectedMood);
         }
@@ -137,15 +134,13 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('questionnaire-screen').classList.add('hidden');
         document.getElementById('loading-screen').classList.remove('hidden');
 
-        // Delay for 6 seconds to show the AdSense ad
+        // Delay for 6 seconds to show the responsive AdSense ad
         setTimeout(async () => {
             document.getElementById('loading-screen').classList.add('hidden');
             document.getElementById('result-screen').classList.remove('hidden');
             
             document.getElementById('match-title').innerText = finalMatch.title;
             document.getElementById('match-description').innerText = finalMatch.description;
-            
-            // Format the streaming platforms into a nice string (e.g. "Netflix, Max")
             document.getElementById('match-streaming').innerText = finalMatch.streamingOn.join(" • ");
 
             // Save timestamp
