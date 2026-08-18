@@ -29,80 +29,147 @@ let currentUser = null;
 let currentMatchTitle = "";
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 3. UI ELEMENTS
+    // UI ELEMENTS
     const authSection = document.getElementById('auth-section');
+    const registerScreen = document.getElementById('register-screen');
     const userInfoSection = document.getElementById('user-info-section');
+    
     const qScreen = document.getElementById('questionnaire-screen');
     const lScreen = document.getElementById('loading-screen');
     const rScreen = document.getElementById('result-screen');
+    
     const submitBtn = document.getElementById('submit-match-btn');
     const errBox = document.getElementById('form-error');
 
-    // DEV RESET TRICK
+    // DEV TRICK: Click the Logo to clear test limits
     document.getElementById('dev-reset-btn').addEventListener('click', () => {
         localStorage.removeItem('hasUsedFreeMatch');
         errBox.classList.add('hidden');
         alert("🔧 Limit Reset! You can test the app again.");
     });
 
-    // 4. AUTHENTICATION
+    // --- AUTHENTICATION & PROFILES ---
     async function checkSession() {
         if (!supabase) return;
         try {
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
                 currentUser = session.user;
+                
+                // Pull data from Supabase user_metadata
+                const profileData = currentUser.user_metadata || {};
+                const firstName = profileData.first_name || currentUser.email.split('@')[0];
+                const location = profileData.city ? `From ${profileData.city}, ${profileData.country}` : 'VIP Member';
+
                 authSection.classList.add('hidden');
+                registerScreen.classList.add('hidden');
                 userInfoSection.classList.remove('hidden');
                 document.getElementById('rule-banner').classList.add('hidden');
-                document.getElementById('user-info').innerText = `✨ VIP Logged in: ${currentUser.email}`;
+                
+                // Display custom greeting
+                document.getElementById('user-greeting').innerText = `✨ Welcome back, ${firstName}!`;
+                document.getElementById('user-profile-meta').innerText = `📍 ${location} | Algorithm Active`;
             }
         } catch (e) { console.warn("Auth check failed."); }
     }
     checkSession();
 
-    document.getElementById('register-btn').addEventListener('click', async () => {
-        if (!supabase) return alert("Database disconnected.");
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const { error } = await supabase.auth.signUp({ email, password });
-        document.getElementById('auth-message').innerText = error ? error.message : "Check your email!";
+    // Toggle Registration Screen
+    document.getElementById('show-register-btn').addEventListener('click', () => {
+        authSection.classList.add('hidden');
+        registerScreen.classList.remove('hidden');
+    });
+    document.getElementById('cancel-register-btn').addEventListener('click', () => {
+        registerScreen.classList.add('hidden');
+        authSection.classList.remove('hidden');
     });
 
+    // Handle VIP Registration (Saving to User Metadata)
+    document.getElementById('submit-register-btn').addEventListener('click', async () => {
+        if (!supabase) return alert("Database disconnected.");
+        
+        const email = document.getElementById('reg-email').value;
+        const password = document.getElementById('reg-password').value;
+        
+        // Grab custom profile data
+        const firstName = document.getElementById('reg-name').value;
+        const country = document.getElementById('reg-country').value;
+        const city = document.getElementById('reg-city').value;
+        const history = document.getElementById('reg-history').value;
+        
+        // Get selected genres
+        const genreSelect = document.getElementById('reg-genres');
+        const selectedGenres = Array.from(genreSelect.selectedOptions).map(opt => opt.value);
+
+        if(!email || !password || !firstName) {
+            document.getElementById('register-message').innerText = "Please fill in Name, Email, and Password.";
+            return;
+        }
+
+        document.getElementById('submit-register-btn').innerText = "Creating Profile...";
+
+        // Supabase SignUp with Data Injection
+        const { error } = await supabase.auth.signUp({ 
+            email, 
+            password,
+            options: {
+                data: {
+                    first_name: firstName,
+                    country: country,
+                    city: city,
+                    favorite_genres: selectedGenres,
+                    watch_history: history
+                }
+            }
+        });
+
+        if (error) {
+            document.getElementById('register-message').innerText = error.message;
+            document.getElementById('submit-register-btn').innerText = "Unlock VIP Access";
+        } else {
+            document.getElementById('register-message').innerText = "Success! Please log in now.";
+            document.getElementById('register-message').style.color = "#4cd137";
+            setTimeout(() => {
+                registerScreen.classList.add('hidden');
+                authSection.classList.remove('hidden');
+            }, 2000);
+        }
+    });
+
+    // Handle Login
     document.getElementById('login-btn').addEventListener('click', async () => {
         if (!supabase) return alert("Database disconnected.");
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
         const { error } = await supabase.auth.signInWithPassword({ email, password });
-        error ? (document.getElementById('auth-message').innerText = error.message) : location.reload();
+        error ? (document.getElementById('login-message').innerText = error.message) : location.reload();
     });
 
+    // Handle Logout
     document.getElementById('logout-btn').addEventListener('click', async () => {
         if (supabase) await supabase.auth.signOut();
         location.reload();
     });
 
-    // 5. BUBBLE NAVIGATION (Close Button)
+    // --- BUBBLE NAVIGATION (Close Button) ---
     document.getElementById('close-bubble-btn').addEventListener('click', () => {
         rScreen.classList.add('hidden');
         qScreen.classList.remove('hidden');
         submitBtn.innerText = "Curate My Match";
     });
 
-    // 6. THE BULLETPROOF MATCH ENGINE
-    // We bind directly to the button click now, completely ignoring browser form quirks.
+    // --- THE MATCH ENGINE ---
     submitBtn.addEventListener('click', async (e) => {
         e.preventDefault();
         
-        // Reset button and hide errors to show activity instantly
         errBox.classList.add('hidden');
         submitBtn.innerText = "Processing Request...";
 
         try {
-            // --- LIMIT CHECK ---
+            // LIMIT CHECK
             if (!currentUser) {
                 if (localStorage.getItem('hasUsedFreeMatch') === 'true') {
-                    errBox.innerText = "🔒 You have already used your free match! Please register or log in above to unlock daily matches.";
+                    errBox.innerText = "🔒 You have already used your free match! Please register above to unlock daily matches.";
                     errBox.classList.remove('hidden');
                     submitBtn.innerText = "Curate My Match";
                     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -121,9 +188,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // --- FILTERING (Defaults applied so it never fails) ---
-            const ageInput = document.getElementById('age').value;
-            const age = parseInt(ageInput) || 18; 
+            // FILTERING
+            const age = parseInt(document.getElementById('age').value) || 18; 
             const country = document.getElementById('country').value || "Global";
             const format = document.getElementById('format').value;
             const mood = document.getElementById('mood').value;
@@ -142,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let match = results[Math.floor(Math.random() * results.length)];
             currentMatchTitle = match.title;
 
-            // --- THE LOADING BAR ANIMATION ---
+            // LOADING BAR ANIMATION
             qScreen.classList.add('hidden');
             lScreen.classList.remove('hidden');
             
@@ -154,13 +220,13 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => text.innerText = "Locating streaming rights...", 2000);
 
             let interval = setInterval(async () => {
-                width += 2; // Fills 2% per tick
+                width += 2; 
                 bar.style.width = width + '%';
                 
                 if (width >= 100) {
                     clearInterval(interval);
                     
-                    // --- SHOW INLINE BUBBLE RESULT ---
+                    // SHOW RESULT
                     lScreen.classList.add('hidden');
                     rScreen.classList.remove('hidden');
                     
@@ -174,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById('result-platform').innerText = match.streamingOn.join(" • ");
                     document.getElementById('result-audio').innerText = `Audio: ${lang.toUpperCase()}`;
 
-                    // Save rule
+                    // Save usage
                     if (!currentUser) {
                         localStorage.setItem('hasUsedFreeMatch', 'true');
                     } else if (supabase) {
@@ -184,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 60); 
 
         } catch (error) {
-            console.error("Match Engine Error:", error);
+            console.error("Engine Error:", error);
             errBox.innerText = "⚠️ An error occurred. Please refresh the page.";
             errBox.classList.remove('hidden');
             submitBtn.innerText = "Curate My Match";
