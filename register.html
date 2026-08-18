@@ -10,9 +10,9 @@
 <body>
     <div class="luxury-bg"></div>
 
-    <div class="container" style="max-width: 500px; margin: 30px auto; padding: 20px;">
+    <div class="container" style="max-width: 500px; margin: 30px auto; padding: 20px; position: relative; z-index: 1;">
         <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <div style="font-size: 24px; font-weight: 800; color: #fff;" onclick="window.location.href='index.html'" style="cursor: pointer;">Match<span style="color: #D4AF37;">App</span></div>
+            <div style="font-size: 24px; font-weight: 800; color: #fff; cursor: pointer;" onclick="window.location.href='index.html'">Match<span style="color: #D4AF37;">App</span></div>
             <button onclick="window.location.href='index.html'" style="background: transparent; color: #A0A0B5; border: 1px solid #444; padding: 6px 12px; border-radius: 6px; cursor: pointer;">← Home</button>
         </header>
 
@@ -39,19 +39,8 @@
                 <input type="password" id="reg-password" placeholder="••••••••" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
             </div>
 
-            <div style="margin-bottom: 20px;">
-                <label style="color: #A0A0B5; font-size: 11px; text-transform: uppercase;">Sexual Orientation</label>
-                <select id="reg-orientation" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
-                    <option value="straight">Heterosexual / Straight</option>
-                    <option value="gay">Gay</option>
-                    <option value="lesbian">Lesbian</option>
-                    <option value="bisexual">Bisexual</option>
-                    <option value="pansexual">Pansexual</option>
-                    <option value="prefer_not_to_say" selected>Prefer not to say</option>
-                </select>
-            </div>
-
-            <button id="btn-register" style="width: 100%; background: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728); color: #000; border: none; padding: 14px; font-weight: 800; border-radius: 8px; cursor: pointer;">Complete Registration</button>
+            <!-- DIRECT INLINE CLICK HANDLER -->
+            <button onclick="triggerRegister()" style="width: 100%; background: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728); color: #000; border: none; padding: 14px; font-weight: 800; border-radius: 8px; cursor: pointer;">Complete Registration</button>
         </div>
     </div>
 
