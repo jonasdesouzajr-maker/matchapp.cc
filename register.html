@@ -3,86 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MatchApp | VIP Registration & Lifestyle Profile</title>
+    <title>MatchApp | VIP Portal</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div class="luxury-bg"></div>
 
-    <div class="container" style="max-width: 550px; margin: 30px auto; padding: 20px; position: relative; z-index: 1;">
-        
-        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <div style="font-size: 24px; font-weight: 800; color: #fff; cursor: pointer;" onclick="window.location.href='index.html'">Match<span style="color: #D4AF37;">App</span></div>
-            <button onclick="window.location.href='index.html'" style="background: transparent; color: #A0A0B5; border: 1px solid #444; padding: 6px 12px; border-radius: 6px; cursor: pointer;">← Home</button>
+    <div class="container" style="max-width: 500px;">
+        <header class="app-header">
+            <div class="logo" onclick="window.location.href='index.html'">Match<span>App</span></div>
+            <button onclick="window.location.href='index.html'" class="secondary-btn" style="padding: 6px 12px; font-size: 12px;">← Back to Home</button>
         </header>
 
-        <div style="background: rgba(20,20,35,0.95); border: 1px solid rgba(212,175,55,0.3); padding: 30px; border-radius: 16px;">
-            <h2 style="color: #D4AF37; margin-top: 0; font-size: 22px;">⭐ Create VIP Concierge Profile</h2>
-            <p style="color: #A0A0B5; font-size: 13px; margin-bottom: 25px;">Tell us about yourself so our algorithm can hyper-personalize your recommendations.</p>
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <button id="tab-reg" onclick="switchTab('reg')" class="gold-btn" style="flex: 1; padding: 12px;">⭐ Create VIP</button>
+            <button id="tab-log" onclick="switchTab('log')" class="secondary-btn" style="flex: 1; padding: 12px; border: none; background: rgba(20,20,35,0.8);">🔐 Log In</button>
+        </div>
+
+        <!-- REGISTRATION SECTION -->
+        <div id="sec-reg" class="premium-card fade-in">
+            <h2 style="color: var(--gold); margin-top: 0;">Create VIP Profile</h2>
             
-            <!-- SECTION 1: ACCOUNT -->
-            <div style="font-size: 11px; text-transform: uppercase; color: #D4AF37; font-weight: bold; letter-spacing: 1px; margin-bottom: 10px;">1. Account Details</div>
-            
-            <div style="margin-bottom: 15px;">
-                <label style="color: #A0A0B5; font-size: 11px; text-transform: uppercase;">Full Name *</label>
-                <input type="text" id="reg-name" placeholder="Your Name" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
+            <div class="input-group">
+                <label>Full Name *</label>
+                <input type="text" id="reg-name" placeholder="Your Name" required>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
-                <div>
-                    <label style="color: #A0A0B5; font-size: 11px; text-transform: uppercase;">Age * (Min 16)</label>
-                    <input type="number" id="reg-age" placeholder="28" min="16" max="120" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
+            <div class="input-grid">
+                <div class="input-group">
+                    <label>Age * (Min 16)</label>
+                    <input type="number" id="reg-age" placeholder="25" min="16" required>
                 </div>
-                <div>
-                    <label style="color: #A0A0B5; font-size: 11px; text-transform: uppercase;">Country *</label>
-                    <input type="text" id="reg-country" placeholder="Brazil / USA" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
+                <div class="input-group">
+                    <label>Country *</label>
+                    <input type="text" id="reg-country" placeholder="USA / Brazil" required>
                 </div>
             </div>
 
-            <div style="margin-bottom: 15px;">
-                <label style="color: #A0A0B5; font-size: 11px; text-transform: uppercase;">Email Address *</label>
-                <input type="email" id="reg-email" placeholder="name@example.com" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
+            <div class="input-group">
+                <label>Email Address *</label>
+                <input type="email" id="reg-email" placeholder="name@example.com" required>
             </div>
 
-            <div style="margin-bottom: 20px;">
-                <label style="color: #A0A0B5; font-size: 11px; text-transform: uppercase;">Password * (Min 6 chars)</label>
-                <input type="password" id="reg-password" placeholder="••••••••" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
+            <div class="input-group">
+                <label>Password * (Min 6 chars)</label>
+                <input type="password" id="reg-password" placeholder="••••••••" required>
             </div>
 
-            <!-- SECTION 2: LIFESTYLE -->
-            <div style="font-size: 11px; text-transform: uppercase; color: #D4AF37; font-weight: bold; letter-spacing: 1px; margin-bottom: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">2. Lifestyle & Demographics</div>
-
-            <div style="margin-bottom: 15px;">
-                <label style="color: #A0A0B5; font-size: 11px; text-transform: uppercase;">Sexual Orientation</label>
-                <select id="reg-orientation" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
-                    <option value="straight">Heterosexual / Straight</option>
-                    <option value="gay">Gay</option>
-                    <option value="lesbian">Lesbian</option>
-                    <option value="bisexual">Bisexual</option>
-                    <option value="pansexual">Pansexual</option>
-                    <option value="asexual">Asexual</option>
-                    <option value="queer">Queer</option>
-                    <option value="other">Other / Self-Describe</option>
-                    <option value="prefer_not_to_say" selected>Prefer not to say</option>
-                </select>
-            </div>
-
-            <div style="margin-bottom: 15px;">
-                <label style="color: #A0A0B5; font-size: 11px; text-transform: uppercase;">Viewing Style</label>
-                <select id="reg-viewing" style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
-                    <option value="binge">Binge Watcher (Finish a season fast)</option>
-                    <option value="casual">Casual Viewer (1-2 times a week)</option>
+            <div class="input-group">
+                <label>Viewing Style</label>
+                <select id="reg-viewing">
+                    <option value="binge">Binge Watcher</option>
+                    <option value="casual">Casual Viewer</option>
                     <option value="weekend">Weekend Enthusiast</option>
                 </select>
             </div>
 
-            <div style="margin-bottom: 25px;">
-                <label style="color: #A0A0B5; font-size: 11px; text-transform: uppercase;">Recently Watched & Loved Shows</label>
-                <input type="text" id="reg-history" placeholder="e.g., Breaking Bad, Avenida Brasil..." style="width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; box-sizing: border-box; margin-top: 5px;">
+            <button onclick="doRegister()" class="gold-btn" style="margin-top: 10px;">Complete VIP Registration</button>
+        </div>
+
+        <!-- LOGIN SECTION -->
+        <div id="sec-log" class="premium-card fade-in" style="display: none;">
+            <h2 style="color: var(--gold); margin-top: 0;">Existing VIP Login</h2>
+            
+            <div class="input-group">
+                <label>Email Address</label>
+                <input type="email" id="log-email" placeholder="name@example.com">
             </div>
 
-            <button onclick="triggerRegister()" style="width: 100%; background: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728); color: #000; border: none; padding: 14px; font-weight: 800; border-radius: 8px; cursor: pointer;">Complete VIP Registration</button>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="log-password" placeholder="••••••••">
+            </div>
+
+            <button onclick="doLogin()" class="gold-btn" style="margin-top: 10px;">Access My VIP Account</button>
         </div>
     </div>
 
