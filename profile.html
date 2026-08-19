@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match App | My VIP Profile</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="luxury-bg"></div>
+
+    <div class="container" style="max-width: 600px;">
+        <header class="app-header">
+            <a href="index.html" class="logo">
+                <img src="logo.jpg" alt="Match App Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';">
+                <span id="logo-text" style="display:none;">Match<span>App</span></span>
+            </a>
+            
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <div class="translate-wrapper" id="google_translate_element"></div>
+                <button onclick="window.location.href='index.html'" class="secondary-btn" style="padding: 6px 12px; font-size: 12px;">← Dashboard</button>
+            </div>
+        </header>
+
+        <div class="premium-card fade-in">
+            <h2 style="color: var(--gold); margin-top: 0; font-size: 26px;">👤 My VIP Profile</h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 25px;">Update your personal algorithm settings. This data heavily boosts your match precision.</p>
+            
+            <div class="input-group">
+                <label>Account Email (Cannot be changed)</label>
+                <input type="email" id="prof-email" disabled style="background: rgba(255,255,255,0.05); color: #888;">
+            </div>
+
+            <div class="input-grid">
+                <div class="input-group">
+                    <label>First Name</label>
+                    <input type="text" id="prof-name">
+                </div>
+                <div class="input-group">
+                    <label>Age</label>
+                    <input type="number" id="prof-age">
+                </div>
+            </div>
+
+            <div class="input-grid" style="margin-top: 10px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <div class="input-group">
+                    <label>Your Star Sign (Zodiac)</label>
+                    <select id="prof-zodiac">
+                        <option value="">-- Select Sign --</option>
+                        <option value="Aries">♈ Aries</option>
+                        <option value="Taurus">♉ Taurus</option>
+                        <option value="Gemini">♊ Gemini</option>
+                        <option value="Cancer">♋ Cancer</option>
+                        <option value="Leo">♌ Leo</option>
+                        <option value="Virgo">♍ Virgo</option>
+                        <option value="Libra">♎ Libra</option>
+                        <option value="Scorpio">♏ Scorpio</option>
+                        <option value="Sagittarius">♐ Sagittarius</option>
+                        <option value="Capricorn">♑ Capricorn</option>
+                        <option value="Aquarius">♒ Aquarius</option>
+                        <option value="Pisces">♓ Pisces</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Household Size</label>
+                    <select id="prof-household">
+                        <option value="1">1 (Living Alone)</option>
+                        <option value="2">2 (Partner / Roommate)</option>
+                        <option value="3">3 (Small Family)</option>
+                        <option value="4">4+ (Large Family)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-group" style="margin-top: 10px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <label>Change Password (Leave blank to keep current)</label>
+                <input type="password" id="prof-password" placeholder="New password (min 6 chars)">
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 25px;">
+                <button onclick="saveProfile()" class="gold-btn" style="flex: 2;">💾 Save Profile Settings</button>
+                <button onclick="doLogout()" class="secondary-btn" style="flex: 1; border-color: #ff5252; color: #ff8787;">Log Out</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'en,zh-CN,hi,es,fr,ar,bn,ru,pt,ur,id', layout: google.translate.TranslateElement.InlineLayout.SIMPLE }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script src="profile.js"></script>
+</body>
+</html>
