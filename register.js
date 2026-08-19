@@ -1,4 +1,4 @@
-console.log("Mastercode: Auth Controller Initialized");
+console.log("Mastercode 12.0: Auth Controller Initialized");
 
 let supabaseClient = null;
 try {
@@ -31,12 +31,26 @@ window.switchTab = function(target) {
     }
 };
 
+window.loginWithProvider = async function(providerName) {
+    if (!supabaseClient) return alert("❌ Database is offline. Check ad-blocker.");
+    try {
+        const { error } = await supabaseClient.auth.signInWithOAuth({
+            provider: providerName,
+            options: { redirectTo: window.location.origin + '/index.html' }
+        });
+        if (error) throw error;
+    } catch (err) {
+        alert(`❌ ${providerName} Login Failed: ` + err.message);
+    }
+};
+
 window.doRegister = async function() {
     const name = document.getElementById('reg-name').value.trim();
     const age = parseInt(document.getElementById('reg-age').value) || 0;
     const country = document.getElementById('reg-country').value.trim();
     const email = document.getElementById('reg-email').value.trim();
     const password = document.getElementById('reg-password').value;
+    const snack = document.getElementById('reg-snack').value;
     const viewing = document.getElementById('reg-viewing').value;
 
     if (!name || !email || !password || !country) return alert("⚠️ Please fill in all required fields (*).");
@@ -47,7 +61,7 @@ window.doRegister = async function() {
     try {
         const { error } = await supabaseClient.auth.signUp({
             email, password,
-            options: { data: { first_name: name, age: age, country: country, viewing_style: viewing } }
+            options: { data: { first_name: name, age: age, country: country, snack_preference: snack, viewing_style: viewing } }
         });
         if (error) throw error;
         alert("🎉 VIP Profile registered successfully! You can now log in.");
