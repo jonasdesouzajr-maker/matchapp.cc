@@ -27,7 +27,12 @@
                 <img src="logo.jpg" alt="Match App Logo" class="brand-logo">
             </div>
             <div id="header-auth-area" style="display: flex; gap: 10px; align-items: center;">
-                <button id="nav-reg-btn" onclick="window.location.href='register.html'" style="background: #D4AF37; color: #000; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer;">Log In / Register</button>
+                <!-- VIP GREETING & LOG OUT BUTTON (Hidden until logged in) -->
+                <div id="user-greeting" style="display: none; color: var(--gold); font-size: 12px; font-weight: bold;"></div>
+                <button id="nav-logout-btn" onclick="doLogout()" style="display: none; background: transparent; color: var(--text-muted); border: 1px solid #444; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">Log Out</button>
+                
+                <!-- DEFAULT LOGIN BUTTON -->
+                <button id="nav-reg-btn" onclick="window.location.href='register.html'" style="background: #D4AF37; color: #000; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">Log In / Register</button>
             </div>
         </header>
 
