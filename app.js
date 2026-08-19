@@ -1,4 +1,4 @@
-console.log("Mastercode 12.0: Advanced Algorithmic Engine Initialized");
+console.log("Mastercode 13.1: Advanced Algorithmic Engine Initialized");
 
 let globalMatchTitle = "Match App";
 let globalSearchQuery = "";
@@ -11,23 +11,36 @@ try {
     }
 } catch (e) { console.warn("Supabase init warning."); }
 
+// SESSION CHECK & UI TOGGLE
 window.addEventListener('DOMContentLoaded', async () => {
     if (supabaseClient) {
         const { data: { session } } = await supabaseClient.auth.getSession();
         if (session) {
             isUserLoggedIn = true;
+            
+            // Hide Register/Login & Freemium Banner
             document.getElementById('nav-reg-btn').style.display = 'none';
-            document.getElementById('freemium-banner').style.display = 'none';
-            const authArea = document.getElementById('header-auth-area');
-            const welcomeTag = document.createElement('div');
-            welcomeTag.style.color = '#D4AF37';
-            welcomeTag.style.fontSize = '12px';
-            welcomeTag.style.fontWeight = 'bold';
-            welcomeTag.innerText = `⭐ VIP: ${session.user.user_metadata?.first_name || 'Member'}`;
-            authArea.appendChild(welcomeTag);
+            if(document.getElementById('freemium-banner')) document.getElementById('freemium-banner').style.display = 'none';
+            
+            // Show VIP Greeting & Logout Button
+            const greeting = document.getElementById('user-greeting');
+            if (greeting) {
+                greeting.innerText = `⭐ VIP: ${session.user.user_metadata?.first_name || 'Member'}`;
+                greeting.style.display = 'block';
+            }
+            const logoutBtn = document.getElementById('nav-logout-btn');
+            if (logoutBtn) logoutBtn.style.display = 'block';
         }
     }
 });
+
+// LOGOUT FUNCTION
+window.doLogout = async function() {
+    if (supabaseClient) {
+        await supabaseClient.auth.signOut();
+        window.location.reload(); // Refresh the page to reset the state
+    }
+};
 
 // MASSIVE EXPANDED CATALOG WITH METRICS FOR SCORING
 const masterCatalog = [
