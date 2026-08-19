@@ -1,9 +1,10 @@
-console.log("Mastercode 13.1: Advanced Algorithmic Engine Initialized");
+console.log("Mastercode 14.0: Deep Profile Algorithmic Engine");
 
 let globalMatchTitle = "Match App";
 let globalSearchQuery = "";
 let supabaseClient = null;
 let isUserLoggedIn = false;
+let userProfileData = {};
 
 try {
     if (window.supabase) {
@@ -11,60 +12,35 @@ try {
     }
 } catch (e) { console.warn("Supabase init warning."); }
 
-// SESSION CHECK & UI TOGGLE
 window.addEventListener('DOMContentLoaded', async () => {
     if (supabaseClient) {
         const { data: { session } } = await supabaseClient.auth.getSession();
         if (session) {
             isUserLoggedIn = true;
+            userProfileData = session.user.user_metadata || {};
             
-            // Hide Register/Login & Freemium Banner
             document.getElementById('nav-reg-btn').style.display = 'none';
+            document.getElementById('nav-profile-btn').style.display = 'block';
             if(document.getElementById('freemium-banner')) document.getElementById('freemium-banner').style.display = 'none';
-            
-            // Show VIP Greeting & Logout Button
-            const greeting = document.getElementById('user-greeting');
-            if (greeting) {
-                greeting.innerText = `⭐ VIP: ${session.user.user_metadata?.first_name || 'Member'}`;
-                greeting.style.display = 'block';
-            }
-            const logoutBtn = document.getElementById('nav-logout-btn');
-            if (logoutBtn) logoutBtn.style.display = 'block';
         }
     }
 });
 
-// LOGOUT FUNCTION
-window.doLogout = async function() {
-    if (supabaseClient) {
-        await supabaseClient.auth.signOut();
-        window.location.reload(); // Refresh the page to reset the state
-    }
-};
-
-// MASSIVE EXPANDED CATALOG WITH METRICS FOR SCORING
 const masterCatalog = [
-    { title: "Parasite", category: "movie", mood: "intense", era: "modern", tone: "dark", pacing: "standard", idealCompany: ["solo", "partner", "friends"], streaming: "Max", poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80", desc: "A masterpiece exploring class discrimination with dark humor." },
-    { title: "The Matrix", category: "movie", mood: "mindbending", era: "classic", tone: "dark", pacing: "standard", idealCompany: ["solo", "partner", "friends"], streaming: "Max / Prime Video", poster: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80", desc: "A hacker discovers the shocking truth about his reality." },
-    { title: "Superbad", category: "movie", mood: "laugh", era: "classic", tone: "light", pacing: "standard", idealCompany: ["friends", "partner"], streaming: "Netflix", poster: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=800&q=80", desc: "Two co-dependent high school seniors deal with separation anxiety." },
-    { title: "Breaking Bad", category: "series", mood: "intense", era: "classic", tone: "dark", pacing: "epic", idealCompany: ["solo", "partner"], streaming: "Netflix", poster: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80", desc: "A chemistry teacher turns to manufacturing methamphetamine." },
-    { title: "The Office (US)", category: "series", mood: "laugh", era: "modern", tone: "light", pacing: "fast", idealCompany: ["solo", "partner", "family", "friends"], streaming: "Peacock / Netflix", poster: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=800&q=80", desc: "A mockumentary on a group of typical office workers." },
-    { title: "Avenida Brasil", category: "telenovela", mood: "intense", era: "classic", tone: "dramatic", pacing: "epic", idealCompany: ["solo", "partner", "family"], streaming: "Globoplay", poster: "https://images.unsplash.com/photo-1514306191717-452ec28c7814?auto=format&fit=crop&w=800&q=80", desc: "A gripping story of revenge and intense drama set in Rio de Janeiro." },
-    
-    // YOUTUBE MEDIA
-    { title: "Kurzgesagt: Optimistic Nihilism", category: "youtube", mood: "mindbending", era: "modern", tone: "surreal", pacing: "fast", idealCompany: ["solo", "friends"], streaming: "YouTube", poster: "", desc: "A beautiful, animated exploration of existence and finding meaning.", embed: "https://www.youtube.com/embed/MBRqu0YOH14" },
-    { title: "Hot Ones", category: "youtube", mood: "laugh", era: "modern", tone: "light", pacing: "fast", idealCompany: ["solo", "friends", "partner"], streaming: "YouTube", poster: "", desc: "Celebrities answering hot questions while eating even hotter wings.", embed: "https://www.youtube.com/embed/nJS04R80oWE" },
-    { title: "Lofi Girl Radio", category: "youtube", mood: "relax", era: "any", tone: "light", pacing: "epic", idealCompany: ["solo", "partner"], streaming: "YouTube Live", poster: "", desc: "Endless beats to relax, study, or chill to.", embed: "https://www.youtube.com/embed/jfKfPfyJRdk" },
-
-    // SPOTIFY MEDIA
-    { title: "Late Night Cinematic", category: "spotify", mood: "relax", era: "modern", tone: "surreal", pacing: "epic", idealCompany: ["solo", "partner"], streaming: "Spotify", poster: "", desc: "Ambient soundscapes to wind down your evening.", embed: "https://open.spotify.com/embed/playlist/37i9dQZF1DX3Ogo9pFvBkY" },
-    { title: "Epic Movie Soundtracks", category: "spotify", mood: "mindbending", era: "any", tone: "dramatic", pacing: "epic", idealCompany: ["solo", "friends", "partner"], streaming: "Spotify", poster: "", desc: "The greatest orchestral scores from blockbuster films.", embed: "https://open.spotify.com/embed/playlist/37i9dQZF1DXdLEN7aqioXM" }
+    { title: "Parasite", category: "movie", mood: "intense", era: "modern", tone: "dark", pacing: "standard", idealCompany: ["solo", "partner", "friends"], zodiacAffinity: ["water", "earth"], streaming: "Max", poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80", desc: "A masterpiece exploring class discrimination with dark humor." },
+    { title: "The Matrix", category: "movie", mood: "mindbending", era: "classic", tone: "dark", pacing: "standard", idealCompany: ["solo", "partner", "friends"], zodiacAffinity: ["air", "fire"], streaming: "Max / Prime Video", poster: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80", desc: "A hacker discovers the shocking truth about his reality." },
+    { title: "Superbad", category: "movie", mood: "laugh", era: "classic", tone: "light", pacing: "standard", idealCompany: ["friends", "partner"], zodiacAffinity: ["fire", "air"], streaming: "Netflix", poster: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=800&q=80", desc: "Two co-dependent high school seniors deal with separation anxiety." },
+    { title: "Breaking Bad", category: "series", mood: "intense", era: "classic", tone: "dark", pacing: "epic", idealCompany: ["solo", "partner"], zodiacAffinity: ["earth", "fire"], streaming: "Netflix", poster: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80", desc: "A chemistry teacher turns to manufacturing methamphetamine." },
+    { title: "The Office (US)", category: "series", mood: "laugh", era: "modern", tone: "light", pacing: "fast", idealCompany: ["solo", "partner", "family", "friends"], zodiacAffinity: ["earth", "water"], streaming: "Peacock / Netflix", poster: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=800&q=80", desc: "A mockumentary on a group of typical office workers." },
+    { title: "Avenida Brasil", category: "telenovela", mood: "intense", era: "classic", tone: "dramatic", pacing: "epic", idealCompany: ["solo", "partner", "family"], zodiacAffinity: ["water", "fire"], streaming: "Globoplay", poster: "https://images.unsplash.com/photo-1514306191717-452ec28c7814?auto=format&fit=crop&w=800&q=80", desc: "A gripping story of revenge and intense drama set in Rio de Janeiro." },
+    { title: "Kurzgesagt: Optimistic Nihilism", category: "youtube", mood: "mindbending", era: "modern", tone: "surreal", pacing: "fast", idealCompany: ["solo", "friends"], zodiacAffinity: ["air", "earth"], streaming: "YouTube", poster: "", desc: "A beautiful, animated exploration of existence and finding meaning.", embed: "https://www.youtube.com/embed/MBRqu0YOH14" },
+    { title: "Hot Ones", category: "youtube", mood: "laugh", era: "modern", tone: "light", pacing: "fast", idealCompany: ["solo", "friends", "partner"], zodiacAffinity: ["fire", "air"], streaming: "YouTube", poster: "", desc: "Celebrities answering hot questions while eating even hotter wings.", embed: "https://www.youtube.com/embed/nJS04R80oWE" },
+    { title: "Lofi Girl Radio", category: "youtube", mood: "relax", era: "any", tone: "light", pacing: "epic", idealCompany: ["solo", "partner"], zodiacAffinity: ["earth", "water"], streaming: "YouTube Live", poster: "", desc: "Endless beats to relax, study, or chill to.", embed: "https://www.youtube.com/embed/jfKfPfyJRdk" },
+    { title: "Late Night Cinematic", category: "spotify", mood: "relax", era: "modern", tone: "surreal", pacing: "epic", idealCompany: ["solo", "partner"], zodiacAffinity: ["water", "air"], streaming: "Spotify", poster: "", desc: "Ambient soundscapes to wind down your evening.", embed: "https://open.spotify.com/embed/playlist/37i9dQZF1DX3Ogo9pFvBkY" },
+    { title: "Epic Movie Soundtracks", category: "spotify", mood: "mindbending", era: "any", tone: "dramatic", pacing: "epic", idealCompany: ["solo", "friends", "partner"], zodiacAffinity: ["fire", "water"], streaming: "Spotify", poster: "", desc: "The greatest orchestral scores from blockbuster films.", embed: "https://open.spotify.com/embed/playlist/37i9dQZF1DXdLEN7aqioXM" }
 ];
 
 window.triggerMatch = function() {
-    const ageInput = document.getElementById('q-age').value;
-    if (!ageInput || parseInt(ageInput) < 16) return alert("⚠️ You must be at least 16 years old.");
-
     if (!isUserLoggedIn && localStorage.getItem('hasUsedFreeMatch') === 'true') {
         document.getElementById('questionnaire-box').style.display = 'none';
         if(document.getElementById('freemium-banner')) document.getElementById('freemium-banner').style.display = 'none';
@@ -79,6 +55,16 @@ window.triggerMatch = function() {
     const pacing = document.getElementById('q-pacing').value;
     const company = document.getElementById('q-company').value;
 
+    // Map User Star Sign to Element for Deep Algorithm Bonus
+    let userElement = null;
+    if (userProfileData.star_sign) {
+        const sign = userProfileData.star_sign.toLowerCase();
+        if (["aries", "leo", "sagittarius"].includes(sign)) userElement = "fire";
+        if (["cancer", "scorpio", "pisces"].includes(sign)) userElement = "water";
+        if (["gemini", "libra", "aquarius"].includes(sign)) userElement = "air";
+        if (["taurus", "virgo", "capricorn"].includes(sign)) userElement = "earth";
+    }
+
     // SCORING ALGORITHM
     let pool = category !== 'any' ? masterCatalog.filter(i => i.category === category) : masterCatalog;
     
@@ -88,23 +74,24 @@ window.triggerMatch = function() {
         if (era === 'any' || item.era === era) score += 3;
         if (item.tone === tone) score += 3;
         if (item.pacing === pacing) score += 2;
-        if (item.idealCompany && item.idealCompany.includes(company)) score += 2;
+        
+        // Deep Profile Factors
+        if (item.idealCompany && item.idealCompany.includes(company)) score += 3;
+        if (userElement && item.zodiacAffinity && item.zodiacAffinity.includes(userElement)) score += 4; // Big Zodiac Bonus!
+
         return { item, score };
     });
 
     scoredMatches.sort((a, b) => b.score - a.score);
     let topScore = scoredMatches[0]?.score || 0;
     let matches = scoredMatches.filter(m => m.score === topScore).map(m => m.item);
-
     if (matches.length === 0) matches = pool;
 
     const selected = matches[Math.floor(Math.random() * matches.length)];
     globalMatchTitle = selected.title; 
-    
-    // Create the live search query string
     globalSearchQuery = `Where to watch ${selected.title} ${selected.category} online stream`;
 
-    // DRAMATIC LOADING SEQUENCE
+    // DRAMATIC LOADING
     document.getElementById('questionnaire-box').style.display = 'none';
     if(document.getElementById('freemium-banner')) document.getElementById('freemium-banner').style.display = 'none';
     document.getElementById('loading-box').style.display = 'block';
@@ -115,7 +102,13 @@ window.triggerMatch = function() {
     let width = 0;
 
     setTimeout(() => { text.innerText = "Querying Google Search Indices..."; subtext.innerText = "Scraping global streaming availability..."; }, 1000);
-    setTimeout(() => { text.innerText = "Cross-referencing databases..."; subtext.innerText = "Matching mood, tone, and pacing metrics..."; }, 2500);
+    
+    if (isUserLoggedIn && userElement) {
+        setTimeout(() => { text.innerText = "Applying Zodiac Profile Data..."; subtext.innerText = `Enhancing matrix for ${userProfileData.star_sign} affinities...`; }, 2500);
+    } else {
+        setTimeout(() => { text.innerText = "Cross-referencing databases..."; subtext.innerText = "Matching mood, tone, and pacing metrics..."; }, 2500);
+    }
+    
     setTimeout(() => { text.innerText = "Extracting perfect match..."; subtext.innerText = "Finalizing results..."; }, 4000);
 
     let interval = setInterval(() => {
