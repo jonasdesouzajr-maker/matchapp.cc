@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- GOOGLE OWNERSHIP VERIFICATION (Paste your code here if needed) -->
+    <meta name="google-site-verification" content="YOUR_COPIED_CODE_HERE" />
     <title>Match App | VIP Streaming Concierge</title>
     <link rel="stylesheet" href="style.css">
     
-    <!-- Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -14,18 +15,6 @@
       gtag('js', new Date());
       gtag('config', 'G-2ECND229RR');
     </script>
-
-    <!-- Language Auto-Detect -->
-    <script>
-        (function autoSetLanguage() {
-            if (!document.cookie.includes('googtrans')) {
-                let userLang = (navigator.language || navigator.userLanguage).split('-')[0];
-                const supported = ['en','zh-CN','hi','es','fr','ar','bn','ru','pt','ur','id'];
-                if(supported.includes(userLang) && userLang !== 'en'){ document.cookie = `googtrans=/en/${userLang}; path=/`; }
-            }
-        })();
-    </script>
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
 </head>
@@ -35,39 +24,30 @@
     <div class="container">
         
         <header class="app-header">
-            <!-- IMAGE LOGO -->
-            <div class="logo" id="dev-reset-btn" title="Click to reset test limit">
+            <div class="logo" onclick="window.location.href='index.html'">
                 <img src="logo.jpg" alt="Match App Logo" class="brand-logo">
             </div>
             <div id="header-auth-area" style="display: flex; gap: 10px; align-items: center;">
-                <div class="translate-wrapper" id="google_translate_element"></div>
-                <button id="nav-reg-btn" onclick="window.location.href='register.html'" style="background: #D4AF37; color: #000; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer;">Register VIP</button>
+                <button id="nav-reg-btn" onclick="window.location.href='register.html'" style="background: #D4AF37; color: #000; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer;">Log In / Register</button>
             </div>
         </header>
 
-        <!-- GOOGLE OAUTH PURPOSE SECTION -->
+        <!-- GOOGLE OAUTH COMPLIANCE -->
         <div class="premium-card fade-in" style="text-align: center; padding: 20px; border-color: rgba(212, 175, 55, 0.6);">
             <h1 style="color: var(--gold); font-size: 18px; margin-top: 0; margin-bottom: 10px;">Welcome to Match App</h1>
             <p style="color: var(--text-main); font-size: 13px; line-height: 1.6; margin: 0;">
-                <strong>App Purpose:</strong> Match App is your personalized streaming concierge. Our platform is designed to eliminate endless scrolling by using a custom algorithm to instantly curate and recommend the perfect movie, TV series, telenovela, or Spotify playlist tailored exactly to your current mood, formatting preferences, and preferred era.
+                <strong>App Purpose:</strong> Match App is your personalized streaming concierge. Our platform uses a precision algorithm to curate the perfect movie, series, telenovela, YouTube video, or Spotify playlist based exactly on your mood and preferences.
             </p>
-        </div>
-
-        <div class="ad-spacing" style="margin-top: 0; margin-bottom: 15px;">
-            <script>
-                atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };
-            </script>
-            <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
         </div>
 
         <div id="freemium-banner" class="rule-banner fade-in">
             ✨ <strong>First Match is FREE!</strong> Register below to unlock unlimited concierge access.
         </div>
 
-        <!-- STAGE 1: QUESTIONNAIRE -->
+        <!-- STAGE 1: EXPANDED QUESTIONNAIRE -->
         <div id="questionnaire-box" class="premium-card fade-in">
-            <h2 style="margin: 0 0 5px 0; font-size: 24px;">Precision Algorithm</h2>
-            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Answer to discover your tailored entertainment match.</p>
+            <h2 style="margin: 0 0 5px 0; font-size: 24px;">Find Your Perfect Vibe</h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Complete this profile so our engine can scan the web for your match.</p>
 
             <div class="input-grid">
                 <div class="input-group">
@@ -78,10 +58,11 @@
                     <label>Format</label>
                     <select id="q-category">
                         <option value="any">Surprise Me</option>
-                        <option value="movie">Movies</option>
-                        <option value="series">Series</option>
+                        <option value="movie">Movies & Films</option>
+                        <option value="series">TV Series</option>
                         <option value="telenovela">Telenovelas</option>
-                        <option value="spotify">Spotify Playlist</option>
+                        <option value="youtube">YouTube Videos</option>
+                        <option value="spotify">Spotify Playlist / Music</option>
                     </select>
                 </div>
             </div>
@@ -89,17 +70,17 @@
             <div class="input-group">
                 <label>Energy / Mood</label>
                 <select id="q-mood">
-                    <option value="relax">Relaxed & Chill</option>
-                    <option value="intense">Intense & Gripping</option>
-                    <option value="laugh">Funny & Upbeat</option>
-                    <option value="romantic">Romantic & Emotional</option>
-                    <option value="mindbending">Mind-Bending & Epic</option>
+                    <option value="relax">Relaxed, Chill, Cozy</option>
+                    <option value="intense">Intense, Thrilling, Gripping</option>
+                    <option value="laugh">Funny, Upbeat, Joyful</option>
+                    <option value="romantic">Romantic, Emotional, Touching</option>
+                    <option value="mindbending">Mind-Bending, Educational, Epic</option>
                 </select>
             </div>
 
             <div class="input-grid">
                 <div class="input-group">
-                    <label>Era</label>
+                    <label>Era / Vibe</label>
                     <select id="q-era">
                         <option value="any">Any Era</option>
                         <option value="modern">Modern (2015+)</option>
@@ -111,9 +92,29 @@
                     <label>Tone</label>
                     <select id="q-tone">
                         <option value="dark">Dark & Gritty</option>
-                        <option value="light">Lighthearted</option>
+                        <option value="light">Lighthearted & Fun</option>
                         <option value="surreal">Surreal & Thoughtful</option>
                         <option value="dramatic">Passionate Drama</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-grid">
+                <div class="input-group">
+                    <label>Company</label>
+                    <select id="q-company">
+                        <option value="solo">Watching Solo</option>
+                        <option value="partner">With a Partner</option>
+                        <option value="friends">With Friends</option>
+                        <option value="family">With Family</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Commitment</label>
+                    <select id="q-pacing">
+                        <option value="fast">Quick Bite (<30m)</option>
+                        <option value="standard">Standard (1-2 Hrs)</option>
+                        <option value="epic">Marathon / Epic</option>
                     </select>
                 </div>
             </div>
@@ -121,24 +122,17 @@
             <button onclick="triggerMatch()" class="gold-btn">⚡ Curate My Match</button>
         </div>
 
-        <!-- STAGE 2: LOADING -->
-        <div id="loading-box" class="premium-card fade-in" style="display: none; text-align: center; padding: 40px 20px;">
-            <div class="loading-icon">🍿</div>
-            <h3 id="loading-text" style="color: var(--gold-glow); margin-bottom: 20px;">Scanning global catalogs...</h3>
+        <!-- STAGE 2: DRAMATIC LOADING -->
+        <div id="loading-box" class="premium-card fade-in" style="display: none; text-align: center; padding: 50px 20px;">
+            <div class="loading-icon">🌐</div>
+            <h3 id="loading-text" style="color: var(--gold-glow); margin-bottom: 10px; font-size: 18px;">Initializing Concierge...</h3>
+            <p id="loading-subtext" style="color: var(--text-muted); font-size: 12px;">Connecting to global servers</p>
             <div class="progress-bar-container">
                 <div id="progress-bar" class="progress-bar-fill"></div>
             </div>
         </div>
 
-        <!-- STAGE 3: BLOCKED -->
-        <div id="blocked-box" class="premium-card fade-in" style="display: none; text-align: center; border-color: #ff5252;">
-            <div style="font-size: 40px; margin-bottom: 10px;">🔒</div>
-            <h2 style="color: #ff8787; margin: 0 0 10px 0;">Free Limit Reached</h2>
-            <p style="color: #fff; font-size: 14px; margin-bottom: 20px;">You have successfully used your free trial match! Register your VIP account to unlock unlimited daily searches.</p>
-            <button onclick="window.location.href='register.html'" class="gold-btn">⭐ Register VIP Account Now</button>
-        </div>
-
-        <!-- STAGE 4: RESULT -->
+        <!-- STAGE 3: RESULT -->
         <div id="result-box" class="premium-card fade-in" style="display: none; border-color: var(--gold);">
             <div style="color: var(--gold); font-size: 11px; font-weight: bold; text-transform: uppercase;">✨ Curated Match Found</div>
             <h2 id="res-title" style="margin: 5px 0 15px 0; font-size: 26px;">Title</h2>
@@ -147,8 +141,8 @@
                 <img id="res-poster" src="" style="width: 100%; height: 240px; object-fit: cover; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.5);">
             </div>
 
-            <div id="spotify-container" style="display: none; margin-bottom: 15px;">
-                <iframe id="spotify-iframe" src="" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" style="border-radius:12px;"></iframe>
+            <div id="media-container" style="display: none; margin-bottom: 15px;">
+                <iframe id="media-iframe" src="" width="100%" height="200" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" style="border-radius:12px;"></iframe>
             </div>
             
             <p id="res-desc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6; margin-bottom: 15px;"></p>
@@ -157,6 +151,11 @@
                 <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: bold;">Platform / Source:</div>
                 <div id="res-platform" style="color: #fff; font-weight: 800; font-size: 18px; margin-top: 5px;">Netflix</div>
             </div>
+
+            <!-- LIVE GOOGLE SEARCH BUTTON -->
+            <button onclick="openLiveGoogleSearch()" class="secondary-btn" style="width: 100%; margin-bottom: 20px; border-color: var(--gold); color: var(--gold);">
+                🔍 Search Live on Google for Links
+            </button>
 
             <!-- SOCIAL SHARES -->
             <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
@@ -169,22 +168,23 @@
                 </div>
             </div>
 
-            <button onclick="handleSearchAgain()" class="secondary-btn" style="width: 100%;">🔄 Find Another Match</button>
-
+            <button onclick="location.reload()" class="secondary-btn" style="width: 100%;">🔄 Find Another Match</button>
+            
             <!-- RESULT ADSENSE -->
             <div class="ad-spacing">
                 <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="3127478321" data-ad-format="auto" data-full-width-responsive="true"></ins>
                 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </div>
         </div>
+
+        <div id="blocked-box" class="premium-card fade-in" style="display: none; text-align: center; border-color: #ff5252;">
+            <div style="font-size: 40px; margin-bottom: 10px;">🔒</div>
+            <h2 style="color: #ff8787; margin: 0 0 10px 0;">Free Limit Reached</h2>
+            <p style="color: #fff; font-size: 14px; margin-bottom: 20px;">You have successfully used your free trial match! Register your VIP account to unlock unlimited daily searches and save your favorites.</p>
+            <button onclick="window.location.href='register.html'" class="gold-btn">⭐ Register VIP Account Now</button>
+        </div>
+
     </div>
-    
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'en,zh-CN,hi,es,fr,ar,bn,ru,pt,ur,id', layout: google.translate.TranslateElement.InlineLayout.SIMPLE }, 'google_translate_element');
-        }
-    </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <script src="app.js"></script>
 </body>
 </html>
