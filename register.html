@@ -12,7 +12,6 @@
 
     <div class="container" style="max-width: 500px;">
         <header class="app-header">
-            <!-- INJECTED CUSTOM IMAGE LOGO HERE -->
             <div class="logo" onclick="window.location.href='index.html'">
                 <img src="logo.jpg" alt="Match App Logo" class="brand-logo">
             </div>
@@ -27,6 +26,17 @@
         <!-- REGISTRATION SECTION -->
         <div id="sec-reg" class="premium-card fade-in">
             <h2 style="color: var(--gold); margin-top: 0;">Create VIP Profile</h2>
+            
+            <div class="social-login-grid">
+                <button onclick="loginWithProvider('google')" class="btn-google">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="18" alt="G"> Sign up with Google
+                </button>
+                <button onclick="loginWithProvider('facebook')" class="btn-facebook">
+                    <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" width="18" alt="F"> Facebook
+                </button>
+            </div>
+            
+            <div class="divider">OR SIGN UP WITH EMAIL</div>
             
             <div class="input-group">
                 <label>Full Name *</label>
@@ -54,13 +64,18 @@
                 <input type="password" id="reg-password" placeholder="••••••••" required>
             </div>
 
-            <div class="input-group">
-                <label>Viewing Style</label>
-                <select id="reg-viewing">
-                    <option value="binge">Binge Watcher</option>
-                    <option value="casual">Casual Viewer</option>
-                    <option value="weekend">Weekend Enthusiast</option>
-                </select>
+            <div class="input-grid">
+                <div class="input-group">
+                    <label>Favorite Snack</label>
+                    <input type="text" id="reg-snack" placeholder="e.g. Popcorn">
+                </div>
+                <div class="input-group">
+                    <label>Viewing Style</label>
+                    <select id="reg-viewing">
+                        <option value="binge">Binge Watcher</option>
+                        <option value="casual">Casual Viewer</option>
+                    </select>
+                </div>
             </div>
 
             <button onclick="doRegister()" class="gold-btn" style="margin-top: 10px;">Complete VIP Registration</button>
@@ -69,6 +84,17 @@
         <!-- LOGIN SECTION -->
         <div id="sec-log" class="premium-card fade-in" style="display: none;">
             <h2 style="color: var(--gold); margin-top: 0;">Existing VIP Login</h2>
+            
+            <div class="social-login-grid">
+                <button onclick="loginWithProvider('google')" class="btn-google">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="18" alt="G"> Log in with Google
+                </button>
+                <button onclick="loginWithProvider('facebook')" class="btn-facebook">
+                    <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" width="18" alt="F"> Facebook
+                </button>
+            </div>
+
+            <div class="divider">OR USE EMAIL</div>
             
             <div class="input-group">
                 <label>Email Address</label>
