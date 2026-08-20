@@ -1,89 +1,85 @@
-console.log("Mastercode 12.0: Auth Controller Initialized");
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match App | Register VIP</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="luxury-bg"><div class="floating-orb orb-1"></div></div>
 
-let supabaseClient = null;
-try {
-    if (window.supabase) {
-        supabaseClient = window.supabase.createClient('https://zkymvqrmbabngsqblyye.supabase.co', 'sb_publishable_j3kQUhd_9JHfWdfiV3iWog_RpEltrOU');
-    }
-} catch (e) { console.warn("Supabase init error"); }
+    <div class="container" style="max-width: 500px;">
+        
+        <!-- THE UNIVERSAL APP HEADER -->
+        <header class="app-header">
+            <a href="index.html" class="logo" style="text-decoration: none;">
+                <picture>
+                    <source srcset="logo.png" type="image/png"><source srcset="logo.jpg" type="image/jpeg"><source srcset="Logo.jpg" type="image/jpeg">
+                    <img src="logo.jpeg" alt="Match App Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';">
+                </picture>
+                <span id="logo-text" style="display:none; font-size: 24px; font-weight: 900; color: #fff;">Match<span style="color: var(--gold);">App</span></span>
+            </a>
+            
+            <div id="header-auth-area" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
+                <div class="translate-wrapper" id="google_translate_element"></div>
+                
+                <!-- Navigation -->
+                <button id="nav-reg-btn" onclick="window.location.href='index.html'" class="secondary-btn" style="padding: 6px 12px; width: auto; font-size: 12px;">← Dashboard</button>
+                
+                <!-- Logged In Buttons (Hidden by default, shown if user state changes) -->
+                <button id="nav-profile-btn" onclick="window.location.href='profile.html'" style="display: none; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid var(--gold); padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">👤 My Profile</button>
+                <button id="nav-upgrade-btn" onclick="window.location.href='pricing.html'" style="display: none; background: linear-gradient(135deg, #BF953F, #FCF6BA); color: #000; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">💎 Upgrade</button>
+                <button id="nav-logout-btn" onclick="doLogout()" style="display: none; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">Log Out</button>
+            </div>
+        </header>
 
-window.switchTab = function(target) {
-    const sReg = document.getElementById('sec-reg');
-    const sLog = document.getElementById('sec-log');
-    const bReg = document.getElementById('tab-reg');
-    const bLog = document.getElementById('tab-log');
+        <div class="premium-card fade-in" style="text-align: center;">
+            <h2 style="color: var(--gold); margin-top: 0; font-size: 28px;">VIP Access</h2>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px;">Create your account to save your portfolio, unlock Zodiac precision, and get unlimited daily matches.</p>
 
-    if (target === 'reg') {
-        sReg.style.display = 'block';
-        sLog.style.display = 'none';
-        bReg.className = 'gold-btn';
-        bLog.className = 'secondary-btn';
-        bLog.style.background = 'rgba(20,20,35,0.8)';
-        bLog.style.border = 'none';
-    } else {
-        sReg.style.display = 'none';
-        sLog.style.display = 'block';
-        bLog.className = 'gold-btn';
-        bLog.style.border = 'none';
-        bReg.className = 'secondary-btn';
-        bReg.style.background = 'rgba(20,20,35,0.8)';
-        bReg.style.border = 'none';
-    }
-};
+            <!-- Social Logins -->
+            <div class="social-login-grid">
+                <button onclick="loginWithGoogle()" class="btn-google">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" width="18"> Google
+                </button>
+            </div>
 
-window.loginWithProvider = async function(providerName) {
-    if (!supabaseClient) return alert("❌ Database is offline. Check ad-blocker.");
-    try {
-        const { error } = await supabaseClient.auth.signInWithOAuth({
-            provider: providerName,
-            options: { redirectTo: window.location.origin + '/index.html' }
-        });
-        if (error) throw error;
-    } catch (err) {
-        alert(`❌ ${providerName} Login Failed: ` + err.message);
-    }
-};
+            <div class="divider">OR USE EMAIL</div>
 
-window.doRegister = async function() {
-    const name = document.getElementById('reg-name').value.trim();
-    const age = parseInt(document.getElementById('reg-age').value) || 0;
-    const country = document.getElementById('reg-country').value.trim();
-    const email = document.getElementById('reg-email').value.trim();
-    const password = document.getElementById('reg-password').value;
-    const snack = document.getElementById('reg-snack').value;
-    const viewing = document.getElementById('reg-viewing').value;
+            <!-- Email Form -->
+            <div class="input-group">
+                <label>Email Address</label>
+                <input type="email" id="email-input" placeholder="you@example.com">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="password-input" placeholder="Min 6 characters">
+            </div>
 
-    if (!name || !email || !password || !country) return alert("⚠️ Please fill in all required fields (*).");
-    if (age < 16) return alert("⚠️ You must be at least 16 years old to register.");
-    if (password.length < 6) return alert("⚠️ Password must be at least 6 characters long.");
-    if (!supabaseClient) return alert("❌ Database is offline. Check your ad-blocker.");
+            <button onclick="signUpEmail()" class="gold-btn" style="margin-bottom: 10px;">Create VIP Account</button>
+            <button onclick="signInEmail()" class="secondary-btn" style="width: 100%;">Log In</button>
+            
+            <div id="auth-message" style="margin-top: 15px; font-size: 13px; font-weight: bold;"></div>
+        </div>
+    </div>
 
-    try {
-        const { error } = await supabaseClient.auth.signUp({
-            email, password,
-            options: { data: { first_name: name, age: age, country: country, snack_preference: snack, viewing_style: viewing } }
-        });
-        if (error) throw error;
-        alert("🎉 VIP Profile registered successfully! You can now log in.");
-        window.switchTab('log');
-    } catch (err) {
-        alert("❌ Registration Failed: " + err.message);
-    }
-};
-
-window.doLogin = async function() {
-    const email = document.getElementById('log-email').value.trim();
-    const password = document.getElementById('log-password').value;
-
-    if (!email || !password) return alert("⚠️ Please enter email and password.");
-    if (!supabaseClient) return alert("❌ Database is offline.");
-
-    try {
-        const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        alert("🎉 Logged in successfully! Redirecting...");
-        window.location.href = 'index.html';
-    } catch (err) {
-        alert("❌ Login Failed: " + err.message);
-    }
-};
+    <!-- TRANSLATION SCRIPT -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() { new google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'pt,en,zh-CN,hi,es,fr,ar,bn,ru,de', layout: google.translate.TranslateElement.InlineLayout.SIMPLE }, 'google_translate_element'); }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    
+    <script>
+        async function doLogout() {
+            if (window.supabase) {
+                const client = window.supabase.createClient('https://zkymvqrmbabngsqblyye.supabase.co', 'sb_publishable_j3kQUhd_9JHfWdfiV3iWog_RpEltrOU');
+                await client.auth.signOut();
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
+    <script src="auth.js"></script>
+</body>
+</html>
