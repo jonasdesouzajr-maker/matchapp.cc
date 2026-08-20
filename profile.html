@@ -5,54 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Match App | My VIP Profile</title>
     <link rel="stylesheet" href="style.css">
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <div class="luxury-bg"></div>
+    <div class="luxury-bg"><div class="floating-orb orb-1"></div></div>
 
     <div class="container" style="max-width: 600px;">
+        <!-- UNIVERSAL HEADER -->
         <header class="app-header">
-            <!-- 🛡️ THE ULTIMATE LOGO FIX -->
-            <a href="index.html" class="logo" style="display: flex; align-items: center; text-decoration: none;">
+            <a href="index.html" class="logo" style="text-decoration: none;">
                 <picture>
-                    <source srcset="logo.png" type="image/png">
-                    <source srcset="logo.jpg" type="image/jpeg">
-                    <source srcset="Logo.jpg" type="image/jpeg">
+                    <source srcset="logo.png" type="image/png"><source srcset="logo.jpg" type="image/jpeg"><source srcset="Logo.jpg" type="image/jpeg">
                     <img src="logo.jpeg" alt="Match App Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';">
                 </picture>
-                <span id="logo-text" style="display:none; font-size: 26px; font-weight: 900; color: #fff; letter-spacing: -1px;">Match<span style="color: var(--gold);">App</span></span>
+                <span id="logo-text" style="display:none; font-size: 24px; font-weight: 900; color: #fff;">Match<span style="color: var(--gold);">App</span></span>
             </a>
             
             <div style="display: flex; gap: 8px; align-items: center;">
-                <div class="translate-wrapper" id="google_translate_element"></div>
                 <button onclick="window.location.href='index.html'" class="secondary-btn" style="padding: 6px 12px; font-size: 12px;">← Dashboard</button>
+                <button onclick="doLogout()" style="background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">Log Out</button>
             </div>
         </header>
 
         <div class="premium-card fade-in">
-            <h2 style="color: var(--gold); margin-top: 0; font-size: 26px;">👤 My VIP Profile</h2>
-            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 25px;">Update your personal algorithm settings. This data heavily boosts your match precision.</p>
+            <h2 style="color: var(--gold); margin-top: 0; font-size: 26px;">👤 My VIP Profile & Preferences</h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 25px;">Update your default algorithm settings. Age and Star Sign are permanently locked once saved.</p>
             
-            <div class="input-group">
-                <label>Account Email (Cannot be changed)</label>
-                <input type="email" id="prof-email" disabled style="background: rgba(255,255,255,0.05); color: #888;">
-            </div>
-
-            <div class="input-grid">
+            <div class="input-grid" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 15px;">
                 <div class="input-group">
-                    <label>First Name</label>
-                    <input type="text" id="prof-name">
+                    <label>Age <span class="locked-badge">Permanent</span></label>
+                    <input type="number" id="prof-age" placeholder="e.g. 25">
                 </div>
                 <div class="input-group">
-                    <label>Age</label>
-                    <input type="number" id="prof-age">
-                </div>
-            </div>
-
-            <div class="input-grid" style="margin-top: 10px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
-                <div class="input-group">
-                    <label>Your Star Sign (Zodiac)</label>
+                    <label>Star Sign <span class="locked-badge">Permanent</span></label>
                     <select id="prof-zodiac">
                         <option value="">-- Select Sign --</option>
                         <option value="Aries">♈ Aries</option>
@@ -69,35 +54,20 @@
                         <option value="Pisces">♓ Pisces</option>
                     </select>
                 </div>
-                <div class="input-group">
-                    <label>Household Size</label>
-                    <select id="prof-household">
-                        <option value="1">1 (Living Alone)</option>
-                        <option value="2">2 (Partner / Roommate)</option>
-                        <option value="3">3 (Small Family)</option>
-                        <option value="4">4+ (Large Family)</option>
-                    </select>
-                </div>
             </div>
 
-            <div class="input-group" style="margin-top: 10px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
-                <label>Change Password (Leave blank to keep current)</label>
-                <input type="password" id="prof-password" placeholder="New password (min 6 chars)">
+            <!-- SEARCH PREFERENCES (CAN BE CHANGED) -->
+            <h3 style="color: #fff; font-size: 16px; text-align: left;">My Default Search Preferences</h3>
+            <div class="input-grid">
+                <div class="input-group"><label>Format</label><select id="pref-category"><option value="any">Surprise Me</option><option value="movie">Movies</option><option value="series">Series</option></select></div>
+                <div class="input-group"><label>Mood</label><select id="pref-mood"><option value="relax">Relaxed</option><option value="intense">Intense</option><option value="laugh">Funny</option></select></div>
+                <div class="input-group"><label>Era</label><select id="pref-era"><option value="any">Any Era</option><option value="modern">Modern</option><option value="classic">Classic</option></select></div>
+                <div class="input-group"><label>Company</label><select id="pref-company"><option value="solo">Solo</option><option value="partner">Partner</option><option value="friends">Friends</option></select></div>
             </div>
 
-            <div style="display: flex; gap: 10px; margin-top: 25px;">
-                <button onclick="saveProfile()" class="gold-btn" style="flex: 2;">💾 Save Profile Settings</button>
-                <button onclick="doLogout()" class="secondary-btn" style="flex: 1; border-color: #ff5252; color: #ff8787;">Log Out</button>
-            </div>
+            <button onclick="saveProfile()" class="gold-btn" style="margin-top: 15px;">💾 Save Profile Settings</button>
         </div>
     </div>
-
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'en,zh-CN,hi,es,fr,ar,bn,ru,pt,ur,id', layout: google.translate.TranslateElement.InlineLayout.SIMPLE }, 'google_translate_element');
-        }
-    </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <script src="profile.js"></script>
 </body>
 </html>
