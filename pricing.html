@@ -31,25 +31,7 @@
 
         <div style="text-align: center; margin-bottom: 30px;">
             <h1 style="color: var(--gold); margin-bottom: 10px; font-size: 32px;">Unlock Premium Matches</h1>
-            <p style="color: var(--text-muted); font-size: 14px;">Pay instantly via PIX (Brazil) or PayPal/Google Pay (Global).</p>
-        </div>
-
-        <!-- 🇧🇷 DIRECT PIX BOX FOR BRAZILIAN USERS -->
-        <div class="premium-card fade-in" style="margin-bottom: 30px; border-color: #25D366; text-align: center; background: rgba(37, 211, 102, 0.05);">
-            <h3 style="color: #25D366; margin-top: 0;">⚡ Instant PIX Payment (Brazil)</h3>
-            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 15px;">Want instant access via PIX? Send the exact amount for the tier you want using your preferred banking app to our official CPF key:</p>
-            
-            <div style="background: rgba(0,0,0,0.6); padding: 12px; border-radius: 8px; font-family: monospace; font-size: 18px; color: #fff; display: inline-block; margin-bottom: 15px; border: 1px solid rgba(37, 211, 102, 0.3);">
-                CPF: <strong>11759207705</strong>
-            </div>
-            
-            <p style="color: var(--gold-glow); font-size: 12px; margin: 0;">
-                <em>After paying via PIX, send your receipt on WhatsApp to unlock your account instantly!</em>
-            </p>
-        </div>
-
-        <div style="text-align: center; margin-bottom: 20px;">
-            <h3 style="color: #fff; font-size: 20px;">Or Pay Securely with PayPal & Google Pay</h3>
+            <p style="color: var(--text-muted); font-size: 14px;">Pay securely via PIX (Brazil) or PayPal / Google Pay (Global).</p>
         </div>
 
         <div class="input-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
@@ -59,7 +41,8 @@
                 <h3 style="color: #fff; margin-top: 0;">Quick Refill</h3>
                 <div style="color: var(--gold); font-size: 36px; font-weight: 900; margin: 15px 0;">R$ 1,99</div>
                 <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px; flex-grow: 1;">Get <strong>5 instant matches</strong>. Perfect for a quick movie night.</p>
-                <!-- PAYPAL BUTTON CONTAINER -->
+                
+                <button onclick="openPixModal('Quick Refill (5 Matches)', 1.99)" class="gold-btn" style="background: #25D366; color: #fff; margin-bottom: 10px; padding: 12px; font-size: 14px;">⚡ Pay via PIX</button>
                 <div id="paypal-button-5"></div>
             </div>
 
@@ -69,7 +52,8 @@
                 <h3 style="color: #fff; margin-top: 15px;">Weekly Pass</h3>
                 <div style="color: var(--gold); font-size: 36px; font-weight: 900; margin: 15px 0;">R$ 9,99</div>
                 <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px; flex-grow: 1;">Get <strong>20 precision matches</strong> to use whenever you want.</p>
-                <!-- PAYPAL BUTTON CONTAINER -->
+                
+                <button onclick="openPixModal('Weekly Pass (20 Matches)', 9.99)" class="gold-btn" style="background: #25D366; color: #fff; margin-bottom: 10px; padding: 12px; font-size: 14px;">⚡ Pay via PIX</button>
                 <div id="paypal-button-20"></div>
             </div>
 
@@ -78,10 +62,29 @@
                 <h3 style="color: #fff; margin-top: 0;">Monthly VIP</h3>
                 <div style="color: var(--gold-glow); font-size: 36px; font-weight: 900; margin: 15px 0;">R$ 19,99</div>
                 <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px; flex-grow: 1;"><strong>Unlimited Matches</strong> for 30 days + Maximum Zodiac Priority.</p>
-                <!-- PAYPAL BUTTON CONTAINER -->
+                
+                <button onclick="openPixModal('Monthly VIP', 19.99)" class="gold-btn" style="background: #25D366; color: #fff; margin-bottom: 10px; padding: 12px; font-size: 14px;">⚡ Pay via PIX</button>
                 <div id="paypal-button-vip"></div>
             </div>
 
+        </div>
+    </div>
+
+    <!-- 🇧🇷 SECURE PIX MODAL (No CPF Exposed) -->
+    <div id="pix-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box;">
+        <div class="premium-card" style="background: var(--bg-dark); border-color: #25D366; width: 100%; max-width: 400px; text-align: center; padding: 30px;">
+            <h2 style="color: #25D366; margin-top: 0;">Scan to Pay</h2>
+            <p style="color: var(--text-muted); font-size: 13px;">Open your banking app and scan this QR code, or copy the Pix key code invisibly.</p>
+            
+            <div style="background: #fff; padding: 15px; border-radius: 12px; display: inline-block; margin-bottom: 20px;">
+                <img id="pix-qr-img" src="" alt="PIX QR Code" style="width: 200px; height: 200px;">
+            </div>
+
+            <!-- Note: The input box has been removed so the code is never visible on screen -->
+            <button onclick="copyPixCode()" class="secondary-btn" style="width: 100%; margin-bottom: 20px;">📋 Copy Pix "Copia e Cola"</button>
+
+            <button id="pix-confirm-btn" class="gold-btn" style="background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; border: none; margin-bottom: 10px;">✅ I Have Paid (Send Receipt)</button>
+            <button onclick="closePixModal()" class="secondary-btn" style="width: 100%; border: none; background: transparent; color: var(--text-muted);">Cancel</button>
         </div>
     </div>
 
