@@ -13,9 +13,15 @@
 
     <div class="container" style="max-width: 600px;">
         <header class="app-header">
-            <a href="index.html" class="logo">
-                <img src="logo.jpg" alt="Match App Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';">
-                <span id="logo-text" style="display:none;">Match<span>App</span></span>
+            <!-- 🛡️ THE ULTIMATE LOGO FIX -->
+            <a href="index.html" class="logo" style="display: flex; align-items: center; text-decoration: none;">
+                <picture>
+                    <source srcset="logo.png" type="image/png">
+                    <source srcset="logo.jpg" type="image/jpeg">
+                    <source srcset="Logo.jpg" type="image/jpeg">
+                    <img src="logo.jpeg" alt="Match App Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';">
+                </picture>
+                <span id="logo-text" style="display:none; font-size: 26px; font-weight: 900; color: #fff; letter-spacing: -1px;">Match<span style="color: var(--gold);">App</span></span>
             </a>
             
             <div style="display: flex; gap: 8px; align-items: center;">
