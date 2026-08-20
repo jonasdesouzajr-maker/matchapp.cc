@@ -12,9 +12,17 @@
 
     <div class="container" style="max-width: 500px;">
         <header class="app-header">
-            <div class="logo" onclick="window.location.href='index.html'">
-                <img src="logo.jpg" alt="Match App Logo" class="brand-logo">
-            </div>
+            <!-- 🛡️ THE ULTIMATE LOGO FIX -->
+            <a href="index.html" class="logo" style="display: flex; align-items: center; text-decoration: none;">
+                <picture>
+                    <source srcset="logo.png" type="image/png">
+                    <source srcset="logo.jpg" type="image/jpeg">
+                    <source srcset="Logo.jpg" type="image/jpeg">
+                    <img src="logo.jpeg" alt="Match App Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';">
+                </picture>
+                <span id="logo-text" style="display:none; font-size: 26px; font-weight: 900; color: #fff; letter-spacing: -1px;">Match<span style="color: var(--gold);">App</span></span>
+            </a>
+
             <button onclick="window.location.href='index.html'" class="secondary-btn" style="padding: 6px 12px; font-size: 12px;">← Back to Home</button>
         </header>
 
