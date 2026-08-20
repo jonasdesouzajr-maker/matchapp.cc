@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match App | Upgrade VIP</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- PAYPAL & GOOGLE PAY SDK -->
+    <!-- REPLACE "test" WITH YOUR ACTUAL PAYPAL CLIENT ID LATER -->
+    <script src="https://www.paypal.com/sdk/js?client-id=test&currency=BRL"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="luxury-bg"></div>
+
+    <div class="container" style="max-width: 800px;">
+        <header class="app-header">
+            <!-- 🛡️ THE ULTIMATE LOGO FIX -->
+            <a href="index.html" class="logo" style="display: flex; align-items: center; text-decoration: none;">
+                <picture>
+                    <source srcset="logo.png" type="image/png">
+                    <source srcset="logo.jpg" type="image/jpeg">
+                    <source srcset="Logo.jpg" type="image/jpeg">
+                    <img src="logo.jpeg" alt="Match App Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';">
+                </picture>
+                <span id="logo-text" style="display:none; font-size: 26px; font-weight: 900; color: #fff; letter-spacing: -1px;">Match<span style="color: var(--gold);">App</span></span>
+            </a>
+
+            <button onclick="window.location.href='index.html'" class="secondary-btn" style="padding: 6px 12px; font-size: 12px;">← Dashboard</button>
+        </header>
+
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="color: var(--gold); margin-bottom: 10px; font-size: 32px;">Unlock Premium Matches</h1>
+            <p style="color: var(--text-muted); font-size: 14px;">Pay securely with PayPal, Google Pay, or Credit Card.</p>
+        </div>
+
+        <div class="input-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
+            
+            <!-- TIER 1: QUICK REFILL -->
+            <div class="premium-card fade-in" style="text-align: center; padding: 30px 20px; display: flex; flex-direction: column;">
+                <h3 style="color: #fff; margin-top: 0;">Quick Refill</h3>
+                <div style="color: var(--gold); font-size: 36px; font-weight: 900; margin: 15px 0;">R$ 1,99</div>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px; flex-grow: 1;">Get <strong>5 instant matches</strong>. Perfect for a quick movie night.</p>
+                <div id="paypal-button-5"></div>
+            </div>
+
+            <!-- TIER 2: WEEKLY PASS -->
+            <div class="premium-card fade-in" style="text-align: center; padding: 30px 20px; border-color: var(--gold); position: relative; display: flex; flex-direction: column;">
+                <div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); background: var(--gold); color: #000; padding: 4px 12px; font-size: 10px; font-weight: bold; border-radius: 0 0 8px 8px;">MOST POPULAR</div>
+                <h3 style="color: #fff; margin-top: 15px;">Weekly Pass</h3>
+                <div style="color: var(--gold); font-size: 36px; font-weight: 900; margin: 15px 0;">R$ 9,99</div>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px; flex-grow: 1;">Get <strong>20 precision matches</strong> to use whenever you want.</p>
+                <div id="paypal-button-20"></div>
+            </div>
+
+            <!-- TIER 3: MONTHLY VIP -->
+            <div class="premium-card fade-in" style="text-align: center; padding: 30px 20px; display: flex; flex-direction: column; background: rgba(212,175,55,0.05);">
+                <h3 style="color: #fff; margin-top: 0;">Monthly VIP</h3>
+                <div style="color: var(--gold-glow); font-size: 36px; font-weight: 900; margin: 15px 0;">R$ 19,99</div>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px; flex-grow: 1;"><strong>Unlimited Matches</strong> for 30 days + Maximum Zodiac Priority.</p>
+                <div id="paypal-button-vip"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="pricing.js"></script>
+</body>
+</html>
