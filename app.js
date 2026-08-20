@@ -1,15 +1,12 @@
-console.log("Mastercode 23.0: Deduplication Engine & Portfolio Sync Active");
+console.log("Mastercode 25.0: Deduplication & Explanation Engine Active");
 
 let globalMatchTitle = "Match App";
-let globalSearchQuery = "";
 let supabaseClient = null;
 let isUserLoggedIn = false;
 let userProfileData = {};
 
-// Local State Arrays
 let seenList = JSON.parse(localStorage.getItem('match_seenList') || '[]');
 let savedList = JSON.parse(localStorage.getItem('match_savedList') || '[]');
-let adblockEnabled = false;
 
 try {
     if (window.supabase) {
@@ -17,7 +14,7 @@ try {
     }
 } catch (e) { console.warn("Supabase init warning."); }
 
-// STRICT ADBLOCK DETECTION
+// AdBlock Detection
 function checkAdBlocker() {
     const testAd = document.createElement('div');
     testAd.innerHTML = '&nbsp;';
@@ -27,7 +24,6 @@ function checkAdBlocker() {
     document.body.appendChild(testAd);
     window.setTimeout(() => {
         if (testAd.offsetHeight === 0) {
-            adblockEnabled = true;
             document.getElementById('adblock-modal').style.display = 'flex';
         }
         testAd.remove();
@@ -43,19 +39,16 @@ window.addEventListener('DOMContentLoaded', async () => {
             isUserLoggedIn = true;
             userProfileData = session.user.user_metadata || {};
             
-            // Sync DB Arrays to Local State
             if (userProfileData.seen_list) seenList = userProfileData.seen_list;
             if (userProfileData.saved_list) savedList = userProfileData.saved_list;
 
             document.getElementById('nav-reg-btn').style.display = 'none';
             document.getElementById('nav-portfolio-btn').style.display = 'block';
             document.getElementById('nav-upgrade-btn').style.display = 'block';
-            if(document.getElementById('freemium-banner')) document.getElementById('freemium-banner').style.display = 'none';
         }
     }
 });
 
-// SYNC HELPER FUNCTION (Saves permanently to account if logged in)
 async function syncListsToDatabase() {
     localStorage.setItem('match_seenList', JSON.stringify(seenList));
     localStorage.setItem('match_savedList', JSON.stringify(savedList));
@@ -64,7 +57,6 @@ async function syncListsToDatabase() {
     }
 }
 
-// FULL CATALOG
 const masterCatalog = [
     { title: "Parasite", category: "movie", mood: "intense", era: "modern", tone: "dark", pacing: "standard", trailer: "https://www.youtube.com/embed/5xH0HfJHsaY", url: "https://www.max.com", streaming: "Max", synopsis: "Greed and class discrimination threaten a wealthy family and a destitute clan.", poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80" },
     { title: "The Matrix", category: "movie", mood: "mindbending", era: "classic", tone: "dark", pacing: "standard", trailer: "https://www.youtube.com/embed/vKQi3bBA1y8", url: "https://www.primevideo.com", streaming: "Prime Video", synopsis: "A hacker discovers the true nature of his reality.", poster: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80" },
@@ -75,13 +67,11 @@ const masterCatalog = [
 ];
 
 window.triggerMatch = async function() {
-    if (adblockEnabled) {
-        document.getElementById('adblock-modal').style.display = 'flex';
-        return;
-    }
-
-    if (!isUserLoggedIn && localStorage.getItem('hasUsedFreeMatch') === 'true') {
+    let retriesUsed = parseInt(localStorage.getItem('adRetriesUsed') || '0');
+    
+    if (!isUserLoggedIn && retriesUsed >= 5) {
         document.getElementById('questionnaire-box').style.display = 'none';
+        document.getElementById('result-box').style.display = 'none';
         document.getElementById('blocked-box').style.display = 'block';
         return;
     }
@@ -89,44 +79,29 @@ window.triggerMatch = async function() {
     const category = document.getElementById('q-category').value;
     const mood = document.getElementById('q-mood').value;
 
-    // Filter 1: By Category
     let pool = category !== 'any' ? masterCatalog.filter(i => i.category === category) : masterCatalog;
-    
-    // Filter 2: THE DEDUPLICATION MATRIX (Remove anything in seenList)
     let unseenPool = pool.filter(item => !seenList.includes(item.title));
-    
-    if (unseenPool.length === 0) {
-        alert("Wow! You've seen every match in this category. We are expanding the algorithm...");
-        unseenPool = pool; // Fallback if they exhausted the database
-    }
+    if (unseenPool.length === 0) unseenPool = pool;
 
-    // Scoring Algorithm
-    let scoredMatches = unseenPool.map(item => {
-        let score = (item.mood === mood) ? 5 : 0;
-        return { item, score };
-    });
+    let scoredMatches = unseenPool.map(item => ({ item, score: (item.mood === mood) ? 5 : 0 }));
     scoredMatches.sort((a, b) => b.score - a.score);
     
-    // Pick the top matched item randomly to ensure variety
     let topScore = scoredMatches[0]?.score || 0;
     let topMatches = scoredMatches.filter(m => m.score === topScore).map(m => m.item);
     const selected = topMatches[Math.floor(Math.random() * topMatches.length)];
     
     globalMatchTitle = selected.title; 
-    globalSearchQuery = `Where to watch ${selected.title} online`;
 
-    // UI transitions
     document.getElementById('questionnaire-box').style.display = 'none';
     document.getElementById('loading-box').style.display = 'block';
 
     const bar = document.getElementById('progress-bar');
     let width = 0;
     let interval = setInterval(() => {
-        width += 4; 
+        width += 5; 
         if (bar) bar.style.width = width + '%';
         if (width >= 100) {
             clearInterval(interval);
-            if (!isUserLoggedIn) localStorage.setItem('hasUsedFreeMatch', 'true');
 
             document.getElementById('loading-box').style.display = 'none';
             document.getElementById('result-box').style.display = 'block';
@@ -137,33 +112,30 @@ window.triggerMatch = async function() {
             document.getElementById('res-trailer').src = selected.trailer;
             document.getElementById('res-direct-link').href = selected.url;
         }
-    }, 50);
+    }, 40);
 };
 
-// PORTFOLIO LOGIC
 window.saveToList = function() {
     if (!savedList.includes(globalMatchTitle)) {
         savedList.push(globalMatchTitle);
         syncListsToDatabase();
         alert(`⭐ "${globalMatchTitle}" saved to your Portfolio!`);
     } else {
-        alert("This item is already in your saved list.");
+        alert("This item is already in your portfolio.");
     }
 };
 
 window.openPortfolio = function() {
     document.getElementById('portfolio-modal').style.display = 'flex';
-    
     const savedContainer = document.getElementById('saved-list-container');
     const seenContainer = document.getElementById('seen-list-container');
     
-    savedContainer.innerHTML = savedList.length ? savedList.map(t => `<div class="portfolio-item">${t}</div>`).join('') : `<p style="font-size:12px; color:#888;">No saved items yet.</p>`;
-    seenContainer.innerHTML = seenList.length ? seenList.map(t => `<div class="portfolio-item seen">${t}</div>`).join('') : `<p style="font-size:12px; color:#888;">No seen items tracked yet.</p>`;
+    savedContainer.innerHTML = savedList.length ? savedList.map(t => `<div style="padding: 6px; border-bottom: 1px solid #333; font-size:12px;">⭐ ${t}</div>`).join('') : `<p style="font-size:12px; color:#888;">No saved items yet.</p>`;
+    seenContainer.innerHTML = seenList.length ? seenList.map(t => `<div style="padding: 6px; border-bottom: 1px solid #333; font-size:12px; color:#ff8787;">🚫 ${t}</div>`).join('') : `<p style="font-size:12px; color:#888;">No seen items tracked yet.</p>`;
 };
 
-// REWARDED AD-WALL / ALREADY SEEN LOGIC
+// REWARDED AD WATCH RETRY
 window.triggerAdRetry = function() {
-    // Force this item into the seenList so it is NEVER matched again
     if (!seenList.includes(globalMatchTitle)) {
         seenList.push(globalMatchTitle);
         syncListsToDatabase();
@@ -201,10 +173,13 @@ window.triggerAdRetry = function() {
                 localStorage.setItem('adRetriesUsed', retriesUsed + 1);
                 document.getElementById('reward-ad-modal').style.display = 'none';
                 document.getElementById('result-box').style.display = 'none';
-                triggerMatch(); // This will automatically exclude the one they just marked as seen!
+                
+                // Show Reward Success Banner
+                const rewardBanner = document.getElementById('ad-reward-banner');
+                if (rewardBanner) rewardBanner.style.display = 'block';
+
+                triggerMatch();
             };
         }
     }, 1000);
 };
-
-window.openLiveGoogleSearch = function() { window.open(`https://www.google.com/search?q=${encodeURIComponent(globalSearchQuery)}`, '_blank'); };
