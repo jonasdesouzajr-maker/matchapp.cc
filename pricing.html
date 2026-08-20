@@ -6,9 +6,8 @@
     <title>Match App | Upgrade VIP</title>
     <link rel="stylesheet" href="style.css">
     
-    <!-- PAYPAL & GOOGLE PAY SDK -->
-    <!-- REPLACE "test" WITH YOUR ACTUAL PAYPAL CLIENT ID LATER -->
-    <script src="https://www.paypal.com/sdk/js?client-id=test&currency=BRL"></script>
+    <!-- 💰 LIVE PAYPAL & GOOGLE PAY SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=BAA6jfiQ3VDWLMI_OOGxG8vkvtUk1T7U3makgTq4dVDd90z2gw_HyctESHFdgDcnL--8zee6cwHntofTek&currency=BRL"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -32,7 +31,25 @@
 
         <div style="text-align: center; margin-bottom: 30px;">
             <h1 style="color: var(--gold); margin-bottom: 10px; font-size: 32px;">Unlock Premium Matches</h1>
-            <p style="color: var(--text-muted); font-size: 14px;">Pay securely with PayPal, Google Pay, or Credit Card.</p>
+            <p style="color: var(--text-muted); font-size: 14px;">Pay instantly via PIX (Brazil) or PayPal/Google Pay (Global).</p>
+        </div>
+
+        <!-- 🇧🇷 DIRECT PIX BOX FOR BRAZILIAN USERS -->
+        <div class="premium-card fade-in" style="margin-bottom: 30px; border-color: #25D366; text-align: center; background: rgba(37, 211, 102, 0.05);">
+            <h3 style="color: #25D366; margin-top: 0;">⚡ Instant PIX Payment (Brazil)</h3>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 15px;">Want instant access via PIX? Send the exact amount for the tier you want using your preferred banking app to our official CPF key:</p>
+            
+            <div style="background: rgba(0,0,0,0.6); padding: 12px; border-radius: 8px; font-family: monospace; font-size: 18px; color: #fff; display: inline-block; margin-bottom: 15px; border: 1px solid rgba(37, 211, 102, 0.3);">
+                CPF: <strong>11759207705</strong>
+            </div>
+            
+            <p style="color: var(--gold-glow); font-size: 12px; margin: 0;">
+                <em>After paying via PIX, send your receipt on WhatsApp to unlock your account instantly!</em>
+            </p>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 20px;">
+            <h3 style="color: #fff; font-size: 20px;">Or Pay Securely with PayPal & Google Pay</h3>
         </div>
 
         <div class="input-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
@@ -42,6 +59,7 @@
                 <h3 style="color: #fff; margin-top: 0;">Quick Refill</h3>
                 <div style="color: var(--gold); font-size: 36px; font-weight: 900; margin: 15px 0;">R$ 1,99</div>
                 <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px; flex-grow: 1;">Get <strong>5 instant matches</strong>. Perfect for a quick movie night.</p>
+                <!-- PAYPAL BUTTON CONTAINER -->
                 <div id="paypal-button-5"></div>
             </div>
 
@@ -51,6 +69,7 @@
                 <h3 style="color: #fff; margin-top: 15px;">Weekly Pass</h3>
                 <div style="color: var(--gold); font-size: 36px; font-weight: 900; margin: 15px 0;">R$ 9,99</div>
                 <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px; flex-grow: 1;">Get <strong>20 precision matches</strong> to use whenever you want.</p>
+                <!-- PAYPAL BUTTON CONTAINER -->
                 <div id="paypal-button-20"></div>
             </div>
 
@@ -59,6 +78,7 @@
                 <h3 style="color: #fff; margin-top: 0;">Monthly VIP</h3>
                 <div style="color: var(--gold-glow); font-size: 36px; font-weight: 900; margin: 15px 0;">R$ 19,99</div>
                 <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px; flex-grow: 1;"><strong>Unlimited Matches</strong> for 30 days + Maximum Zodiac Priority.</p>
+                <!-- PAYPAL BUTTON CONTAINER -->
                 <div id="paypal-button-vip"></div>
             </div>
 
