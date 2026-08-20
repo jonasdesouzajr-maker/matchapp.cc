@@ -15,14 +15,8 @@
     </div>
 
     <div class="container">
-        <!-- TOP ADSTERRA BANNER -->
-        <div class="ad-placement fade-in">
-            <script>
-                atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };
-            </script>
-            <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
-        </div>
-
+        
+        <!-- HEADER -->
         <header class="app-header">
             <a href="index.html" class="logo" style="text-decoration: none;">
                 <picture>
@@ -31,26 +25,46 @@
                     <source srcset="Logo.jpg" type="image/jpeg">
                     <img src="logo.jpeg" alt="Match App Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';">
                 </picture>
-                <span id="logo-text" style="display:none; font-size: 26px; font-weight: 900; color: #fff;">Match<span style="color: var(--gold);">App</span></span>
+                <span id="logo-text" style="display:none; font-size: 24px; font-weight: 900; color: #fff;">Match<span style="color: var(--gold);">App</span></span>
             </a>
             
             <div id="header-auth-area" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
+                <!-- TOP 10 LANGUAGES SELECTOR -->
                 <div class="translate-wrapper" id="google_translate_element"></div>
                 
-                <!-- VIP NAVIGATION -->
                 <button id="nav-portfolio-btn" onclick="openPortfolio()" style="display: none; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid #fff; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">🎬 My Portfolio</button>
                 <button id="nav-upgrade-btn" onclick="window.location.href='pricing.html'" style="display: none; background: linear-gradient(135deg, #BF953F, #FCF6BA); color: #000; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">💎 Upgrade</button>
                 <button id="nav-reg-btn" onclick="window.location.href='register.html'" style="background: var(--gold); color: #000; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">Log In</button>
             </div>
         </header>
 
+        <!-- WELCOME & SYSTEM EXPLANATION CARD -->
+        <div class="premium-card fade-in" style="text-align: left; padding: 22px;">
+            <h2 style="color: var(--gold); margin-top: 0; font-size: 20px; text-align: center;">🎬 How Match App Works</h2>
+            <p style="color: var(--text-main); font-size: 13px; line-height: 1.6; margin-bottom: 12px;">
+                Match App is your AI-powered entertainment concierge. We combine your current mood, energy, and personal Zodiac affinity to scan streaming services and find your exact match.
+            </p>
+            <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 10px; border-left: 3px solid var(--gold);">
+                <ul style="color: var(--text-muted); font-size: 12px; line-height: 1.7; margin: 0; padding-left: 18px;">
+                    <li><strong style="color: #fff;">1st Match is 100% FREE!</strong> Test our algorithm right away.</li>
+                    <li><strong style="color: #fff;">Already seen a recommendation?</strong> Watch a 15s sponsor ad to unlock another match (up to 5 ad retries).</li>
+                    <li><strong style="color: #fff;">Unlimited Access:</strong> After your 5th ad retry, register a VIP account to get daily matches, Zodiac precision scoring, and save titles to your Portfolio!</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- REWARD NOTIFICATION BANNER (Triggered after watching an Ad) -->
+        <div id="ad-reward-banner" class="rule-banner success-banner fade-in" style="display: none;">
+            🎉 <strong>Ad Watched Successfully!</strong> You unlocked a brand new match. Enjoy!
+        </div>
+
         <!-- QUESTIONNAIRE -->
         <div id="questionnaire-box" class="premium-card fade-in">
-            <h2 style="margin: 0 0 5px 0; font-size: 24px; color: var(--gold);">Find Your Perfect Vibe</h2>
-            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Complete this profile so our engine can curate your match.</p>
+            <h2 style="margin: 0 0 5px 0; font-size: 22px; color: var(--gold);">Find Your Vibe</h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Fill out your preferences below to generate your match.</p>
 
             <div class="input-grid">
-                <div class="input-group"><label>Format</label><select id="q-category"><option value="any">Surprise Me</option><option value="movie">Movies</option><option value="series">Series</option></select></div>
+                <div class="input-group"><label>Format</label><select id="q-category"><option value="any">Surprise Me</option><option value="movie">Movies</option><option value="series">TV Series</option></select></div>
                 <div class="input-group"><label>Energy / Mood</label><select id="q-mood"><option value="relax">Relaxed</option><option value="intense">Intense</option><option value="laugh">Funny</option><option value="mindbending">Mind-Bending</option></select></div>
                 <div class="input-group"><label>Era</label><select id="q-era"><option value="any">Any Era</option><option value="modern">Modern</option><option value="classic">Classic</option></select></div>
                 <div class="input-group"><label>Tone</label><select id="q-tone"><option value="dark">Dark & Gritty</option><option value="light">Lighthearted</option><option value="dramatic">Dramatic</option></select></div>
@@ -67,10 +81,10 @@
             <div class="progress-bar-container"><div id="progress-bar" class="progress-bar-fill"></div></div>
         </div>
 
-        <!-- RESULT (WITH EMBEDS & SYNOPSIS) -->
+        <!-- RESULT CARD -->
         <div id="result-box" class="premium-card fade-in" style="display: none; border-color: var(--gold); padding: 30px;">
             <div style="color: var(--gold); font-size: 12px; font-weight: 900; text-transform: uppercase;">✨ Your Ultimate Match</div>
-            <h2 id="res-title" style="font-size: 32px; font-weight: 900; margin: 5px 0 15px 0;">Title</h2>
+            <h2 id="res-title" style="font-size: 30px; font-weight: 900; margin: 5px 0 15px 0;">Title</h2>
             
             <div style="margin-bottom: 20px; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.7);">
                 <iframe id="res-trailer" width="100%" height="230" src="" frameborder="0" allowfullscreen></iframe>
@@ -97,30 +111,25 @@
             <button onclick="location.reload()" class="gold-btn">🔄 Run Another Search</button>
         </div>
 
-        <!-- BLOCKED BOX -->
+        <!-- BLOCKED BOX (5-Ad Limit Reached) -->
         <div id="blocked-box" class="premium-card fade-in" style="display: none; border-color: #ff5252;">
             <div style="font-size: 40px; margin-bottom: 10px;">🔒</div>
-            <h2 style="color: #ff8787; margin: 0 0 10px 0;">Out of Matches!</h2>
-            <p id="blocked-msg" style="color: #fff; font-size: 14px; margin-bottom: 20px;">You have used all your free matches and ad retries. Upgrade your account to unlock unlimited precision matching.</p>
-            <button onclick="window.location.href='pricing.html'" class="gold-btn" style="background: linear-gradient(135deg, #ff5252, #ff8787); color: #fff;">💎 View Upgrade Options</button>
+            <h2 style="color: #ff8787; margin: 0 0 10px 0;">5 Free Ad Matches Reached!</h2>
+            <p id="blocked-msg" style="color: #fff; font-size: 14px; margin-bottom: 20px; line-height: 1.6;">
+                You have used all 5 free ad-supported matches! Register your VIP account now to unlock unlimited daily searches, save your watchlist portfolio, and activate Zodiac affinity scoring.
+            </p>
+            <button onclick="window.location.href='register.html'" class="gold-btn" style="background: linear-gradient(135deg, #ff5252, #ff8787); color: #fff;">⭐ Register VIP Account Now</button>
         </div>
-        
-        <!-- BOTTOM ADSTERRA BANNER -->
-        <div class="ad-placement fade-in">
-            <script>
-                atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
-            </script>
-            <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
-        </div>
+
     </div>
 
-    <!-- STRICT ANTI-ADBLOCK MODAL (Unclosable) -->
+    <!-- STRICT ANTI-ADBLOCK MODAL -->
     <div id="adblock-modal" class="modal-overlay">
-        <div class="premium-card modal-content" style="border-color: #ff5252; box-shadow: 0 0 50px rgba(255, 82, 82, 0.4);">
-            <div style="font-size: 50px; margin-bottom: 10px;">🛑</div>
+        <div class="premium-card modal-content" style="border-color: #ff5252;">
+            <div style="font-size: 40px; margin-bottom: 10px;">🛑</div>
             <h2 style="color: #ff5252; margin-top: 0;">Ad-Blocker Detected</h2>
-            <p style="color: #fff; font-size: 14px; margin-bottom: 25px; line-height: 1.6;">Our advanced concierge engine relies entirely on ad revenue to function. <br><br><strong>You must disable your Ad-Blocker for this specific website to access your matches.</strong></p>
-            <button onclick="location.reload()" class="gold-btn" style="background: linear-gradient(135deg, #ff5252, #ff8787); color: #fff; font-size: 18px; padding: 18px;">I Disabled It - Reload Page</button>
+            <p style="color: #fff; font-size: 13px; margin-bottom: 20px; line-height: 1.6;">Match App uses ads to support our concierge algorithm. Please disable your Ad-Blocker for this site to generate matches.</p>
+            <button onclick="location.reload()" class="gold-btn" style="background: linear-gradient(135deg, #ff5252, #ff8787); color: #fff;">I Disabled It - Reload Page</button>
         </div>
     </div>
 
@@ -128,9 +137,8 @@
     <div id="reward-ad-modal" class="modal-overlay">
         <div class="premium-card modal-content">
             <h3 style="color: var(--gold); margin-top: 0;">Sponsor Break</h3>
-            <p style="font-size: 13px; color: var(--text-muted);">Watch this message to unlock a brand new match! (<span id="retry-count"></span>/5 free retries used)</p>
+            <p style="font-size: 12px; color: var(--text-muted);">Watch this sponsor ad to unlock another free match! (<span id="retry-count"></span>/5 retries used)</p>
             
-            <!-- GOOGLE ADSENSE IN-FEED AD -->
             <div class="ad-placement" style="background: rgba(0,0,0,0.6); padding: 10px; min-height: 200px;">
                 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
                 <ins class="adsbygoogle" style="display:block" data-ad-format="fluid" data-ad-layout-key="-6t+ed+2i-1n-4w" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117"></ins>
@@ -150,17 +158,24 @@
             <h2 style="color: var(--gold); margin-top: 0;">🎬 My Portfolio</h2>
             
             <h4 style="color: #fff; text-align: left; margin: 10px 0 5px 0;">⭐ Saved to Watch</h4>
-            <div id="saved-list-container" class="portfolio-list"></div>
+            <div id="saved-list-container" style="text-align: left; max-height: 120px; overflow-y: auto; margin-bottom: 10px;"></div>
 
             <h4 style="color: #ff5252; text-align: left; margin: 15px 0 5px 0;">🚫 Already Seen</h4>
-            <div id="seen-list-container" class="portfolio-list"></div>
+            <div id="seen-list-container" style="text-align: left; max-height: 120px; overflow-y: auto;"></div>
 
             <button onclick="document.getElementById('portfolio-modal').style.display='none';" class="secondary-btn" style="margin-top: 15px;">Close Portfolio</button>
         </div>
     </div>
 
+    <!-- TOP 10 LANGUAGES CONFIG (WITH PT-BR PRIORITY) -->
     <script type="text/javascript">
-        function googleTranslateElementInit() { new google.translate.TranslateElement({ pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE }, 'google_translate_element'); }
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'pt,en,zh-CN,hi,es,fr,ar,bn,ru,de', // 10 top languages with PT-BR first
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
     </script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <script src="app.js"></script>
