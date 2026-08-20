@@ -1,4 +1,4 @@
-console.log("Mastercode 14.0: Deep Profile Algorithmic Engine");
+console.log("Mastercode 16.0: Monetized Engine Initialized");
 
 let globalMatchTitle = "Match App";
 let globalSearchQuery = "";
@@ -12,6 +12,17 @@ try {
     }
 } catch (e) { console.warn("Supabase init warning."); }
 
+// 💰 ADSTERRA SMARTLINK 2 (POPUNDER MONETIZATION)
+// Triggers a hidden background tab on the first click on the document to maximize ad revenue
+let hasTriggeredPopunder = false;
+document.addEventListener('click', () => {
+    if (!hasTriggeredPopunder) {
+        hasTriggeredPopunder = true;
+        // Opens the Adsterra Smartlink without stealing focus from the app
+        window.open('https://brunettesir.com/aujea2k10v?key=6d6ff5d71aa0f25eaecd2160f24301a2', '_blank', 'noopener,noreferrer');
+    }
+});
+
 window.addEventListener('DOMContentLoaded', async () => {
     if (supabaseClient) {
         const { data: { session } } = await supabaseClient.auth.getSession();
@@ -19,8 +30,16 @@ window.addEventListener('DOMContentLoaded', async () => {
             isUserLoggedIn = true;
             userProfileData = session.user.user_metadata || {};
             
+            if (userProfileData.matches_left === undefined && !userProfileData.is_vip) {
+                userProfileData.matches_left = 1;
+            }
+
             document.getElementById('nav-reg-btn').style.display = 'none';
             document.getElementById('nav-profile-btn').style.display = 'block';
+            
+            const upgBtn = document.getElementById('nav-upgrade-btn');
+            if (upgBtn) upgBtn.style.display = 'block';
+
             if(document.getElementById('freemium-banner')) document.getElementById('freemium-banner').style.display = 'none';
         }
     }
@@ -40,12 +59,26 @@ const masterCatalog = [
     { title: "Epic Movie Soundtracks", category: "spotify", mood: "mindbending", era: "any", tone: "dramatic", pacing: "epic", idealCompany: ["solo", "friends", "partner"], zodiacAffinity: ["fire", "water"], streaming: "Spotify", poster: "", desc: "The greatest orchestral scores from blockbuster films.", embed: "https://open.spotify.com/embed/playlist/37i9dQZF1DXdLEN7aqioXM" }
 ];
 
-window.triggerMatch = function() {
-    if (!isUserLoggedIn && localStorage.getItem('hasUsedFreeMatch') === 'true') {
-        document.getElementById('questionnaire-box').style.display = 'none';
-        if(document.getElementById('freemium-banner')) document.getElementById('freemium-banner').style.display = 'none';
-        document.getElementById('blocked-box').style.display = 'block';
-        return;
+window.triggerMatch = async function() {
+    
+    // VERIFY SUBSCRIPTION LIMITS
+    if (!isUserLoggedIn) {
+        if (localStorage.getItem('hasUsedFreeMatch') === 'true') {
+            document.getElementById('questionnaire-box').style.display = 'none';
+            document.getElementById('native-ad-container').style.display = 'none';
+            document.getElementById('blocked-box').style.display = 'block';
+            return;
+        }
+    } else {
+        const matchesLeft = userProfileData.matches_left || 0;
+        const isVip = userProfileData.is_vip === true;
+        if (!isVip && matchesLeft <= 0) {
+            document.getElementById('questionnaire-box').style.display = 'none';
+            document.getElementById('native-ad-container').style.display = 'none';
+            document.getElementById('blocked-box').style.display = 'block';
+            document.getElementById('blocked-msg').innerText = "You have run out of matches! Top up or upgrade to VIP to continue.";
+            return;
+        }
     }
 
     const category = document.getElementById('q-category').value;
@@ -55,7 +88,6 @@ window.triggerMatch = function() {
     const pacing = document.getElementById('q-pacing').value;
     const company = document.getElementById('q-company').value;
 
-    // Map User Star Sign to Element for Deep Algorithm Bonus
     let userElement = null;
     if (userProfileData.star_sign) {
         const sign = userProfileData.star_sign.toLowerCase();
@@ -65,20 +97,15 @@ window.triggerMatch = function() {
         if (["taurus", "virgo", "capricorn"].includes(sign)) userElement = "earth";
     }
 
-    // SCORING ALGORITHM
     let pool = category !== 'any' ? masterCatalog.filter(i => i.category === category) : masterCatalog;
-    
     let scoredMatches = pool.map(item => {
         let score = 0;
         if (item.mood === mood) score += 5;
         if (era === 'any' || item.era === era) score += 3;
         if (item.tone === tone) score += 3;
         if (item.pacing === pacing) score += 2;
-        
-        // Deep Profile Factors
         if (item.idealCompany && item.idealCompany.includes(company)) score += 3;
-        if (userElement && item.zodiacAffinity && item.zodiacAffinity.includes(userElement)) score += 4; // Big Zodiac Bonus!
-
+        if (userElement && item.zodiacAffinity && item.zodiacAffinity.includes(userElement)) score += 4;
         return { item, score };
     });
 
@@ -91,8 +118,8 @@ window.triggerMatch = function() {
     globalMatchTitle = selected.title; 
     globalSearchQuery = `Where to watch ${selected.title} ${selected.category} online stream`;
 
-    // DRAMATIC LOADING
     document.getElementById('questionnaire-box').style.display = 'none';
+    document.getElementById('native-ad-container').style.display = 'none';
     if(document.getElementById('freemium-banner')) document.getElementById('freemium-banner').style.display = 'none';
     document.getElementById('loading-box').style.display = 'block';
 
@@ -102,22 +129,24 @@ window.triggerMatch = function() {
     let width = 0;
 
     setTimeout(() => { text.innerText = "Querying Google Search Indices..."; subtext.innerText = "Scraping global streaming availability..."; }, 1000);
-    
-    if (isUserLoggedIn && userElement) {
-        setTimeout(() => { text.innerText = "Applying Zodiac Profile Data..."; subtext.innerText = `Enhancing matrix for ${userProfileData.star_sign} affinities...`; }, 2500);
-    } else {
-        setTimeout(() => { text.innerText = "Cross-referencing databases..."; subtext.innerText = "Matching mood, tone, and pacing metrics..."; }, 2500);
-    }
-    
+    if (isUserLoggedIn && userElement) { setTimeout(() => { text.innerText = "Applying Zodiac Profile Data..."; subtext.innerText = `Enhancing matrix for ${userProfileData.star_sign} affinities...`; }, 2500); } 
+    else { setTimeout(() => { text.innerText = "Cross-referencing databases..."; subtext.innerText = "Matching mood, tone, and pacing metrics..."; }, 2500); }
     setTimeout(() => { text.innerText = "Extracting perfect match..."; subtext.innerText = "Finalizing results..."; }, 4000);
 
-    let interval = setInterval(() => {
+    let interval = setInterval(async () => {
         width += 2; 
         if (bar) bar.style.width = width + '%';
         
         if (width >= 100) {
             clearInterval(interval);
             
+            if (isUserLoggedIn && userProfileData.is_vip !== true) {
+                userProfileData.matches_left -= 1;
+                await supabaseClient.auth.updateUser({ data: { matches_left: userProfileData.matches_left } });
+            } else if (!isUserLoggedIn) {
+                localStorage.setItem('hasUsedFreeMatch', 'true');
+            }
+
             document.getElementById('loading-box').style.display = 'none';
             document.getElementById('result-box').style.display = 'block';
 
@@ -134,20 +163,12 @@ window.triggerMatch = function() {
                 document.getElementById('poster-container').style.display = 'block';
                 document.getElementById('res-poster').src = selected.poster;
             }
-
-            if (!isUserLoggedIn) localStorage.setItem('hasUsedFreeMatch', 'true');
         }
     }, 100);
 };
 
-window.openLiveGoogleSearch = function() {
-    window.open(`https://www.google.com/search?q=${encodeURIComponent(globalSearchQuery)}`, '_blank');
-};
-
+window.openLiveGoogleSearch = function() { window.open(`https://www.google.com/search?q=${encodeURIComponent(globalSearchQuery)}`, '_blank'); };
 window.shareWA = () => window.open(`https://api.whatsapp.com/send?text=I got matched with ${encodeURIComponent(globalMatchTitle)} on Match App! Curate your own night at https://matchapp.cc`, '_blank');
 window.shareX = () => window.open(`https://twitter.com/intent/tweet?text=I got matched with ${encodeURIComponent(globalMatchTitle)} on Match App! Curate your own night at https://matchapp.cc`, '_blank');
 window.shareFB = () => window.open(`https://www.facebook.com/sharer/sharer.php?u=https://matchapp.cc`, '_blank');
-window.shareMore = async () => {
-    if (navigator.share) { await navigator.share({ title: 'Match App', text: `My tailored match is: ${globalMatchTitle}`, url: 'https://matchapp.cc' }); }
-    else { navigator.clipboard.writeText('https://matchapp.cc'); alert("Link Copied to clipboard!"); }
-};
+window.shareMore = async () => { if (navigator.share) { await navigator.share({ title: 'Match App', text: `My tailored match is: ${globalMatchTitle}`, url: 'https://matchapp.cc' }); } else { navigator.clipboard.writeText('https://matchapp.cc'); alert("Link Copied to clipboard!"); } };
