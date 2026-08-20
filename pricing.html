@@ -11,22 +11,31 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <div class="luxury-bg"></div>
+    <div class="luxury-bg"><div class="floating-orb orb-1"></div></div>
 
     <div class="container" style="max-width: 800px;">
+        
+        <!-- THE UNIVERSAL APP HEADER -->
         <header class="app-header">
-            <!-- 🛡️ THE ULTIMATE LOGO FIX -->
-            <a href="index.html" class="logo" style="display: flex; align-items: center; text-decoration: none;">
+            <a href="index.html" class="logo" style="text-decoration: none;">
                 <picture>
-                    <source srcset="logo.png" type="image/png">
-                    <source srcset="logo.jpg" type="image/jpeg">
-                    <source srcset="Logo.jpg" type="image/jpeg">
+                    <source srcset="logo.png" type="image/png"><source srcset="logo.jpg" type="image/jpeg"><source srcset="Logo.jpg" type="image/jpeg">
                     <img src="logo.jpeg" alt="Match App Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';">
                 </picture>
-                <span id="logo-text" style="display:none; font-size: 26px; font-weight: 900; color: #fff; letter-spacing: -1px;">Match<span style="color: var(--gold);">App</span></span>
+                <span id="logo-text" style="display:none; font-size: 24px; font-weight: 900; color: #fff;">Match<span style="color: var(--gold);">App</span></span>
             </a>
-
-            <button onclick="window.location.href='index.html'" class="secondary-btn" style="padding: 6px 12px; font-size: 12px;">← Dashboard</button>
+            
+            <div id="header-auth-area" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
+                <div class="translate-wrapper" id="google_translate_element"></div>
+                
+                <!-- Navigation -->
+                <button id="nav-reg-btn" onclick="window.location.href='index.html'" class="secondary-btn" style="padding: 6px 12px; width: auto; font-size: 12px;">← Dashboard</button>
+                
+                <!-- Logged In Buttons (Handled dynamically via JS usually, but kept for universal layout) -->
+                <button id="nav-profile-btn" onclick="window.location.href='profile.html'" style="display: none; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid var(--gold); padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">👤 My Profile</button>
+                <button id="nav-upgrade-btn" onclick="window.location.href='pricing.html'" style="display: none; background: linear-gradient(135deg, #BF953F, #FCF6BA); color: #000; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">💎 Upgrade</button>
+                <button id="nav-logout-btn" onclick="doLogout()" style="display: none; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">Log Out</button>
+            </div>
         </header>
 
         <div style="text-align: center; margin-bottom: 30px;">
@@ -80,7 +89,6 @@
                 <img id="pix-qr-img" src="" alt="PIX QR Code" style="width: 200px; height: 200px;">
             </div>
 
-            <!-- Note: The input box has been removed so the code is never visible on screen -->
             <button onclick="copyPixCode()" class="secondary-btn" style="width: 100%; margin-bottom: 20px;">📋 Copy Pix "Copia e Cola"</button>
 
             <button id="pix-confirm-btn" class="gold-btn" style="background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; border: none; margin-bottom: 10px;">✅ I Have Paid (Send Receipt)</button>
@@ -88,6 +96,21 @@
         </div>
     </div>
 
+    <!-- TRANSLATION SCRIPT -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() { new google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'pt,en,zh-CN,hi,es,fr,ar,bn,ru,de', layout: google.translate.TranslateElement.InlineLayout.SIMPLE }, 'google_translate_element'); }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    
+    <script>
+        async function doLogout() {
+            if (window.supabase) {
+                const client = window.supabase.createClient('https://zkymvqrmbabngsqblyye.supabase.co', 'sb_publishable_j3kQUhd_9JHfWdfiV3iWog_RpEltrOU');
+                await client.auth.signOut();
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
     <script src="pricing.js"></script>
 </body>
 </html>
