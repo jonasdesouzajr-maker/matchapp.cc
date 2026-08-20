@@ -9,65 +9,51 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <div class="luxury-bg">
-        <div class="floating-orb orb-1"></div>
-        <div class="floating-orb orb-2"></div>
-    </div>
+    <div class="luxury-bg"><div class="floating-orb orb-1"></div><div class="floating-orb orb-2"></div></div>
 
     <div class="container">
-        
-        <!-- HEADER -->
+        <!-- TOP ADSTERRA BANNER -->
+        <div class="ad-placement fade-in">
+            <script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script>
+            <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
+        </div>
+
+        <!-- THE UNIVERSAL APP HEADER -->
         <header class="app-header">
             <a href="index.html" class="logo" style="text-decoration: none;">
                 <picture>
-                    <source srcset="logo.png" type="image/png">
-                    <source srcset="logo.jpg" type="image/jpeg">
-                    <source srcset="Logo.jpg" type="image/jpeg">
+                    <source srcset="logo.png" type="image/png"><source srcset="logo.jpg" type="image/jpeg"><source srcset="Logo.jpg" type="image/jpeg">
                     <img src="logo.jpeg" alt="Match App Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';">
                 </picture>
                 <span id="logo-text" style="display:none; font-size: 24px; font-weight: 900; color: #fff;">Match<span style="color: var(--gold);">App</span></span>
             </a>
             
             <div id="header-auth-area" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
-                <!-- TOP 10 LANGUAGES SELECTOR -->
                 <div class="translate-wrapper" id="google_translate_element"></div>
-                
-                <button id="nav-portfolio-btn" onclick="openPortfolio()" style="display: none; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid #fff; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">🎬 My Portfolio</button>
+                <!-- Logged Out Buttons -->
+                <button id="nav-reg-btn" onclick="window.location.href='register.html'" class="gold-btn" style="padding: 6px 12px; width: auto; font-size: 12px;">Log In / Register</button>
+                <!-- Logged In Buttons (Hidden by default) -->
+                <button id="nav-profile-btn" onclick="window.location.href='profile.html'" style="display: none; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid var(--gold); padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">👤 My Profile</button>
                 <button id="nav-upgrade-btn" onclick="window.location.href='pricing.html'" style="display: none; background: linear-gradient(135deg, #BF953F, #FCF6BA); color: #000; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">💎 Upgrade</button>
-                <button id="nav-reg-btn" onclick="window.location.href='register.html'" style="background: var(--gold); color: #000; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">Log In</button>
+                <button id="nav-logout-btn" onclick="doLogout()" style="display: none; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">Log Out</button>
             </div>
         </header>
 
-        <!-- WELCOME & SYSTEM EXPLANATION CARD -->
-        <div class="premium-card fade-in" style="text-align: left; padding: 22px;">
-            <h2 style="color: var(--gold); margin-top: 0; font-size: 20px; text-align: center;">🎬 How Match App Works</h2>
-            <p style="color: var(--text-main); font-size: 13px; line-height: 1.6; margin-bottom: 12px;">
-                Match App is your AI-powered entertainment concierge. We combine your current mood, energy, and personal Zodiac affinity to scan streaming services and find your exact match.
-            </p>
-            <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 10px; border-left: 3px solid var(--gold);">
-                <ul style="color: var(--text-muted); font-size: 12px; line-height: 1.7; margin: 0; padding-left: 18px;">
-                    <li><strong style="color: #fff;">1st Match is 100% FREE!</strong> Test our algorithm right away.</li>
-                    <li><strong style="color: #fff;">Already seen a recommendation?</strong> Watch a 15s sponsor ad to unlock another match (up to 5 ad retries).</li>
-                    <li><strong style="color: #fff;">Unlimited Access:</strong> After your 5th ad retry, register a VIP account to get daily matches, Zodiac precision scoring, and save titles to your Portfolio!</li>
-                </ul>
-            </div>
-        </div>
+        <div id="freemium-banner" class="rule-banner fade-in">✨ <strong>First Match is FREE!</strong> Complete your profile below.</div>
+        <div id="ad-reward-banner" class="rule-banner success-banner fade-in" style="display: none;">🎉 <strong>Ad Watched!</strong> You unlocked a brand new match. Enjoy!</div>
 
-        <!-- REWARD NOTIFICATION BANNER (Triggered after watching an Ad) -->
-        <div id="ad-reward-banner" class="rule-banner success-banner fade-in" style="display: none;">
-            🎉 <strong>Ad Watched Successfully!</strong> You unlocked a brand new match. Enjoy!
-        </div>
-
-        <!-- QUESTIONNAIRE -->
+        <!-- MAIN QUESTIONNAIRE -->
         <div id="questionnaire-box" class="premium-card fade-in">
             <h2 style="margin: 0 0 5px 0; font-size: 22px; color: var(--gold);">Find Your Vibe</h2>
-            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Fill out your preferences below to generate your match.</p>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Fill out your preferences below. (Syncs with your profile)</p>
 
             <div class="input-grid">
                 <div class="input-group"><label>Format</label><select id="q-category"><option value="any">Surprise Me</option><option value="movie">Movies</option><option value="series">TV Series</option></select></div>
                 <div class="input-group"><label>Energy / Mood</label><select id="q-mood"><option value="relax">Relaxed</option><option value="intense">Intense</option><option value="laugh">Funny</option><option value="mindbending">Mind-Bending</option></select></div>
                 <div class="input-group"><label>Era</label><select id="q-era"><option value="any">Any Era</option><option value="modern">Modern</option><option value="classic">Classic</option></select></div>
                 <div class="input-group"><label>Tone</label><select id="q-tone"><option value="dark">Dark & Gritty</option><option value="light">Lighthearted</option><option value="dramatic">Dramatic</option></select></div>
+                <div class="input-group"><label>Company</label><select id="q-company"><option value="solo">Solo</option><option value="partner">Partner</option><option value="friends">Friends</option><option value="family">Family</option></select></div>
+                <div class="input-group"><label>Pacing</label><select id="q-pacing"><option value="standard">Standard</option><option value="fast">Quick</option><option value="epic">Epic Marathon</option></select></div>
             </div>
 
             <button onclick="triggerMatch()" class="gold-btn" style="padding: 16px; margin-top: 10px;">⚡ Curate My Match</button>
@@ -77,50 +63,50 @@
         <div id="loading-box" class="premium-card fade-in" style="display: none; padding: 50px 20px;">
             <div class="loading-icon">🌐</div>
             <h3 id="loading-text" style="color: var(--gold-glow); margin-bottom: 10px; font-size: 18px;">Initializing Concierge...</h3>
-            <p id="loading-subtext" style="color: var(--text-muted); font-size: 12px;">Checking deduplication matrices...</p>
+            <p id="loading-subtext" style="color: var(--text-muted); font-size: 12px;">Enforcing strict deduplication matrices...</p>
             <div class="progress-bar-container"><div id="progress-bar" class="progress-bar-fill"></div></div>
         </div>
 
-        <!-- RESULT CARD -->
-        <div id="result-box" class="premium-card fade-in" style="display: none; border-color: var(--gold); padding: 30px;">
-            <div style="color: var(--gold); font-size: 12px; font-weight: 900; text-transform: uppercase;">✨ Your Ultimate Match</div>
-            <h2 id="res-title" style="font-size: 30px; font-weight: 900; margin: 5px 0 15px 0;">Title</h2>
-            
-            <div style="margin-bottom: 20px; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.7);">
-                <iframe id="res-trailer" width="100%" height="230" src="" frameborder="0" allowfullscreen></iframe>
-            </div>
-
-            <div style="background: rgba(0,0,0,0.4); padding: 18px; border-radius: 12px; margin-bottom: 20px; text-align: left; border-left: 4px solid var(--gold);">
-                <div style="font-size: 11px; color: var(--gold); text-transform: uppercase; font-weight: bold; margin-bottom: 5px;">📖 Synopsis</div>
-                <p id="res-synopsis" style="color: #fff; font-size: 14px; line-height: 1.6; margin: 0;"></p>
-            </div>
-            
-            <div style="background: rgba(212,175,55,0.1); padding: 15px; border-radius: 10px; border-left: 4px solid var(--gold); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; text-align: left;">
-                <div>
-                    <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: bold;">Platform:</div>
-                    <div id="res-platform" style="color: #fff; font-weight: 900; font-size: 18px;">Netflix</div>
+        <!-- ✨ NEW CINEMATIC RESULT SCREEN ✨ -->
+        <div id="result-box" class="premium-card cinematic-result fade-in" style="display: none;">
+            <div id="res-header-bg" class="cinematic-header" style="background-image: url('');">
+                <div class="cinematic-overlay"></div>
+                <div class="cinematic-title-box">
+                    <div style="color: var(--gold); font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px;">Perfect Match Found</div>
+                    <h2 id="res-title" class="cinematic-title">Title</h2>
+                    <div id="res-meta" class="cinematic-meta">Match Category • Tone • Era</div>
                 </div>
-                <a id="res-direct-link" href="#" target="_blank" class="gold-btn" style="padding: 10px 18px; font-size: 13px; width: auto; text-decoration: none;">▶ Watch Now</a>
             </div>
 
-            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <button onclick="saveToList()" class="secondary-btn" style="flex: 1; border-color: var(--gold); color: var(--gold);">⭐ Save to Portfolio</button>
-                <button onclick="triggerAdRetry()" class="secondary-btn" style="flex: 1;">🔄 Already Seen? (Watch Ad)</button>
-            </div>
+            <div class="cinematic-body">
+                <p id="res-synopsis" class="cinematic-synopsis"></p>
+                
+                <iframe id="res-trailer" class="trailer-frame" src="" frameborder="0" allowfullscreen></iframe>
+                
+                <div style="background: rgba(212,175,55,0.1); padding: 15px; border-radius: 12px; border-left: 4px solid var(--gold); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                    <div>
+                        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: bold;">Watch Now On:</div>
+                        <div id="res-platform" style="color: #fff; font-weight: 900; font-size: 20px;">Netflix</div>
+                    </div>
+                    <a id="res-direct-link" href="#" target="_blank" class="gold-btn" style="padding: 12px 20px; font-size: 13px; width: auto; text-decoration: none;">▶ Stream Now</a>
+                </div>
 
-            <button onclick="location.reload()" class="gold-btn">🔄 Run Another Search</button>
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <button onclick="saveToList()" class="secondary-btn" style="flex: 1; border-color: var(--gold); color: var(--gold);">⭐ Save to Portfolio</button>
+                    <button onclick="triggerAdRetry()" class="secondary-btn" style="flex: 1;">🔄 Watch Ad for New Match</button>
+                </div>
+
+                <button onclick="location.reload()" class="secondary-btn" style="width: 100%;">🔙 Back to Dashboard</button>
+            </div>
         </div>
 
-        <!-- BLOCKED BOX (5-Ad Limit Reached) -->
+        <!-- BLOCKED BOX -->
         <div id="blocked-box" class="premium-card fade-in" style="display: none; border-color: #ff5252;">
             <div style="font-size: 40px; margin-bottom: 10px;">🔒</div>
             <h2 style="color: #ff8787; margin: 0 0 10px 0;">5 Free Ad Matches Reached!</h2>
-            <p id="blocked-msg" style="color: #fff; font-size: 14px; margin-bottom: 20px; line-height: 1.6;">
-                You have used all 5 free ad-supported matches! Register your VIP account now to unlock unlimited daily searches, save your watchlist portfolio, and activate Zodiac affinity scoring.
-            </p>
+            <p id="blocked-msg" style="color: #fff; font-size: 14px; margin-bottom: 20px; line-height: 1.6;">You have used all 5 free ad-supported matches! Register your VIP account now to unlock unlimited daily searches and Zodiac precision.</p>
             <button onclick="window.location.href='register.html'" class="gold-btn" style="background: linear-gradient(135deg, #ff5252, #ff8787); color: #fff;">⭐ Register VIP Account Now</button>
         </div>
-
     </div>
 
     <!-- STRICT ANTI-ADBLOCK MODAL -->
@@ -128,7 +114,7 @@
         <div class="premium-card modal-content" style="border-color: #ff5252;">
             <div style="font-size: 40px; margin-bottom: 10px;">🛑</div>
             <h2 style="color: #ff5252; margin-top: 0;">Ad-Blocker Detected</h2>
-            <p style="color: #fff; font-size: 13px; margin-bottom: 20px; line-height: 1.6;">Match App uses ads to support our concierge algorithm. Please disable your Ad-Blocker for this site to generate matches.</p>
+            <p style="color: #fff; font-size: 13px; margin-bottom: 20px; line-height: 1.6;">We rely on ads to keep the servers running. Please disable your Ad-Blocker for this site to access your matches.</p>
             <button onclick="location.reload()" class="gold-btn" style="background: linear-gradient(135deg, #ff5252, #ff8787); color: #fff;">I Disabled It - Reload Page</button>
         </div>
     </div>
@@ -137,7 +123,7 @@
     <div id="reward-ad-modal" class="modal-overlay">
         <div class="premium-card modal-content">
             <h3 style="color: var(--gold); margin-top: 0;">Sponsor Break</h3>
-            <p style="font-size: 12px; color: var(--text-muted);">Watch this sponsor ad to unlock another free match! (<span id="retry-count"></span>/5 retries used)</p>
+            <p style="font-size: 12px; color: var(--text-muted);">Watch this sponsor ad to unlock a brand new match! (<span id="retry-count"></span>/5 retries used)</p>
             
             <div class="ad-placement" style="background: rgba(0,0,0,0.6); padding: 10px; min-height: 200px;">
                 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
@@ -145,37 +131,13 @@
                 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </div>
 
-            <button id="claim-retry-btn" class="secondary-btn" disabled style="width: 100%; opacity: 0.5; margin-bottom: 10px; font-size: 16px; padding: 15px;">
-                Wait <span id="ad-timer">15</span>s to claim...
-            </button>
-            <button onclick="document.getElementById('reward-ad-modal').style.display='none';" class="secondary-btn" style="width: 100%; border:none; background:transparent; color: var(--text-muted);">Cancel</button>
+            <button id="claim-retry-btn" class="secondary-btn" disabled style="width: 100%; opacity: 0.5; margin-bottom: 10px; font-size: 16px; padding: 15px;">Wait <span id="ad-timer">15</span>s to claim...</button>
         </div>
     </div>
 
-    <!-- PORTFOLIO MODAL -->
-    <div id="portfolio-modal" class="modal-overlay">
-        <div class="premium-card modal-content" style="max-height: 80vh; overflow: hidden; display: flex; flex-direction: column;">
-            <h2 style="color: var(--gold); margin-top: 0;">🎬 My Portfolio</h2>
-            
-            <h4 style="color: #fff; text-align: left; margin: 10px 0 5px 0;">⭐ Saved to Watch</h4>
-            <div id="saved-list-container" style="text-align: left; max-height: 120px; overflow-y: auto; margin-bottom: 10px;"></div>
-
-            <h4 style="color: #ff5252; text-align: left; margin: 15px 0 5px 0;">🚫 Already Seen</h4>
-            <div id="seen-list-container" style="text-align: left; max-height: 120px; overflow-y: auto;"></div>
-
-            <button onclick="document.getElementById('portfolio-modal').style.display='none';" class="secondary-btn" style="margin-top: 15px;">Close Portfolio</button>
-        </div>
-    </div>
-
-    <!-- TOP 10 LANGUAGES CONFIG (WITH PT-BR PRIORITY) -->
+    <!-- TRANSLATION SCRIPT -->
     <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-                pageLanguage: 'en',
-                includedLanguages: 'pt,en,zh-CN,hi,es,fr,ar,bn,ru,de', // 10 top languages with PT-BR first
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-            }, 'google_translate_element');
-        }
+        function googleTranslateElementInit() { new google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'pt,en,zh-CN,hi,es,fr,ar,bn,ru,de', layout: google.translate.TranslateElement.InlineLayout.SIMPLE }, 'google_translate_element'); }
     </script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <script src="app.js"></script>
