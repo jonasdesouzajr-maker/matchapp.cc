@@ -7,6 +7,13 @@
     <title>Match App | VIP Streaming Concierge</title>
     <link rel="stylesheet" href="style.css">
     
+    <!-- 1. GOOGLE ADSENSE: STANDARD HTML5 AUTO ADS -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
+    
+    <!-- 2. GOOGLE ADSENSE: AMP SCRIPT (As Requested) -->
+    <script async custom-element="amp-auto-ads" src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js"></script>
+
+    <!-- Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -16,33 +23,47 @@
     </script>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
 </head>
 <body>
+    <!-- 3. GOOGLE ADSENSE: AMP AUTO ADS BODY TAG -->
+    <amp-auto-ads type="adsense" data-ad-client="ca-pub-9541435081010948"></amp-auto-ads>
+
     <div class="luxury-bg"></div>
 
     <div class="container">
         
         <header class="app-header">
-            <!-- LOGO WITH TEXT FALLBACK IF IMAGE FAILS -->
-            <a href="index.html" class="logo" id="logo-container">
-                <img src="logo.jpg" alt="Match App Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';">
-                <span id="logo-text" style="display:none;">Match<span>App</span></span>
+            <!-- 🛡️ THE ULTIMATE LOGO FIX: Checks PNG, JPG, and JPEG. Falls back to text. -->
+            <a href="index.html" class="logo" id="logo-container" style="display: flex; align-items: center; text-decoration: none;">
+                <picture>
+                    <source srcset="logo.png" type="image/png">
+                    <source srcset="logo.jpg" type="image/jpeg">
+                    <source srcset="Logo.jpg" type="image/jpeg">
+                    <img src="logo.jpeg" alt="Match App Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';">
+                </picture>
+                <span id="logo-text" style="display:none; font-size: 26px; font-weight: 900; color: #fff; letter-spacing: -1px;">Match<span style="color: var(--gold);">App</span></span>
             </a>
             
             <div id="header-auth-area" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
                 <div class="translate-wrapper" id="google_translate_element"></div>
-                <button id="nav-reg-btn" onclick="window.location.href='register.html'" style="background: #D4AF37; color: #000; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">Log In / Register</button>
-                
-                <!-- VIP NAVIGATION (Hidden until login) -->
-                <button id="nav-profile-btn" onclick="window.location.href='profile.html'" style="display: none; background: rgba(255,255,255,0.1); color: var(--gold); border: 1px solid var(--gold); padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">👤 My Profile</button>
+                <button id="nav-reg-btn" onclick="window.location.href='register.html'" style="background: #D4AF37; color: #000; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">Log In</button>
+                <button id="nav-upgrade-btn" onclick="window.location.href='pricing.html'" style="display: none; background: linear-gradient(135deg, #BF953F, #FCF6BA); color: #000; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">💎 Upgrade</button>
+                <button id="nav-profile-btn" onclick="window.location.href='profile.html'" style="display: none; background: rgba(255,255,255,0.1); color: var(--gold); border: 1px solid var(--gold); padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">👤 Profile</button>
             </div>
         </header>
+
+        <!-- 💰 ADSTERRA: 728x90 BANNER (Top placement) -->
+        <div class="ad-spacing" style="display: flex; justify-content: center; margin-bottom: 20px; overflow: hidden;">
+            <script>
+              atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };
+            </script>
+            <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
+        </div>
 
         <div class="premium-card fade-in" style="text-align: center; padding: 20px; border-color: rgba(212, 175, 55, 0.6);">
             <h1 style="color: var(--gold); font-size: 18px; margin-top: 0; margin-bottom: 10px;">Welcome to Match App</h1>
             <p style="color: var(--text-main); font-size: 13px; line-height: 1.6; margin: 0;">
-                <strong>App Purpose:</strong> Match App is your personalized streaming concierge. Our platform uses a precision algorithm and your unique profile data to instantly curate the perfect movie, series, telenovela, YouTube video, or Spotify playlist based exactly on your mood.
+                <strong>App Purpose:</strong> Match App is your personalized streaming concierge. Our platform uses a precision algorithm and your unique profile data to instantly curate the perfect entertainment based exactly on your mood.
             </p>
         </div>
 
@@ -123,7 +144,13 @@
             <button onclick="triggerMatch()" class="gold-btn" style="padding: 18px;">⚡ Curate My Match</button>
         </div>
 
-        <!-- STAGE 2: DRAMATIC LOADING -->
+        <!-- 💰 ADSTERRA: NATIVE BANNER (Middle placement) -->
+        <div id="native-ad-container" class="ad-spacing fade-in">
+            <script async="async" data-cfasync="false" src="https://pl30907929.effectivecpmnetwork.com/24c070776b5f8b41dda874f495a807d2/invoke.js"></script>
+            <div id="container-24c070776b5f8b41dda874f495a807d2"></div>
+        </div>
+
+        <!-- STAGE 2: LOADING -->
         <div id="loading-box" class="premium-card fade-in" style="display: none; text-align: center; padding: 50px 20px;">
             <div class="loading-icon">🌐</div>
             <h3 id="loading-text" style="color: var(--gold-glow); margin-bottom: 10px; font-size: 18px;">Initializing Concierge...</h3>
@@ -154,9 +181,22 @@
                 <div id="res-platform" class="result-platform-text">Netflix</div>
             </div>
 
+            <!-- 💰 ADSTERRA: SMARTLINK 1 (Attached to a premium-looking sponsor button) -->
+            <button onclick="window.open('https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562f63b85c00cb649448', '_blank')" class="gold-btn" style="width: 100%; margin-bottom: 10px; background: linear-gradient(135deg, #181824, #2a2a3d); color: #fff; border: 1px solid rgba(255,255,255,0.2);">
+                🎁 View Partner Streaming Deals
+            </button>
+
             <button onclick="openLiveGoogleSearch()" class="secondary-btn" style="width: 100%; margin-bottom: 25px; border-color: var(--gold); color: var(--gold); padding: 15px; font-size: 15px;">
                 🔍 Search Live on Google for Links
             </button>
+
+            <!-- 💰 ADSTERRA: 300x250 BANNER (Inside Results for high visibility) -->
+            <div class="ad-spacing" style="display: flex; justify-content: center; margin-bottom: 25px;">
+                <script>
+                  atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
+                </script>
+                <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
+            </div>
 
             <div style="background: rgba(0,0,0,0.4); padding: 20px; border-radius: 12px; margin-bottom: 25px;">
                 <div style="font-size: 13px; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 10px;">📤 Share Your Match:</div>
@@ -173,9 +213,9 @@
 
         <div id="blocked-box" class="premium-card fade-in" style="display: none; text-align: center; border-color: #ff5252;">
             <div style="font-size: 40px; margin-bottom: 10px;">🔒</div>
-            <h2 style="color: #ff8787; margin: 0 0 10px 0;">Free Limit Reached</h2>
-            <p style="color: #fff; font-size: 14px; margin-bottom: 20px;">You have successfully used your free trial match! Register your VIP account to unlock unlimited daily searches, save your zodiac profile, and get precision matches.</p>
-            <button onclick="window.location.href='register.html'" class="gold-btn">⭐ Register VIP Account Now</button>
+            <h2 style="color: #ff8787; margin: 0 0 10px 0;">Out of Matches!</h2>
+            <p id="blocked-msg" style="color: #fff; font-size: 14px; margin-bottom: 20px;">You have used all your free matches. Upgrade your account to unlock unlimited precision matching.</p>
+            <button onclick="window.location.href='pricing.html'" class="gold-btn" style="background: linear-gradient(135deg, #ff5252, #ff8787); color: #fff;">💎 View Upgrade Options</button>
         </div>
 
     </div>
