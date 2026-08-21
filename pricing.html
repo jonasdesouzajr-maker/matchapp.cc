@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Match App | Upgrade VIP</title>
     <link rel="stylesheet" href="style.css">
-    
-    <!-- 💰 LIVE PAYPAL & GOOGLE PAY SDK -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
     <script src="https://www.paypal.com/sdk/js?client-id=BAA6jfiQ3VDWLMI_OOGxG8vkvtUk1T7U3makgTq4dVDd90z2gw_HyctESHFdgDcnL--8zee6cwHntofTek&currency=BRL"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -15,26 +14,23 @@
 
     <div class="container" style="max-width: 800px;">
         
-        <!-- THE UNIVERSAL APP HEADER -->
+        <!-- 💰 TOP AD PLACEMENT -->
+        <div class="ad-placement fade-in">
+            <span style="font-size: 9px; color: #666; display: block; margin-bottom: 5px;">ADVERTISEMENT</span>
+            <div class="ad-scale-wrapper">
+                <script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script>
+                <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
+            </div>
+        </div>
+
         <header class="app-header">
             <a href="index.html" class="logo" style="text-decoration: none;">
-                <picture>
-                    <source srcset="logo.png" type="image/png"><source srcset="logo.jpg" type="image/jpeg"><source srcset="Logo.jpg" type="image/jpeg">
-                    <img src="logo.jpeg" alt="Match App Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';">
-                </picture>
+                <picture><source srcset="logo.jpeg" type="image/jpeg"><img src="logo.jpeg" alt="Match App Logo" class="brand-logo"></picture>
                 <span id="logo-text" style="display:none; font-size: 24px; font-weight: 900; color: #fff;">Match<span style="color: var(--gold);">App</span></span>
             </a>
-            
             <div id="header-auth-area" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
                 <div class="translate-wrapper" id="google_translate_element"></div>
-                
-                <!-- Navigation -->
                 <button id="nav-reg-btn" onclick="window.location.href='index.html'" class="secondary-btn" style="padding: 6px 12px; width: auto; font-size: 12px;">← Dashboard</button>
-                
-                <!-- Logged In Buttons (Handled dynamically via JS usually, but kept for universal layout) -->
-                <button id="nav-profile-btn" onclick="window.location.href='profile.html'" style="display: none; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid var(--gold); padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">👤 My Profile</button>
-                <button id="nav-upgrade-btn" onclick="window.location.href='pricing.html'" style="display: none; background: linear-gradient(135deg, #BF953F, #FCF6BA); color: #000; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">💎 Upgrade</button>
-                <button id="nav-logout-btn" onclick="doLogout()" style="display: none; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">Log Out</button>
             </div>
         </header>
 
@@ -44,73 +40,71 @@
         </div>
 
         <div class="input-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
-            
-            <!-- TIER 1: QUICK REFILL -->
             <div class="premium-card fade-in" style="text-align: center; padding: 30px 20px; display: flex; flex-direction: column;">
                 <h3 style="color: #fff; margin-top: 0;">Quick Refill</h3>
                 <div style="color: var(--gold); font-size: 36px; font-weight: 900; margin: 15px 0;">R$ 1,99</div>
-                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px; flex-grow: 1;">Get <strong>5 instant matches</strong>. Perfect for a quick movie night.</p>
-                
-                <button onclick="openPixModal('Quick Refill (5 Matches)', 1.99)" class="gold-btn" style="background: #25D366; color: #fff; margin-bottom: 10px; padding: 12px; font-size: 14px;">⚡ Pay via PIX</button>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px; flex-grow: 1;">Get <strong>5 instant matches</strong>.</p>
+                <button onclick="openPixModal('Quick Refill', 1.99)" class="gold-btn" style="background: #25D366; color: #fff; margin-bottom: 10px; padding: 12px;">⚡ Pay via PIX</button>
                 <div id="paypal-button-5"></div>
             </div>
 
-            <!-- TIER 2: WEEKLY PASS -->
             <div class="premium-card fade-in" style="text-align: center; padding: 30px 20px; border-color: var(--gold); position: relative; display: flex; flex-direction: column;">
                 <div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); background: var(--gold); color: #000; padding: 4px 12px; font-size: 10px; font-weight: bold; border-radius: 0 0 8px 8px;">MOST POPULAR</div>
                 <h3 style="color: #fff; margin-top: 15px;">Weekly Pass</h3>
                 <div style="color: var(--gold); font-size: 36px; font-weight: 900; margin: 15px 0;">R$ 9,99</div>
-                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px; flex-grow: 1;">Get <strong>20 precision matches</strong> to use whenever you want.</p>
-                
-                <button onclick="openPixModal('Weekly Pass (20 Matches)', 9.99)" class="gold-btn" style="background: #25D366; color: #fff; margin-bottom: 10px; padding: 12px; font-size: 14px;">⚡ Pay via PIX</button>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px; flex-grow: 1;">Get <strong>20 precision matches</strong>.</p>
+                <button onclick="openPixModal('Weekly Pass', 9.99)" class="gold-btn" style="background: #25D366; color: #fff; margin-bottom: 10px; padding: 12px;">⚡ Pay via PIX</button>
                 <div id="paypal-button-20"></div>
             </div>
 
-            <!-- TIER 3: MONTHLY VIP -->
             <div class="premium-card fade-in" style="text-align: center; padding: 30px 20px; display: flex; flex-direction: column; background: rgba(212,175,55,0.05);">
                 <h3 style="color: #fff; margin-top: 0;">Monthly VIP</h3>
                 <div style="color: var(--gold-glow); font-size: 36px; font-weight: 900; margin: 15px 0;">R$ 19,99</div>
-                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px; flex-grow: 1;"><strong>Unlimited Matches</strong> for 30 days + Maximum Zodiac Priority.</p>
-                
-                <button onclick="openPixModal('Monthly VIP', 19.99)" class="gold-btn" style="background: #25D366; color: #fff; margin-bottom: 10px; padding: 12px; font-size: 14px;">⚡ Pay via PIX</button>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px; flex-grow: 1;"><strong>Unlimited Matches</strong> + Zodiac Priority.</p>
+                <button onclick="openPixModal('Monthly VIP', 19.99)" class="gold-btn" style="background: #25D366; color: #fff; margin-bottom: 10px; padding: 12px;">⚡ Pay via PIX</button>
                 <div id="paypal-button-vip"></div>
             </div>
-
         </div>
+
+        <!-- 📚 UNIVERSAL FOOTER -->
+        <footer class="app-footer fade-in">
+            <h4 style="color: var(--gold); margin: 0 0 15px 0; font-size: 18px; text-align: center;">🎬 How Match App Works</h4>
+            <p><strong>1. First Match is FREE!</strong> Our concierge algorithm uses your mood and Zodiac affinity to curate your perfect movie or series.</p>
+            <p><strong>2. Free Ad-Retries:</strong> Already seen a match? Watch a 15-second sponsor ad to unlock a new, deduplicated match (up to 5 free retries).</p>
+            <p><strong>3. VIP Access:</strong> Register to save titles to your Portfolio, activate deep Zodiac matching, and get unlimited daily searches.</p>
+            
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 20px; padding-top: 20px;">
+                <span style="font-size: 9px; color: #666; display: block; margin-bottom: 5px; text-align: center;">SPONSORED ADS</span>
+                <div style="display: flex; justify-content: center; margin-bottom: 15px; overflow: hidden;">
+                    <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script>
+                    <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
+                </div>
+                <div style="width: 100%; min-height: 100px; display: block; overflow: hidden;">
+                    <ins class="adsbygoogle" style="display:block; width:100%;" data-ad-format="fluid" data-ad-layout-key="-6t+ed+2i-1n-4w" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117"></ins>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                </div>
+            </div>
+        </footer>
     </div>
 
-    <!-- 🇧🇷 SECURE PIX MODAL (No CPF Exposed) -->
+    <!-- 🇧🇷 SECURE PIX MODAL -->
     <div id="pix-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box;">
         <div class="premium-card" style="background: var(--bg-dark); border-color: #25D366; width: 100%; max-width: 400px; text-align: center; padding: 30px;">
             <h2 style="color: #25D366; margin-top: 0;">Scan to Pay</h2>
             <p style="color: var(--text-muted); font-size: 13px;">Open your banking app and scan this QR code, or copy the Pix key code invisibly.</p>
-            
             <div style="background: #fff; padding: 15px; border-radius: 12px; display: inline-block; margin-bottom: 20px;">
                 <img id="pix-qr-img" src="" alt="PIX QR Code" style="width: 200px; height: 200px;">
             </div>
-
             <button onclick="copyPixCode()" class="secondary-btn" style="width: 100%; margin-bottom: 20px;">📋 Copy Pix "Copia e Cola"</button>
-
             <button id="pix-confirm-btn" class="gold-btn" style="background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; border: none; margin-bottom: 10px;">✅ I Have Paid (Send Receipt)</button>
             <button onclick="closePixModal()" class="secondary-btn" style="width: 100%; border: none; background: transparent; color: var(--text-muted);">Cancel</button>
         </div>
     </div>
 
-    <!-- TRANSLATION SCRIPT -->
     <script type="text/javascript">
         function googleTranslateElementInit() { new google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'pt,en,zh-CN,hi,es,fr,ar,bn,ru,de', layout: google.translate.TranslateElement.InlineLayout.SIMPLE }, 'google_translate_element'); }
     </script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-    
-    <script>
-        async function doLogout() {
-            if (window.supabase) {
-                const client = window.supabase.createClient('https://zkymvqrmbabngsqblyye.supabase.co', 'sb_publishable_j3kQUhd_9JHfWdfiV3iWog_RpEltrOU');
-                await client.auth.signOut();
-                window.location.href = 'index.html';
-            }
-        }
-    </script>
     <script src="pricing.js"></script>
 </body>
 </html>
