@@ -12,13 +12,34 @@
     <div class="luxury-bg"><div class="floating-orb orb-1"></div><div class="floating-orb orb-2"></div></div>
 
     <div class="container" style="max-width: 650px;">
-        <div class="ad-placement fade-in"><div class="ad-scale-wrapper"><script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script><script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script></div></div>
+        
+        <!-- 💰 TOP AD PLACEMENT -->
+        <div class="ad-placement fade-in">
+            <span style="font-size: 9px; color: #666; display: block; margin-bottom: 5px;">ADVERTISEMENT</span>
+            <div class="ad-scale-wrapper">
+                <script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script>
+                <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
+            </div>
+        </div>
 
+        <!-- ✨ APP HEADER WITH CREATOR SIGNATURE -->
         <header class="app-header fade-in">
-            <a href="index.html" class="logo"><picture><source srcset="logo.jpeg" type="image/jpeg"><img src="logo.jpeg" class="brand-logo"></picture><span style="display:none;">MatchApp</span></a>
-            <div style="display: flex; gap: 8px; align-items: center;">
-                <button onclick="window.location.href='index.html'" class="secondary-btn">← Dashboard</button>
-                <button onclick="doLogout()" class="secondary-btn" style="border-color: #ff5252; color: #ff5252;">Log Out</button>
+            <a href="index.html" class="logo" style="display: flex; flex-direction: column; align-items: flex-start; text-decoration: none;">
+                <div style="display: flex; align-items: center;">
+                    <picture>
+                        <source srcset="logo.jpeg" type="image/jpeg">
+                        <img src="logo.jpeg" alt="Match App Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';">
+                    </picture>
+                    <span id="logo-text" style="display:none; font-size: 24px; font-weight: 900; color: #fff;">Match<span style="color: var(--gold);">App</span></span>
+                </div>
+                <!-- YOUR SIGNATURE -->
+                <span style="font-size: 9px; font-weight: 900; color: var(--gold); opacity: 0.75; letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; margin-left: 2px;">By Jonas Junior</span>
+            </a>
+            
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
+                <div class="translate-wrapper" id="google_translate_element"></div>
+                <button onclick="window.location.href='index.html'" class="secondary-btn" style="padding: 6px 12px; font-size: 12px; width: auto;">← Dashboard</button>
+                <button onclick="doLogout()" class="secondary-btn" style="padding: 6px 12px; font-size: 12px; width: auto; border-color: #ff5252; color: #ff5252;">Log Out</button>
             </div>
         </header>
 
@@ -41,7 +62,33 @@
 
             <button onclick="saveProfile()" class="gold-btn pulse" style="margin-top: 25px;">💾 Save Profile Settings</button>
         </div>
+
+        <!-- 📚 UNIVERSAL FOOTER -->
+        <footer class="app-footer fade-in">
+            <h4 style="color: var(--gold); margin: 0 0 15px 0; font-size: 18px; text-align: center;">🎬 How Match App Works</h4>
+            <p><strong>1. The Algorithm:</strong> We cross-reference your mood, selected streaming platform, and aesthetic vibe to find your perfect content.</p>
+            <p><strong>2. Strict Deduplication:</strong> Once you see a match, it is locked into your device's seen-list. You will NEVER be matched with it again.</p>
+            <p><strong>3. VIP Access:</strong> Register to save titles to your Portfolio, activate deep Zodiac matching, and get unlimited daily searches.</p>
+            
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 25px; padding-top: 25px;">
+                <span style="font-size: 9px; color: #666; display: block; margin-bottom: 10px; text-align: center; letter-spacing: 1px;">SPONSORED CONTENT</span>
+                <div style="display: flex; justify-content: center; margin-bottom: 20px; overflow: hidden; border-radius: 12px;">
+                    <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script>
+                    <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
+                </div>
+                <div class="ad-placement">
+                    <ins class="adsbygoogle" style="display:block; width:100%; min-height: 100px;" data-ad-format="fluid" data-ad-layout-key="-6t+ed+2i-1n-4w" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117"></ins>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                </div>
+            </div>
+        </footer>
     </div>
+    
+    <!-- TRANSLATION SCRIPT -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() { new google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'pt,en,zh-CN,hi,es,fr,ar,bn,ru,de', layout: google.translate.TranslateElement.InlineLayout.SIMPLE }, 'google_translate_element'); }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <script src="profile.js"></script>
 </body>
 </html>
