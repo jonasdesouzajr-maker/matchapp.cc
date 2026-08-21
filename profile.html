@@ -5,67 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Match App | My VIP Profile</title>
     <link rel="stylesheet" href="style.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <div class="luxury-bg"><div class="floating-orb orb-1"></div></div>
+    <div class="luxury-bg"><div class="floating-orb orb-1"></div><div class="floating-orb orb-2"></div></div>
 
-    <div class="container" style="max-width: 600px;">
-        <!-- UNIVERSAL HEADER -->
-        <header class="app-header">
-            <a href="index.html" class="logo" style="text-decoration: none;">
-                <picture>
-                    <source srcset="logo.png" type="image/png"><source srcset="logo.jpg" type="image/jpeg"><source srcset="Logo.jpg" type="image/jpeg">
-                    <img src="logo.jpeg" alt="Match App Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';">
-                </picture>
-                <span id="logo-text" style="display:none; font-size: 24px; font-weight: 900; color: #fff;">Match<span style="color: var(--gold);">App</span></span>
-            </a>
-            
+    <div class="container" style="max-width: 650px;">
+        <div class="ad-placement fade-in"><div class="ad-scale-wrapper"><script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script><script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script></div></div>
+
+        <header class="app-header fade-in">
+            <a href="index.html" class="logo"><picture><source srcset="logo.jpeg" type="image/jpeg"><img src="logo.jpeg" class="brand-logo"></picture><span style="display:none;">MatchApp</span></a>
             <div style="display: flex; gap: 8px; align-items: center;">
-                <button onclick="window.location.href='index.html'" class="secondary-btn" style="padding: 6px 12px; font-size: 12px;">← Dashboard</button>
-                <button onclick="doLogout()" style="background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">Log Out</button>
+                <button onclick="window.location.href='index.html'" class="secondary-btn">← Dashboard</button>
+                <button onclick="doLogout()" class="secondary-btn" style="border-color: #ff5252; color: #ff5252;">Log Out</button>
             </div>
         </header>
 
         <div class="premium-card fade-in">
-            <h2 style="color: var(--gold); margin-top: 0; font-size: 26px;">👤 My VIP Profile & Preferences</h2>
-            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 25px;">Update your default algorithm settings. Age and Star Sign are permanently locked once saved.</p>
+            <h2 style="color: var(--gold); margin-top: 0; font-size: 28px;">👤 My VIP Profile</h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 25px;">Set your default preferences. Age and Zodiac are locked permanently once saved to calibrate your core affinity.</p>
             
-            <div class="input-grid" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 15px;">
-                <div class="input-group">
-                    <label>Age <span class="locked-badge">Permanent</span></label>
-                    <input type="number" id="prof-age" placeholder="e.g. 25">
-                </div>
-                <div class="input-group">
-                    <label>Star Sign <span class="locked-badge">Permanent</span></label>
-                    <select id="prof-zodiac">
-                        <option value="">-- Select Sign --</option>
-                        <option value="Aries">♈ Aries</option>
-                        <option value="Taurus">♉ Taurus</option>
-                        <option value="Gemini">♊ Gemini</option>
-                        <option value="Cancer">♋ Cancer</option>
-                        <option value="Leo">♌ Leo</option>
-                        <option value="Virgo">♍ Virgo</option>
-                        <option value="Libra">♎ Libra</option>
-                        <option value="Scorpio">♏ Scorpio</option>
-                        <option value="Sagittarius">♐ Sagittarius</option>
-                        <option value="Capricorn">♑ Capricorn</option>
-                        <option value="Aquarius">♒ Aquarius</option>
-                        <option value="Pisces">♓ Pisces</option>
-                    </select>
-                </div>
+            <div class="input-grid" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; margin-bottom: 20px;">
+                <div class="input-group"><label>Age <span class="locked-badge">Locks</span></label><input type="number" id="prof-age" placeholder="e.g. 25"></div>
+                <div class="input-group"><label>Star Sign <span class="locked-badge">Locks</span></label><select id="prof-zodiac"><option value="">-- Select Sign --</option><option value="Aries">♈ Aries</option><option value="Taurus">♉ Taurus</option><option value="Gemini">♊ Gemini</option><option value="Cancer">♋ Cancer</option><option value="Leo">♌ Leo</option><option value="Virgo">♍ Virgo</option><option value="Libra">♎ Libra</option><option value="Scorpio">♏ Scorpio</option><option value="Sagittarius">♐ Sagittarius</option><option value="Capricorn">♑ Capricorn</option><option value="Aquarius">♒ Aquarius</option><option value="Pisces">♓ Pisces</option></select></div>
             </div>
 
-            <!-- SEARCH PREFERENCES (CAN BE CHANGED) -->
-            <h3 style="color: #fff; font-size: 16px; text-align: left;">My Default Search Preferences</h3>
+            <h3 style="color: #fff; font-size: 18px; text-align: left; margin-bottom: 15px;">My Default Search Preferences</h3>
             <div class="input-grid">
-                <div class="input-group"><label>Format</label><select id="pref-category"><option value="any">Surprise Me</option><option value="movie">Movies</option><option value="series">Series</option></select></div>
-                <div class="input-group"><label>Mood</label><select id="pref-mood"><option value="relax">Relaxed</option><option value="intense">Intense</option><option value="laugh">Funny</option></select></div>
-                <div class="input-group"><label>Era</label><select id="pref-era"><option value="any">Any Era</option><option value="modern">Modern</option><option value="classic">Classic</option></select></div>
-                <div class="input-group"><label>Company</label><select id="pref-company"><option value="solo">Solo</option><option value="partner">Partner</option><option value="friends">Friends</option></select></div>
+                <div class="input-group"><label>Platform</label><select id="pref-platform"><option value="any">Any Platform</option><option value="Netflix">Netflix</option><option value="Max">Max</option><option value="Prime">Amazon Prime</option><option value="Globoplay">Globoplay</option><option value="Spotify">Spotify</option><option value="YouTube">YouTube</option></select></div>
+                <div class="input-group"><label>Format</label><select id="pref-category"><option value="any">Surprise Me</option><option value="movie">Movies</option><option value="series">Series</option><option value="telenovela">Novelas</option><option value="spotify">Spotify</option><option value="short">Shorts</option></select></div>
+                <div class="input-group"><label>Mood</label><select id="pref-mood"><option value="relax">Relaxed</option><option value="intense">Intense</option><option value="laugh">Funny</option><option value="romantic">Romantic</option></select></div>
+                <div class="input-group"><label>Aesthetic</label><select id="pref-aesthetic"><option value="any">Any</option><option value="dark">Dark & Gritty</option><option value="colorful">Colorful</option><option value="luxurious">Luxurious</option></select></div>
             </div>
 
-            <button onclick="saveProfile()" class="gold-btn" style="margin-top: 15px;">💾 Save Profile Settings</button>
+            <button onclick="saveProfile()" class="gold-btn pulse" style="margin-top: 25px;">💾 Save Profile Settings</button>
         </div>
     </div>
     <script src="profile.js"></script>
