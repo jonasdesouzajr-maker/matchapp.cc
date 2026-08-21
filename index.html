@@ -21,12 +21,20 @@
             </div>
         </div>
 
-        <!-- APP HEADER -->
+        <!-- ✨ APP HEADER WITH CREATOR SIGNATURE -->
         <header class="app-header fade-in">
-            <a href="index.html" class="logo">
-                <picture><source srcset="logo.jpeg" type="image/jpeg"><img src="logo.jpeg" alt="Match App Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';"></picture>
-                <span id="logo-text" style="display:none;">Match<span style="color: var(--gold);">App</span></span>
+            <a href="index.html" class="logo" style="display: flex; flex-direction: column; align-items: flex-start; text-decoration: none;">
+                <div style="display: flex; align-items: center;">
+                    <picture>
+                        <source srcset="logo.jpeg" type="image/jpeg">
+                        <img src="logo.jpeg" alt="Match App Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';">
+                    </picture>
+                    <span id="logo-text" style="display:none; font-size: 24px; font-weight: 900; color: #fff;">Match<span style="color: var(--gold);">App</span></span>
+                </div>
+                <!-- YOUR SIGNATURE -->
+                <span style="font-size: 9px; font-weight: 900; color: var(--gold); opacity: 0.75; letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; margin-left: 2px;">By Jonas Junior</span>
             </a>
+            
             <div id="header-auth-area" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
                 <div class="translate-wrapper" id="google_translate_element"></div>
                 <button id="nav-reg-btn" onclick="window.location.href='register.html'" class="gold-btn" style="padding: 8px 15px; width: auto; font-size: 12px; letter-spacing: 0;">Log In / Register</button>
@@ -49,7 +57,6 @@
             <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 25px;">Our algorithm ensures you never see the same match twice on this device.</p>
 
             <div class="input-grid">
-                <!-- 1. Format -->
                 <div class="input-group">
                     <label>Content Format</label>
                     <select id="q-category">
@@ -62,7 +69,6 @@
                         <option value="spotify">Spotify Playlists</option>
                     </select>
                 </div>
-                <!-- 2. Streaming Platform -->
                 <div class="input-group">
                     <label>Streaming Platform</label>
                     <select id="q-platform">
@@ -76,13 +82,9 @@
                         <option value="Spotify">Spotify</option>
                     </select>
                 </div>
-                <!-- 3. Mood -->
                 <div class="input-group"><label>Energy / Mood</label><select id="q-mood"><option value="relax">Relaxed / Cozy</option><option value="intense">Intense / Gripping</option><option value="laugh">Funny / Upbeat</option><option value="mindbending">Mind-Bending</option><option value="romantic">Romantic</option></select></div>
-                <!-- 4. Vibe/Aesthetic -->
                 <div class="input-group"><label>Aesthetic Vibe</label><select id="q-aesthetic"><option value="any">Any Vibe</option><option value="dark">Dark & Gritty</option><option value="colorful">Colorful & Vibrant</option><option value="retro">Retro / Nostalgic</option><option value="luxurious">Luxurious / Royal</option></select></div>
-                <!-- 5. Era -->
                 <div class="input-group"><label>Era</label><select id="q-era"><option value="any">Any Era</option><option value="modern">Modern (2015+)</option><option value="classic">Classic (90s/00s)</option><option value="vintage">Vintage (Pre-90s)</option></select></div>
-                <!-- 6. Pacing -->
                 <div class="input-group"><label>Pacing / Length</label><select id="q-pacing"><option value="standard">Standard</option><option value="fast">Quick Bite</option><option value="epic">Epic Marathon</option></select></div>
             </div>
             <button onclick="triggerMatch()" class="gold-btn pulse" style="margin-top: 20px;">⚡ Curate My Match</button>
@@ -142,12 +144,10 @@
             
             <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 25px; padding-top: 25px;">
                 <span style="font-size: 9px; color: #666; display: block; margin-bottom: 10px; text-align: center; letter-spacing: 1px;">SPONSORED CONTENT</span>
-                
                 <div style="display: flex; justify-content: center; margin-bottom: 20px; overflow: hidden; border-radius: 12px;">
                     <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script>
                     <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
                 </div>
-
                 <div class="ad-placement">
                     <ins class="adsbygoogle" style="display:block; width:100%; min-height: 100px;" data-ad-format="fluid" data-ad-layout-key="-6t+ed+2i-1n-4w" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117"></ins>
                     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
