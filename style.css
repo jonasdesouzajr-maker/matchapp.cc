@@ -16,7 +16,7 @@ body {
     box-sizing: border-box; overflow-x: hidden;
 }
 
-/* Chic Animated Background */
+/* Background Effects */
 .luxury-bg {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: radial-gradient(circle at 15% 50%, rgba(48, 20, 75, 0.5), transparent 50%),
@@ -28,9 +28,9 @@ body {
 .orb-2 { width: 400px; height: 400px; background: rgba(147, 51, 234, 0.15); bottom: -10%; right: -10%; animation-delay: -5s; }
 @keyframes float { 0% { transform: translateY(0px) scale(1); } 100% { transform: translateY(40px) scale(1.1); } }
 
-.container { position: relative; z-index: 1; max-width: 650px; width: 100%; margin: 10px auto; padding-bottom: 40px; }
+.container { position: relative; z-index: 1; max-width: 650px; width: 100%; margin: 10px auto; padding-bottom: 20px; }
 
-/* Responsive Universal Header */
+/* Responsive Header */
 .app-header { 
     display: flex; justify-content: space-between; align-items: center; 
     margin-bottom: 20px; gap: 15px; background: rgba(20, 20, 35, 0.6);
@@ -40,7 +40,6 @@ body {
 .logo { display: flex; align-items: center; cursor: pointer; text-decoration: none; font-size: 24px; font-weight: 900; color: #fff; letter-spacing: -1px; }
 .brand-logo { height: 40px; width: auto; max-width: 160px; object-fit: contain; display: block; border-radius: 8px; }
 
-/* Language Widget */
 .translate-wrapper { background: rgba(0, 0, 0, 0.4); border: 1px solid var(--gold); border-radius: 8px; padding: 4px 8px; display: inline-block; }
 .goog-te-gadget-simple { background: transparent !important; border: none !important; }
 .goog-te-gadget-simple span { color: #fff !important; font-size: 12px; font-weight: bold; }
@@ -53,13 +52,13 @@ body {
     padding: 25px; margin-bottom: 20px; position: relative; overflow: hidden; text-align: center;
 }
 
-/* Forms & Disabled Inputs */
+/* Forms */
 .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .input-group { margin-bottom: 15px; text-align: left; }
-label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gold); font-weight: bold; margin-bottom: 5px; }
+label { display: block; font-size: 11px; text-transform: uppercase; color: var(--gold); font-weight: bold; margin-bottom: 5px; }
 input, select { background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 12px; border-radius: 10px; font-size: 14px; width: 100%; box-sizing: border-box; transition: 0.3s; }
-input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
-input:disabled, select:disabled { opacity: 0.5; cursor: not-allowed; border-color: rgba(255,255,255,0.05); background: rgba(0,0,0,0.8); color: #888; }
+input:focus, select:focus { outline: none; border-color: var(--gold); }
+input:disabled, select:disabled { opacity: 0.5; cursor: not-allowed; background: rgba(0,0,0,0.8); }
 .locked-badge { font-size: 9px; color: #ff5252; float: right; text-transform: uppercase; font-weight: bold; }
 
 /* Buttons */
@@ -68,9 +67,9 @@ input:disabled, select:disabled { opacity: 0.5; cursor: not-allowed; border-colo
 .secondary-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--text-muted); color: var(--text-main); padding: 12px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; }
 .secondary-btn:hover:not([disabled]) { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
 
-/* ✨ CINEMATIC RESULT UI ✨ */
-.cinematic-result { padding: 0; overflow: hidden; border: 1px solid var(--gold); box-shadow: 0 20px 50px rgba(212, 175, 55, 0.15); }
-.cinematic-header { position: relative; width: 100%; height: 280px; display: flex; align-items: flex-end; justify-content: flex-start; padding: 20px; box-sizing: border-box; background-size: cover; background-position: center; border-bottom: 2px solid var(--gold); }
+/* Cinematic Result UI */
+.cinematic-result { padding: 0; overflow: hidden; border: 1px solid var(--gold); }
+.cinematic-header { position: relative; width: 100%; height: 280px; display: flex; align-items: flex-end; padding: 20px; box-sizing: border-box; background-size: cover; background-position: center; border-bottom: 2px solid var(--gold); }
 .cinematic-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%); }
 .cinematic-title-box { position: relative; z-index: 2; text-align: left; }
 .cinematic-title { font-size: 38px; font-weight: 900; color: #fff; text-shadow: 0 2px 15px rgba(0,0,0,0.8); margin: 0; line-height: 1.1; }
@@ -79,24 +78,40 @@ input:disabled, select:disabled { opacity: 0.5; cursor: not-allowed; border-colo
 .cinematic-synopsis { color: #ddd; font-size: 14px; line-height: 1.7; text-align: left; margin-bottom: 20px; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; }
 .trailer-frame { width: 100%; height: 250px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 20px; }
 
-/* Modals & Banners */
+/* 💰 ADVERTISING HACKS (Mobile Responsive) 💰 */
+.ad-placement { background: rgba(0,0,0,0.4); border-radius: 12px; padding: 10px; margin: 20px 0; width: 100%; box-sizing: border-box; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+.ad-scale-wrapper { width: 100%; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 90px; }
+
+/* 📚 UNIVERSAL FOOTER EXPLANATION */
+.app-footer {
+    background: rgba(10, 10, 15, 0.85);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 25px;
+    margin-top: 30px;
+    text-align: left;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.4);
+}
+.app-footer p { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin: 8px 0; }
+.app-footer strong { color: #fff; }
+
+/* Utilities */
 .rule-banner { background: rgba(212, 175, 55, 0.1); border: 1px solid var(--border); color: var(--gold-glow); padding: 12px 15px; border-radius: 12px; font-size: 13px; margin-bottom: 20px; text-align: center; }
 .success-banner { background: rgba(37, 211, 102, 0.15) !important; border: 1px solid #25D366 !important; color: #fff !important; }
-.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; backdrop-filter: blur(15px); }
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; backdrop-filter: blur(15px); }
 .modal-content { width: 100%; max-width: 450px; text-align: center; animation: popIn 0.3s ease-out; }
-@keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-/* Ads, Progress & Social */
-.ad-placement { background: rgba(0,0,0,0.2); border-radius: 12px; overflow: hidden; display: flex; justify-content: center; margin: 20px 0; }
 .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+@keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.loading-icon { font-size: 50px; margin-bottom: 15px; animation: spinBounce 2s infinite ease-in-out; display: inline-block; }
-@keyframes spinBounce { 0% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.2) rotate(180deg); } 100% { transform: scale(1) rotate(360deg); } }
-.progress-bar-container { width: 100%; background: rgba(0, 0, 0, 0.5); height: 12px; border-radius: 10px; overflow: hidden; margin-top: 20px; }
-.progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #D4AF37, #FFF8DC, #D4AF37); transition: width 0.1s linear; }
 
+/* Mobile Adjustments */
 @media (max-width: 600px) {
     .app-header { flex-direction: column; align-items: stretch; }
     .input-grid { grid-template-columns: 1fr; }
     .cinematic-title { font-size: 28px; }
+    
+    /* Shrink the 728x90 ad strictly for mobile to force it to show without breaking screen */
+    .ad-scale-wrapper iframe { transform: scale(0.45); transform-origin: center; }
+    .ad-scale-wrapper { height: 50px; min-height: 50px; }
 }
