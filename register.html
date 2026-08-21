@@ -2,27 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Match App | Register VIP</title>
     <link rel="stylesheet" href="style.css">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <!-- 🌍 ANIMATED GLOBAL THEME BACKGROUND -->
+    <!-- 🌍 ANIMATED GLOBAL THEME BACKGROUND (Vibrant Flying Particles) -->
     <div class="luxury-bg">
         <div class="floating-orb orb-1"></div>
         <div class="floating-orb orb-2"></div>
         <div class="stream-flags">
-            <span class="sf-item" style="animation-delay: 0s; left: 5%;">NETFLIX</span>
-            <span class="sf-item flag" style="animation-delay: 2s; left: 80%;">🇧🇷</span>
-            <span class="sf-item" style="animation-delay: 5s; left: 15%;">MAX</span>
-            <span class="sf-item flag" style="animation-delay: 8s; left: 90%;">🇺🇸</span>
-            <span class="sf-item" style="animation-delay: 11s; left: 50%;">PRIME VIDEO</span>
-            <span class="sf-item flag" style="animation-delay: 14s; left: 30%;">🇯🇵</span>
-            <span class="sf-item" style="animation-delay: 17s; left: 70%;">GLOBOPLAY</span>
-            <span class="sf-item flag" style="animation-delay: 20s; left: 10%;">🇬🇧</span>
-            <span class="sf-item" style="animation-delay: 23s; left: 85%;">SPOTIFY</span>
+            <span class="sf-item flag" style="animation: flyPath1 22s infinite; left: 10%; animation-delay: 0s;">🇧🇷</span>
+            <span class="sf-item flag" style="animation: flyPath2 28s infinite; left: 85%; animation-delay: 3s;">🇺🇸</span>
+            <span class="sf-item flag" style="animation: flyPath1 25s infinite; left: 35%; animation-delay: 6s;">🇬🇧</span>
+            <span class="sf-item flag" style="animation: flyPath2 30s infinite; left: 65%; animation-delay: 9s;">🇯🇵</span>
+            <span class="sf-item flag" style="animation: flyPath1 24s infinite; left: 20%; animation-delay: 12s;">🇪🇸</span>
+            <span class="sf-item flag" style="animation: flyPath2 26s infinite; left: 75%; animation-delay: 15s;">🇰🇷</span>
+            <span class="sf-item brand-netflix" style="animation: flyPath2 20s infinite; left: 5%; animation-delay: 2s;">NETFLIX</span>
+            <span class="sf-item brand-max" style="animation: flyPath1 25s infinite; left: 80%; animation-delay: 5s;">MAX</span>
+            <span class="sf-item brand-prime" style="animation: flyPath2 22s infinite; left: 45%; animation-delay: 8s;">PRIME VIDEO</span>
+            <span class="sf-item brand-disney" style="animation: flyPath1 27s infinite; left: 15%; animation-delay: 11s;">DISNEY+</span>
+            <span class="sf-item brand-spotify" style="animation: flyPath2 24s infinite; left: 60%; animation-delay: 14s;">SPOTIFY</span>
+            <span class="sf-item brand-globo" style="animation: flyPath1 29s infinite; left: 90%; animation-delay: 17s;">GLOBOPLAY</span>
         </div>
     </div>
 
@@ -30,14 +33,14 @@
         
         <!-- 💰 TOP AD PLACEMENT -->
         <div class="ad-placement fade-in">
-            <span style="font-size: 9px; color: #666; display: block; margin-bottom: 5px;">ADVERTISEMENT</span>
+            <span style="font-size: 9px; color: #666; display: block; margin-bottom: 5px; font-weight: bold; letter-spacing: 1px;">SPONSORED ADVERTISEMENT</span>
             <div class="ad-scale-wrapper">
                 <script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script>
                 <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
             </div>
         </div>
 
-        <!-- ✨ UPDATED APP HEADER -->
+        <!-- ✨ MASTER APP HEADER -->
         <header class="app-header fade-in">
             <a href="index.html" class="header-brand-area">
                 <picture><source srcset="logo.jpeg" type="image/jpeg"><img src="logo.jpeg" alt="Logo" class="brand-logo"></picture>
@@ -49,7 +52,7 @@
             </a>
             <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
                 <div class="translate-wrapper" id="google_translate_element"></div>
-                <button onclick="window.location.href='index.html'" class="secondary-btn" style="padding: 8px 15px; width: auto; font-size: 12px;">← Dashboard</button>
+                <button onclick="window.location.href='index.html'" class="secondary-btn" style="padding: 10px 15px; width: auto; font-size: 12px;">← Dashboard</button>
             </div>
         </header>
 
@@ -58,14 +61,14 @@
             <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px;">Create your account to save your portfolio and unlock Zodiac precision.</p>
             
             <!-- Social Logins -->
-            <div class="input-grid" style="grid-template-columns: 1fr; margin-bottom: 20px;">
+            <div class="input-grid" style="grid-template-columns: 1fr; margin-bottom: 25px;">
                 <button onclick="loginWithGoogle()" class="secondary-btn" style="background: #fff; color: #000; border: none; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" width="18"> Continue with Google
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" width="20"> Continue with Google
                 </button>
             </div>
             
-            <div style="margin: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: center; line-height: 0.1em;">
-                <span style="background: var(--bg-card); padding: 0 10px; font-size: 11px; color: var(--text-muted);">OR EMAIL</span>
+            <div style="margin: 25px 0; border-bottom: 1px solid rgba(255,255,255,0.15); text-align: center; line-height: 0.1em;">
+                <span style="background: var(--bg-card); padding: 0 15px; font-size: 11px; color: var(--text-muted); font-weight: bold;">OR EMAIL</span>
             </div>
 
             <div class="input-group">
@@ -76,25 +79,25 @@
                 <label>Password</label>
                 <input type="password" id="password-input" placeholder="Min 6 characters">
             </div>
-            <button onclick="signUpEmail()" class="gold-btn pulse" style="margin-bottom: 10px;">Create VIP Account</button>
+            <button onclick="signUpEmail()" class="gold-btn pulse" style="margin-bottom: 15px; margin-top: 10px;">Create VIP Account</button>
             <button onclick="signInEmail()" class="secondary-btn" style="width: 100%;">Log In</button>
-            <div id="auth-message" style="margin-top: 15px; font-size: 13px; font-weight: bold;"></div>
+            <div id="auth-message" style="margin-top: 15px; font-size: 14px; font-weight: bold;"></div>
         </div>
 
         <!-- 📚 UNIVERSAL FOOTER -->
         <footer class="app-footer fade-in">
-            <h4 style="color: var(--gold); margin: 0 0 15px 0; font-size: 18px; text-align: center;">🎬 How Match App Works</h4>
-            <p><strong>1. The Algorithm:</strong> We cross-reference your mood, selected streaming platform, and aesthetic vibe to find your perfect content.</p>
-            <p><strong>2. Search Titles:</strong> Looking for something specific? Use the "Where to Watch" bar to find which platform is streaming your favorite show.</p>
-            <p><strong>3. VIP Access:</strong> Register to save titles to your Portfolio, activate deep Zodiac matching, and get unlimited daily searches.</p>
+            <h4 style="color: var(--gold); margin: 0 0 15px 0; font-size: 20px;">🎬 How Match App Works</h4>
+            <p style="font-size: 14px; line-height: 1.6; color: var(--text-muted); margin-bottom: 10px;"><strong>1. The Algorithm:</strong> We cross-reference your mood, selected streaming platform, and aesthetic vibe to find your perfect content.</p>
+            <p style="font-size: 14px; line-height: 1.6; color: var(--text-muted); margin-bottom: 10px;"><strong>2. Search Titles:</strong> Looking for something specific? Use the "Where to Watch" bar to find which platform is streaming your favorite show.</p>
+            <p style="font-size: 14px; line-height: 1.6; color: var(--text-muted); margin-bottom: 10px;"><strong>3. Strict Deduplication:</strong> Once you see a match, it is locked into your device's seen-list. You will NEVER be matched with it again.</p>
             
-            <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 25px; padding-top: 25px;">
-                <span style="font-size: 9px; color: #666; display: block; margin-bottom: 10px; text-align: center; letter-spacing: 1px;">SPONSORED CONTENT</span>
-                <div style="display: flex; justify-content: center; margin-bottom: 20px; overflow: hidden; border-radius: 12px;">
+            <div style="border-top: 1px solid rgba(255,255,255,0.15); margin-top: 30px; padding-top: 30px;">
+                <span style="font-size: 10px; color: #888; display: block; margin-bottom: 15px; text-align: center; letter-spacing: 1.5px; font-weight: bold;">SPONSORED CONTENT</span>
+                <div style="display: flex; justify-content: center; margin-bottom: 25px; overflow: hidden; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.5);">
                     <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script>
                     <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
                 </div>
-                <div class="ad-placement">
+                <div class="ad-placement" style="padding: 10px;">
                     <ins class="adsbygoogle" style="display:block; width:100%; min-height: 100px;" data-ad-format="fluid" data-ad-layout-key="-6t+ed+2i-1n-4w" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117"></ins>
                     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                 </div>
@@ -102,7 +105,6 @@
         </footer>
     </div>
 
-    <!-- TRANSLATION SCRIPT -->
     <script type="text/javascript">
         function googleTranslateElementInit() { new google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'pt,en,zh-CN,hi,es,fr,ar,bn,ru,de', layout: google.translate.TranslateElement.InlineLayout.SIMPLE }, 'google_translate_element'); }
     </script>
