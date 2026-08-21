@@ -9,7 +9,22 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <div class="luxury-bg"><div class="floating-orb orb-1"></div><div class="floating-orb orb-2"></div></div>
+    <!-- 🌍 ANIMATED GLOBAL THEME BACKGROUND -->
+    <div class="luxury-bg">
+        <div class="floating-orb orb-1"></div>
+        <div class="floating-orb orb-2"></div>
+        <div class="stream-flags">
+            <span class="sf-item" style="animation-delay: 0s; left: 5%;">NETFLIX</span>
+            <span class="sf-item flag" style="animation-delay: 2s; left: 80%;">🇧🇷</span>
+            <span class="sf-item" style="animation-delay: 5s; left: 15%;">MAX</span>
+            <span class="sf-item flag" style="animation-delay: 8s; left: 90%;">🇺🇸</span>
+            <span class="sf-item" style="animation-delay: 11s; left: 50%;">PRIME VIDEO</span>
+            <span class="sf-item flag" style="animation-delay: 14s; left: 30%;">🇯🇵</span>
+            <span class="sf-item" style="animation-delay: 17s; left: 70%;">GLOBOPLAY</span>
+            <span class="sf-item flag" style="animation-delay: 20s; left: 10%;">🇬🇧</span>
+            <span class="sf-item" style="animation-delay: 23s; left: 85%;">SPOTIFY</span>
+        </div>
+    </div>
 
     <div class="container" style="max-width: 500px;">
         
@@ -22,23 +37,19 @@
             </div>
         </div>
 
-        <!-- ✨ APP HEADER WITH CREATOR SIGNATURE -->
+        <!-- ✨ UPDATED APP HEADER -->
         <header class="app-header fade-in">
-            <a href="index.html" class="logo" style="display: flex; flex-direction: column; align-items: flex-start; text-decoration: none;">
-                <div style="display: flex; align-items: center;">
-                    <picture>
-                        <source srcset="logo.jpeg" type="image/jpeg">
-                        <img src="logo.jpeg" alt="Match App Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';">
-                    </picture>
-                    <span id="logo-text" style="display:none; font-size: 24px; font-weight: 900; color: #fff;">Match<span style="color: var(--gold);">App</span></span>
+            <a href="index.html" class="header-brand-area">
+                <picture><source srcset="logo.jpeg" type="image/jpeg"><img src="logo.jpeg" alt="Logo" class="brand-logo"></picture>
+                <div class="brand-text-container">
+                    <span class="app-title-main">Match<span style="color: var(--gold);">App</span></span>
+                    <span class="app-title-sub">Your streaming concierge service</span>
+                    <span class="app-author">By Jonas Junior</span>
                 </div>
-                <!-- YOUR SIGNATURE -->
-                <span style="font-size: 9px; font-weight: 900; color: var(--gold); opacity: 0.75; letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; margin-left: 2px;">By Jonas Junior</span>
             </a>
-            
             <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
                 <div class="translate-wrapper" id="google_translate_element"></div>
-                <button onclick="window.location.href='index.html'" class="secondary-btn" style="padding: 6px 12px; font-size: 12px; width: auto;">← Dashboard</button>
+                <button onclick="window.location.href='index.html'" class="secondary-btn" style="padding: 8px 15px; width: auto; font-size: 12px;">← Dashboard</button>
             </div>
         </header>
 
@@ -74,7 +85,7 @@
         <footer class="app-footer fade-in">
             <h4 style="color: var(--gold); margin: 0 0 15px 0; font-size: 18px; text-align: center;">🎬 How Match App Works</h4>
             <p><strong>1. The Algorithm:</strong> We cross-reference your mood, selected streaming platform, and aesthetic vibe to find your perfect content.</p>
-            <p><strong>2. Strict Deduplication:</strong> Once you see a match, it is locked into your device's seen-list. You will NEVER be matched with it again.</p>
+            <p><strong>2. Search Titles:</strong> Looking for something specific? Use the "Where to Watch" bar to find which platform is streaming your favorite show.</p>
             <p><strong>3. VIP Access:</strong> Register to save titles to your Portfolio, activate deep Zodiac matching, and get unlimited daily searches.</p>
             
             <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 25px; padding-top: 25px;">
