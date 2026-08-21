@@ -20,11 +20,11 @@ window.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('prof-zodiac').disabled = true;
     }
 
-    // Load Default Preferences
+    // Load Default Preferences (Includes Platform & Aesthetic)
     if (meta.pref_category) document.getElementById('pref-category').value = meta.pref_category;
+    if (meta.pref_platform) document.getElementById('pref-platform').value = meta.pref_platform;
     if (meta.pref_mood) document.getElementById('pref-mood').value = meta.pref_mood;
-    if (meta.pref_era) document.getElementById('pref-era').value = meta.pref_era;
-    if (meta.pref_company) document.getElementById('pref-company').value = meta.pref_company;
+    if (meta.pref_aesthetic) document.getElementById('pref-aesthetic').value = meta.pref_aesthetic;
 });
 
 window.saveProfile = async function() {
@@ -33,9 +33,9 @@ window.saveProfile = async function() {
     
     let updateData = {
         pref_category: document.getElementById('pref-category').value,
+        pref_platform: document.getElementById('pref-platform').value,
         pref_mood: document.getElementById('pref-mood').value,
-        pref_era: document.getElementById('pref-era').value,
-        pref_company: document.getElementById('pref-company').value
+        pref_aesthetic: document.getElementById('pref-aesthetic').value
     };
 
     // Only save Age/Zodiac if they aren't disabled yet
