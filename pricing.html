@@ -10,7 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <div class="luxury-bg"><div class="floating-orb orb-1"></div></div>
+    <div class="luxury-bg"><div class="floating-orb orb-1"></div><div class="floating-orb orb-2"></div></div>
 
     <div class="container" style="max-width: 800px;">
         
@@ -23,19 +23,28 @@
             </div>
         </div>
 
-        <header class="app-header">
-            <a href="index.html" class="logo" style="text-decoration: none;">
-                <picture><source srcset="logo.jpeg" type="image/jpeg"><img src="logo.jpeg" alt="Match App Logo" class="brand-logo"></picture>
-                <span id="logo-text" style="display:none; font-size: 24px; font-weight: 900; color: #fff;">Match<span style="color: var(--gold);">App</span></span>
+        <!-- ✨ APP HEADER WITH CREATOR SIGNATURE -->
+        <header class="app-header fade-in">
+            <a href="index.html" class="logo" style="display: flex; flex-direction: column; align-items: flex-start; text-decoration: none;">
+                <div style="display: flex; align-items: center;">
+                    <picture>
+                        <source srcset="logo.jpeg" type="image/jpeg">
+                        <img src="logo.jpeg" alt="Match App Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';">
+                    </picture>
+                    <span id="logo-text" style="display:none; font-size: 24px; font-weight: 900; color: #fff;">Match<span style="color: var(--gold);">App</span></span>
+                </div>
+                <!-- YOUR SIGNATURE -->
+                <span style="font-size: 9px; font-weight: 900; color: var(--gold); opacity: 0.75; letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; margin-left: 2px;">By Jonas Junior</span>
             </a>
-            <div id="header-auth-area" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
+            
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
                 <div class="translate-wrapper" id="google_translate_element"></div>
-                <button id="nav-reg-btn" onclick="window.location.href='index.html'" class="secondary-btn" style="padding: 6px 12px; width: auto; font-size: 12px;">← Dashboard</button>
+                <button onclick="window.location.href='index.html'" class="secondary-btn" style="padding: 6px 12px; font-size: 12px; width: auto;">← Dashboard</button>
             </div>
         </header>
 
         <div style="text-align: center; margin-bottom: 30px;">
-            <h1 style="color: var(--gold); margin-bottom: 10px; font-size: 32px;">Unlock Premium Matches</h1>
+            <h1 style="color: var(--gold); margin-bottom: 10px; font-size: 32px; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">Unlock Premium Matches</h1>
             <p style="color: var(--text-muted); font-size: 14px;">Pay securely via PIX (Brazil) or PayPal / Google Pay (Global).</p>
         </div>
 
@@ -53,7 +62,7 @@
                 <h3 style="color: #fff; margin-top: 15px;">Weekly Pass</h3>
                 <div style="color: var(--gold); font-size: 36px; font-weight: 900; margin: 15px 0;">R$ 9,99</div>
                 <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px; flex-grow: 1;">Get <strong>20 precision matches</strong>.</p>
-                <button onclick="openPixModal('Weekly Pass', 9.99)" class="gold-btn" style="background: #25D366; color: #fff; margin-bottom: 10px; padding: 12px;">⚡ Pay via PIX</button>
+                <button onclick="openPixModal('Weekly Pass', 9.99)" class="gold-btn pulse" style="background: #25D366; color: #fff; margin-bottom: 10px; padding: 12px;">⚡ Pay via PIX</button>
                 <div id="paypal-button-20"></div>
             </div>
 
@@ -69,18 +78,18 @@
         <!-- 📚 UNIVERSAL FOOTER -->
         <footer class="app-footer fade-in">
             <h4 style="color: var(--gold); margin: 0 0 15px 0; font-size: 18px; text-align: center;">🎬 How Match App Works</h4>
-            <p><strong>1. First Match is FREE!</strong> Our concierge algorithm uses your mood and Zodiac affinity to curate your perfect movie or series.</p>
-            <p><strong>2. Free Ad-Retries:</strong> Already seen a match? Watch a 15-second sponsor ad to unlock a new, deduplicated match (up to 5 free retries).</p>
+            <p><strong>1. The Algorithm:</strong> We cross-reference your mood, selected streaming platform, and aesthetic vibe to find your perfect content.</p>
+            <p><strong>2. Strict Deduplication:</strong> Once you see a match, it is locked into your device's seen-list. You will NEVER be matched with it again.</p>
             <p><strong>3. VIP Access:</strong> Register to save titles to your Portfolio, activate deep Zodiac matching, and get unlimited daily searches.</p>
             
-            <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 20px; padding-top: 20px;">
-                <span style="font-size: 9px; color: #666; display: block; margin-bottom: 5px; text-align: center;">SPONSORED ADS</span>
-                <div style="display: flex; justify-content: center; margin-bottom: 15px; overflow: hidden;">
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 25px; padding-top: 25px;">
+                <span style="font-size: 9px; color: #666; display: block; margin-bottom: 10px; text-align: center; letter-spacing: 1px;">SPONSORED CONTENT</span>
+                <div style="display: flex; justify-content: center; margin-bottom: 20px; overflow: hidden; border-radius: 12px;">
                     <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script>
                     <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
                 </div>
-                <div style="width: 100%; min-height: 100px; display: block; overflow: hidden;">
-                    <ins class="adsbygoogle" style="display:block; width:100%;" data-ad-format="fluid" data-ad-layout-key="-6t+ed+2i-1n-4w" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117"></ins>
+                <div class="ad-placement">
+                    <ins class="adsbygoogle" style="display:block; width:100%; min-height: 100px;" data-ad-format="fluid" data-ad-layout-key="-6t+ed+2i-1n-4w" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117"></ins>
                     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                 </div>
             </div>
@@ -88,19 +97,20 @@
     </div>
 
     <!-- 🇧🇷 SECURE PIX MODAL -->
-    <div id="pix-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box;">
-        <div class="premium-card" style="background: var(--bg-dark); border-color: #25D366; width: 100%; max-width: 400px; text-align: center; padding: 30px;">
+    <div id="pix-modal" class="modal-overlay">
+        <div class="premium-card modal-content" style="border-color: #25D366;">
             <h2 style="color: #25D366; margin-top: 0;">Scan to Pay</h2>
             <p style="color: var(--text-muted); font-size: 13px;">Open your banking app and scan this QR code, or copy the Pix key code invisibly.</p>
             <div style="background: #fff; padding: 15px; border-radius: 12px; display: inline-block; margin-bottom: 20px;">
                 <img id="pix-qr-img" src="" alt="PIX QR Code" style="width: 200px; height: 200px;">
             </div>
             <button onclick="copyPixCode()" class="secondary-btn" style="width: 100%; margin-bottom: 20px;">📋 Copy Pix "Copia e Cola"</button>
-            <button id="pix-confirm-btn" class="gold-btn" style="background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; border: none; margin-bottom: 10px;">✅ I Have Paid (Send Receipt)</button>
+            <button id="pix-confirm-btn" class="gold-btn pulse" style="background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; border: none; margin-bottom: 10px;">✅ I Have Paid (Send Receipt)</button>
             <button onclick="closePixModal()" class="secondary-btn" style="width: 100%; border: none; background: transparent; color: var(--text-muted);">Cancel</button>
         </div>
     </div>
 
+    <!-- TRANSLATION SCRIPT -->
     <script type="text/javascript">
         function googleTranslateElementInit() { new google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'pt,en,zh-CN,hi,es,fr,ar,bn,ru,de', layout: google.translate.TranslateElement.InlineLayout.SIMPLE }, 'google_translate_element'); }
     </script>
