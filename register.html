@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Match App | Register VIP</title>
     <link rel="stylesheet" href="style.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -12,43 +13,29 @@
 
     <div class="container" style="max-width: 500px;">
         
-        <!-- THE UNIVERSAL APP HEADER -->
+        <!-- 💰 TOP AD PLACEMENT -->
+        <div class="ad-placement fade-in">
+            <span style="font-size: 9px; color: #666; display: block; margin-bottom: 5px;">ADVERTISEMENT</span>
+            <div class="ad-scale-wrapper">
+                <script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script>
+                <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
+            </div>
+        </div>
+
         <header class="app-header">
             <a href="index.html" class="logo" style="text-decoration: none;">
-                <picture>
-                    <source srcset="logo.png" type="image/png"><source srcset="logo.jpg" type="image/jpeg"><source srcset="Logo.jpg" type="image/jpeg">
-                    <img src="logo.jpeg" alt="Match App Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';">
-                </picture>
+                <picture><source srcset="logo.jpeg" type="image/jpeg"><img src="logo.jpeg" alt="Match App Logo" class="brand-logo"></picture>
                 <span id="logo-text" style="display:none; font-size: 24px; font-weight: 900; color: #fff;">Match<span style="color: var(--gold);">App</span></span>
             </a>
-            
             <div id="header-auth-area" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
                 <div class="translate-wrapper" id="google_translate_element"></div>
-                
-                <!-- Navigation -->
                 <button id="nav-reg-btn" onclick="window.location.href='index.html'" class="secondary-btn" style="padding: 6px 12px; width: auto; font-size: 12px;">← Dashboard</button>
-                
-                <!-- Logged In Buttons (Hidden by default, shown if user state changes) -->
-                <button id="nav-profile-btn" onclick="window.location.href='profile.html'" style="display: none; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid var(--gold); padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">👤 My Profile</button>
-                <button id="nav-upgrade-btn" onclick="window.location.href='pricing.html'" style="display: none; background: linear-gradient(135deg, #BF953F, #FCF6BA); color: #000; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">💎 Upgrade</button>
-                <button id="nav-logout-btn" onclick="doLogout()" style="display: none; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">Log Out</button>
             </div>
         </header>
 
         <div class="premium-card fade-in" style="text-align: center;">
             <h2 style="color: var(--gold); margin-top: 0; font-size: 28px;">VIP Access</h2>
-            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px;">Create your account to save your portfolio, unlock Zodiac precision, and get unlimited daily matches.</p>
-
-            <!-- Social Logins -->
-            <div class="social-login-grid">
-                <button onclick="loginWithGoogle()" class="btn-google">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" width="18"> Google
-                </button>
-            </div>
-
-            <div class="divider">OR USE EMAIL</div>
-
-            <!-- Email Form -->
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px;">Create your account to save your portfolio and unlock Zodiac precision.</p>
             <div class="input-group">
                 <label>Email Address</label>
                 <input type="email" id="email-input" placeholder="you@example.com">
@@ -57,29 +44,36 @@
                 <label>Password</label>
                 <input type="password" id="password-input" placeholder="Min 6 characters">
             </div>
-
             <button onclick="signUpEmail()" class="gold-btn" style="margin-bottom: 10px;">Create VIP Account</button>
             <button onclick="signInEmail()" class="secondary-btn" style="width: 100%;">Log In</button>
-            
             <div id="auth-message" style="margin-top: 15px; font-size: 13px; font-weight: bold;"></div>
         </div>
+
+        <!-- 📚 UNIVERSAL FOOTER -->
+        <footer class="app-footer fade-in">
+            <h4 style="color: var(--gold); margin: 0 0 15px 0; font-size: 18px; text-align: center;">🎬 How Match App Works</h4>
+            <p><strong>1. First Match is FREE!</strong> Our concierge algorithm uses your mood and Zodiac affinity to curate your perfect movie or series.</p>
+            <p><strong>2. Free Ad-Retries:</strong> Already seen a match? Watch a 15-second sponsor ad to unlock a new, deduplicated match (up to 5 free retries).</p>
+            <p><strong>3. VIP Access:</strong> Register to save titles to your Portfolio, activate deep Zodiac matching, and get unlimited daily searches.</p>
+            
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 20px; padding-top: 20px;">
+                <span style="font-size: 9px; color: #666; display: block; margin-bottom: 5px; text-align: center;">SPONSORED ADS</span>
+                <div style="display: flex; justify-content: center; margin-bottom: 15px; overflow: hidden;">
+                    <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script>
+                    <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
+                </div>
+                <div style="width: 100%; min-height: 100px; display: block; overflow: hidden;">
+                    <ins class="adsbygoogle" style="display:block; width:100%;" data-ad-format="fluid" data-ad-layout-key="-6t+ed+2i-1n-4w" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117"></ins>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                </div>
+            </div>
+        </footer>
     </div>
 
-    <!-- TRANSLATION SCRIPT -->
     <script type="text/javascript">
         function googleTranslateElementInit() { new google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'pt,en,zh-CN,hi,es,fr,ar,bn,ru,de', layout: google.translate.TranslateElement.InlineLayout.SIMPLE }, 'google_translate_element'); }
     </script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-    
-    <script>
-        async function doLogout() {
-            if (window.supabase) {
-                const client = window.supabase.createClient('https://zkymvqrmbabngsqblyye.supabase.co', 'sb_publishable_j3kQUhd_9JHfWdfiV3iWog_RpEltrOU');
-                await client.auth.signOut();
-                window.location.href = 'index.html';
-            }
-        }
-    </script>
     <script src="auth.js"></script>
 </body>
 </html>
