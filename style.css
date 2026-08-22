@@ -124,11 +124,16 @@ input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow
 .search-input-wrapper input { flex-grow: 1; }
 .search-input-wrapper button { width: auto; padding: 15px 30px; white-space: nowrap; }
 
-/* 🔘 BUTTONS */
+/* 🔘 BUTTONS & SOCIALS */
 .gold-btn { background: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C); color: #000; border: none; padding: 16px; border-radius: 12px; font-weight: 900; font-size: 15px; cursor: pointer; width: 100%; transition: all 0.3s ease; box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4); text-transform: uppercase; letter-spacing: 1px; }
 .gold-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(212, 175, 55, 0.7); }
 .secondary-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.25); color: #fff; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; }
 .secondary-btn:hover:not([disabled]) { background: rgba(255,255,255,0.15); border-color: var(--gold); color: var(--gold-glow); transform: translateY(-2px); }
+
+.social-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 20px; border-radius: 10px; font-weight: bold; font-size: 14px; text-decoration: none; transition: all 0.3s; width: 100%; box-sizing: border-box; }
+.social-ig { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: #fff; }
+.social-yt { background: #FF0000; color: #fff; }
+.social-btn:hover { transform: translateY(-3px); filter: brightness(1.2); box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
 
 /* 🎬 CINEMATIC RESULT */
 .cinematic-result { padding: 0; overflow: hidden; border: 2px solid var(--gold); }
@@ -138,23 +143,16 @@ input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow
 .cinematic-title { font-size: 46px; font-weight: 900; color: #fff; text-shadow: 0 4px 25px rgba(0,0,0,1); margin: 0; line-height: 1.1; }
 .cinematic-body { padding: 35px; background: rgba(5, 5, 10, 0.98); }
 
-/* ✨ FADE-IN FIX (Start opacity at 0) */
-.fade-in { 
-    opacity: 0; 
-    animation: fadeIn 0.8s ease-out forwards; 
-}
-@keyframes popIn { 
-    from { transform: scale(0.9); opacity: 0; } 
-    to { transform: scale(1); opacity: 1; } 
-}
-@keyframes fadeIn { 
-    from { opacity: 0; transform: translateY(20px); } 
-    to { opacity: 1; transform: translateY(0); } 
-}
+/* ✨ FADE-IN FIX */
+.fade-in { opacity: 0; animation: fadeIn 0.8s ease-out forwards; }
+@keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
 /* MODALS & PROGRESS */
 .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; backdrop-filter: blur(30px); }
-.modal-content { width: 100%; max-width: 480px; text-align: center; animation: popIn 0.4s ease-out; }
+.modal-content { width: 100%; max-width: 480px; text-align: center; animation: popIn 0.4s ease-out; position: relative; }
+.close-x { position: absolute; top: 15px; right: 20px; font-size: 28px; color: var(--text-muted); cursor: pointer; transition: color 0.3s; line-height: 1; }
+.close-x:hover { color: #ff5252; }
 .loading-icon { font-size: 60px; margin-bottom: 20px; display: inline-block; animation: pulseIcon 1.5s infinite; }
 @keyframes pulseIcon { 0% { transform: scale(1); filter: drop-shadow(0 0 15px var(--gold)); } 50% { transform: scale(1.2); filter: drop-shadow(0 0 40px var(--gold)); } 100% { transform: scale(1); filter: drop-shadow(0 0 15px var(--gold)); } }
 .progress-bar-container { width: 100%; background: rgba(0, 0, 0, 0.8); height: 16px; border-radius: 10px; overflow: hidden; margin-top: 25px; border: 1px solid rgba(212,175,55,0.3); }
@@ -182,7 +180,7 @@ input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow
     .ad-scale-wrapper > * { transform: scale(min(1, calc(100vw / 750))); transform-origin: top center; max-width: 100%; }
 }
 
-/* 🛑 GOOGLE TRANSLATE HOVER FIX (Permanently disables the annoying text popups) */
+/* 🛑 GOOGLE TRANSLATE HOVER FIX */
 body { top: 0 !important; }
 .skiptranslate iframe { display: none !important; }
 #goog-gt-tt, .goog-te-balloon-frame { display: none !important; }
