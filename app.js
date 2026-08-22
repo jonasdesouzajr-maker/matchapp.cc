@@ -1,4 +1,4 @@
-console.log("Mastercode 34.0: Welcome Screen, Socials & Strict Algorithm Active");
+console.log("Mastercode 36.0: Aggressive Deep-Link Detector & Layout Anchors Active");
 
 let globalMatchTitle = "Match App";
 let supabaseClient = null;
@@ -23,7 +23,8 @@ function checkAdBlocker() {
 // 🌐 BULLETPROOF CHROME DETECTOR & DEEP-LINK
 window.openInChrome = function() {
     const currentUrl = window.location.href.replace(/^https?:\/\//, '');
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const ua = navigator.userAgent;
+    const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
     
     if (isIOS) {
         window.location.href = 'googlechrome://' + currentUrl;
@@ -32,7 +33,10 @@ window.openInChrome = function() {
     }
 }
 
-// ✨ WELCOME MODAL LOGIC
+window.dismissChromeBanner = function() {
+    document.getElementById('chrome-banner').style.display = 'none';
+};
+
 window.closeWelcomeModal = function() {
     document.getElementById('welcome-modal').style.display = 'none';
     localStorage.setItem('hasSeenWelcome', 'true');
@@ -42,17 +46,31 @@ window.addEventListener('DOMContentLoaded', async () => {
     checkAdBlocker();
     setInterval(checkAdBlocker, 5000); 
 
-    // Show Welcome Screen if first visit
+    // WELCOME SCREEN
     if (localStorage.getItem('hasSeenWelcome') !== 'true') {
         const welcomeModal = document.getElementById('welcome-modal');
         if (welcomeModal) welcomeModal.style.display = 'flex';
     }
 
-    // Banner Logic: Show if browser is NOT Google Chrome.
-    const isActuallyChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor) && !/Edge|Edg|OPR|Brave/.test(navigator.userAgent);
-    if (!isActuallyChrome) {
+    // 🛑 AGGRESSIVE BROWSER SNIFFER (Detects Safari & In-App WebViews like Instagram)
+    const ua = navigator.userAgent || navigator.vendor || window.opera;
+    const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+    const isAndroid = /Android/.test(ua);
+    const isChromeIOS = /CriOS/.test(ua);
+    const isChromeAndroid = /Chrome/.test(ua) && /Google Inc/.test(navigator.vendor);
+    const isWebView = /wv|Instagram|FBAN|FBAV/.test(ua); // Detects in-app browsers
+
+    let showChromeBanner = false;
+    
+    // Show if on iOS and NOT using the Chrome app
+    if (isIOS && !isChromeIOS) showChromeBanner = true;
+    
+    // Show if on Android and NOT using Chrome, OR trapped inside a WebView (Instagram/Facebook)
+    if (isAndroid && (!isChromeAndroid || isWebView)) showChromeBanner = true;
+
+    if (showChromeBanner) {
         const banner = document.getElementById('chrome-banner');
-        if (banner) banner.style.display = 'flex';
+        if (banner) banner.style.display = 'flex'; // Use flex to match layout
     }
 
     if (supabaseClient) {
@@ -191,7 +209,13 @@ window.triggerMatch = async function() {
             if (!isUserLoggedIn && localStorage.getItem('hasUsedFreeMatch') !== 'true') localStorage.setItem('hasUsedFreeMatch', 'true');
 
             document.getElementById('loading-box').style.display = 'none';
-            document.getElementById('result-box').style.display = 'block';
+            
+            // Force animation reset for display block
+            const resultBox = document.getElementById('result-box');
+            resultBox.style.display = 'block';
+            resultBox.style.animation = 'none';
+            resultBox.offsetHeight; // trigger reflow
+            resultBox.style.animation = null;
 
             document.getElementById('res-header-bg').style.backgroundImage = `url('${selected.poster}')`;
             document.getElementById('res-title').innerText = selected.title;
@@ -282,7 +306,13 @@ window.triggerSearch = function() {
         if (width >= 100) {
             clearInterval(interval);
             document.getElementById('loading-box').style.display = 'none';
-            document.getElementById('search-result-box').style.display = 'block';
+            
+            const searchBox = document.getElementById('search-result-box');
+            searchBox.style.display = 'block';
+            searchBox.style.animation = 'none';
+            searchBox.offsetHeight; 
+            searchBox.style.animation = null;
+
             document.getElementById('search-res-title').innerText = query;
             const searchUrl = `https://www.google.com/search?q=where+to+watch+${encodeURIComponent(query)}`;
             document.getElementById('search-direct-link').href = searchUrl;
