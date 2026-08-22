@@ -1,4 +1,4 @@
-console.log("Mastercode 31.0: Advanced Deduplication & Scoring Engine Active");
+console.log("Mastercode 32.0: Deep-Link, Localized Trailers & Deduplication Engine Active");
 
 let globalMatchTitle = "Match App";
 let supabaseClient = null;
@@ -21,15 +21,18 @@ function checkAdBlocker() {
     }, 300);
 }
 
-// CHROME DEEP LINK DETECTOR
+// 🌐 THE REAL "OPEN IN CHROME" DEEP-LINK SCRIPT
 window.openInChrome = function() {
-    const url = window.location.href.replace(/^https?:\/\//, '');
-    if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-        window.location.href = 'googlechrome://' + url;
-    } else if (/Android/i.test(navigator.userAgent)) {
-        window.location.href = 'intent://' + url + '#Intent;scheme=https;package=com.android.chrome;end;';
+    const currentUrl = window.location.href.replace(/^https?:\/\//, '');
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const isAndroid = /Android/.test(navigator.userAgent);
+    
+    if (isIOS) {
+        window.location.href = 'googlechrome://' + currentUrl;
+    } else if (isAndroid) {
+        window.location.href = 'intent://' + currentUrl + '#Intent;scheme=https;package=com.android.chrome;end;';
     } else {
-        alert("Please open Google Chrome and paste our website address for the best experience!");
+        alert("Please open Google Chrome and navigate to our website for the ultimate experience!");
     }
 }
 
@@ -37,10 +40,13 @@ window.addEventListener('DOMContentLoaded', async () => {
     checkAdBlocker();
     setInterval(checkAdBlocker, 5000); 
 
-    // Show Chrome banner if not Chrome
-    const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
-    if (!isChrome && document.getElementById('chrome-banner')) {
-        document.getElementById('chrome-banner').style.display = 'flex';
+    // Mobile Browser Sniffer for Chrome Banner
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const isChrome = /CriOS/i.test(navigator.userAgent) || (/Chrome/i.test(navigator.userAgent) && /Google Inc/i.test(navigator.vendor));
+    
+    if (isMobile && !isChrome) {
+        const banner = document.getElementById('chrome-banner');
+        if (banner) banner.style.display = 'flex';
     }
 
     if (supabaseClient) {
@@ -73,35 +79,36 @@ async function syncListsToDatabase() {
     if (isUserLoggedIn && supabaseClient) await supabaseClient.auth.updateUser({ data: { seen_list: seenList, saved_list: savedList } });
 }
 
-// 🌐 THE MASTER CATALOG (Expanded for precise algorithm matching)
+// 🎬 VERIFIED YOUTUBE IDs CATALOG
 const masterCatalog = [
-    // MOVIES
-    { title: "Parasite", category: "movie", platform: "Max", mood: "intense", aesthetic: "dark", era: "modern", pacing: "standard", trailer: "https://www.youtube.com/embed/5xH0HfJHsaY", url: "https://www.max.com", synopsis: "Greed and class discrimination threaten a wealthy family.", poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80" },
-    { title: "Cidade de Deus", category: "movie", platform: "Prime", mood: "intense", aesthetic: "dark", era: "classic", pacing: "standard", trailer: "https://www.youtube.com/embed/dcUOO4yqZaQ", url: "https://www.primevideo.com", synopsis: "Two boys growing up in a violent neighborhood of Rio take different paths.", poster: "https://images.unsplash.com/photo-1518639197413-568b81340156?auto=format&fit=crop&w=800&q=80" },
-    { title: "Superbad", category: "movie", platform: "Netflix", mood: "laugh", aesthetic: "colorful", era: "classic", pacing: "fast", trailer: "https://www.youtube.com/embed/4eaKAjixTMY", url: "https://www.netflix.com", synopsis: "High school seniors deal with separation anxiety during a wild party.", poster: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=800&q=80" },
-    { title: "Interstellar", category: "movie", platform: "Prime", mood: "mindbending", aesthetic: "dark", era: "modern", pacing: "epic", trailer: "https://www.youtube.com/embed/zSWdZVtXT7E", url: "https://www.primevideo.com", synopsis: "Explorers travel through a wormhole in space to ensure humanity's survival.", poster: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80" },
-    { title: "The Great Gatsby", category: "movie", platform: "Max", mood: "romantic", aesthetic: "luxurious", era: "classic", pacing: "standard", trailer: "https://www.youtube.com/embed/rARN6agiW7o", url: "https://www.max.com", synopsis: "A writer gets drawn into the lavish, tragic world of his millionaire neighbor.", poster: "https://images.unsplash.com/photo-1566737236500-c8ac43014a67?auto=format&fit=crop&w=800&q=80" },
+    // MOVIES (Using specific verified YouTube IDs)
+    { title: "Parasite", category: "movie", platform: "Max", mood: "intense", aesthetic: "dark", era: "modern", pacing: "standard", trailerId: "SEUXfv87Wpk", url: "https://www.max.com", synopsis: "Greed and class discrimination threaten a wealthy family.", poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80" },
+    { title: "Cidade de Deus", category: "movie", platform: "Prime", mood: "intense", aesthetic: "dark", era: "classic", pacing: "standard", trailerId: "ioUEvrOaAoU", url: "https://www.primevideo.com", synopsis: "Two boys growing up in a violent neighborhood of Rio take different paths.", poster: "https://images.unsplash.com/photo-1518639197413-568b81340156?auto=format&fit=crop&w=800&q=80" },
+    { title: "Superbad", category: "movie", platform: "Netflix", mood: "laugh", aesthetic: "colorful", era: "classic", pacing: "fast", trailerId: "MNpoTxeydiI", url: "https://www.netflix.com", synopsis: "High school seniors deal with separation anxiety during a wild party.", poster: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=800&q=80" },
+    { title: "Interstellar", category: "movie", platform: "Prime", mood: "mindbending", aesthetic: "dark", era: "modern", pacing: "epic", trailerId: "zSWdZVtXT7E", url: "https://www.primevideo.com", synopsis: "Explorers travel through a wormhole in space to ensure humanity's survival.", poster: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80" },
+    { title: "The Great Gatsby", category: "movie", platform: "Max", mood: "romantic", aesthetic: "luxurious", era: "classic", pacing: "standard", trailerId: "sN183rJltNM", url: "https://www.max.com", synopsis: "A writer gets drawn into the lavish, tragic world of his millionaire neighbor.", poster: "https://images.unsplash.com/photo-1566737236500-c8ac43014a67?auto=format&fit=crop&w=800&q=80" },
     
     // SERIES
-    { title: "Succession", category: "series", platform: "Max", mood: "intense", aesthetic: "luxurious", era: "modern", pacing: "standard", trailer: "https://www.youtube.com/embed/OzYxJV_rmv8", url: "https://www.max.com", synopsis: "A media family fights for control of their empire.", poster: "https://images.unsplash.com/photo-1555529733-0e67056058e1?auto=format&fit=crop&w=800&q=80" },
-    { title: "Stranger Things", category: "series", platform: "Netflix", mood: "intense", aesthetic: "retro", era: "modern", pacing: "epic", trailer: "https://www.youtube.com/embed/b9EkMc79ZSU", url: "https://www.netflix.com", synopsis: "A group of kids uncover secret experiments and terrifying supernatural forces.", poster: "https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=800&q=80" },
-    { title: "The Office", category: "series", platform: "Prime", mood: "laugh", aesthetic: "retro", era: "classic", pacing: "fast", trailer: "https://www.youtube.com/embed/cKKHFAew_ls", url: "https://www.primevideo.com", synopsis: "A mockumentary on a group of typical office workers.", poster: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=800&q=80" },
+    { title: "Succession", category: "series", platform: "Max", mood: "intense", aesthetic: "luxurious", era: "modern", pacing: "standard", trailerId: "OzYxJV_rmv8", url: "https://www.max.com", synopsis: "A media family fights for control of their empire.", poster: "https://images.unsplash.com/photo-1555529733-0e67056058e1?auto=format&fit=crop&w=800&q=80" },
+    { title: "Stranger Things", category: "series", platform: "Netflix", mood: "intense", aesthetic: "retro", era: "modern", pacing: "epic", trailerId: "b9EkMc79ZSU", url: "https://www.netflix.com", synopsis: "A group of kids uncover secret experiments and terrifying supernatural forces.", poster: "https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=800&q=80" },
+    { title: "The Office", category: "series", platform: "Prime", mood: "laugh", aesthetic: "retro", era: "classic", pacing: "fast", trailerId: "cKKHFAew_ls", url: "https://www.primevideo.com", synopsis: "A mockumentary on a group of typical office workers.", poster: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=800&q=80" },
 
     // NOVELAS
-    { title: "Avenida Brasil", category: "telenovela", platform: "Globoplay", mood: "intense", aesthetic: "colorful", era: "classic", pacing: "epic", trailer: "https://www.youtube.com/embed/MBRqu0YOH14", url: "https://globoplay.globo.com", synopsis: "A gripping story of revenge and intense family drama.", poster: "https://images.unsplash.com/photo-1514306191717-452ec28c7814?auto=format&fit=crop&w=800&q=80" },
-    { title: "O Clone", category: "telenovela", platform: "Globoplay", mood: "romantic", aesthetic: "luxurious", era: "classic", pacing: "epic", trailer: "https://www.youtube.com/embed/1vR_s-v4t8A", url: "https://globoplay.globo.com", synopsis: "A massive hit dealing with cloning, love, and destiny.", poster: "https://images.unsplash.com/photo-1542158862-23c3b0eb6d62?auto=format&fit=crop&w=800&q=80" },
-    { title: "Rebelde", category: "telenovela", platform: "Globoplay", mood: "laugh", aesthetic: "retro", era: "classic", pacing: "epic", trailer: "https://www.youtube.com/embed/1vR_s-v4t8A", url: "https://globoplay.globo.com", synopsis: "Teenagers at an elite boarding school form a pop band.", poster: "https://images.unsplash.com/photo-1518991206126-72d8ebdfa40c?auto=format&fit=crop&w=800&q=80" },
-
-    // SPOTIFY
-    { title: "Late Night Cinematic", category: "spotify", platform: "Spotify", mood: "relax", aesthetic: "dark", era: "modern", pacing: "standard", trailer: "https://open.spotify.com/embed/playlist/37i9dQZF1DX3Ogo9pFvBkY", url: "https://open.spotify.com/playlist/37i9dQZF1DX3Ogo9pFvBkY", synopsis: "Beautiful cinematic tracks for a relaxed evening.", poster: "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&fit=crop&w=800&q=80" },
-    { title: "Phonk Workout", category: "spotify", platform: "Spotify", mood: "intense", aesthetic: "dark", era: "modern", pacing: "fast", trailer: "https://open.spotify.com/embed/playlist/37i9dQZF1DWWY64wDtewQt", url: "https://open.spotify.com/playlist/37i9dQZF1DWWY64wDtewQt", synopsis: "Aggressive phonk beats for heavy lifting and high energy.", poster: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80" },
-    { title: "Retro 80s Hits", category: "spotify", platform: "Spotify", mood: "laugh", aesthetic: "retro", era: "vintage", pacing: "standard", trailer: "https://open.spotify.com/embed/playlist/37i9dQZF1DX4UtSsVN1WsYY", url: "https://open.spotify.com/playlist/37i9dQZF1DX4UtSsVN1WsYY", synopsis: "The greatest upbeat hits of the 1980s.", poster: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80" },
+    { title: "Avenida Brasil", category: "telenovela", platform: "Globoplay", mood: "intense", aesthetic: "colorful", era: "classic", pacing: "epic", trailerId: "tYv8j-d3Bmw", url: "https://globoplay.globo.com", synopsis: "A gripping story of revenge and intense family drama.", poster: "https://images.unsplash.com/photo-1514306191717-452ec28c7814?auto=format&fit=crop&w=800&q=80" },
+    { title: "O Clone", category: "telenovela", platform: "Globoplay", mood: "romantic", aesthetic: "luxurious", era: "classic", pacing: "epic", trailerId: "gMtwYw8Q6eY", url: "https://globoplay.globo.com", synopsis: "A massive hit dealing with cloning, love, and destiny.", poster: "https://images.unsplash.com/photo-1542158862-23c3b0eb6d62?auto=format&fit=crop&w=800&q=80" },
+    { title: "Rebelde", category: "telenovela", platform: "Globoplay", mood: "laugh", aesthetic: "retro", era: "classic", pacing: "epic", trailerId: "q3aM-uM51H8", url: "https://globoplay.globo.com", synopsis: "Teenagers at an elite boarding school form a pop band.", poster: "https://images.unsplash.com/photo-1518991206126-72d8ebdfa40c?auto=format&fit=crop&w=800&q=80" },
 
     // YOUTUBE & SHORTS
-    { title: "Kurzgesagt - Optimistic Nihilism", category: "youtube", platform: "YouTube", mood: "mindbending", aesthetic: "colorful", era: "modern", pacing: "fast", trailer: "https://www.youtube.com/embed/MBRqu0YOH14", url: "https://youtube.com", synopsis: "A beautiful animated journey exploring the vastness of the universe.", poster: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80" },
-    { title: "Satisfying Kinetic Sand", category: "short", platform: "YouTube", mood: "relax", aesthetic: "colorful", era: "modern", pacing: "fast", trailer: "https://www.youtube.com/embed/8b1JjJwzZ6M", url: "https://youtube.com/shorts", synopsis: "A highly addictive loop of satisfying kinetic sand cutting.", poster: "https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?auto=format&fit=crop&w=800&q=80" }
+    { title: "Kurzgesagt - Optimistic Nihilism", category: "youtube", platform: "YouTube", mood: "mindbending", aesthetic: "colorful", era: "modern", pacing: "fast", trailerId: "MBRqu0YOH14", url: "https://youtube.com", synopsis: "A beautiful animated journey exploring the vastness of the universe.", poster: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80" },
+    { title: "Satisfying Kinetic Sand", category: "short", platform: "YouTube", mood: "relax", aesthetic: "colorful", era: "modern", pacing: "fast", trailerId: "mR_Pq6V3oP4", url: "https://youtube.com/shorts", synopsis: "A highly addictive loop of satisfying kinetic sand cutting.", poster: "https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?auto=format&fit=crop&w=800&q=80" },
+
+    // SPOTIFY
+    { title: "Late Night Cinematic", category: "spotify", platform: "Spotify", mood: "relax", aesthetic: "dark", era: "modern", pacing: "standard", spotifyId: "playlist/37i9dQZF1DX3Ogo9pFvBkY", url: "https://open.spotify.com/playlist/37i9dQZF1DX3Ogo9pFvBkY", synopsis: "Beautiful cinematic tracks for a relaxed evening.", poster: "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&fit=crop&w=800&q=80" },
+    { title: "Phonk Workout", category: "spotify", platform: "Spotify", mood: "intense", aesthetic: "dark", era: "modern", pacing: "fast", spotifyId: "playlist/37i9dQZF1DWWY64wDtewQt", url: "https://open.spotify.com/playlist/37i9dQZF1DWWY64wDtewQt", synopsis: "Aggressive phonk beats for heavy lifting and high energy.", poster: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80" },
+    { title: "Retro 80s Hits", category: "spotify", platform: "Spotify", mood: "laugh", aesthetic: "retro", era: "vintage", pacing: "standard", spotifyId: "playlist/37i9dQZF1DX4UtSsVN1WsYY", url: "https://open.spotify.com/playlist/37i9dQZF1DX4UtSsVN1WsYY", synopsis: "The greatest upbeat hits of the 1980s.", poster: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80" }
 ];
 
+// 🔥 THE PRECISION MATCHING ENGINE
 window.triggerMatch = async function() {
     if (adblockEnabled) { document.getElementById('adblock-modal').style.display = 'flex'; return; }
 
@@ -113,7 +120,6 @@ window.triggerMatch = async function() {
         return;
     }
 
-    // 1. Get User Preferences
     const category = document.getElementById('q-category') ? document.getElementById('q-category').value : 'any';
     const platform = document.getElementById('q-platform') ? document.getElementById('q-platform').value : 'any';
     const mood = document.getElementById('q-mood') ? document.getElementById('q-mood').value : 'any';
@@ -121,56 +127,51 @@ window.triggerMatch = async function() {
     const era = document.getElementById('q-era') ? document.getElementById('q-era').value : 'any';
     const pacing = document.getElementById('q-pacing') ? document.getElementById('q-pacing').value : 'any';
 
-    // 2. THE FIREWALL (Strict Deduplication)
+    // STRICT DEDUPLICATION FIREWALL
     let unseenPool = masterCatalog.filter(item => !seenList.includes(item.title));
 
     if (unseenPool.length === 0) {
-        alert("Incredible! You have literally seen every title in our current database. We are actively adding more!");
+        alert("Incredible! You have literally seen every title in our database. We are actively adding more to the platform!");
         return;
     }
 
-    // 3. Strict Filtering
+    // MANDATORY FILTERING
     let filteredPool = unseenPool;
     if (category !== 'any') filteredPool = filteredPool.filter(i => i.category === category);
     if (platform !== 'any') filteredPool = filteredPool.filter(i => i.platform === platform);
     if (era !== 'any') filteredPool = filteredPool.filter(i => i.era === era);
     if (pacing !== 'any') filteredPool = filteredPool.filter(i => i.pacing === pacing);
 
-    // 4. Algorithm Fallback (If user is too specific, gracefully expand search)
     if (filteredPool.length === 0) {
-        console.log("Strict match failed. Relaxing Era and Pacing...");
+        console.log("Too specific. Relaxing Era and Pacing bounds...");
         filteredPool = unseenPool;
         if (category !== 'any') filteredPool = filteredPool.filter(i => i.category === category);
         if (platform !== 'any') filteredPool = filteredPool.filter(i => i.platform === platform);
         
         if (filteredPool.length === 0) {
-            console.log("Platform match failed. Searching all platforms for format...");
+            console.log("No match on platform. Opening to all platforms for this format...");
             filteredPool = unseenPool;
             if (category !== 'any') filteredPool = filteredPool.filter(i => i.category === category);
         }
     }
 
-    // 5. Intelligent Scoring Engine (Finds the *Perfect* Fit)
+    // INTELLIGENT SCORING (Mood & Aesthetic)
     let scoredMatches = filteredPool.map(item => {
         let score = 0;
         if (item.mood === mood) score += 10;
         if (item.aesthetic === aesthetic) score += 8;
-        if (item.era === era) score += 5;
-        if (item.pacing === pacing) score += 5;
         return { item, score };
     });
     
-    // Sort highest score first
     scoredMatches.sort((a, b) => b.score - a.score);
-    
-    // Pick from the top tied scores to ensure variety but high quality
     let topScore = scoredMatches[0].score;
     let topMatches = scoredMatches.filter(m => m.score === topScore).map(m => m.item);
-    const selected = topMatches[Math.floor(Math.random() * topMatches.length)];
     
+    // Select the winner
+    const selected = topMatches[Math.floor(Math.random() * topMatches.length)];
     globalMatchTitle = selected.title; 
 
-    // Add to Seen List immediately
+    // LOCK IN SEEN LIST (User will never see this again unless they clear their cache)
     seenList.push(globalMatchTitle);
     syncListsToDatabase();
 
@@ -196,31 +197,32 @@ window.triggerMatch = async function() {
             document.getElementById('res-synopsis').innerText = selected.synopsis;
             document.getElementById('res-platform').innerText = selected.platform;
             
+            // 🔥 LOCALIZED YOUTUBE & SPOTIFY EMBEDS
             const iframe = document.getElementById('res-trailer');
-            if(selected.category === 'spotify') iframe.style.height = "152px";
-            else iframe.style.height = "280px";
             
-            iframe.src = selected.trailer;
+            if(selected.category === 'spotify') {
+                iframe.style.height = "152px";
+                iframe.src = `https://open.spotify.com/embed/${selected.spotifyId}`;
+            } else {
+                iframe.style.height = "280px";
+                // Get the user's exact browser language to force YouTube CC subtitles!
+                const userLang = (navigator.language || 'en').split('-')[0];
+                iframe.src = `https://www.youtube.com/embed/${selected.trailerId}?hl=${userLang}&cc_load_policy=1&cc_lang_pref=${userLang}&autoplay=0`;
+            }
+            
             document.getElementById('res-direct-link').href = selected.url;
         }
     }, 40);
 };
 
-// ACTIONS
-window.saveToList = function() {
-    if (!savedList.includes(globalMatchTitle)) {
-        savedList.push(globalMatchTitle);
-        syncListsToDatabase();
-        alert(`⭐ "${globalMatchTitle}" saved to your Portfolio!`);
-    }
-};
-
+// 🔘 "ALREADY SEEN IT" SKIP BUTTON
 window.markAsSeenAndSkip = function() {
-    alert(`✔️ "${globalMatchTitle}" marked as seen/heard. We are spinning up a fresh match for you!`);
+    alert(`✔️ "${globalMatchTitle}" has been logged as Seen/Heard. The Concierge is spinning up a fresh alternative for you now!`);
     document.getElementById('result-box').style.display = 'none';
-    triggerMatch(); // Run algorithm again instantly, for free
+    triggerMatch(); 
 };
 
+// 🔄 WATCH AD FOR RETRY LOOP
 window.triggerAdRetry = function() {
     let retriesUsed = parseInt(localStorage.getItem('adRetriesUsed') || '0');
     if (retriesUsed >= 5 && !isUserLoggedIn) {
@@ -251,6 +253,14 @@ window.triggerAdRetry = function() {
             };
         }
     }, 1000);
+};
+
+window.saveToList = function() {
+    if (!savedList.includes(globalMatchTitle)) {
+        savedList.push(globalMatchTitle);
+        syncListsToDatabase();
+        alert(`⭐ "${globalMatchTitle}" saved to your Portfolio!`);
+    }
 };
 
 window.triggerSearch = function() {
