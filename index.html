@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2ECND229RR');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Match App | Your Streaming Concierge</title>
@@ -30,6 +38,13 @@
     </div>
 
     <div class="container">
+        
+        <!-- 🌐 CHROME OPTIMIZATION BANNER (Hidden by default, shown to iOS/Safari/Edge users) -->
+        <div id="chrome-banner" style="display: none; background: rgba(17, 60, 207, 0.2); border: 1px solid rgba(17,60,207,0.5); border-radius: 12px; padding: 15px; margin-bottom: 20px; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; backdrop-filter: blur(10px);">
+            <div style="font-size: 13px; color: #fff;"><strong>Browser Alert:</strong> For the ultimate cinematic experience, we recommend using Google Chrome.</div>
+            <button onclick="openInChrome()" class="gold-btn" style="padding: 10px 15px; font-size: 12px; width: auto; background: linear-gradient(135deg, #113ccf, #2b5af5); color: #fff; border: none;">Open in Chrome Now</button>
+        </div>
+
         <!-- 💰 TOP AD -->
         <div class="ad-placement fade-in">
             <span style="font-size: 9px; color: #666; display: block; margin-bottom: 5px; font-weight: bold; letter-spacing: 1px;">SPONSORED ADVERTISEMENT</span>
@@ -67,10 +82,6 @@
                 <button onclick="triggerSearch()" class="secondary-btn" style="background: rgba(212,175,55,0.15); border-color: var(--gold); color: var(--gold-glow);">Find Platform</button>
             </div>
         </div>
-
-        <div id="freemium-banner" class="premium-card fade-in" style="padding: 18px; border-color: var(--gold); background: rgba(212,175,55,0.15);">
-            <span style="font-size: 20px;">✨</span> <strong style="color: var(--gold-glow); font-size: 16px;">First Match is FREE!</strong> Complete your profile below.
-        </div>
         
         <!-- 🎛️ CONCIERGE QUESTIONNAIRE -->
         <div id="questionnaire-box" class="premium-card fade-in">
@@ -78,10 +89,10 @@
             <div class="input-grid">
                 <div class="input-group"><label>Format</label><select id="q-category"><option value="any">Surprise Me</option><option value="movie">Movies</option><option value="series">TV Series</option><option value="telenovela">Novelas (Global)</option><option value="youtube">YouTube</option><option value="short">Shorts</option><option value="spotify">Spotify</option></select></div>
                 <div class="input-group"><label>Platform</label><select id="q-platform"><option value="any">Any Platform</option><option value="Netflix">Netflix</option><option value="Max">Max</option><option value="Prime">Amazon Prime</option><option value="Globoplay">Globoplay</option><option value="Disney">Disney+</option><option value="YouTube">YouTube</option><option value="Spotify">Spotify</option></select></div>
-                <div class="input-group"><label>Mood</label><select id="q-mood"><option value="relax">Relaxed</option><option value="intense">Intense</option><option value="laugh">Funny</option><option value="mindbending">Mind-Bending</option><option value="romantic">Romantic</option></select></div>
+                <div class="input-group"><label>Mood</label><select id="q-mood"><option value="any">Any</option><option value="relax">Relaxed</option><option value="intense">Intense</option><option value="laugh">Funny</option><option value="mindbending">Mind-Bending</option><option value="romantic">Romantic</option></select></div>
                 <div class="input-group"><label>Aesthetic</label><select id="q-aesthetic"><option value="any">Any Vibe</option><option value="dark">Dark & Gritty</option><option value="colorful">Colorful</option><option value="retro">Retro</option><option value="luxurious">Luxurious</option></select></div>
                 <div class="input-group"><label>Era</label><select id="q-era"><option value="any">Any Era</option><option value="modern">Modern</option><option value="classic">Classic</option><option value="vintage">Vintage</option></select></div>
-                <div class="input-group"><label>Pacing</label><select id="q-pacing"><option value="standard">Standard</option><option value="fast">Quick</option><option value="epic">Epic Marathon</option></select></div>
+                <div class="input-group"><label>Pacing</label><select id="q-pacing"><option value="any">Any</option><option value="standard">Standard</option><option value="fast">Quick</option><option value="epic">Epic Marathon</option></select></div>
             </div>
             <button onclick="triggerMatch()" class="gold-btn" style="margin-top: 25px;">⚡ Curate My Match</button>
         </div>
@@ -111,10 +122,13 @@
                     <div><div style="font-size: 12px; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Available On:</div><div id="res-platform" style="color: #fff; font-weight: 900; font-size: 26px;">Platform</div></div>
                     <a id="res-direct-link" href="#" target="_blank" class="gold-btn" style="padding: 16px 28px; font-size: 15px; width: auto; text-decoration: none;">▶ Stream Now</a>
                 </div>
-                <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
-                    <button onclick="saveToList()" class="secondary-btn" style="flex: 1; min-width: 200px; border-color: var(--gold); color: var(--gold);">⭐ Save to Portfolio</button>
-                    <button onclick="triggerAdRetry()" class="secondary-btn" style="flex: 1; min-width: 200px;">🔄 Watch Ad for New Match</button>
+                
+                <!-- NEW: Mark as Seen (Skip) Button & Watch Ad Button -->
+                <div style="display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;">
+                    <button onclick="saveToList()" class="secondary-btn" style="flex: 1; min-width: 150px; border-color: var(--gold); color: var(--gold);">⭐ Save to Portfolio</button>
+                    <button onclick="markAsSeenAndSkip()" class="secondary-btn" style="flex: 1; min-width: 150px; border-color: rgba(255,255,255,0.5); color: #fff;">✔️ Already Seen/Heard It</button>
                 </div>
+                <button onclick="triggerAdRetry()" class="secondary-btn" style="width: 100%; margin-bottom: 20px; background: rgba(37, 211, 102, 0.1); border-color: #25D366; color: #25D366;">🔄 Watch Ad for New Match</button>
                 <button onclick="location.reload()" class="secondary-btn" style="width: 100%; border: none; background: transparent;">🔙 Back to Dashboard</button>
             </div>
         </div>
@@ -141,8 +155,8 @@
         <!-- 📚 UNIVERSAL FOOTER -->
         <footer class="app-footer fade-in">
             <h4 style="color: var(--gold); margin: 0 0 15px 0; font-size: 20px;">🎬 How Match App Works</h4>
-            <p style="font-size: 14px; line-height: 1.6; color: var(--text-muted); margin-bottom: 10px;"><strong>1. The Algorithm:</strong> We cross-reference your mood, selected streaming platform, and aesthetic vibe to find your perfect content.</p>
-            <p style="font-size: 14px; line-height: 1.6; color: var(--text-muted); margin-bottom: 10px;"><strong>2. Search Titles:</strong> Looking for something specific? Use the "Where to Watch" bar to find which platform is streaming your favorite show.</p>
+            <p style="font-size: 14px; line-height: 1.6; color: var(--text-muted); margin-bottom: 10px;"><strong>1. The Algorithm:</strong> We mathematically score your mood, platform, and aesthetic vibe to find your perfect content.</p>
+            <p style="font-size: 14px; line-height: 1.6; color: var(--text-muted); margin-bottom: 10px;"><strong>2. Already Seen It?</strong> Click the "I've Seen This" button and the algorithm will instantly spin up a new match for free.</p>
             <p style="font-size: 14px; line-height: 1.6; color: var(--text-muted); margin-bottom: 10px;"><strong>3. Strict Deduplication:</strong> Once you see a match, it is locked into your device's seen-list. You will NEVER be matched with it again.</p>
             <div style="border-top: 1px solid rgba(255,255,255,0.15); margin-top: 30px; padding-top: 30px;">
                 <span style="font-size: 10px; color: #888; display: block; margin-bottom: 15px; text-align: center; letter-spacing: 1.5px; font-weight: bold;">SPONSORED CONTENT</span>
@@ -156,6 +170,21 @@
                 </div>
             </div>
         </footer>
+    </div>
+
+    <!-- REWARDED AD MODAL (Fix for Ad Retry) -->
+    <div id="reward-ad-modal" class="modal-overlay">
+        <div class="premium-card modal-content">
+            <h3 style="color: var(--gold); margin-top: 0; font-size: 24px;">Sponsor Break</h3>
+            <p style="font-size: 13px; color: var(--text-muted);">Watch this sponsor ad to unlock a brand new, unique match!</p>
+            <div class="ad-placement" style="background: rgba(0,0,0,0.8); padding: 15px; min-height: 220px; margin: 20px 0;">
+                <div style="width: 100%; display: block; overflow: hidden;">
+                    <ins class="adsbygoogle" style="display:block; width:100%;" data-ad-format="fluid" data-ad-layout-key="-6t+ed+2i-1n-4w" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117"></ins>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                </div>
+            </div>
+            <button id="claim-retry-btn" class="gold-btn pulse" disabled style="width: 100%; opacity: 0.5; font-size: 16px; padding: 16px; margin-bottom: 10px;">Wait <span id="ad-timer">15</span>s to claim...</button>
+        </div>
     </div>
 
     <!-- 🛑 IMPENETRABLE AD-BLOCK MODAL -->
