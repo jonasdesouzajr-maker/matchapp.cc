@@ -1,4 +1,4 @@
-console.log("Mastercode 36.0: Aggressive Deep-Link Detector & Layout Anchors Active");
+console.log("Mastercode 37.0: Lifetime Ad-Free Engine & Universal Deep-Links Active");
 
 let globalMatchTitle = "Match App";
 let supabaseClient = null;
@@ -7,11 +7,14 @@ let userProfileData = {};
 
 let seenList = JSON.parse(localStorage.getItem('match_seenList') || '[]');
 let savedList = JSON.parse(localStorage.getItem('match_savedList') || '[]');
+let isAdFree = localStorage.getItem('match_adFree') === 'true'; 
 let adblockEnabled = false;
 
 try { if (window.supabase) supabaseClient = window.supabase.createClient('https://zkymvqrmbabngsqblyye.supabase.co', 'sb_publishable_j3kQUhd_9JHfWdfiV3iWog_RpEltrOU'); } catch(e){}
 
+// AD BLOCK DETECTION (COMPLETELY BYPASSED IF VIP/AD-FREE)
 function checkAdBlocker() {
+    if (isAdFree) return; // VIPs don't get checked for adblockers!
     const testAd = document.createElement('div'); testAd.innerHTML = '&nbsp;'; testAd.className = 'adsbox ad-placement doubleclick';
     testAd.style.position = 'absolute'; testAd.style.top = '-999px'; document.body.appendChild(testAd);
     window.setTimeout(() => {
@@ -35,6 +38,7 @@ window.openInChrome = function() {
 
 window.dismissChromeBanner = function() {
     document.getElementById('chrome-banner').style.display = 'none';
+    sessionStorage.setItem('dismissedChromeBanner', 'true');
 };
 
 window.closeWelcomeModal = function() {
@@ -42,35 +46,58 @@ window.closeWelcomeModal = function() {
     localStorage.setItem('hasSeenWelcome', 'true');
 };
 
+// 💎 SUBSCRIPTION / PURCHASE LOGIC
+window.openUpgradeModal = function() {
+    document.getElementById('upgrade-modal').style.display = 'flex';
+};
+
+window.closeUpgradeModal = function() {
+    document.getElementById('upgrade-modal').style.display = 'none';
+};
+
+window.purchaseAdFree = function() {
+    const btn = document.getElementById('purchase-btn');
+    btn.innerText = "Processing Secure Checkout...";
+    btn.style.opacity = '0.7';
+    
+    // Simulate secure checkout delay
+    setTimeout(async () => {
+        localStorage.setItem('match_adFree', 'true');
+        isAdFree = true;
+        document.body.classList.add('ad-free-mode');
+        
+        if (isUserLoggedIn && supabaseClient) {
+            await supabaseClient.auth.updateUser({ data: { ad_free: true } });
+        }
+        
+        alert("🎉 Purchase Successful! You now have Lifetime Ad-Free access.");
+        document.getElementById('upgrade-modal').style.display = 'none';
+        
+        // If they were stuck on the limit screen, unblock them
+        if (document.getElementById('blocked-box').style.display === 'block') {
+             document.getElementById('blocked-box').style.display = 'none';
+             document.getElementById('questionnaire-box').style.display = 'block';
+             localStorage.setItem('adRetriesUsed', '0');
+        }
+    }, 1500);
+};
+
 window.addEventListener('DOMContentLoaded', async () => {
+    // Apply Ad-Free CSS class instantly if they own it
+    if (isAdFree) document.body.classList.add('ad-free-mode');
+
     checkAdBlocker();
     setInterval(checkAdBlocker, 5000); 
 
-    // WELCOME SCREEN
     if (localStorage.getItem('hasSeenWelcome') !== 'true') {
         const welcomeModal = document.getElementById('welcome-modal');
         if (welcomeModal) welcomeModal.style.display = 'flex';
     }
 
-    // 🛑 AGGRESSIVE BROWSER SNIFFER (Detects Safari & In-App WebViews like Instagram)
-    const ua = navigator.userAgent || navigator.vendor || window.opera;
-    const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
-    const isAndroid = /Android/.test(ua);
-    const isChromeIOS = /CriOS/.test(ua);
-    const isChromeAndroid = /Chrome/.test(ua) && /Google Inc/.test(navigator.vendor);
-    const isWebView = /wv|Instagram|FBAN|FBAV/.test(ua); // Detects in-app browsers
-
-    let showChromeBanner = false;
-    
-    // Show if on iOS and NOT using the Chrome app
-    if (isIOS && !isChromeIOS) showChromeBanner = true;
-    
-    // Show if on Android and NOT using Chrome, OR trapped inside a WebView (Instagram/Facebook)
-    if (isAndroid && (!isChromeAndroid || isWebView)) showChromeBanner = true;
-
-    if (showChromeBanner) {
+    // Hide Chrome Banner if previously dismissed
+    if (sessionStorage.getItem('dismissedChromeBanner') === 'true') {
         const banner = document.getElementById('chrome-banner');
-        if (banner) banner.style.display = 'flex'; // Use flex to match layout
+        if (banner) banner.style.display = 'none';
     }
 
     if (supabaseClient) {
@@ -79,6 +106,12 @@ window.addEventListener('DOMContentLoaded', async () => {
             isUserLoggedIn = true;
             userProfileData = session.user.user_metadata || {};
             
+            if (userProfileData.ad_free) {
+                isAdFree = true;
+                localStorage.setItem('match_adFree', 'true');
+                document.body.classList.add('ad-free-mode');
+            }
+
             if (userProfileData.seen_list) seenList = userProfileData.seen_list;
             if (userProfileData.saved_list) savedList = userProfileData.saved_list;
 
@@ -91,7 +124,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('nav-profile-btn').style.display = 'block';
             document.getElementById('nav-upgrade-btn').style.display = 'block';
             document.getElementById('nav-logout-btn').style.display = 'block';
-            if(document.getElementById('freemium-banner')) document.getElementById('freemium-banner').style.display = 'none';
         }
     }
 });
@@ -141,7 +173,9 @@ window.triggerMatch = async function() {
     if (adblockEnabled) { document.getElementById('adblock-modal').style.display = 'flex'; return; }
 
     let retriesUsed = parseInt(localStorage.getItem('adRetriesUsed') || '0');
-    if (!isUserLoggedIn && retriesUsed >= 5) {
+    
+    // VIPs have unlimited matches. Only block free users after 5 tries.
+    if (!isUserLoggedIn && !isAdFree && retriesUsed >= 5) {
         document.getElementById('search-container').style.display = 'none';
         document.getElementById('questionnaire-box').style.display = 'none';
         document.getElementById('blocked-box').style.display = 'block';
@@ -206,15 +240,13 @@ window.triggerMatch = async function() {
         if (bar) bar.style.width = width + '%';
         if (width >= 100) {
             clearInterval(interval);
-            if (!isUserLoggedIn && localStorage.getItem('hasUsedFreeMatch') !== 'true') localStorage.setItem('hasUsedFreeMatch', 'true');
-
+            
             document.getElementById('loading-box').style.display = 'none';
             
-            // Force animation reset for display block
             const resultBox = document.getElementById('result-box');
             resultBox.style.display = 'block';
             resultBox.style.animation = 'none';
-            resultBox.offsetHeight; // trigger reflow
+            resultBox.offsetHeight; 
             resultBox.style.animation = null;
 
             document.getElementById('res-header-bg').style.backgroundImage = `url('${selected.poster}')`;
@@ -244,8 +276,17 @@ window.markAsSeenAndSkip = function() {
     triggerMatch(); 
 };
 
+// 🔄 VIP AD-BYPASS OR REWARD AD
 window.triggerAdRetry = function() {
     let retriesUsed = parseInt(localStorage.getItem('adRetriesUsed') || '0');
+    
+    // If the user bought Ad-Free, instantly bypass everything!
+    if (isAdFree) {
+        document.getElementById('result-box').style.display = 'none';
+        triggerMatch();
+        return;
+    }
+
     if (retriesUsed >= 5 && !isUserLoggedIn) {
         document.getElementById('result-box').style.display = 'none';
         document.getElementById('blocked-box').style.display = 'block';
@@ -289,7 +330,6 @@ window.triggerSearch = function() {
     const query = document.getElementById('manual-search-input').value.trim();
     if (!query) { alert("Please enter a movie or series title first!"); return; }
 
-    if(document.getElementById('freemium-banner')) document.getElementById('freemium-banner').style.display = 'none';
     document.getElementById('search-container').style.display = 'none';
     document.getElementById('questionnaire-box').style.display = 'none';
     
