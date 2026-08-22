@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2ECND229RR');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Match App | My VIP Profile</title>
@@ -9,7 +17,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <!-- 🌍 ANIMATED GLOBAL THEME BACKGROUND (Vibrant Flying Particles) -->
+    <!-- 🌍 ANIMATED GLOBAL THEME BACKGROUND -->
     <div class="luxury-bg">
         <div class="floating-orb orb-1"></div>
         <div class="floating-orb orb-2"></div>
@@ -70,7 +78,7 @@
             <div class="input-grid">
                 <div class="input-group"><label>Platform</label><select id="pref-platform"><option value="any">Any Platform</option><option value="Netflix">Netflix</option><option value="Max">Max</option><option value="Prime">Amazon Prime</option><option value="Globoplay">Globoplay</option><option value="Spotify">Spotify</option><option value="YouTube">YouTube</option></select></div>
                 <div class="input-group"><label>Format</label><select id="pref-category"><option value="any">Surprise Me</option><option value="movie">Movies</option><option value="series">Series</option><option value="telenovela">Novelas</option><option value="spotify">Spotify</option><option value="short">Shorts</option></select></div>
-                <div class="input-group"><label>Mood</label><select id="pref-mood"><option value="relax">Relaxed</option><option value="intense">Intense</option><option value="laugh">Funny</option><option value="romantic">Romantic</option></select></div>
+                <div class="input-group"><label>Mood</label><select id="pref-mood"><option value="any">Any</option><option value="relax">Relaxed</option><option value="intense">Intense</option><option value="laugh">Funny</option><option value="romantic">Romantic</option></select></div>
                 <div class="input-group"><label>Aesthetic</label><select id="pref-aesthetic"><option value="any">Any</option><option value="dark">Dark & Gritty</option><option value="colorful">Colorful</option><option value="luxurious">Luxurious</option></select></div>
             </div>
 
@@ -80,8 +88,8 @@
         <!-- 📚 UNIVERSAL FOOTER -->
         <footer class="app-footer fade-in">
             <h4 style="color: var(--gold); margin: 0 0 15px 0; font-size: 20px;">🎬 How Match App Works</h4>
-            <p style="font-size: 14px; line-height: 1.6; color: var(--text-muted); margin-bottom: 10px;"><strong>1. The Algorithm:</strong> We cross-reference your mood, selected streaming platform, and aesthetic vibe to find your perfect content.</p>
-            <p style="font-size: 14px; line-height: 1.6; color: var(--text-muted); margin-bottom: 10px;"><strong>2. Search Titles:</strong> Looking for something specific? Use the "Where to Watch" bar to find which platform is streaming your favorite show.</p>
+            <p style="font-size: 14px; line-height: 1.6; color: var(--text-muted); margin-bottom: 10px;"><strong>1. The Algorithm:</strong> We mathematically score your mood, platform, and aesthetic vibe to find your perfect content.</p>
+            <p style="font-size: 14px; line-height: 1.6; color: var(--text-muted); margin-bottom: 10px;"><strong>2. Already Seen It?</strong> Click the "I've Seen This" button and the algorithm will instantly spin up a new match for free.</p>
             <p style="font-size: 14px; line-height: 1.6; color: var(--text-muted); margin-bottom: 10px;"><strong>3. Strict Deduplication:</strong> Once you see a match, it is locked into your device's seen-list. You will NEVER be matched with it again.</p>
             
             <div style="border-top: 1px solid rgba(255,255,255,0.15); margin-top: 30px; padding-top: 30px;">
