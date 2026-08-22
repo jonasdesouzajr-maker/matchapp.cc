@@ -26,22 +26,22 @@
     
     <!-- Isolated flags layer so it doesn't break mobile scaling -->
     <div class="stream-flags">
-        <span class="sf-item flag" style="animation: flyPath1 22s linear infinite; left: 10%; animation-delay: 0s;">🇧🇷</span>
-        <span class="sf-item flag" style="animation: flyPath2 28s linear infinite; left: 85%; animation-delay: 3s;">🇺🇸</span>
-        <span class="sf-item flag" style="animation: flyPath1 25s linear infinite; left: 35%; animation-delay: 6s;">🇬🇧</span>
-        <span class="sf-item flag" style="animation: flyPath2 30s linear infinite; left: 65%; animation-delay: 9s;">🇯🇵</span>
-        <span class="sf-item flag" style="animation: flyPath1 24s linear infinite; left: 20%; animation-delay: 12s;">🇪🇸</span>
-        <span class="sf-item flag" style="animation: flyPath2 26s linear infinite; left: 75%; animation-delay: 15s;">🇰🇷</span>
+        <span class="sf-item flag" style="animation: flyPath1 22s linear infinite; -webkit-animation: flyPath1 22s linear infinite; left: 10%; animation-delay: 0s;">🇧🇷</span>
+        <span class="sf-item flag" style="animation: flyPath2 28s linear infinite; -webkit-animation: flyPath2 28s linear infinite; left: 85%; animation-delay: 3s;">🇺🇸</span>
+        <span class="sf-item flag" style="animation: flyPath1 25s linear infinite; -webkit-animation: flyPath1 25s linear infinite; left: 35%; animation-delay: 6s;">🇬🇧</span>
+        <span class="sf-item flag" style="animation: flyPath2 30s linear infinite; -webkit-animation: flyPath2 30s linear infinite; left: 65%; animation-delay: 9s;">🇯🇵</span>
+        <span class="sf-item flag" style="animation: flyPath1 24s linear infinite; -webkit-animation: flyPath1 24s linear infinite; left: 20%; animation-delay: 12s;">🇪🇸</span>
+        <span class="sf-item flag" style="animation: flyPath2 26s linear infinite; -webkit-animation: flyPath2 26s linear infinite; left: 75%; animation-delay: 15s;">🇰🇷</span>
         
-        <span class="sf-item brand-netflix" style="animation: flyPath2 20s linear infinite; left: 5%; animation-delay: 2s;">NETFLIX</span>
-        <span class="sf-item brand-max" style="animation: flyPath1 25s linear infinite; left: 80%; animation-delay: 5s;">MAX</span>
-        <span class="sf-item brand-prime" style="animation: flyPath2 22s linear infinite; left: 45%; animation-delay: 8s;">PRIME VIDEO</span>
-        <span class="sf-item brand-disney" style="animation: flyPath1 27s linear infinite; left: 15%; animation-delay: 11s;">DISNEY+</span>
-        <span class="sf-item brand-spotify" style="animation: flyPath2 24s linear infinite; left: 60%; animation-delay: 14s;">SPOTIFY</span>
-        <span class="sf-item brand-globo" style="animation: flyPath1 29s linear infinite; left: 90%; animation-delay: 17s;">GLOBOPLAY</span>
+        <span class="sf-item brand-netflix" style="animation: flyPath2 20s linear infinite; -webkit-animation: flyPath2 20s linear infinite; left: 5%; animation-delay: 2s;">NETFLIX</span>
+        <span class="sf-item brand-max" style="animation: flyPath1 25s linear infinite; -webkit-animation: flyPath1 25s linear infinite; left: 80%; animation-delay: 5s;">MAX</span>
+        <span class="sf-item brand-prime" style="animation: flyPath2 22s linear infinite; -webkit-animation: flyPath2 22s linear infinite; left: 45%; animation-delay: 8s;">PRIME VIDEO</span>
+        <span class="sf-item brand-disney" style="animation: flyPath1 27s linear infinite; -webkit-animation: flyPath1 27s linear infinite; left: 15%; animation-delay: 11s;">DISNEY+</span>
+        <span class="sf-item brand-spotify" style="animation: flyPath2 24s linear infinite; -webkit-animation: flyPath2 24s linear infinite; left: 60%; animation-delay: 14s;">SPOTIFY</span>
+        <span class="sf-item brand-globo" style="animation: flyPath1 29s linear infinite; -webkit-animation: flyPath1 29s linear infinite; left: 90%; animation-delay: 17s;">GLOBOPLAY</span>
     </div>
 
-    <!-- ✨ THE WELCOME MODAL (Only shows on first visit) -->
+    <!-- ✨ THE WELCOME MODAL -->
     <div id="welcome-modal" class="modal-overlay">
         <div class="premium-card modal-content" style="border: 2px solid var(--gold); box-shadow: 0 0 50px rgba(212,175,55,0.2);">
             <span class="close-x" onclick="closeWelcomeModal()">×</span>
@@ -50,21 +50,43 @@
             <p style="color: #fff; font-size: 15px; line-height: 1.6; margin-bottom: 20px;">Stop scrolling. Start watching. Here is how your new Digital Concierge works:</p>
             <div style="background: rgba(0,0,0,0.6); padding: 20px; border-radius: 12px; text-align: left; margin-bottom: 30px; border-left: 4px solid var(--gold);">
                 <ul style="color: #bbb; font-size: 14px; margin: 0; padding-left: 20px; line-height: 1.8;">
-                    <li><strong style="color: #fff;">1. Set the Vibe:</strong> Tell us your mood, era, and platform (Netflix, Max, Spotify, etc).</li>
-                    <li><strong style="color: #fff;">2. 100% Unique:</strong> The algorithm finds a perfect match. Once you see it, we will <strong>never</strong> suggest it to you again.</li>
-                    <li><strong style="color: #fff;">3. Stream Instantly:</strong> Watch the trailer right here, then click to stream directly on your TV or phone.</li>
+                    <li><strong style="color: #fff;">1. Set the Vibe:</strong> Tell us your mood, era, and platform.</li>
+                    <li><strong style="color: #fff;">2. 100% Unique:</strong> The algorithm finds a perfect match. Once seen, we will <strong>never</strong> suggest it again.</li>
+                    <li><strong style="color: #fff;">3. Stream Instantly:</strong> Watch the trailer right here, then click to stream directly.</li>
                 </ul>
             </div>
             <button onclick="closeWelcomeModal()" class="gold-btn pulse" style="font-size: 18px; padding: 20px;">🚀 Find My Perfect Match</button>
         </div>
     </div>
 
+    <!-- 💎 THE NEW SUBSCRIPTION UPGRADE MODAL -->
+    <div id="upgrade-modal" class="modal-overlay">
+        <div class="premium-card modal-content" style="border: 2px solid var(--gold); box-shadow: 0 0 50px rgba(212,175,55,0.2);">
+            <span class="close-x" onclick="closeUpgradeModal()">×</span>
+            <div style="font-size: 55px; margin-bottom: 15px;">💎</div>
+            <h2 style="color: var(--gold); margin-top: 0; font-size: 32px;">Go VIP. Go Ad-Free.</h2>
+            <p style="color: #fff; font-size: 15px; line-height: 1.6; margin-bottom: 25px;">Tired of sponsor breaks? Want uninterrupted, unlimited algorithmic matchmaking? Unlock the ultimate experience.</p>
+            
+            <div style="background: rgba(212, 175, 55, 0.1); border: 1px solid var(--gold); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                <h3 style="margin: 0 0 5px 0; color: #fff; font-size: 20px;">Lifetime Ad-Free Pass</h3>
+                <h4 style="margin: 0 0 15px 0; color: var(--gold); font-size: 28px;">$9.99 <span style="font-size: 14px; color: #aaa; font-weight: normal;">One-Time Purchase</span></h4>
+                <ul style="color: #ddd; font-size: 13px; text-align: left; line-height: 1.8; margin-bottom: 0;">
+                    <li>✔️ <strong>Forever removes ALL banner & video ads.</strong></li>
+                    <li>✔️ <strong>Bypasses Ad-Blocker restrictions entirely.</strong></li>
+                    <li>✔️ <strong>Skip the 15-second wait times instantly.</strong></li>
+                </ul>
+            </div>
+            
+            <button id="purchase-btn" onclick="purchaseAdFree()" class="gold-btn" style="font-size: 18px; padding: 20px;">🔓 Unlock Ad-Free Forever ($9.99)</button>
+        </div>
+    </div>
+
     <div class="container">
         
-        <!-- 🌐 AGGRESSIVE CHROME OPTIMIZATION BANNER (Now with Close button) -->
-        <div id="chrome-banner" style="display: none; background: rgba(17, 60, 207, 0.2); border: 1px solid rgba(17,60,207,0.5); border-radius: 12px; padding: 15px; margin-bottom: 20px; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; backdrop-filter: blur(10px); position: relative;">
-            <span class="close-x" onclick="dismissChromeBanner()" style="position: absolute; top: 5px; right: 10px; font-size: 20px; z-index: 10;">×</span>
-            <div style="font-size: 13px; color: #fff; flex-grow: 1;"><strong>Browser Alert:</strong> You are using a limited browser. For the ultimate cinematic experience, open in Google Chrome.</div>
+        <!-- 🌐 FORCED CHROME BANNER (Always visible on load unless dismissed) -->
+        <div id="chrome-banner" class="fade-in" style="display: flex; background: rgba(17, 60, 207, 0.2); border: 1px solid rgba(17,60,207,0.5); border-radius: 12px; padding: 15px; margin-bottom: 20px; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); position: relative;">
+            <span class="close-x" onclick="dismissChromeBanner()" style="position: absolute; top: 5px; right: 10px; font-size: 20px; z-index: 10; color: #fff;">×</span>
+            <div style="font-size: 13px; color: #fff; flex-grow: 1; text-align: left;"><strong>Browser Alert:</strong> For the ultimate, glitch-free cinematic experience, please open in Google Chrome.</div>
             <button onclick="openInChrome()" class="gold-btn" style="padding: 10px 15px; font-size: 12px; width: 100%; background: linear-gradient(135deg, #113ccf, #2b5af5); color: #fff; border: none; max-width: 250px; margin: 0 auto;">Open in Chrome Now</button>
         </div>
 
@@ -89,9 +111,9 @@
             </a>
             <div id="header-auth-area" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
                 <div class="translate-wrapper" id="google_translate_element"></div>
+                <button id="nav-upgrade-btn" onclick="openUpgradeModal()" class="gold-btn" style="padding: 10px 15px; width: auto; font-size: 12px; border: 1px solid #fff;">🚫 Remove Ads</button>
                 <button id="nav-reg-btn" onclick="window.location.href='register.html'" class="gold-btn" style="padding: 10px 15px; width: auto; font-size: 12px;">Log In / Register</button>
                 <button id="nav-profile-btn" onclick="window.location.href='profile.html'" style="display: none;" class="secondary-btn">👤 My Profile</button>
-                <button id="nav-upgrade-btn" onclick="window.location.href='pricing.html'" style="display: none; background: linear-gradient(135deg, #BF953F, #FCF6BA); color: #000; border: none; padding: 12px 15px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 12px;">💎 Upgrade</button>
                 <button id="nav-logout-btn" onclick="doLogout()" style="display: none; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 12px 15px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 12px;">Log Out</button>
             </div>
         </header>
@@ -167,11 +189,13 @@
             <button onclick="location.reload()" class="secondary-btn" style="width: 100%; border: none; background: transparent;">🔙 Back to Dashboard</button>
         </div>
 
+        <!-- 🚫 LIMIT REACHED MODAL -->
         <div id="blocked-box" class="premium-card fade-in" style="display: none; border-color: #ff5252;">
             <div style="font-size: 60px; margin-bottom: 20px;">🔒</div>
-            <h2 style="color: #ff8787; margin: 0 0 15px 0; font-size: 32px;">5 Free Matches Reached!</h2>
-            <p style="color: #fff; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">Register your VIP account to unlock unlimited daily searches, save your portfolio, and activate Zodiac precision.</p>
-            <button onclick="window.location.href='register.html'" class="gold-btn" style="background: linear-gradient(135deg, #ff5252, #ff8787); color: #fff; padding: 20px; font-size: 18px;">⭐ Register VIP Account Now</button>
+            <h2 style="color: #ff8787; margin: 0 0 15px 0; font-size: 32px;">Match Limit Reached!</h2>
+            <p style="color: #fff; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">You can unlock unlimited daily matches and remove all ads forever by purchasing the Lifetime Ad-Free Pass.</p>
+            <button onclick="openUpgradeModal()" class="gold-btn" style="background: linear-gradient(135deg, #BF953F, #FBF5B7); color: #000; padding: 20px; font-size: 18px; margin-bottom: 15px;">💎 Unlock Lifetime Ad-Free ($9.99)</button>
+            <button onclick="window.location.href='register.html'" class="secondary-btn" style="border: none;">Or Register Free Account</button>
         </div>
 
         <!-- 📚 UNIVERSAL FOOTER -->
@@ -197,13 +221,14 @@
             <p style="font-size: 14px; line-height: 1.6; color: var(--text-muted); margin-bottom: 10px;"><strong>1. The Algorithm:</strong> We mathematically score your mood, platform, and aesthetic vibe to find your perfect content.</p>
             <p style="font-size: 14px; line-height: 1.6; color: var(--text-muted); margin-bottom: 10px;"><strong>2. Already Seen It?</strong> Click the "I've Seen This" button and the algorithm will instantly spin up a new match for free.</p>
             <p style="font-size: 14px; line-height: 1.6; color: var(--text-muted); margin-bottom: 10px;"><strong>3. Strict Deduplication:</strong> Once you see a match, it is locked into your device's seen-list. You will NEVER be matched with it again.</p>
-            <div style="border-top: 1px solid rgba(255,255,255,0.15); margin-top: 30px; padding-top: 30px;">
+            
+            <div class="ad-placement" style="border-top: 1px solid rgba(255,255,255,0.15); margin-top: 30px; padding-top: 30px; background: transparent; border-radius: 0;">
                 <span style="font-size: 10px; color: #888; display: block; margin-bottom: 15px; text-align: center; letter-spacing: 1.5px; font-weight: bold;">SPONSORED CONTENT</span>
                 <div style="display: flex; justify-content: center; margin-bottom: 25px; overflow: hidden; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.5);">
                     <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script>
                     <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
                 </div>
-                <div class="ad-placement" style="padding: 10px;">
+                <div style="padding: 10px;">
                     <ins class="adsbygoogle" style="display:block; width:100%; min-height: 100px;" data-ad-format="fluid" data-ad-layout-key="-6t+ed+2i-1n-4w" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117"></ins>
                     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                 </div>
@@ -223,6 +248,7 @@
                 </div>
             </div>
             <button id="claim-retry-btn" class="gold-btn pulse" disabled style="width: 100%; opacity: 0.5; font-size: 16px; padding: 16px; margin-bottom: 10px;">Wait <span id="ad-timer">15</span>s to claim...</button>
+            <button onclick="openUpgradeModal()" class="secondary-btn" style="margin-top: 15px; border: none; font-size: 12px; color: var(--gold);">Want to skip this forever? Upgrade Ad-Free.</button>
         </div>
     </div>
 
@@ -234,12 +260,13 @@
             <div style="background: rgba(0,0,0,0.6); padding: 20px; border-radius: 12px; text-align: left; margin-bottom: 30px; border-left: 4px solid #ff5252;">
                 <p style="color: #fff; font-size: 15px; margin-top: 0; line-height: 1.6;">Our advanced matchmaking servers run entirely on ad revenue. <strong>Access is permanently blocked while ad-blockers are active.</strong></p>
                 <ol style="color: #bbb; font-size: 13px; margin-bottom: 0; padding-left: 20px; line-height: 1.8;">
-                    <li>Click your Ad-Blocker extension icon (top right).</li>
+                    <li>Click your Ad-Blocker extension icon.</li>
                     <li>Select <strong>"Pause on this site"</strong>.</li>
                     <li>Click the button below to verify.</li>
                 </ol>
             </div>
-            <button onclick="location.reload()" class="gold-btn" style="background: linear-gradient(135deg, #ff5252, #d32f2f); color: #fff; font-size: 18px; padding: 20px;">🔄 I Disabled It - Verify & Reload</button>
+            <button onclick="location.reload()" class="gold-btn" style="background: linear-gradient(135deg, #ff5252, #d32f2f); color: #fff; font-size: 18px; padding: 20px; margin-bottom: 15px;">🔄 I Disabled It - Verify & Reload</button>
+            <button onclick="openUpgradeModal()" class="secondary-btn" style="border-color: var(--gold); color: var(--gold);">Or Purchase Ad-Free Pass</button>
         </div>
     </div>
     
