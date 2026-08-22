@@ -48,38 +48,46 @@ body {
     100% { transform: translateY(50px) scale(1.15); } 
 }
 
-/* 🚩 FLYING FLAGS & LOGOS */
-.stream-flags { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden; }
+/* 🚩 BIG, BOLD, GLOWING FLYING FLAGS & LOGOS */
+.stream-flags { 
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+    z-index: 0; overflow: hidden; perspective: 1000px; 
+}
 .sf-item { 
     position: absolute; 
     font-family: "Arial Black", sans-serif; 
-    font-size: 32px; 
+    font-size: 65px; /* MASSIVE TEXT */
     font-weight: 900; 
     white-space: nowrap; 
     opacity: 0; 
-    letter-spacing: 2px; 
-    text-shadow: 0 4px 15px rgba(0,0,0,0.5); 
+    letter-spacing: 4px; 
+    will-change: transform, opacity;
 }
-.sf-item.flag { font-size: 50px; filter: drop-shadow(0 0 15px rgba(255,255,255,0.15)); }
+.sf-item.flag { 
+    font-size: 110px; /* GIANT FLAGS */
+    filter: drop-shadow(0 0 35px rgba(255,255,255,0.6)); 
+}
 
-.brand-netflix { color: rgba(229, 9, 20, 0.35); }
-.brand-prime { color: rgba(0, 168, 225, 0.35); }
-.brand-max { color: rgba(88, 34, 180, 0.35); }
-.brand-disney { color: rgba(17, 60, 207, 0.35); }
-.brand-spotify { color: rgba(30, 215, 96, 0.35); }
-.brand-globo { color: rgba(255, 102, 0, 0.35); }
+/* PURE NEON BRAND COLORS (100% Opacity with Heavy Glowing Shadows) */
+.brand-netflix { color: #E50914; text-shadow: 0 0 40px rgba(229, 9, 20, 1); }
+.brand-prime { color: #00A8E1; text-shadow: 0 0 40px rgba(0, 168, 225, 1); }
+.brand-max { color: #9A5CFF; text-shadow: 0 0 40px rgba(154, 92, 255, 1); }
+.brand-disney { color: #113CCF; text-shadow: 0 0 40px rgba(17, 60, 207, 1); }
+.brand-spotify { color: #1ED760; text-shadow: 0 0 40px rgba(30, 215, 96, 1); }
+.brand-globo { color: #FF6600; text-shadow: 0 0 40px rgba(255, 102, 0, 1); }
 
+/* Smooth, constant floating animation from bottom to top */
 @keyframes flyPath1 { 
-    0% { transform: translate(-10vw, 110vh) rotate(-15deg) scale(0.8); opacity: 0; } 
-    10% { opacity: 0.85; } 
-    90% { opacity: 0.85; } 
-    100% { transform: translate(20vw, -20vh) rotate(15deg) scale(1.2); opacity: 0; } 
+    0% { transform: translateY(120vh) translateX(-10vw) rotate(-20deg) scale(0.6); opacity: 0; } 
+    10% { opacity: 0.8; } 
+    80% { opacity: 0.8; } 
+    100% { transform: translateY(-30vh) translateX(30vw) rotate(20deg) scale(1.4); opacity: 0; } 
 }
 @keyframes flyPath2 { 
-    0% { transform: translate(10vw, 110vh) rotate(15deg) scale(1); opacity: 0; } 
-    10% { opacity: 0.75; } 
-    90% { opacity: 0.75; } 
-    100% { transform: translate(-20vw, -20vh) rotate(-15deg) scale(0.9); opacity: 0; } 
+    0% { transform: translateY(120vh) translateX(10vw) rotate(20deg) scale(0.6); opacity: 0; } 
+    10% { opacity: 0.8; } 
+    80% { opacity: 0.8; } 
+    100% { transform: translateY(-30vh) translateX(-30vw) rotate(-20deg) scale(1.4); opacity: 0; } 
 }
 
 /* 📱 MAIN CONTAINER */
