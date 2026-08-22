@@ -22,21 +22,23 @@
     <div class="luxury-bg">
         <div class="floating-orb orb-1"></div>
         <div class="floating-orb orb-2"></div>
-        <div class="stream-flags">
-            <span class="sf-item flag" style="animation: flyPath1 22s linear infinite; left: 10%; animation-delay: 0s;">🇧🇷</span>
-            <span class="sf-item flag" style="animation: flyPath2 28s linear infinite; left: 85%; animation-delay: 3s;">🇺🇸</span>
-            <span class="sf-item flag" style="animation: flyPath1 25s linear infinite; left: 35%; animation-delay: 6s;">🇬🇧</span>
-            <span class="sf-item flag" style="animation: flyPath2 30s linear infinite; left: 65%; animation-delay: 9s;">🇯🇵</span>
-            <span class="sf-item flag" style="animation: flyPath1 24s linear infinite; left: 20%; animation-delay: 12s;">🇪🇸</span>
-            <span class="sf-item flag" style="animation: flyPath2 26s linear infinite; left: 75%; animation-delay: 15s;">🇰🇷</span>
-            
-            <span class="sf-item brand-netflix" style="animation: flyPath2 20s linear infinite; left: 5%; animation-delay: 2s;">NETFLIX</span>
-            <span class="sf-item brand-max" style="animation: flyPath1 25s linear infinite; left: 80%; animation-delay: 5s;">MAX</span>
-            <span class="sf-item brand-prime" style="animation: flyPath2 22s linear infinite; left: 45%; animation-delay: 8s;">PRIME VIDEO</span>
-            <span class="sf-item brand-disney" style="animation: flyPath1 27s linear infinite; left: 15%; animation-delay: 11s;">DISNEY+</span>
-            <span class="sf-item brand-spotify" style="animation: flyPath2 24s linear infinite; left: 60%; animation-delay: 14s;">SPOTIFY</span>
-            <span class="sf-item brand-globo" style="animation: flyPath1 29s linear infinite; left: 90%; animation-delay: 17s;">GLOBOPLAY</span>
-        </div>
+    </div>
+    
+    <!-- Isolated flags layer so it doesn't break mobile scaling -->
+    <div class="stream-flags">
+        <span class="sf-item flag" style="animation: flyPath1 22s linear infinite; left: 10%; animation-delay: 0s;">🇧🇷</span>
+        <span class="sf-item flag" style="animation: flyPath2 28s linear infinite; left: 85%; animation-delay: 3s;">🇺🇸</span>
+        <span class="sf-item flag" style="animation: flyPath1 25s linear infinite; left: 35%; animation-delay: 6s;">🇬🇧</span>
+        <span class="sf-item flag" style="animation: flyPath2 30s linear infinite; left: 65%; animation-delay: 9s;">🇯🇵</span>
+        <span class="sf-item flag" style="animation: flyPath1 24s linear infinite; left: 20%; animation-delay: 12s;">🇪🇸</span>
+        <span class="sf-item flag" style="animation: flyPath2 26s linear infinite; left: 75%; animation-delay: 15s;">🇰🇷</span>
+        
+        <span class="sf-item brand-netflix" style="animation: flyPath2 20s linear infinite; left: 5%; animation-delay: 2s;">NETFLIX</span>
+        <span class="sf-item brand-max" style="animation: flyPath1 25s linear infinite; left: 80%; animation-delay: 5s;">MAX</span>
+        <span class="sf-item brand-prime" style="animation: flyPath2 22s linear infinite; left: 45%; animation-delay: 8s;">PRIME VIDEO</span>
+        <span class="sf-item brand-disney" style="animation: flyPath1 27s linear infinite; left: 15%; animation-delay: 11s;">DISNEY+</span>
+        <span class="sf-item brand-spotify" style="animation: flyPath2 24s linear infinite; left: 60%; animation-delay: 14s;">SPOTIFY</span>
+        <span class="sf-item brand-globo" style="animation: flyPath1 29s linear infinite; left: 90%; animation-delay: 17s;">GLOBOPLAY</span>
     </div>
 
     <!-- ✨ THE WELCOME MODAL (Only shows on first visit) -->
@@ -59,10 +61,11 @@
 
     <div class="container">
         
-        <!-- 🌐 CHROME OPTIMIZATION BANNER -->
-        <div id="chrome-banner" style="display: none; background: rgba(17, 60, 207, 0.2); border: 1px solid rgba(17,60,207,0.5); border-radius: 12px; padding: 15px; margin-bottom: 20px; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; backdrop-filter: blur(10px);">
-            <div style="font-size: 13px; color: #fff;"><strong>Browser Alert:</strong> For the ultimate cinematic experience, we recommend using Google Chrome.</div>
-            <button onclick="openInChrome()" class="gold-btn" style="padding: 10px 15px; font-size: 12px; width: auto; background: linear-gradient(135deg, #113ccf, #2b5af5); color: #fff; border: none;">Open in Chrome Now</button>
+        <!-- 🌐 AGGRESSIVE CHROME OPTIMIZATION BANNER (Now with Close button) -->
+        <div id="chrome-banner" style="display: none; background: rgba(17, 60, 207, 0.2); border: 1px solid rgba(17,60,207,0.5); border-radius: 12px; padding: 15px; margin-bottom: 20px; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; backdrop-filter: blur(10px); position: relative;">
+            <span class="close-x" onclick="dismissChromeBanner()" style="position: absolute; top: 5px; right: 10px; font-size: 20px; z-index: 10;">×</span>
+            <div style="font-size: 13px; color: #fff; flex-grow: 1;"><strong>Browser Alert:</strong> You are using a limited browser. For the ultimate cinematic experience, open in Google Chrome.</div>
+            <button onclick="openInChrome()" class="gold-btn" style="padding: 10px 15px; font-size: 12px; width: 100%; background: linear-gradient(135deg, #113ccf, #2b5af5); color: #fff; border: none; max-width: 250px; margin: 0 auto;">Open in Chrome Now</button>
         </div>
 
         <!-- 💰 TOP AD -->
@@ -171,10 +174,10 @@
             <button onclick="window.location.href='register.html'" class="gold-btn" style="background: linear-gradient(135deg, #ff5252, #ff8787); color: #fff; padding: 20px; font-size: 18px;">⭐ Register VIP Account Now</button>
         </div>
 
-        <!-- 📚 UNIVERSAL FOOTER (Now with Social Medias!) -->
+        <!-- 📚 UNIVERSAL FOOTER -->
         <footer class="app-footer fade-in">
             
-            <!-- ✨ NEW: JONAS JUNIOR SOCIAL MEDIA LINKS -->
+            <!-- ✨ JONAS JUNIOR SOCIAL MEDIA LINKS -->
             <div style="margin-bottom: 35px; text-align: center; background: rgba(0,0,0,0.4); padding: 25px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);">
                 <h4 style="color: #fff; margin: 0 0 10px 0; font-size: 18px;">Meet the Creator</h4>
                 <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Join the community for exclusive behind-the-scenes, app updates, and top-tier entertainment curation.</p>
