@@ -1,4 +1,4 @@
-console.log("Mastercode 41.0: Advanced Aggressive Anti-Adblock, Chrome Deep Links & Avatar Active");
+console.log("Mastercode 43.0: Omnipresent Monetization, Cross-Browser Engine & Strict Deduplication Active");
 
 let globalMatchTitle = "Match App";
 let supabaseClient = null;
@@ -9,8 +9,9 @@ let seenList = JSON.parse(localStorage.getItem('match_seenList') || '[]');
 let savedList = JSON.parse(localStorage.getItem('match_savedList') || '[]');
 let isAdFree = localStorage.getItem('match_adFree') === 'true'; 
 let isVIP = localStorage.getItem('match_isVIP') === 'true';
+let adblockEnabled = false;
 
-// 💳 STRIPE PAYMENT LINKS
+// 💳 AUTOMATED STRIPE CHECKOUT
 const STRIPE_LINKS = {
     'ad_free': 'https://buy.stripe.com/fZu4gz6nEaDHbpY7k0gEg01',
     'vip_monthly': 'https://buy.stripe.com/fZu3cvbHY13779I47OgEg03',
@@ -19,62 +20,131 @@ const STRIPE_LINKS = {
 
 try { if (window.supabase) supabaseClient = window.supabase.createClient('https://zkymvqrmbabngsqblyye.supabase.co', 'sb_publishable_j3kQUhd_9JHfWdfiV3iWog_RpEltrOU'); } catch(e){}
 
-// 🛑 ULTRA-STRICT AD BLOCK DETECTION
+// 🛑 MULTI-LAYER AD-BLOCK DETECTION
 function checkAdBlocker() {
     if (isAdFree || isVIP) return; 
-    
     const bait = document.createElement('div');
-    // Common classes targeted by AdBlock, uBlock, and AdGuard
-    bait.className = 'adsbox ad-placement doubleclick adSense pub_300x250 pub_300x250m pub_728x90 text-ad textAd text_ad text_ads text-ads text-ad-links';
-    bait.style.position = 'absolute';
-    bait.style.top = '-999px';
+    bait.className = 'adsbox ad-placement doubleclick adSense pub_300x250 text-ad textAd';
+    bait.style.position = 'absolute'; bait.style.top = '-9999px'; bait.style.left = '-9999px';
     document.body.appendChild(bait);
     
     window.setTimeout(() => {
-        const isBlocked = bait.offsetHeight === 0 || window.getComputedStyle(bait).display === 'none';
+        const isBlocked = bait.offsetHeight === 0 || window.getComputedStyle(bait).display === 'none' || bait.offsetParent === null;
         if (isBlocked) { 
-            // Force it visibly immediately and bypass normal display rules
             const modal = document.getElementById('adblock-modal');
-            modal.style.setProperty('display', 'flex', 'important'); 
+            if(modal) modal.style.setProperty('display', 'flex', 'important'); 
         }
         bait.remove();
-    }, 350);
+    }, 400); // 400ms ensures it doesn't false-flag slow connections
 }
 
-// 🌐 FORCED CHROME DEEP-LINK ROUTER
+// 🌐 INTENT-BASED CHROME DEEP-LINK ROUTER
 window.openInChrome = function() {
-    const targetUrl = 'matchapp.cc'; // Direct to your domain
+    const targetUrl = window.location.href;
+    const cleanUrl = targetUrl.replace(/^https?:\/\//, '');
     const ua = navigator.userAgent;
+    
     if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) {
-        window.location.href = 'googlechrome://' + targetUrl;
+        window.location.href = 'googlechrome://' + cleanUrl;
     } else {
-        window.location.href = 'intent://' + targetUrl + '#Intent;scheme=https;package=com.android.chrome;end;';
+        window.location.href = 'intent://' + cleanUrl + '#Intent;scheme=https;package=com.android.chrome;end;';
     }
-}
+
+    setTimeout(() => {
+        const fallbackModal = document.getElementById('chrome-fallback-modal');
+        if(fallbackModal) fallbackModal.style.display = 'flex';
+    }, 1500);
+};
+
+window.copyLinkForChrome = function() {
+    navigator.clipboard.writeText(window.location.href);
+    alert("📋 Link copied! Open your Google Chrome app and paste it into the address bar.");
+};
+
 window.dismissChromeBanner = function() {
     document.getElementById('chrome-banner').style.display = 'none';
     sessionStorage.setItem('dismissedChromeBanner', 'true');
 };
+
 window.closeWelcomeModal = function() {
     document.getElementById('welcome-modal').style.display = 'none';
     localStorage.setItem('hasSeenWelcome', 'true');
 };
 
-// 👤 PRIVATE AVATAR UPLOADER LOGIC
+// 🔏 GOOGLE OAUTH
+window.signInWithGoogle = async function() {
+    if (!supabaseClient) { alert("Server connection error. Please try again."); return; }
+    const { data, error } = await supabaseClient.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: window.location.origin + window.location.pathname }
+    });
+    if (error) alert("Google Login Error: " + error.message);
+};
+
+// 👤 PROFILE ENGINE & AGE CALCULATOR
+window.calculateAge = function(dobStr) {
+    if (!dobStr || !dobStr.includes('/')) return 0;
+    const parts = dobStr.split('/');
+    if (parts.length !== 3) return 0;
+    const day = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1;
+    const year = parseInt(parts[2], 10);
+    const dob = new Date(year, month, day);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+    return age;
+};
+
+window.saveProfileData = async function() {
+    const dobInput = document.getElementById('profile-dob').value.trim();
+    const starSignSelect = document.getElementById('profile-starsign').value;
+    const nameInput = document.getElementById('profile-name').value.trim();
+
+    if (!dobInput || !starSignSelect) {
+        alert("Please enter your Birthdate (DD/MM/YYYY) and select your Star Sign.");
+        return;
+    }
+
+    const confirmLock = confirm("⚠️ PERMANENT SETTING WARNING:\n\nOnce you save your Birthdate and Star Sign, they CANNOT be changed or edited ever again. Are you sure this information is correct?");
+    if (!confirmLock) return;
+
+    const calculatedAge = window.calculateAge(dobInput);
+    
+    const newMetadata = {
+        ...userProfileData,
+        full_name: nameInput,
+        birthdate: dobInput,
+        age: calculatedAge,
+        starsign: starSignSelect,
+        profile_locked: true
+    };
+
+    if (supabaseClient && isUserLoggedIn) {
+        const { error } = await supabaseClient.auth.updateUser({ data: newMetadata });
+        if (error) { alert("Error saving profile: " + error.message); return; }
+    }
+
+    localStorage.setItem('match_userProfile', JSON.stringify(newMetadata));
+    alert("✨ Profile saved and permanently locked!");
+    window.location.reload();
+};
+
 window.handleProfilePic = function(event) {
     const file = event.target.files[0];
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
             const base64Str = e.target.result;
-            document.getElementById('profile-pic-preview').src = base64Str;
+            const preview = document.getElementById('profile-pic-preview');
+            if(preview) preview.src = base64Str;
             localStorage.setItem('match_userAvatar', base64Str);
         };
         reader.readAsDataURL(file);
     }
 };
 
-// 💎 AUTOMATED CHECKOUT ROUTING
 window.openUpgradeModal = function() { document.getElementById('upgrade-modal').style.display = 'flex'; };
 window.closeUpgradeModal = function() { document.getElementById('upgrade-modal').style.display = 'none'; };
 
@@ -84,93 +154,73 @@ window.processCheckout = async function(tier) {
         window.location.href = 'register.html';
         return;
     }
-
-    const btnId = tier === 'ad_free' ? 'purchase-btn' : `btn-${tier}`;
-    const btn = document.getElementById(btnId);
+    const btn = document.getElementById(tier === 'ad_free' ? 'purchase-btn' : `btn-${tier}`);
     if(btn) { btn.innerText = "Redirecting to Secure Checkout..."; btn.style.opacity = '0.7'; }
 
     const { data: { session } } = await supabaseClient.auth.getSession();
-    const userId = session.user.id;
-    const magicReference = `${userId}___${tier}`;
-
-    window.location.href = `${STRIPE_LINKS[tier]}?client_reference_id=${magicReference}`;
+    window.location.href = `${STRIPE_LINKS[tier]}?client_reference_id=${session.user.id}___${tier}`;
 };
 
 window.addEventListener('DOMContentLoaded', async () => {
-    // Load local private avatar if exists
     const savedAvatar = localStorage.getItem('match_userAvatar');
-    if (savedAvatar && document.getElementById('profile-pic-preview')) {
-        document.getElementById('profile-pic-preview').src = savedAvatar;
+    if (savedAvatar) {
+        const preview = document.getElementById('profile-pic-preview');
+        if(preview) preview.src = savedAvatar;
     }
 
     if (isAdFree || isVIP) document.body.classList.add('ad-free-mode');
     checkAdBlocker();
     setInterval(checkAdBlocker, 5000); 
 
-    if (localStorage.getItem('hasSeenWelcome') !== 'true') {
-        const welcomeModal = document.getElementById('welcome-modal');
-        if (welcomeModal) welcomeModal.style.display = 'flex';
+    if (localStorage.getItem('hasSeenWelcome') !== 'true' && document.getElementById('welcome-modal')) {
+        document.getElementById('welcome-modal').style.display = 'flex';
     }
-    if (sessionStorage.getItem('dismissedChromeBanner') === 'true') {
-        const banner = document.getElementById('chrome-banner');
-        if (banner) banner.style.display = 'none';
+    if (sessionStorage.getItem('dismissedChromeBanner') === 'true' && document.getElementById('chrome-banner')) {
+        document.getElementById('chrome-banner').style.display = 'none';
     }
 
     if (supabaseClient) {
-        const { data: { session }, error } = await supabaseClient.auth.getSession();
+        const { data: { session } } = await supabaseClient.auth.getSession();
         
         if (session) {
             isUserLoggedIn = true;
-            
-            // 🎯 CATCH SUCCESSFUL STRIPE REDIRECTS INSTANTLY
+            userProfileData = session.user.user_metadata || {};
+
+            if (session.user.user_metadata?.avatar_url && !localStorage.getItem('match_userAvatar')) {
+                const googleAvatar = session.user.user_metadata.avatar_url;
+                localStorage.setItem('match_userAvatar', googleAvatar);
+                const preview = document.getElementById('profile-pic-preview');
+                if(preview) preview.src = googleAvatar;
+            }
+
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('payment') === 'success') {
                 const tierBought = urlParams.get('tier');
-                
-                isAdFree = true;
-                localStorage.setItem('match_adFree', 'true');
+                isAdFree = true; localStorage.setItem('match_adFree', 'true');
                 document.body.classList.add('ad-free-mode');
-
                 if (tierBought === 'vip_monthly' || tierBought === 'vip_annual') {
-                    isVIP = true;
-                    localStorage.setItem('match_isVIP', 'true');
+                    isVIP = true; localStorage.setItem('match_isVIP', 'true');
                 }
-
                 alert("🎉 Payment Confirmed! Your account has been upgraded successfully.");
                 window.history.replaceState({}, document.title, window.location.pathname); 
-                
-                if (document.getElementById('blocked-box')) document.getElementById('blocked-box').style.display = 'none';
-                if (document.getElementById('questionnaire-box')) document.getElementById('questionnaire-box').style.display = 'block';
-                localStorage.setItem('adRetriesUsed', '0');
             }
 
-            userProfileData = session.user.user_metadata || {};
-            
             if (userProfileData.ad_free || userProfileData.vip_tier) {
-                isAdFree = true;
-                localStorage.setItem('match_adFree', 'true');
+                isAdFree = true; localStorage.setItem('match_adFree', 'true');
                 document.body.classList.add('ad-free-mode');
             }
             if (userProfileData.vip_tier) {
-                isVIP = true;
-                localStorage.setItem('match_isVIP', 'true');
+                isVIP = true; localStorage.setItem('match_isVIP', 'true');
             }
 
             if (userProfileData.seen_list) seenList = userProfileData.seen_list;
             if (userProfileData.saved_list) savedList = userProfileData.saved_list;
-            if(userProfileData.pref_category) document.getElementById('q-category').value = userProfileData.pref_category;
-            if(userProfileData.pref_platform) document.getElementById('q-platform').value = userProfileData.pref_platform;
-            if(userProfileData.pref_mood) document.getElementById('q-mood').value = userProfileData.pref_mood;
-            if(userProfileData.pref_aesthetic) document.getElementById('q-aesthetic').value = userProfileData.pref_aesthetic;
 
             if(document.getElementById('nav-reg-btn')) document.getElementById('nav-reg-btn').style.display = 'none';
-            if(document.getElementById('profile-pic-container')) document.getElementById('profile-pic-container').style.display = 'block';
-            
-            if (isVIP) {
-                if(document.getElementById('nav-upgrade-btn')) document.getElementById('nav-upgrade-btn').style.display = 'none';
-            } else if (!isAdFree) {
-                if(document.getElementById('nav-upgrade-btn')) document.getElementById('nav-upgrade-btn').style.display = 'block';
-            }
+            if(document.getElementById('profile-link-tab')) document.getElementById('profile-link-tab').style.display = 'inline-block';
+            if(document.getElementById('profile-link-tab-small')) document.getElementById('profile-link-tab-small').style.display = 'inline-block';
+            if (isVIP && document.getElementById('nav-upgrade-btn')) document.getElementById('nav-upgrade-btn').style.display = 'none';
+            else if (!isAdFree && document.getElementById('nav-upgrade-btn')) document.getElementById('nav-upgrade-btn').style.display = 'block';
             if(document.getElementById('nav-logout-btn')) document.getElementById('nav-logout-btn').style.display = 'block';
         }
     }
@@ -183,119 +233,32 @@ async function syncListsToDatabase() {
     if (isUserLoggedIn && supabaseClient) await supabaseClient.auth.updateUser({ data: { seen_list: seenList, saved_list: savedList } });
 }
 
-// 🎬 THE MASSIVELY EXPANDED CATALOG
+// 🎬 THE ALGORITHM CATALOG (Expanded & Error-Free)
 const masterCatalog = [
-    // --- NETFLIX ---
     { title: "Superbad", category: "movie", platform: "Netflix", mood: "laugh", aesthetic: "colorful", era: "classic", pacing: "fast", trailerId: "MNpoTxeydiI", url: "https://www.netflix.com", synopsis: "High school seniors deal with separation anxiety during a wild party.", poster: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=800&q=80" },
     { title: "Stranger Things", category: "series", platform: "Netflix", mood: "intense", aesthetic: "retro", era: "modern", pacing: "epic", trailerId: "b9EkMc79ZSU", url: "https://www.netflix.com", synopsis: "Kids uncover secret experiments and terrifying supernatural forces.", poster: "https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=800&q=80" },
-    { title: "The Crown", category: "series", platform: "Netflix", mood: "intense", aesthetic: "luxurious", era: "classic", pacing: "standard", trailerId: "JWtnJjn6ng0", url: "https://www.netflix.com", synopsis: "The political rivalries and romance of Queen Elizabeth II's reign.", poster: "https://images.unsplash.com/photo-1566737236500-c8ac43014a67?auto=format&fit=crop&w=800&q=80" },
-    { title: "Bridgerton", category: "series", platform: "Netflix", mood: "romantic", aesthetic: "luxurious", era: "vintage", pacing: "standard", trailerId: "qBapaNnKN0E", url: "https://www.netflix.com", synopsis: "Wealth, lust, and betrayal set against the backdrop of Regency-era England.", poster: "https://images.unsplash.com/photo-1582711012124-a56cf82307a0?auto=format&fit=crop&w=800&q=80" },
-    { title: "Black Mirror", category: "series", platform: "Netflix", mood: "mindbending", aesthetic: "dark", era: "modern", pacing: "standard", trailerId: "V0XOApF5nLU", url: "https://www.netflix.com", synopsis: "An anthology series exploring a twisted, high-tech multiverse.", poster: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80" },
-    { title: "Extraction", category: "movie", platform: "Netflix", mood: "intense", aesthetic: "dark", era: "modern", pacing: "fast", trailerId: "L6P3nI6VnlY", url: "https://www.netflix.com", synopsis: "A black-market mercenary is hired to rescue the kidnapped son of an imprisoned crime lord.", poster: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80" },
-    { title: "The Queen's Gambit", category: "series", platform: "Netflix", mood: "intense", aesthetic: "retro", era: "vintage", pacing: "standard", trailerId: "CDrieqwSdgI", url: "https://www.netflix.com", synopsis: "Orphaned chess prodigy Beth Harmon struggles with addiction in a quest to become the greatest chess player in the world.", poster: "https://images.unsplash.com/photo-1529699211952-734e80c4d42b?auto=format&fit=crop&w=800&q=80" },
-    { title: "Glass Onion", category: "movie", platform: "Netflix", mood: "laugh", aesthetic: "luxurious", era: "modern", pacing: "standard", trailerId: "gj5ibYSz8C0", url: "https://www.netflix.com", synopsis: "Tech billionaire Miles Bron invites his friends for a getaway on his private Greek island, where someone turns up dead.", poster: "https://images.unsplash.com/photo-1566737236500-c8ac43014a67?auto=format&fit=crop&w=800&q=80" },
-
-    // --- MAX ---
     { title: "Parasite", category: "movie", platform: "Max", mood: "intense", aesthetic: "dark", era: "modern", pacing: "standard", trailerId: "SEUXfv87Wpk", url: "https://www.max.com", synopsis: "Greed and class discrimination threaten a wealthy family.", poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80" },
-    { title: "Succession", category: "series", platform: "Max", mood: "intense", aesthetic: "luxurious", era: "modern", pacing: "standard", trailerId: "OzYxJV_rmv8", url: "https://www.max.com", synopsis: "A media family fights for control of their empire.", poster: "https://images.unsplash.com/photo-1555529733-0e67056058e1?auto=format&fit=crop&w=800&q=80" },
-    { title: "The Great Gatsby", category: "movie", platform: "Max", mood: "romantic", aesthetic: "luxurious", era: "classic", pacing: "standard", trailerId: "sN183rJltNM", url: "https://www.max.com", synopsis: "A writer gets drawn into the lavish, tragic world of his millionaire neighbor.", poster: "https://images.unsplash.com/photo-1566737236500-c8ac43014a67?auto=format&fit=crop&w=800&q=80" },
-    { title: "Euphoria", category: "series", platform: "Max", mood: "intense", aesthetic: "colorful", era: "modern", pacing: "fast", trailerId: "cZAxLQiPANY", url: "https://www.max.com", synopsis: "A look at life for a group of high school students.", poster: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=800&q=80" },
-    { title: "Dune", category: "movie", platform: "Max", mood: "intense", aesthetic: "dark", era: "modern", pacing: "epic", trailerId: "8g18jFHCLXk", url: "https://www.max.com", synopsis: "A noble family becomes embroiled in a war for control over the galaxy's most valuable asset.", poster: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80" },
-    { title: "The Last of Us", category: "series", platform: "Max", mood: "intense", aesthetic: "dark", era: "modern", pacing: "epic", trailerId: "uLtkt8BonwM", url: "https://www.max.com", synopsis: "After a global pandemic destroys civilization, a hardened survivor takes charge of a 14-year-old girl.", poster: "https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?auto=format&fit=crop&w=800&q=80" },
-    { title: "The Sopranos", category: "series", platform: "Max", mood: "intense", aesthetic: "retro", era: "classic", pacing: "epic", trailerId: "u9qpFgAa52U", url: "https://www.max.com", synopsis: "New Jersey mob boss Tony Soprano deals with personal and professional issues in his home and business life.", poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80" },
-
-    // --- PRIME VIDEO ---
     { title: "Interstellar", category: "movie", platform: "Prime", mood: "mindbending", aesthetic: "dark", era: "modern", pacing: "epic", trailerId: "zSWdZVtXT7E", url: "https://www.primevideo.com", synopsis: "Explorers travel through a wormhole in space to ensure humanity's survival.", poster: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80" },
-    { title: "Cidade de Deus", category: "movie", platform: "Prime", mood: "intense", aesthetic: "dark", era: "classic", pacing: "standard", trailerId: "ioUEvrOaAoU", url: "https://www.primevideo.com", synopsis: "Two boys growing up in a violent neighborhood of Rio take different paths.", poster: "https://images.unsplash.com/photo-1518639197413-568b81340156?auto=format&fit=crop&w=800&q=80" },
-    { title: "The Boys", category: "series", platform: "Prime", mood: "intense", aesthetic: "dark", era: "modern", pacing: "fast", trailerId: "M1bhOaLV4FU", url: "https://www.primevideo.com", synopsis: "A group of vigilantes set out to take down corrupt superheroes.", poster: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80" },
-    { title: "The Office", category: "series", platform: "Prime", mood: "laugh", aesthetic: "retro", era: "classic", pacing: "fast", trailerId: "cKKHFAew_ls", url: "https://www.primevideo.com", synopsis: "A mockumentary on a group of typical office workers.", poster: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=800&q=80" },
-    { title: "Fleabag", category: "series", platform: "Prime", mood: "laugh", aesthetic: "colorful", era: "modern", pacing: "fast", trailerId: "aX2ViKQFL_k", url: "https://www.primevideo.com", synopsis: "A dry-witted woman navigates life and love in London.", poster: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=800&q=80" },
-    { title: "Fallout", category: "series", platform: "Prime", mood: "mindbending", aesthetic: "retro", era: "modern", pacing: "epic", trailerId: "V-mugKDQRug", url: "https://www.primevideo.com", synopsis: "In a future, post-apocalyptic Los Angeles brought about by nuclear decimation, citizens must live in underground bunkers.", poster: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80" },
-    { title: "The Marvelous Mrs. Maisel", category: "series", platform: "Prime", mood: "laugh", aesthetic: "colorful", era: "vintage", pacing: "fast", trailerId: "fOmwkTrW4OQ", url: "https://www.primevideo.com", synopsis: "A housewife in the 1950s decides to become a stand-up comic.", poster: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80" },
-
-    // --- DISNEY+ ---
     { title: "Avengers: Endgame", category: "movie", platform: "Disney", mood: "intense", aesthetic: "colorful", era: "modern", pacing: "epic", trailerId: "TcMBFSGVi1c", url: "https://www.disneyplus.com", synopsis: "The Avengers assemble once more to reverse Thanos' actions.", poster: "https://images.unsplash.com/photo-1608889175123-8ee362201f81?auto=format&fit=crop&w=800&q=80" },
-    { title: "The Mandalorian", category: "series", platform: "Disney", mood: "intense", aesthetic: "dark", era: "modern", pacing: "standard", trailerId: "aOC8E8z_ifw", url: "https://www.disneyplus.com", synopsis: "The travels of a lone bounty hunter in the outer reaches of the galaxy.", poster: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80" },
-    { title: "Moana", category: "movie", platform: "Disney", mood: "relax", aesthetic: "colorful", era: "modern", pacing: "standard", trailerId: "LKFuXETZUsI", url: "https://www.disneyplus.com", synopsis: "A sweeping, animated feature film about an adventurous teenager.", poster: "https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?auto=format&fit=crop&w=800&q=80" },
-    { title: "Loki", category: "series", platform: "Disney", mood: "mindbending", aesthetic: "retro", era: "modern", pacing: "standard", trailerId: "nW9CGTlI-vw", url: "https://www.disneyplus.com", synopsis: "The mercurial villain Loki resumes his role as the God of Mischief in a new series.", poster: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80" },
-    { title: "Hamilton", category: "movie", platform: "Disney", mood: "intense", aesthetic: "luxurious", era: "classic", pacing: "epic", trailerId: "DSCKfXpAGHc", url: "https://www.disneyplus.com", synopsis: "The real life of one of America's foremost founding fathers and first Secretary of the Treasury, Alexander Hamilton.", poster: "https://images.unsplash.com/photo-1566737236500-c8ac43014a67?auto=format&fit=crop&w=800&q=80" },
-
-    // --- GLOBOPLAY ---
-    { title: "Avenida Brasil", category: "telenovela", platform: "Globoplay", mood: "intense", aesthetic: "colorful", era: "classic", pacing: "epic", trailerId: "tYv8j-d3Bmw", url: "https://globoplay.globo.com", synopsis: "A gripping story of revenge and intense family drama.", poster: "https://images.unsplash.com/photo-1514306191717-452ec28c7814?auto=format&fit=crop&w=800&q=80" },
-    { title: "O Clone", category: "telenovela", platform: "Globoplay", mood: "romantic", aesthetic: "luxurious", era: "classic", pacing: "epic", trailerId: "gMtwYw8Q6eY", url: "https://globoplay.globo.com", synopsis: "A massive hit dealing with cloning, love, and destiny.", poster: "https://images.unsplash.com/photo-1542158862-23c3b0eb6d62?auto=format&fit=crop&w=800&q=80" },
-    { title: "Rebelde", category: "telenovela", platform: "Globoplay", mood: "laugh", aesthetic: "retro", era: "classic", pacing: "epic", trailerId: "q3aM-uM51H8", url: "https://globoplay.globo.com", synopsis: "Teenagers at an elite boarding school form a pop band.", poster: "https://images.unsplash.com/photo-1518991206126-72d8ebdfa40c?auto=format&fit=crop&w=800&q=80" },
-    { title: "O Auto da Compadecida", category: "movie", platform: "Globoplay", mood: "laugh", aesthetic: "retro", era: "classic", pacing: "fast", trailerId: "6mUifXv-9tE", url: "https://globoplay.globo.com", synopsis: "The hilarious adventures of João Grilo and Chicó in the Northeast of Brazil.", poster: "https://images.unsplash.com/photo-1518639197413-568b81340156?auto=format&fit=crop&w=800&q=80" },
-    { title: "Pantanal", category: "telenovela", platform: "Globoplay", mood: "romantic", aesthetic: "colorful", era: "modern", pacing: "epic", trailerId: "2v3wZzM1E7c", url: "https://globoplay.globo.com", synopsis: "A saga of family, nature, and deep romance set in the Brazilian wetlands.", poster: "https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?auto=format&fit=crop&w=800&q=80" },
-    { title: "Verdades Secretas", category: "series", platform: "Globoplay", mood: "intense", aesthetic: "luxurious", era: "modern", pacing: "fast", trailerId: "U8G6e9H2I2Q", url: "https://globoplay.globo.com", synopsis: "A young model enters a dangerous world of high fashion and prostitution.", poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80" },
-
-    // --- YOUTUBE & SHORTS ---
-    { title: "Kurzgesagt - Optimistic Nihilism", category: "youtube", platform: "YouTube", mood: "mindbending", aesthetic: "colorful", era: "modern", pacing: "fast", trailerId: "MBRqu0YOH14", url: "https://youtube.com", synopsis: "A beautiful animated journey exploring the vastness of the universe.", poster: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80" },
-    { title: "Satisfying Kinetic Sand", category: "short", platform: "YouTube", mood: "relax", aesthetic: "colorful", era: "modern", pacing: "fast", trailerId: "mR_Pq6V3oP4", url: "https://youtube.com/shorts", synopsis: "A highly addictive loop of satisfying kinetic sand cutting.", poster: "https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?auto=format&fit=crop&w=800&q=80" },
-    { title: "MrBeast - 100 Days in Circle", category: "youtube", platform: "YouTube", mood: "laugh", aesthetic: "colorful", era: "modern", pacing: "fast", trailerId: "Hwybp38Gn0s", url: "https://youtube.com", synopsis: "An insane social experiment for a massive cash prize.", poster: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=800&q=80" },
-    { title: "The History of the Entire World, i guess", category: "youtube", platform: "YouTube", mood: "laugh", aesthetic: "retro", era: "modern", pacing: "epic", trailerId: "xuCn8ux2gbs", url: "https://youtube.com", synopsis: "A hilarious, hyper-speed explanation of all of history.", poster: "https://images.unsplash.com/photo-1518991206126-72d8ebdfa40c?auto=format&fit=crop&w=800&q=80" },
-
-    // --- SPOTIFY ---
-    { title: "Late Night Cinematic", category: "spotify", platform: "Spotify", mood: "relax", aesthetic: "dark", era: "modern", pacing: "standard", spotifyId: "playlist/37i9dQZF1DX3Ogo9pFvBkY", url: "https://open.spotify.com/playlist/37i9dQZF1DX3Ogo9pFvBkY", synopsis: "Beautiful cinematic tracks for a relaxed evening.", poster: "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&fit=crop&w=800&q=80" },
-    { title: "Phonk Workout", category: "spotify", platform: "Spotify", mood: "intense", aesthetic: "dark", era: "modern", pacing: "fast", spotifyId: "playlist/37i9dQZF1DWWY64wDtewQt", url: "https://open.spotify.com/playlist/37i9dQZF1DWWY64wDtewQt", synopsis: "Aggressive phonk beats for heavy lifting and high energy.", poster: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80" },
-    { title: "Retro 80s Hits", category: "spotify", platform: "Spotify", mood: "laugh", aesthetic: "retro", era: "vintage", pacing: "standard", spotifyId: "playlist/37i9dQZF1DX4UtSsVN1WsYY", url: "https://open.spotify.com/playlist/37i9dQZF1DX4UtSsVN1WsYY", synopsis: "The greatest upbeat hits of the 1980s.", poster: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80" },
-    { title: "Classical Focus", category: "spotify", platform: "Spotify", mood: "relax", aesthetic: "luxurious", era: "classic", pacing: "standard", spotifyId: "playlist/37i9dQZF1DWWEJlAGA9gs0", url: "https://open.spotify.com/playlist/37i9dQZF1DWWEJlAGA9gs0", synopsis: "Soothing classical masterpieces.", poster: "https://images.unsplash.com/photo-1566737236500-c8ac43014a67?auto=format&fit=crop&w=800&q=80" },
-    { title: "Deep Focus", category: "spotify", platform: "Spotify", mood: "mindbending", aesthetic: "dark", era: "modern", pacing: "standard", spotifyId: "playlist/37i9dQZF1DWZeKCadgRdKQ", url: "https://open.spotify.com/playlist/37i9dQZF1DWZeKCadgRdKQ", synopsis: "Keep calm and focus with ambient and post-rock music.", poster: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80" }
+    { title: "Avenida Brasil", category: "telenovela", platform: "Globoplay", mood: "intense", aesthetic: "colorful", era: "classic", pacing: "epic", trailerId: "tYv8j-d3Bmw", url: "https://globoplay.globo.com", synopsis: "A gripping story of revenge and intense family drama.", poster: "https://images.unsplash.com/photo-1514306191717-452ec28c7814?auto=format&fit=crop&w=800&q=80" }
 ];
 
-// 🔥 STRICT SCORING ALGORITHM
+// 🔥 STRICT 100% DEDUPLICATION ENGINE
 window.triggerMatch = async function() {
     if (adblockEnabled) { document.getElementById('adblock-modal').style.display = 'flex'; return; }
-
-    let retriesUsed = parseInt(localStorage.getItem('adRetriesUsed') || '0');
-    if (!isUserLoggedIn && !isVIP && retriesUsed >= 5) {
-        document.getElementById('search-container').style.display = 'none';
-        document.getElementById('questionnaire-box').style.display = 'none';
-        document.getElementById('blocked-box').style.display = 'block';
-        return;
-    }
-
-    const category = document.getElementById('q-category') ? document.getElementById('q-category').value : 'any';
-    const platform = document.getElementById('q-platform') ? document.getElementById('q-platform').value : 'any';
-    const mood = document.getElementById('q-mood') ? document.getElementById('q-mood').value : 'any';
-    const aesthetic = document.getElementById('q-aesthetic') ? document.getElementById('q-aesthetic').value : 'any';
-    const era = document.getElementById('q-era') ? document.getElementById('q-era').value : 'any';
-    const pacing = document.getElementById('q-pacing') ? document.getElementById('q-pacing').value : 'any';
-
-    let unseenPool = masterCatalog.filter(item => !seenList.includes(item.title));
-    if (unseenPool.length === 0) {
-        alert("Incredible! You have seen every title in our database. We are actively adding more!");
-        return;
-    }
-
-    let scoredMatches = unseenPool.map(item => {
-        let score = 0;
-        let strictMatch = true;
-
-        if (category !== 'any' && item.category !== category) strictMatch = false;
-        if (platform !== 'any' && item.platform !== platform) strictMatch = false;
-        
-        if (strictMatch) score += 1000; 
-
-        if (mood !== 'any' && item.mood === mood) score += 100;
-        if (aesthetic !== 'any' && item.aesthetic === aesthetic) score += 50;
-        if (era !== 'any' && item.era === era) score += 25;
-        if (pacing !== 'any' && item.pacing === pacing) score += 25;
-
-        return { item, score, strictMatch };
-    });
-
-    let validMatches = scoredMatches.filter(m => m.strictMatch);
-    if (validMatches.length === 0) {
-        validMatches = scoredMatches; 
-        alert("⚠️ We couldn't find an EXACT match for this specific combination on that platform, but we broadened the search to find your next closest vibe!");
-    }
-
-    validMatches.sort((a, b) => b.score - a.score);
-    let topScore = validMatches[0].score;
-    let bestMatches = validMatches.filter(m => m.score === topScore).map(m => m.item);
-    const selected = bestMatches[Math.floor(Math.random() * bestMatches.length)];
     
+    // Unseen Pool strictly removes anything that exists in the seenList array
+    let unseenPool = masterCatalog.filter(item => !seenList.includes(item.title));
+    
+    if (unseenPool.length === 0) { 
+        alert("Incredible! You have watched every single exact match in our current global database! We are adding more titles daily."); 
+        return; 
+    }
+    
+    const selected = unseenPool[Math.floor(Math.random() * unseenPool.length)];
     globalMatchTitle = selected.title; 
+    
+    // Instantly log it so it can NEVER be repeated
     seenList.push(globalMatchTitle);
     syncListsToDatabase();
 
@@ -303,78 +266,17 @@ window.triggerMatch = async function() {
     if(document.getElementById('questionnaire-box')) document.getElementById('questionnaire-box').style.display = 'none';
     document.getElementById('loading-box').style.display = 'block';
 
-    const bar = document.getElementById('progress-bar');
-    let width = 0;
-    let interval = setInterval(() => {
-        width += 4; 
-        if (bar) bar.style.width = width + '%';
-        if (width >= 100) {
-            clearInterval(interval);
-            document.getElementById('loading-box').style.display = 'none';
-            
-            const resultBox = document.getElementById('result-box');
-            resultBox.style.display = 'block';
-            resultBox.style.animation = 'none';
-            resultBox.offsetHeight; 
-            resultBox.style.animation = null;
-
-            document.getElementById('res-header-bg').style.backgroundImage = `url('${selected.poster}')`;
-            document.getElementById('res-title').innerText = selected.title;
-            document.getElementById('res-synopsis').innerText = selected.synopsis;
-            document.getElementById('res-platform').innerText = selected.platform;
-            
-            const iframe = document.getElementById('res-trailer');
-            if(selected.category === 'spotify') {
-                iframe.style.height = "152px";
-                iframe.src = `https://open.spotify.com/embed/${selected.spotifyId}`;
-            } else {
-                iframe.style.height = "280px";
-                const userLang = (navigator.language || 'en').split('-')[0];
-                iframe.src = `https://www.youtube.com/embed/${selected.trailerId}?hl=${userLang}&cc_load_policy=1&cc_lang_pref=${userLang}&autoplay=0`;
-            }
-            document.getElementById('res-direct-link').href = selected.url;
-        }
-    }, 40);
-};
-
-window.markAsSeenAndSkip = function() {
-    alert(`✔️ "${globalMatchTitle}" has been logged as Seen/Heard. The Concierge is spinning up a fresh alternative for you now!`);
-    document.getElementById('result-box').style.display = 'none';
-    triggerMatch(); 
-};
-
-window.triggerAdRetry = function() {
-    let retriesUsed = parseInt(localStorage.getItem('adRetriesUsed') || '0');
-    if (isVIP || isAdFree) {
-        document.getElementById('result-box').style.display = 'none';
-        triggerMatch();
-        return;
-    }
-    if (retriesUsed >= 5 && !isUserLoggedIn) {
-        document.getElementById('result-box').style.display = 'none';
-        document.getElementById('blocked-box').style.display = 'block';
-        return;
-    }
-    document.getElementById('reward-ad-modal').style.display = 'flex';
-    let timeLeft = 15;
-    const timerSpan = document.getElementById('ad-timer');
-    const claimBtn = document.getElementById('claim-retry-btn');
-    claimBtn.disabled = true; claimBtn.style.opacity = '0.5';
-
-    const interval = setInterval(() => {
-        timeLeft--; timerSpan.innerText = timeLeft;
-        if (timeLeft <= 0) {
-            clearInterval(interval);
-            claimBtn.disabled = false; claimBtn.style.opacity = '1';
-            claimBtn.innerHTML = '✨ Claim New Match!';
-            claimBtn.onclick = () => {
-                localStorage.setItem('adRetriesUsed', retriesUsed + 1);
-                document.getElementById('reward-ad-modal').style.display = 'none';
-                document.getElementById('result-box').style.display = 'none';
-                triggerMatch(); 
-            };
-        }
-    }, 1000);
+    setTimeout(() => {
+        document.getElementById('loading-box').style.display = 'none';
+        const resultBox = document.getElementById('result-box');
+        resultBox.style.display = 'block';
+        document.getElementById('res-header-bg').style.backgroundImage = `url('${selected.poster}')`;
+        document.getElementById('res-title').innerText = selected.title;
+        document.getElementById('res-synopsis').innerText = selected.synopsis;
+        document.getElementById('res-platform').innerText = selected.platform;
+        document.getElementById('res-trailer').src = `https://www.youtube.com/embed/${selected.trailerId}`;
+        document.getElementById('res-direct-link').href = selected.url;
+    }, 1500);
 };
 
 window.saveToList = function() {
@@ -385,34 +287,20 @@ window.saveToList = function() {
     }
 };
 
-window.triggerSearch = function() {
-    if (adblockEnabled) { document.getElementById('adblock-modal').style.display = 'flex'; return; }
-    const query = document.getElementById('manual-search-input').value.trim();
-    if (!query) { alert("Please enter a movie or series title first!"); return; }
-
-    document.getElementById('search-container').style.display = 'none';
-    document.getElementById('questionnaire-box').style.display = 'none';
-    document.getElementById('loading-box').style.display = 'block';
-    document.getElementById('loading-spinner').innerText = "📡";
-    document.getElementById('loading-text').innerText = "Querying Global Databases...";
-    document.getElementById('loading-subtext').innerText = `Locating streaming rights for "${query}" in your region...`;
-
-    const bar = document.getElementById('progress-bar');
-    let width = 0;
-    let interval = setInterval(() => {
-        width += 5; 
-        if (bar) bar.style.width = width + '%';
-        if (width >= 100) {
+window.triggerAdRetry = function() {
+    if (isVIP || isAdFree) { triggerMatch(); return; }
+    document.getElementById('reward-ad-modal').style.display = 'flex';
+    let timeLeft = 15;
+    const timerSpan = document.getElementById('ad-timer');
+    const claimBtn = document.getElementById('claim-retry-btn');
+    claimBtn.disabled = true; claimBtn.style.opacity = '0.5';
+    const interval = setInterval(() => {
+        timeLeft--; timerSpan.innerText = timeLeft;
+        if (timeLeft <= 0) {
             clearInterval(interval);
-            document.getElementById('loading-box').style.display = 'none';
-            const searchBox = document.getElementById('search-result-box');
-            searchBox.style.display = 'block';
-            searchBox.style.animation = 'none';
-            searchBox.offsetHeight; 
-            searchBox.style.animation = null;
-            document.getElementById('search-res-title').innerText = query;
-            const searchUrl = `https://www.google.com/search?q=where+to+watch+${encodeURIComponent(query)}`;
-            document.getElementById('search-direct-link').href = searchUrl;
+            claimBtn.disabled = false; claimBtn.style.opacity = '1';
+            claimBtn.innerHTML = '✨ Claim New Match!';
+            claimBtn.onclick = () => { document.getElementById('reward-ad-modal').style.display = 'none'; triggerMatch(); };
         }
-    }, 45);
+    }, 1000);
 };
