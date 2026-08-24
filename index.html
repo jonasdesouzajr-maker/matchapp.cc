@@ -15,14 +15,10 @@
 
     <div class="container">
         
-        <!-- 🌐 NEW COMPACT CHROME PILL -->
         <div id="chrome-banner" class="chrome-banner fade-in">
             <div class="chrome-text">For the best experience, open in Chrome.</div>
             <div style="display: flex; align-items: center; gap: 10px;">
-                <button onclick="openInChrome()" class="chrome-btn">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 6.5C15.04 6.5 17.5 8.96 17.5 12C17.5 15.04 15.04 17.5 12 17.5C8.96 17.5 6.5 15.04 6.5 12C6.5 8.96 8.96 6.5 12 6.5ZM12 8.5C10.07 8.5 8.5 10.07 8.5 12C8.5 13.93 10.07 15.5 12 15.5C13.93 15.5 15.5 13.93 15.5 12C15.5 10.07 13.93 8.5 12 8.5Z" fill="#113ccf"/><path d="M11.99 3.5C8.01 3.5 4.67 5.76 3.07 9.04L6.96 15.77C7.29 14.15 8.7 12.9 10.42 12.9H18.77C18.17 7.6 15.51 3.5 11.99 3.5Z" fill="#113ccf"/><path d="M12 20.5C15.58 20.5 18.66 18.29 19.98 15.1H12.21C10.46 15.1 8.98 14.07 8.35 12.5L4.56 19.06C6.54 20.08 8.8 20.5 12 20.5Z" fill="#113ccf"/><path d="M20.89 10.1C20.65 9.17 20.25 8.31 19.72 7.54L15.93 14.1L12.04 20.84C15.68 20.73 18.76 18.3 19.96 15.1H12.19C13.95 15.1 15.46 14.05 16.09 12.46L20.89 10.1Z" fill="#113ccf"/></svg>
-                    Open
-                </button>
+                <button onclick="openInChrome()" class="chrome-btn">Open Chrome</button>
                 <span class="close-x" style="position: relative; top:0; right:0; font-size: 20px; color: #fff;" onclick="dismissChromeBanner()">×</span>
             </div>
         </div>
@@ -46,19 +42,14 @@
             </a>
             
             <div id="header-auth-area" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
-                <!-- AVATAR & PROFILE TAB -->
                 <label for="profile-pic-upload" id="profile-pic-container" class="profile-pic-container">
                     <img id="profile-pic-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 24 24' fill='%23D4AF37'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" alt="Avatar">
                 </label>
                 <input type="file" id="profile-pic-upload" accept="image/*" style="display: none;" onchange="handleProfilePic(event)">
 
                 <button id="profile-link-tab" onclick="window.location.href='profile.html'" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid var(--gold); color: var(--gold-glow); padding: 10px 15px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 12px;">👤 My Profile</button>
-                <button id="nav-upgrade-btn" onclick="openUpgradeModal()" class="gold-btn" style="padding: 10px 15px; width: auto; font-size: 12px; border: 1px solid #fff;">🚫 Remove Ads</button>
-                
-                <!-- NEW GOOGLE REGISTER BUTTON FOR MAIN PAGE -->
-                <button id="nav-reg-btn" onclick="signInWithGoogle()" class="gold-btn" style="padding: 10px 15px; width: auto; font-size: 12px; background: #fff; color: #000; display: flex; align-items: center; gap: 8px;">
-                    <svg width="14" height="14" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.95H1.23v3.15C3.21 21.32 7.27 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.25c-.25-.72-.38-1.49-.38-2.25s.13-1.53.38-2.25V6.6H1.23C.45 8.17 0 9.93 0 12s.45 3.83 1.23 5.4l4.05-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.27 0 3.21 2.68 1.23 6.6l4.05 3.15c.95-2.84 3.6-4.95 6.72-4.95z"/></svg> Sign In
-                </button>
+                <button id="nav-upgrade-btn" onclick="window.location.href='pricing.html'" class="gold-btn" style="padding: 10px 15px; width: auto; font-size: 12px; border: 1px solid #fff;">💎 Get VIP Status</button>
+                <button id="nav-reg-btn" onclick="signInWithGoogle()" class="gold-btn" style="padding: 10px 15px; width: auto; font-size: 12px; background: #fff; color: #000;">Sign In With Google</button>
                 <button id="nav-logout-btn" onclick="doLogout()" style="display: none; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 10px 15px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 12px;">Log Out</button>
             </div>
         </header>
@@ -66,81 +57,52 @@
         <div id="questionnaire-box" class="premium-card fade-in">
             <h2 style="margin: 0 0 15px 0; font-size: 32px; color: var(--gold);">Find Your Vibe</h2>
             <div class="input-grid">
-                <div class="input-group"><label>Format</label><select id="q-category"><option value="any">Surprise Me</option><option value="movie">Movies</option><option value="series">TV Series</option></select></div>
-                <div class="input-group"><label>Platform</label><select id="q-platform"><option value="any">Any Platform</option><option value="Netflix">Netflix</option><option value="Max">Max</option><option value="Prime">Amazon Prime</option></select></div>
-                <div class="input-group"><label>Mood</label><select id="q-mood"><option value="any">Any</option><option value="relax">Relaxed</option><option value="intense">Intense</option><option value="laugh">Funny</option></select></div>
-                <div class="input-group"><label>Aesthetic</label><select id="q-aesthetic"><option value="any">Any Vibe</option><option value="dark">Dark & Gritty</option><option value="colorful">Colorful</option></select></div>
+                <div class="input-group"><label>Format</label><select id="q-category"><option value="any">Surprise Me</option><option value="movie">Movies</option></select></div>
+                <div class="input-group"><label>Platform</label><select id="q-platform"><option value="any">Any Platform</option><option value="Netflix">Netflix</option></select></div>
+                <div class="input-group"><label>Mood</label><select id="q-mood"><option value="any">Any</option><option value="relax">Relaxed</option></select></div>
+                <div class="input-group"><label>Aesthetic</label><select id="q-aesthetic"><option value="any">Any Vibe</option><option value="dark">Dark & Gritty</option></select></div>
             </div>
             <button onclick="triggerMatch()" class="gold-btn" style="margin-top: 25px;">⚡ Curate My Match</button>
         </div>
 
         <div id="loading-box" class="premium-card fade-in" style="display: none; padding: 70px 20px;">
-            <div class="loading-icon">🔮</div>
+            <div style="font-size: 60px; margin-bottom: 20px;">🔮</div>
             <h3 style="color: var(--gold-glow); font-size: 24px; margin-bottom: 12px;">Consulting the Algorithm...</h3>
-            <div class="progress-bar-container"><div id="progress-bar" class="progress-bar-fill" style="width:100%"></div></div>
         </div>
 
         <div id="result-box" class="premium-card cinematic-result fade-in" style="display: none;">
-            <div id="res-header-bg" class="cinematic-header">
-                <div class="cinematic-overlay"></div>
-                <div class="cinematic-title-box">
-                    <h2 id="res-title" class="cinematic-title">Title</h2>
-                </div>
-            </div>
+            <div id="res-header-bg" class="cinematic-header"><div class="cinematic-overlay"></div><div class="cinematic-title-box"><h2 id="res-title" class="cinematic-title">Title</h2></div></div>
             <div class="cinematic-body">
-                <p id="res-synopsis" style="color: #ddd; font-size: 16px; line-height: 1.7; text-align: left; margin-bottom: 25px;"></p>
+                <p id="res-synopsis" style="color: #ddd; font-size: 16px; text-align: left; margin-bottom: 25px;"></p>
                 <iframe id="res-trailer" style="width: 100%; height: 280px; border-radius: 16px; margin-bottom: 25px;" src="" frameborder="0" allowfullscreen></iframe>
-                <div style="display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;">
-                    <button onclick="saveToList()" class="secondary-btn" style="flex: 1; border-color: var(--gold); color: var(--gold);">⭐ Save to Portfolio</button>
-                    <button onclick="triggerAdRetry()" class="secondary-btn" style="flex: 1; background: rgba(37, 211, 102, 0.1); border-color: #25D366; color: #25D366;">🔄 Watch Ad for New Match</button>
+                <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                    <button onclick="saveToList()" class="secondary-btn" style="flex: 1; border-color: var(--gold); color: var(--gold);">⭐ Save</button>
+                    <button onclick="location.reload()" class="secondary-btn" style="flex: 1;">🔄 Dashboard</button>
                 </div>
-                <button onclick="location.reload()" class="secondary-btn" style="border: none; background: transparent;">🔙 Back to Dashboard</button>
             </div>
         </div>
 
         <footer class="app-footer fade-in">
             <div class="ad-placement" style="background: transparent; border-radius: 0; padding-top:20px;">
                 <span style="font-size: 10px; color: #888; display: block; margin-bottom: 15px; text-align: center; font-weight: bold;">SPONSORED CONTENT</span>
-                <div style="display: flex; justify-content: center; margin-bottom: 25px; overflow: hidden; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.5);">
+                <div style="display: flex; justify-content: center; margin-bottom: 25px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.5);">
                     <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script>
                     <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
-                </div>
-                <div style="padding: 10px; width: 100%;">
-                    <ins class="adsbygoogle" style="display:block; width:100%; min-height: 100px;" data-ad-format="fluid" data-ad-layout-key="-6t+ed+2i-1n-4w" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117"></ins>
-                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                 </div>
             </div>
         </footer>
     </div>
     
-    <!-- FALLBACK MODALS (Hidden by default) -->
-    <div id="chrome-fallback-modal" class="modal-overlay">
-        <div class="premium-card modal-content" style="border: 2px solid var(--gold);">
-            <span class="close-x" onclick="document.getElementById('chrome-fallback-modal').style.display='none'">×</span>
-            <h3 style="color: var(--gold); margin-top: 0;">Manual Chrome Launch</h3>
-            <p style="color: #fff; font-size: 14px;">If your browser didn't automatically switch, copy the link below and open it directly inside your Google Chrome app:</p>
-            <button onclick="copyLinkForChrome()" class="gold-btn" style="margin-bottom: 15px;">📋 Copy Link for Chrome</button>
-        </div>
-    </div>
-    
-    <div id="upgrade-modal" class="modal-overlay">
-        <div class="premium-card modal-content" style="border: 2px solid var(--gold);">
-            <span class="close-x" onclick="closeUpgradeModal()">×</span>
-            <h2 style="color: var(--gold); margin-top: 0; font-size: 32px;">Go VIP. Go Ad-Free.</h2>
-            <button id="purchase-btn" onclick="processCheckout('ad_free')" class="gold-btn" style="font-size: 18px; padding: 20px;">🔓 Unlock Ad-Free Forever ($9.99)</button>
-        </div>
-    </div>
-
+    <!-- 🛑 THE FIX: Link points directly to pricing.html -->
     <div id="adblock-modal" class="modal-overlay">
         <div class="premium-card modal-content" style="border: 2px solid #ff5252; background: rgba(20,5,5,0.95);">
             <div style="font-size: 65px; margin-bottom: 20px;">🛑</div>
-            <h2 style="color: #ff5252; font-size: 32px;">Ad-Blocker Detected</h2>
+            <h2 style="color: #ff5252; font-size: 32px; margin-top:0;">Ad-Blocker Detected</h2>
             <p style="color: #fff; font-size: 15px;">Access is blocked while ad-blockers are active.</p>
             <button onclick="location.reload()" class="gold-btn" style="background: #ff5252; color: #fff; padding: 20px; margin-bottom:15px;">🔄 I Disabled It - Reload</button>
-            <button onclick="openUpgradeModal()" class="secondary-btn" style="border-color: var(--gold); color: var(--gold);">Or Purchase VIP Ad-Free</button>
+            <button onclick="window.location.href='pricing.html'" class="secondary-btn" style="border-color: var(--gold); color: var(--gold);">Or Purchase VIP Ad-Free</button>
         </div>
     </div>
-    
     <script src="app.js"></script>
 </body>
 </html>
