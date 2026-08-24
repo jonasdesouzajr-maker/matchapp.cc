@@ -24,51 +24,30 @@ body.ad-free-mode .ad-placement { display: none !important; }
     z-index: -2; pointer-events: none; 
 }
 .floating-orb {
-    position: absolute; border-radius: 50%; filter: blur(70px); -webkit-filter: blur(70px); -moz-filter: blur(70px); opacity: 0.65; 
+    position: absolute; border-radius: 50%; filter: blur(70px); -webkit-filter: blur(70px); opacity: 0.65; 
     animation: float 10s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); 
-    -webkit-animation: float 10s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
 }
 .orb-1 { width: 400px; height: 400px; background: rgba(212, 175, 55, 0.25); top: 5%; left: -15%; }
-.orb-2 { width: 500px; height: 500px; background: rgba(147, 51, 234, 0.25); bottom: -10%; right: -15%; animation-delay: -5s; -webkit-animation-delay: -5s; }
+.orb-2 { width: 500px; height: 500px; background: rgba(147, 51, 234, 0.25); bottom: -10%; right: -15%; animation-delay: -5s; }
 
 @keyframes float { 0% { transform: translateY(0px) scale(1); } 100% { transform: translateY(60px) scale(1.2); } }
-@-webkit-keyframes float { 0% { -webkit-transform: translateY(0px) scale(1); } 100% { -webkit-transform: translateY(60px) scale(1.2); } }
 
-/* 🎬 POPPING FLYING BRANDS */
-.stream-flags { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; overflow: hidden; }
-.sf-item { position: absolute; font-family: "Arial Black", sans-serif; font-size: clamp(45px, 6vw, 75px); font-weight: 900; white-space: nowrap; opacity: 0; letter-spacing: 5px; filter: drop-shadow(0 0 35px rgba(255,255,255,0.6)); -webkit-filter: drop-shadow(0 0 35px rgba(255,255,255,0.6)); }
-.sf-item.flag { font-size: clamp(70px, 10vw, 130px); }
-
-.brand-netflix { color: #E50914; text-shadow: 0 0 40px rgba(229, 9, 20, 1), 0 0 10px rgba(255,255,255,0.5); }
-.brand-prime { color: #00A8E1; text-shadow: 0 0 40px rgba(0, 168, 225, 1), 0 0 10px rgba(255,255,255,0.5); }
-.brand-max { color: #9A5CFF; text-shadow: 0 0 40px rgba(154, 92, 255, 1), 0 0 10px rgba(255,255,255,0.5); }
-.brand-disney { color: #113CCF; text-shadow: 0 0 40px rgba(17, 60, 207, 1), 0 0 10px rgba(255,255,255,0.5); }
-.brand-spotify { color: #1ED760; text-shadow: 0 0 40px rgba(30, 215, 96, 1), 0 0 10px rgba(255,255,255,0.5); }
-
-@keyframes flyPath1 { 0% { transform: translateY(120vh) translateX(-15vw) rotate(-25deg) scale(0.7); opacity: 0; } 10% { opacity: 0.9; } 80% { opacity: 0.9; } 100% { transform: translateY(-30vh) translateX(35vw) rotate(25deg) scale(1.5); opacity: 0; } }
-@keyframes flyPath2 { 0% { transform: translateY(120vh) translateX(15vw) rotate(25deg) scale(0.7); opacity: 0; } 10% { opacity: 0.9; } 80% { opacity: 0.9; } 100% { transform: translateY(-30vh) translateX(-35vw) rotate(-25deg) scale(1.5); opacity: 0; } }
-@-webkit-keyframes flyPath1 { 0% { -webkit-transform: translateY(120vh) translateX(-15vw) rotate(-25deg) scale(0.7); opacity: 0; } 10% { opacity: 0.9; } 80% { opacity: 0.9; } 100% { -webkit-transform: translateY(-30vh) translateX(35vw) rotate(25deg) scale(1.5); opacity: 0; } }
-@-webkit-keyframes flyPath2 { 0% { -webkit-transform: translateY(120vh) translateX(15vw) rotate(25deg) scale(0.7); opacity: 0; } 10% { opacity: 0.9; } 80% { opacity: 0.9; } 100% { -webkit-transform: translateY(-30vh) translateX(-35vw) rotate(-25deg) scale(1.5); opacity: 0; } }
-
-.container { position: relative; z-index: 1; max-width: 750px; width: 100%; margin: 0 auto; padding-bottom: 30px; }
+.container { position: relative; z-index: 1; max-width: 750px; width: 100%; margin: 0 auto; padding-bottom: 30px; perspective: 1000px; }
 
 /* 🌐 SLEEK CHROME PILL BANNER */
 .chrome-banner {
     display: flex; align-items: center; justify-content: space-between; gap: 15px;
     background: linear-gradient(135deg, rgba(17,60,207,0.9), rgba(43,90,245,0.95));
-    border: 1px solid rgba(255,255,255,0.2); border-radius: 50px;
-    padding: 10px 20px; margin-bottom: 25px;
+    border: 1px solid rgba(255,255,255,0.2); border-radius: 50px; padding: 10px 20px; margin-bottom: 25px;
     box-shadow: 0 10px 30px rgba(17,60,207,0.5), inset 0 2px 10px rgba(255,255,255,0.2);
-    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-    transition: transform 0.3s;
+    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); transition: transform 0.3s;
 }
 .chrome-banner:hover { transform: translateY(-2px); }
 .chrome-text { font-size: 14px; color: #fff; line-height: 1.3; flex-grow: 1; }
 .chrome-btn {
     background: #fff; color: #113ccf; font-weight: 900; font-size: 13px;
     padding: 10px 18px; border-radius: 30px; border: none; cursor: pointer;
-    display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    white-space: nowrap; transition: all 0.3s;
+    display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s;
 }
 .chrome-btn:hover { background: var(--gold-glow); transform: scale(1.05); }
 
@@ -82,18 +61,18 @@ body.ad-free-mode .ad-placement { display: none !important; }
 .header-brand-area { display: flex; align-items: center; gap: 15px; text-decoration: none; transition: transform 0.3s; }
 .header-brand-area:hover { transform: scale(1.03); }
 .brand-logo { height: 60px; width: auto; border-radius: 14px; box-shadow: 0 5px 25px rgba(212,175,55,0.5); }
+.brand-text-container { display: flex; flex-direction: column; justify-content: center; text-align: left; }
 
-/* BOLD ANIMATED TEXT */
 .app-title-main { 
     font-size: clamp(34px, 7vw, 48px); font-weight: 900; margin: 0; line-height: 1;
     background: linear-gradient(90deg, #FFFFFF, #D4AF37, #FFFFFF, #D4AF37);
-    background-size: 300% auto; color: transparent;
-    -webkit-background-clip: text; background-clip: text;
-    animation: goldShimmer 3s linear infinite; -webkit-animation: goldShimmer 3s linear infinite;
-    text-shadow: 0 4px 20px rgba(212,175,55,0.3); letter-spacing: -1px;
+    background-size: 300% auto; color: transparent; -webkit-background-clip: text;
+    animation: goldShimmer 3s linear infinite; text-shadow: 0 4px 20px rgba(212,175,55,0.3); letter-spacing: -1px;
 }
 .app-title-sub { font-size: clamp(10px, 2.5vw, 12px); font-weight: 700; color: #A0A0B5; margin: 4px 0 0 0; text-transform: uppercase; letter-spacing: 1.5px; }
 .app-author { font-size: clamp(8px, 2vw, 10px); font-weight: 900; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin-top: 3px; }
+
+@keyframes goldShimmer { to { background-position: 300% center; } }
 
 /* 🃏 3D GLOWING CARDS */
 .premium-card { 
@@ -102,11 +81,8 @@ body.ad-free-mode .ad-placement { display: none !important; }
     backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); 
     padding: 40px; margin-bottom: 30px; position: relative; overflow: hidden; text-align: center; 
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s;
-    animation: pulseGlow 6s infinite alternate; -webkit-animation: pulseGlow 6s infinite alternate;
 }
-.premium-card:hover { transform: translateY(-5px); box-shadow: 0 30px 70px rgba(0,0,0,1), inset 0 0 25px rgba(212,175,55,0.1); }
-@keyframes pulseGlow { 0% { border-color: rgba(212, 175, 55, 0.3); } 100% { border-color: rgba(212, 175, 55, 0.6); box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 30px rgba(212,175,55,0.15); } }
-@-webkit-keyframes pulseGlow { 0% { border-color: rgba(212, 175, 55, 0.3); } 100% { border-color: rgba(212, 175, 55, 0.6); box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 30px rgba(212,175,55,0.15); } }
+.premium-card:hover { transform: translateY(-5px); box-shadow: 0 30px 70px rgba(0,0,0,1), inset 0 0 25px rgba(212,175,55,0.2); }
 
 /* ✨ BUTTON LIGHT SWEEP EFFECT */
 .gold-btn { 
@@ -118,11 +94,10 @@ body.ad-free-mode .ad-placement { display: none !important; }
 .gold-btn::after {
     content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
     background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%);
-    transform: skewX(-25deg); animation: lightSweep 4s infinite; -webkit-animation: lightSweep 4s infinite;
+    transform: skewX(-25deg); animation: lightSweep 4s infinite;
 }
 .gold-btn:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 15px 35px rgba(212, 175, 55, 0.8); }
 @keyframes lightSweep { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
-@-webkit-keyframes lightSweep { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
 
 .secondary-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 16px; border-radius: 14px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; width: 100%; box-sizing: border-box;}
 .secondary-btn:hover:not([disabled]) { background: rgba(255,255,255,0.15); border-color: var(--gold); color: var(--gold-glow); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
@@ -132,11 +107,33 @@ body.ad-free-mode .ad-placement { display: none !important; }
 .input-group { text-align: left; }
 label { display: block; font-size: 12px; text-transform: uppercase; color: var(--gold); font-weight: 900; margin-bottom: 8px; letter-spacing: 0.5px; }
 input, select { background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(255,255,255,0.25); color: #fff; padding: 16px; border-radius: 14px; font-size: 16px; width: 100%; box-sizing: border-box; transition: all 0.3s ease; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
-input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 25px rgba(212, 175, 55, 0.5), inset 0 2px 10px rgba(0,0,0,0.5); background: rgba(10,10,15,1); transform: scale(1.02); }
+input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 25px rgba(212, 175, 55, 0.5); background: rgba(10,10,15,1); transform: scale(1.02); }
+
+/* 🛒 PRICING CARDS (PRODUCTS) */
+.pricing-grid { display: flex; flex-direction: column; gap: 25px; margin-top: 20px; }
+.pricing-card { 
+    background: rgba(20,20,30,0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; 
+    padding: 30px; text-align: center; position: relative; overflow: hidden;
+    transition: transform 0.4s, border-color 0.4s, box-shadow 0.4s; cursor: pointer;
+}
+.pricing-card:hover { transform: translateY(-10px) scale(1.02); border-color: var(--gold); box-shadow: 0 20px 40px rgba(212,175,55,0.2); }
+.pricing-card.featured { border: 2px solid var(--gold); background: linear-gradient(180deg, rgba(30,25,10,0.9) 0%, rgba(15,15,22,0.9) 100%); box-shadow: 0 0 30px rgba(212,175,55,0.15); }
+.badge-popular { position: absolute; top: 15px; right: -35px; background: var(--gold); color: #000; font-size: 11px; font-weight: 900; padding: 5px 40px; transform: rotate(45deg); text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+.pricing-title { color: #fff; font-size: 22px; font-weight: 900; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 1px; }
+.pricing-price { color: var(--gold); font-size: 38px; font-weight: 900; margin: 0 0 20px 0; }
+.pricing-price span { font-size: 16px; color: var(--text-muted); font-weight: normal; }
+.pricing-features { list-style: none; padding: 0; margin: 0 0 25px 0; text-align: left; }
+.pricing-features li { color: #ddd; font-size: 15px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+.pricing-features li::before { content: '✓'; color: #25D366; font-weight: bold; font-size: 18px; }
 
 /* MODALS */
-.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); }
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; backdrop-filter: blur(40px); }
 .modal-content { width: 100%; max-width: 500px; text-align: center; position: relative; }
+
+/* Profile Pic */
+.profile-pic-container { position: relative; width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--gold); overflow: hidden; cursor: pointer; box-shadow: 0 0 20px rgba(212,175,55,0.4); transition: transform 0.3s; display: none; flex-shrink: 0; }
+.profile-pic-container:hover { transform: scale(1.15); }
+.profile-pic-container img { width: 100%; height: 100%; object-fit: cover; }
 
 /* 📱 MOBILE OPTIMIZATIONS */
 .ad-placement { background: rgba(0,0,0,0.6); border-radius: 18px; padding: 15px; margin: 25px 0; width: 100%; box-sizing: border-box; text-align: center; border: 1px solid rgba(255,255,255,0.15); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -144,25 +141,14 @@ input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow
 
 @media (max-width: 600px) {
     .container { padding-left: 12px; padding-right: 12px; }
-    
-    /* Chrome Pill shrinks beautifully on mobile */
     .chrome-banner { padding: 8px 15px; border-radius: 15px; flex-direction: row; align-items: center; }
     .chrome-text { font-size: 11px; text-align: left; }
     .chrome-btn { padding: 8px 12px; font-size: 11px; width: auto; }
-    .chrome-btn svg { width: 16px; height: 16px; }
-    
     .app-header { flex-direction: column; text-align: center; padding: 25px 15px; }
     .header-brand-area { flex-direction: column; gap: 10px; }
     #header-auth-area { justify-content: center; width: 100%; margin-top: 20px; gap: 10px; }
     .premium-card { padding: 30px 20px; border-radius: 20px; }
-    .ad-scale-wrapper > * { transform: scale(min(1, calc(100vw / 750))); transform-origin: top center; max-width: 100%; }
 }
 
-.fade-in { animation: fadeIn 0.8s cubic-bezier(0.25, 0.8, 0.25, 1) forwards; -webkit-animation: fadeIn 0.8s cubic-bezier(0.25, 0.8, 0.25, 1) forwards; }
+.fade-in { animation: fadeIn 0.8s cubic-bezier(0.25, 0.8, 0.25, 1) forwards; }
 @keyframes fadeIn { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
-@-webkit-keyframes fadeIn { 0% { opacity: 0; -webkit-transform: translateY(20px); } 100% { opacity: 1; -webkit-transform: translateY(0); } }
-
-/* Profile Pic */
-.profile-pic-container { position: relative; width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--gold); overflow: hidden; cursor: pointer; box-shadow: 0 0 20px rgba(212,175,55,0.4); transition: transform 0.3s; display: none; flex-shrink: 0; }
-.profile-pic-container:hover { transform: scale(1.15); }
-.profile-pic-container img { width: 100%; height: 100%; object-fit: cover; }
