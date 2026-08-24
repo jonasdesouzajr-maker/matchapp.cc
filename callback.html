@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authenticating...</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: var(--bg-dark);">
+    <div class="luxury-bg"><div class="floating-orb orb-1"></div></div>
+
+    <div class="premium-card fade-in" style="padding: 60px 40px; text-align: center; max-width: 400px; width: 90%;">
+        <div style="font-size: 60px; margin-bottom: 20px; animation: pulseIcon 1.5s infinite; filter: drop-shadow(0 0 20px var(--gold));">🛡️</div>
+        <h2 style="color: var(--gold); font-size: 28px; margin: 0 0 10px 0;">Authenticating Securely</h2>
+        <p style="color: var(--text-muted); font-size: 15px;">Establishing secure connection with Google...</p>
+    </div>
+
+    <!-- Hidden Engine -->
+    <script src="app.js"></script>
+    <script>
+        // Supabase automatically parses the URL hash in app.js. We just wait and redirect.
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(async () => {
+                if (window.supabaseClient) {
+                    const { data: { session } } = await window.supabaseClient.auth.getSession();
+                    if (session) {
+                        window.location.href = 'index.html';
+                    } else {
+                        // If it fails, send them back so they can try again.
+                        window.location.href = 'index.html'; 
+                    }
+                }
+            }, 2500); // Gives the aesthetic loading screen 2.5 seconds to shine
+        });
+    </script>
+</body>
+</html>
