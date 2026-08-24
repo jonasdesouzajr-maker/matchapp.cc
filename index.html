@@ -9,7 +9,6 @@
       gtag('js', new Date());
       gtag('config', 'G-2ECND229RR');
     </script>
-    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Match App | Your Streaming Concierge</title>
@@ -18,27 +17,19 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <!-- 🌍 THE NEW MASSIVE NEON ANIMATED BACKGROUND -->
-    <div class="luxury-bg">
-        <div class="floating-orb orb-1"></div>
-        <div class="floating-orb orb-2"></div>
-    </div>
+    <!-- 🌍 ANIMATED BACKGROUND -->
+    <div class="luxury-bg"><div class="floating-orb orb-1"></div><div class="floating-orb orb-2"></div></div>
     
-    <!-- Isolated flags layer so it doesn't break mobile scaling -->
     <div class="stream-flags">
         <span class="sf-item flag" style="animation: flyPath1 22s linear infinite; -webkit-animation: flyPath1 22s linear infinite; left: 10%; animation-delay: 0s;">🇧🇷</span>
         <span class="sf-item flag" style="animation: flyPath2 28s linear infinite; -webkit-animation: flyPath2 28s linear infinite; left: 85%; animation-delay: 3s;">🇺🇸</span>
         <span class="sf-item flag" style="animation: flyPath1 25s linear infinite; -webkit-animation: flyPath1 25s linear infinite; left: 35%; animation-delay: 6s;">🇬🇧</span>
         <span class="sf-item flag" style="animation: flyPath2 30s linear infinite; -webkit-animation: flyPath2 30s linear infinite; left: 65%; animation-delay: 9s;">🇯🇵</span>
-        <span class="sf-item flag" style="animation: flyPath1 24s linear infinite; -webkit-animation: flyPath1 24s linear infinite; left: 20%; animation-delay: 12s;">🇪🇸</span>
-        <span class="sf-item flag" style="animation: flyPath2 26s linear infinite; -webkit-animation: flyPath2 26s linear infinite; left: 75%; animation-delay: 15s;">🇰🇷</span>
         
-        <span class="sf-item brand-netflix" style="animation: flyPath2 20s linear infinite; -webkit-animation: flyPath2 20s linear infinite; left: 5%; animation-delay: 2s;">NETFLIX</span>
-        <span class="sf-item brand-max" style="animation: flyPath1 25s linear infinite; -webkit-animation: flyPath1 25s linear infinite; left: 80%; animation-delay: 5s;">MAX</span>
-        <span class="sf-item brand-prime" style="animation: flyPath2 22s linear infinite; -webkit-animation: flyPath2 22s linear infinite; left: 45%; animation-delay: 8s;">PRIME VIDEO</span>
-        <span class="sf-item brand-disney" style="animation: flyPath1 27s linear infinite; -webkit-animation: flyPath1 27s linear infinite; left: 15%; animation-delay: 11s;">DISNEY+</span>
-        <span class="sf-item brand-spotify" style="animation: flyPath2 24s linear infinite; -webkit-animation: flyPath2 24s linear infinite; left: 60%; animation-delay: 14s;">SPOTIFY</span>
-        <span class="sf-item brand-globo" style="animation: flyPath1 29s linear infinite; -webkit-animation: flyPath1 29s linear infinite; left: 90%; animation-delay: 17s;">GLOBOPLAY</span>
+        <span class="sf-item brand-netflix" style="animation: flyPath2 20s linear infinite; left: 5%; animation-delay: 2s;">NETFLIX</span>
+        <span class="sf-item brand-max" style="animation: flyPath1 25s linear infinite; left: 80%; animation-delay: 5s;">MAX</span>
+        <span class="sf-item brand-prime" style="animation: flyPath2 22s linear infinite; left: 45%; animation-delay: 8s;">PRIME VIDEO</span>
+        <span class="sf-item brand-spotify" style="animation: flyPath2 24s linear infinite; left: 60%; animation-delay: 14s;">SPOTIFY</span>
     </div>
 
     <!-- ✨ THE WELCOME MODAL -->
@@ -59,7 +50,7 @@
         </div>
     </div>
 
-    <!-- 💎 THE NEW SUBSCRIPTION UPGRADE MODAL -->
+    <!-- 💎 UPGRADE MODAL -->
     <div id="upgrade-modal" class="modal-overlay">
         <div class="premium-card modal-content" style="border: 2px solid var(--gold); box-shadow: 0 0 50px rgba(212,175,55,0.2);">
             <span class="close-x" onclick="closeUpgradeModal()">×</span>
@@ -76,21 +67,22 @@
                     <li>✔️ <strong>Skip the 15-second wait times instantly.</strong></li>
                 </ul>
             </div>
-            
-            <button id="purchase-btn" onclick="purchaseAdFree()" class="gold-btn" style="font-size: 18px; padding: 20px;">🔓 Unlock Ad-Free Forever ($9.99)</button>
+            <button id="purchase-btn" onclick="processCheckout('ad_free')" class="gold-btn" style="font-size: 18px; padding: 20px;">🔓 Unlock Ad-Free Forever ($9.99)</button>
         </div>
     </div>
 
     <div class="container">
         
-        <!-- 🌐 FORCED CHROME BANNER (Always visible on load unless dismissed) -->
-        <div id="chrome-banner" class="fade-in" style="display: flex; background: rgba(17, 60, 207, 0.2); border: 1px solid rgba(17,60,207,0.5); border-radius: 12px; padding: 15px; margin-bottom: 20px; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); position: relative;">
-            <span class="close-x" onclick="dismissChromeBanner()" style="position: absolute; top: 5px; right: 10px; font-size: 20px; z-index: 10; color: #fff;">×</span>
-            <div style="font-size: 13px; color: #fff; flex-grow: 1; text-align: left;"><strong>Browser Alert:</strong> For the ultimate, glitch-free cinematic experience, please open in Google Chrome.</div>
-            <button onclick="openInChrome()" class="gold-btn" style="padding: 10px 15px; font-size: 12px; width: 100%; background: linear-gradient(135deg, #113ccf, #2b5af5); color: #fff; border: none; max-width: 250px; margin: 0 auto;">Open in Chrome Now</button>
+        <!-- 🌐 PREMIUM CHROME BANNER LOGO & BUTTON -->
+        <div id="chrome-banner" class="fade-in" style="display: flex; flex-direction: column; background: rgba(17, 60, 207, 0.2); border: 1px solid rgba(17,60,207,0.5); border-radius: 12px; padding: 20px; margin-bottom: 20px; align-items: center; justify-content: center; gap: 15px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); position: relative; text-align: center;">
+            <span class="close-x" onclick="dismissChromeBanner()" style="position: absolute; top: 10px; right: 15px; font-size: 24px; z-index: 10; color: #fff;">×</span>
+            <div style="font-size: 15px; color: #fff; line-height: 1.5; padding: 0 15px;">You are using a limited browser. <strong>For a better experience, open on Google Chrome.</strong></div>
+            <button onclick="openInChrome()" class="gold-btn" style="padding: 14px 20px; font-size: 15px; width: 100%; max-width: 300px; background: linear-gradient(135deg, #113ccf, #2b5af5); color: #fff; border: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 5px 20px rgba(17,60,207,0.5);">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 6.5C15.04 6.5 17.5 8.96 17.5 12C17.5 15.04 15.04 17.5 12 17.5C8.96 17.5 6.5 15.04 6.5 12C6.5 8.96 8.96 6.5 12 6.5ZM12 8.5C10.07 8.5 8.5 10.07 8.5 12C8.5 13.93 10.07 15.5 12 15.5C13.93 15.5 15.5 13.93 15.5 12C15.5 10.07 13.93 8.5 12 8.5Z" fill="white"/><path d="M11.99 3.5C8.01 3.5 4.67 5.76 3.07 9.04L6.96 15.77C7.29 14.15 8.7 12.9 10.42 12.9H18.77C18.17 7.6 15.51 3.5 11.99 3.5Z" fill="white"/><path d="M12 20.5C15.58 20.5 18.66 18.29 19.98 15.1H12.21C10.46 15.1 8.98 14.07 8.35 12.5L4.56 19.06C6.54 20.08 8.8 20.5 12 20.5Z" fill="white"/><path d="M20.89 10.1C20.65 9.17 20.25 8.31 19.72 7.54L15.93 14.1L12.04 20.84C15.68 20.73 18.76 18.3 19.96 15.1H12.19C13.95 15.1 15.46 14.05 16.09 12.46L20.89 10.1Z" fill="white"/></svg>
+                Open on Google Chrome
+            </button>
         </div>
 
-        <!-- 💰 TOP AD -->
         <div class="ad-placement fade-in">
             <span style="font-size: 9px; color: #666; display: block; margin-bottom: 5px; font-weight: bold; letter-spacing: 1px;">SPONSORED ADVERTISEMENT</span>
             <div class="ad-scale-wrapper">
@@ -99,26 +91,32 @@
             </div>
         </div>
 
-        <!-- ✨ MASTER APP HEADER -->
+        <!-- ✨ MASTER APP HEADER (Redesigned) -->
         <header class="app-header fade-in">
             <a href="index.html" class="header-brand-area">
                 <picture><source srcset="logo.jpeg" type="image/jpeg"><img src="logo.jpeg" alt="Logo" class="brand-logo"></picture>
                 <div class="brand-text-container">
-                    <span class="app-title-main">Match<span style="color: var(--gold);">App</span></span>
-                    <span class="app-title-sub">Your streaming concierge service</span>
+                    <span class="app-title-main">MatchApp</span>
+                    <span class="app-title-sub">Your streaming concierge</span>
                     <span class="app-author">By Jonas Junior</span>
                 </div>
             </a>
+            
             <div id="header-auth-area" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
+                <!-- 👤 PRIVATE PROFILE PICTURE -->
+                <label for="profile-pic-upload" id="profile-pic-container" class="profile-pic-container">
+                    <img id="profile-pic-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24' fill='%23D4AF37'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" alt="Avatar">
+                </label>
+                <input type="file" id="profile-pic-upload" accept="image/*" style="display: none;" onchange="handleProfilePic(event)">
+
                 <div class="translate-wrapper" id="google_translate_element"></div>
                 <button id="nav-upgrade-btn" onclick="openUpgradeModal()" class="gold-btn" style="padding: 10px 15px; width: auto; font-size: 12px; border: 1px solid #fff;">🚫 Remove Ads</button>
-                <button id="nav-reg-btn" onclick="window.location.href='register.html'" class="gold-btn" style="padding: 10px 15px; width: auto; font-size: 12px;">Log In / Register</button>
-                <button id="nav-profile-btn" onclick="window.location.href='profile.html'" style="display: none;" class="secondary-btn">👤 My Profile</button>
+                <button id="nav-reg-btn" onclick="window.location.href='register.html'" class="gold-btn" style="padding: 10px 15px; width: auto; font-size: 12px;">Log In</button>
                 <button id="nav-logout-btn" onclick="doLogout()" style="display: none; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 12px 15px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 12px;">Log Out</button>
             </div>
         </header>
 
-        <!-- 🔍 WHERE TO WATCH SEARCH BAR -->
+        <!-- 🔍 SEARCH BAR -->
         <div id="search-container" class="premium-card fade-in" style="padding: 25px; border-color: rgba(255,255,255,0.2);">
             <h3 style="margin: 0 0 8px 0; color: #fff; font-size: 20px; text-align: left;">🔍 Where to Watch</h3>
             <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 15px; text-align: left;">Looking for a specific title? Search to find which streaming service has it in your country.</p>
@@ -128,7 +126,7 @@
             </div>
         </div>
         
-        <!-- 🎛️ CONCIERGE QUESTIONNAIRE -->
+        <!-- 🎛️ QUESTIONNAIRE -->
         <div id="questionnaire-box" class="premium-card fade-in">
             <h2 style="margin: 0 0 10px 0; font-size: 28px; color: var(--gold);">Find Your Perfect Vibe</h2>
             <div class="input-grid">
@@ -150,7 +148,7 @@
             <div class="progress-bar-container"><div id="progress-bar" class="progress-bar-fill"></div></div>
         </div>
 
-        <!-- 🎬 CINEMATIC RESULT (Match) -->
+        <!-- 🎬 CINEMATIC RESULT -->
         <div id="result-box" class="premium-card cinematic-result fade-in" style="display: none;">
             <div id="res-header-bg" class="cinematic-header">
                 <div class="cinematic-overlay"></div>
@@ -170,26 +168,24 @@
                 
                 <div style="display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;">
                     <button onclick="saveToList()" class="secondary-btn" style="flex: 1; min-width: 150px; border-color: var(--gold); color: var(--gold);">⭐ Save to Portfolio</button>
-                    <button onclick="markAsSeenAndSkip()" class="secondary-btn" style="flex: 1; min-width: 150px; border-color: rgba(255,255,255,0.5); color: #fff;">✔️ Already Seen/Heard It</button>
+                    <button onclick="markAsSeenAndSkip()" class="secondary-btn" style="flex: 1; min-width: 150px; border-color: rgba(255,255,255,0.5); color: #fff;">✔️ Already Seen It</button>
                 </div>
                 <button onclick="triggerAdRetry()" class="secondary-btn" style="width: 100%; margin-bottom: 20px; background: rgba(37, 211, 102, 0.1); border-color: #25D366; color: #25D366;">🔄 Watch Ad for New Match</button>
                 <button onclick="location.reload()" class="secondary-btn" style="width: 100%; border: none; background: transparent;">🔙 Back to Dashboard</button>
             </div>
         </div>
 
-        <!-- 🔍 SEARCH RESULT BOX (Where to watch) -->
+        <!-- 🔍 SEARCH RESULT -->
         <div id="search-result-box" class="premium-card fade-in" style="display: none; border-color: var(--gold); padding: 50px 25px;">
             <div style="font-size: 60px; margin-bottom: 15px; animation: pulseIcon 2s infinite;">📡</div>
             <div style="color: var(--gold); font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">Global Database Search Complete</div>
             <h2 id="search-res-title" style="font-size: 36px; color: #fff; margin: 15px 0 25px 0;">Title</h2>
-            <p style="color: var(--text-muted); font-size: 15px; line-height: 1.7; margin-bottom: 30px;">
-                We have queried global streaming directories. Click below to instantly see which platforms have this title available in your specific region.
-            </p>
+            <p style="color: var(--text-muted); font-size: 15px; line-height: 1.7; margin-bottom: 30px;">We have queried global streaming directories. Click below to instantly see which platforms have this title available in your specific region.</p>
             <a id="search-direct-link" href="#" target="_blank" class="gold-btn" style="display: block; text-decoration: none; padding: 20px; font-size: 18px; margin-bottom: 20px;">🔍 View Streaming Options</a>
             <button onclick="location.reload()" class="secondary-btn" style="width: 100%; border: none; background: transparent;">🔙 Back to Dashboard</button>
         </div>
 
-        <!-- 🚫 LIMIT REACHED MODAL -->
+        <!-- 🚫 LIMIT REACHED -->
         <div id="blocked-box" class="premium-card fade-in" style="display: none; border-color: #ff5252;">
             <div style="font-size: 60px; margin-bottom: 20px;">🔒</div>
             <h2 style="color: #ff8787; margin: 0 0 15px 0; font-size: 32px;">Match Limit Reached!</h2>
@@ -198,22 +194,14 @@
             <button onclick="window.location.href='register.html'" class="secondary-btn" style="border: none;">Or Register Free Account</button>
         </div>
 
-        <!-- 📚 UNIVERSAL FOOTER -->
+        <!-- 📚 FOOTER -->
         <footer class="app-footer fade-in">
-            
-            <!-- ✨ JONAS JUNIOR SOCIAL MEDIA LINKS -->
             <div style="margin-bottom: 35px; text-align: center; background: rgba(0,0,0,0.4); padding: 25px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);">
                 <h4 style="color: #fff; margin: 0 0 10px 0; font-size: 18px;">Meet the Creator</h4>
                 <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Join the community for exclusive behind-the-scenes, app updates, and top-tier entertainment curation.</p>
                 <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                    <a href="https://instagram.com/j_amb_jr" target="_blank" class="social-btn social-ig" style="max-width: 200px;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"/></svg>
-                        @j_amb_jr
-                    </a>
-                    <a href="https://youtube.com/@JonasAmbrosi" target="_blank" class="social-btn social-yt" style="max-width: 200px;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.052-.072 1.965l-.008.104-.022.26-.01.104c-.048.519-.119 1.023-.22 1.402a2.01 2.01 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.007 2.007 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31.4 31.4 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.007 2.007 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A99.788 99.788 0 0 1 7.858 2h.193zM6.4 5.209v4.818l4.157-2.408L6.4 5.209z"/></svg>
-                        @JonasAmbrosi
-                    </a>
+                    <a href="https://instagram.com/j_amb_jr" target="_blank" class="social-btn social-ig" style="max-width: 200px;">@j_amb_jr</a>
+                    <a href="https://youtube.com/@JonasAmbrosi" target="_blank" class="social-btn social-yt" style="max-width: 200px;">@JonasAmbrosi</a>
                 </div>
             </div>
 
@@ -266,7 +254,7 @@
                 </ol>
             </div>
             <button onclick="location.reload()" class="gold-btn" style="background: linear-gradient(135deg, #ff5252, #d32f2f); color: #fff; font-size: 18px; padding: 20px; margin-bottom: 15px;">🔄 I Disabled It - Verify & Reload</button>
-            <button onclick="openUpgradeModal()" class="secondary-btn" style="border-color: var(--gold); color: var(--gold);">Or Purchase Ad-Free Pass</button>
+            <button onclick="openUpgradeModal()" class="secondary-btn" style="border-color: var(--gold); color: var(--gold);">Or Purchase VIP Ad-Free</button>
         </div>
     </div>
     
