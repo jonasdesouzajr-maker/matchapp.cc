@@ -1,4 +1,4 @@
-console.log("Mastercode 44.0: Google OAuth Fix, Deep-Link Pill & Premium Animation Engine Active");
+console.log("Mastercode 45.0: Pricing Store, Auth Callbacks & 3D Engine Active");
 
 let globalMatchTitle = "Match App";
 let supabaseClient = null;
@@ -19,9 +19,11 @@ const STRIPE_LINKS = {
 
 try { if (window.supabase) supabaseClient = window.supabase.createClient('https://zkymvqrmbabngsqblyye.supabase.co', 'sb_publishable_j3kQUhd_9JHfWdfiV3iWog_RpEltrOU'); } catch(e){}
 
-// 🛑 AD BLOCK DETECTION
+// 🛑 AD BLOCK DETECTION (Disabled on pricing.html so they can buy)
 function checkAdBlocker() {
     if (isAdFree || isVIP) return; 
+    if (window.location.pathname.includes('pricing.html')) return; // NEVER block the checkout page
+    
     const bait = document.createElement('div');
     bait.className = 'adsbox ad-placement doubleclick adSense pub_300x250 text-ad textAd';
     bait.style.position = 'absolute'; bait.style.top = '-9999px'; bait.style.left = '-9999px';
@@ -45,15 +47,6 @@ window.openInChrome = function() {
     } else {
         window.location.href = 'intent://' + cleanUrl + '#Intent;scheme=https;package=com.android.chrome;end;';
     }
-    setTimeout(() => {
-        const fallbackModal = document.getElementById('chrome-fallback-modal');
-        if(fallbackModal) fallbackModal.style.display = 'flex';
-    }, 1500);
-};
-
-window.copyLinkForChrome = function() {
-    navigator.clipboard.writeText("https://matchapp.cc");
-    alert("📋 Link copied! Open your Google Chrome app and paste it in.");
 };
 
 window.dismissChromeBanner = function() {
@@ -61,14 +54,14 @@ window.dismissChromeBanner = function() {
     sessionStorage.setItem('dismissedChromeBanner', 'true');
 };
 
-// 🔏 GOOGLE OAUTH FIX
+// 🔏 GOOGLE OAUTH WITH CALLBACK
 window.signInWithGoogle = async function() {
     if (!supabaseClient) { alert("Server error. Try again."); return; }
     const { data, error } = await supabaseClient.auth.signInWithOAuth({
         provider: 'google',
         options: { 
-            // This explicitly forces it to return to your custom domain, fixing the mismatch error.
-            redirectTo: 'https://matchapp.cc/index.html' 
+            // Routes to our chic loading screen
+            redirectTo: 'https://matchapp.cc/callback.html' 
         }
     });
     if (error) alert("Google Login Error: " + error.message);
@@ -93,7 +86,6 @@ window.saveProfileData = async function() {
     const nameInput = document.getElementById('profile-name').value.trim();
 
     if (!dobInput || !starSignSelect) { alert("Please enter Birthdate and Star Sign."); return; }
-
     const confirmLock = confirm("⚠️ PERMANENT WARNING:\n\nBirthdate and Star Sign CANNOT be changed later. Is this correct?");
     if (!confirmLock) return;
 
@@ -115,13 +107,14 @@ window.handleProfilePic = function(event) {
     }
 };
 
-window.openUpgradeModal = function() { document.getElementById('upgrade-modal').style.display = 'flex'; };
-window.closeUpgradeModal = function() { document.getElementById('upgrade-modal').style.display = 'none'; };
-
 window.processCheckout = async function(tier) {
-    if (!isUserLoggedIn || !supabaseClient) { alert("Please log in first!"); window.location.href = 'register.html'; return; }
-    const btn = document.getElementById(tier === 'ad_free' ? 'purchase-btn' : `btn-${tier}`);
-    if(btn) { btn.innerText = "Redirecting..."; btn.style.opacity = '0.7'; }
+    if (!isUserLoggedIn || !supabaseClient) { 
+        alert("Please log in or register first so we can securely link your purchase!"); 
+        window.location.href = 'index.html'; 
+        return; 
+    }
+    const btn = document.getElementById(`btn-${tier}`);
+    if(btn) { btn.innerText = "Redirecting securely to Stripe..."; btn.style.opacity = '0.7'; }
     const { data: { session } } = await supabaseClient.auth.getSession();
     window.location.href = `${STRIPE_LINKS[tier]}?client_reference_id=${session.user.id}___${tier}`;
 };
@@ -133,7 +126,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (isAdFree || isVIP) document.body.classList.add('ad-free-mode');
     checkAdBlocker(); setInterval(checkAdBlocker, 5000); 
 
-    if (localStorage.getItem('hasSeenWelcome') !== 'true' && document.getElementById('welcome-modal')) document.getElementById('welcome-modal').style.display = 'flex';
     if (sessionStorage.getItem('dismissedChromeBanner') === 'true' && document.getElementById('chrome-banner')) document.getElementById('chrome-banner').style.display = 'none';
 
     if (supabaseClient) {
@@ -141,7 +133,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (session) {
             isUserLoggedIn = true; userProfileData = session.user.user_metadata || {};
             
-            // Auto-pull Google Avatar
             if (session.user.user_metadata?.avatar_url && !localStorage.getItem('match_userAvatar')) {
                 localStorage.setItem('match_userAvatar', session.user.user_metadata.avatar_url);
                 if(document.getElementById('profile-pic-preview')) document.getElementById('profile-pic-preview').src = session.user.user_metadata.avatar_url;
@@ -151,7 +142,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (urlParams.get('payment') === 'success') {
                 isAdFree = true; localStorage.setItem('match_adFree', 'true'); document.body.classList.add('ad-free-mode');
                 if (urlParams.get('tier') === 'vip_monthly' || urlParams.get('tier') === 'vip_annual') { isVIP = true; localStorage.setItem('match_isVIP', 'true'); }
-                alert("🎉 Upgrade Successful!"); window.history.replaceState({}, document.title, window.location.pathname); 
+                alert("🎉 Premium Status Activated! Enjoy MatchApp without limits."); window.history.replaceState({}, document.title, window.location.pathname); 
             }
 
             if (userProfileData.ad_free || userProfileData.vip_tier) { isAdFree = true; document.body.classList.add('ad-free-mode'); }
@@ -161,7 +152,6 @@ window.addEventListener('DOMContentLoaded', async () => {
 
             if(document.getElementById('nav-reg-btn')) document.getElementById('nav-reg-btn').style.display = 'none';
             if(document.getElementById('profile-link-tab')) document.getElementById('profile-link-tab').style.display = 'inline-block';
-            if(document.getElementById('profile-link-tab-small')) document.getElementById('profile-link-tab-small').style.display = 'inline-block';
             if(document.getElementById('profile-pic-container')) document.getElementById('profile-pic-container').style.display = 'block';
             
             if (isVIP && document.getElementById('nav-upgrade-btn')) document.getElementById('nav-upgrade-btn').style.display = 'none';
@@ -177,12 +167,10 @@ async function syncListsToDatabase() {
     if (isUserLoggedIn && supabaseClient) await supabaseClient.auth.updateUser({ data: { seen_list: seenList, saved_list: savedList } });
 }
 
-// 🎬 DEDUPLICATION CATALOG
 const masterCatalog = [
     { title: "Superbad", category: "movie", platform: "Netflix", mood: "laugh", aesthetic: "colorful", era: "classic", pacing: "fast", trailerId: "MNpoTxeydiI", url: "https://www.netflix.com", synopsis: "High school seniors deal with separation anxiety during a wild party.", poster: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=800&q=80" },
     { title: "Stranger Things", category: "series", platform: "Netflix", mood: "intense", aesthetic: "retro", era: "modern", pacing: "epic", trailerId: "b9EkMc79ZSU", url: "https://www.netflix.com", synopsis: "Kids uncover secret experiments and terrifying supernatural forces.", poster: "https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=800&q=80" },
-    { title: "Parasite", category: "movie", platform: "Max", mood: "intense", aesthetic: "dark", era: "modern", pacing: "standard", trailerId: "SEUXfv87Wpk", url: "https://www.max.com", synopsis: "Greed and class discrimination threaten a wealthy family.", poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80" },
-    { title: "Interstellar", category: "movie", platform: "Prime", mood: "mindbending", aesthetic: "dark", era: "modern", pacing: "epic", trailerId: "zSWdZVtXT7E", url: "https://www.primevideo.com", synopsis: "Explorers travel through a wormhole in space to ensure humanity's survival.", poster: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80" }
+    { title: "Parasite", category: "movie", platform: "Max", mood: "intense", aesthetic: "dark", era: "modern", pacing: "standard", trailerId: "SEUXfv87Wpk", url: "https://www.max.com", synopsis: "Greed and class discrimination threaten a wealthy family.", poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80" }
 ];
 
 window.triggerMatch = async function() {
@@ -218,18 +206,5 @@ window.saveToList = function() {
 
 window.triggerAdRetry = function() {
     if (isVIP || isAdFree) { triggerMatch(); return; }
-    document.getElementById('reward-ad-modal').style.display = 'flex';
-    let timeLeft = 15;
-    const timerSpan = document.getElementById('ad-timer');
-    const claimBtn = document.getElementById('claim-retry-btn');
-    claimBtn.disabled = true; claimBtn.style.opacity = '0.5';
-    const interval = setInterval(() => {
-        timeLeft--; timerSpan.innerText = timeLeft;
-        if (timeLeft <= 0) {
-            clearInterval(interval);
-            claimBtn.disabled = false; claimBtn.style.opacity = '1';
-            claimBtn.innerHTML = '✨ Claim New Match!';
-            claimBtn.onclick = () => { document.getElementById('reward-ad-modal').style.display = 'none'; triggerMatch(); };
-        }
-    }, 1000);
+    // Optional ad flow goes here
 };
