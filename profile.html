@@ -1,115 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-2ECND229RR');
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Match App | My VIP Profile</title>
     <link rel="stylesheet" href="style.css">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <!-- 🌍 ANIMATED GLOBAL THEME BACKGROUND -->
-    <div class="luxury-bg">
-        <div class="floating-orb orb-1"></div>
-        <div class="floating-orb orb-2"></div>
-        <div class="stream-flags">
-            <span class="sf-item flag" style="animation: flyPath1 22s infinite; left: 10%; animation-delay: 0s;">🇧🇷</span>
-            <span class="sf-item flag" style="animation: flyPath2 28s infinite; left: 85%; animation-delay: 3s;">🇺🇸</span>
-            <span class="sf-item flag" style="animation: flyPath1 25s infinite; left: 35%; animation-delay: 6s;">🇬🇧</span>
-            <span class="sf-item flag" style="animation: flyPath2 30s infinite; left: 65%; animation-delay: 9s;">🇯🇵</span>
-            <span class="sf-item flag" style="animation: flyPath1 24s infinite; left: 20%; animation-delay: 12s;">🇪🇸</span>
-            <span class="sf-item flag" style="animation: flyPath2 26s infinite; left: 75%; animation-delay: 15s;">🇰🇷</span>
-            <span class="sf-item brand-netflix" style="animation: flyPath2 20s infinite; left: 5%; animation-delay: 2s;">NETFLIX</span>
-            <span class="sf-item brand-max" style="animation: flyPath1 25s infinite; left: 80%; animation-delay: 5s;">MAX</span>
-            <span class="sf-item brand-prime" style="animation: flyPath2 22s infinite; left: 45%; animation-delay: 8s;">PRIME VIDEO</span>
-            <span class="sf-item brand-disney" style="animation: flyPath1 27s infinite; left: 15%; animation-delay: 11s;">DISNEY+</span>
-            <span class="sf-item brand-spotify" style="animation: flyPath2 24s infinite; left: 60%; animation-delay: 14s;">SPOTIFY</span>
-            <span class="sf-item brand-globo" style="animation: flyPath1 29s infinite; left: 90%; animation-delay: 17s;">GLOBOPLAY</span>
-        </div>
-    </div>
+    <!-- 🌍 ANIMATED LUXURY BACKGROUND -->
+    <div class="luxury-bg"><div class="floating-orb orb-1"></div><div class="floating-orb orb-2"></div></div>
 
-    <div class="container" style="max-width: 650px;">
+    <div class="container" style="margin-top: 40px;">
         
-        <!-- 💰 TOP AD PLACEMENT -->
-        <div class="ad-placement fade-in">
-            <span style="font-size: 9px; color: #666; display: block; margin-bottom: 5px; font-weight: bold; letter-spacing: 1px;">SPONSORED ADVERTISEMENT</span>
-            <div class="ad-scale-wrapper">
-                <script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script>
-                <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
-            </div>
-        </div>
-
-        <!-- ✨ MASTER APP HEADER -->
-        <header class="app-header fade-in">
-            <a href="index.html" class="header-brand-area">
-                <picture><source srcset="logo.jpeg" type="image/jpeg"><img src="logo.jpeg" alt="Logo" class="brand-logo"></picture>
-                <div class="brand-text-container">
-                    <span class="app-title-main">Match<span style="color: var(--gold);">App</span></span>
-                    <span class="app-title-sub">Your streaming concierge service</span>
-                    <span class="app-author">By Jonas Junior</span>
+        <!-- ✨ COMPACT HEADER FOR NAVIGATION -->
+        <header class="app-header fade-in" style="margin-bottom: 30px; justify-content: center;">
+            <a href="index.html" class="header-brand-area" style="text-decoration: none;">
+                <div class="brand-text-container" style="text-align: center;">
+                    <span class="app-title-main" style="font-size: 24px;">MatchApp</span>
+                    <span class="app-author">Dashboard Return</span>
                 </div>
             </a>
-            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
-                <div class="translate-wrapper" id="google_translate_element"></div>
-                <button onclick="window.location.href='index.html'" class="secondary-btn" style="padding: 10px 15px; font-size: 12px; width: auto;">← Dashboard</button>
-                <button onclick="doLogout()" class="secondary-btn" style="padding: 10px 15px; font-size: 12px; width: auto; border-color: #ff5252; color: #ff5252;">Log Out</button>
-            </div>
         </header>
 
-        <div class="premium-card fade-in">
-            <h2 style="color: var(--gold); margin-top: 0; font-size: 28px;">👤 My VIP Profile</h2>
-            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 25px;">Set your default preferences. Age and Zodiac are locked permanently once saved to calibrate your core affinity.</p>
+        <!-- 👤 MAIN PROFILE CARD -->
+        <div class="premium-card fade-in" style="padding: 40px 25px;">
             
-            <div class="input-grid" style="border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 25px; margin-bottom: 25px;">
-                <div class="input-group"><label>Age <span class="locked-badge">Locks</span></label><input type="number" id="prof-age" placeholder="e.g. 25"></div>
-                <div class="input-group"><label>Star Sign <span class="locked-badge">Locks</span></label><select id="prof-zodiac"><option value="">-- Select Sign --</option><option value="Aries">♈ Aries</option><option value="Taurus">♉ Taurus</option><option value="Gemini">♊ Gemini</option><option value="Cancer">♋ Cancer</option><option value="Leo">♌ Leo</option><option value="Virgo">♍ Virgo</option><option value="Libra">♎ Libra</option><option value="Scorpio">♏ Scorpio</option><option value="Sagittarius">♐ Sagittarius</option><option value="Capricorn">♑ Capricorn</option><option value="Aquarius">♒ Aquarius</option><option value="Pisces">♓ Pisces</option></select></div>
+            <!-- LARGE AVATAR UPLOADER -->
+            <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+                <label for="profile-pic-upload" style="position: relative; cursor: pointer; display: inline-block; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    <!-- The image ID must exactly match what we built in app.js -->
+                    <div style="width: 130px; height: 130px; border-radius: 50%; border: 3px solid var(--gold); overflow: hidden; box-shadow: 0 0 30px rgba(212,175,55,0.4);">
+                        <img id="profile-pic-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23D4AF37'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <!-- Premium Edit Badge -->
+                    <div style="position: absolute; bottom: 5px; right: 5px; background: #fff; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.6); border: 2px solid var(--gold); font-size: 16px;">
+                        ✏️
+                    </div>
+                </label>
+                <!-- Hidden file input using the global app.js function -->
+                <input type="file" id="profile-pic-upload" accept="image/*" style="display: none;" onchange="handleProfilePic(event)">
             </div>
 
-            <h3 style="color: #fff; font-size: 20px; text-align: left; margin-bottom: 15px;">My Default Search Preferences</h3>
-            <div class="input-grid">
-                <div class="input-group"><label>Platform</label><select id="pref-platform"><option value="any">Any Platform</option><option value="Netflix">Netflix</option><option value="Max">Max</option><option value="Prime">Amazon Prime</option><option value="Globoplay">Globoplay</option><option value="Spotify">Spotify</option><option value="YouTube">YouTube</option></select></div>
-                <div class="input-group"><label>Format</label><select id="pref-category"><option value="any">Surprise Me</option><option value="movie">Movies</option><option value="series">Series</option><option value="telenovela">Novelas</option><option value="spotify">Spotify</option><option value="short">Shorts</option></select></div>
-                <div class="input-group"><label>Mood</label><select id="pref-mood"><option value="any">Any</option><option value="relax">Relaxed</option><option value="intense">Intense</option><option value="laugh">Funny</option><option value="romantic">Romantic</option></select></div>
-                <div class="input-group"><label>Aesthetic</label><select id="pref-aesthetic"><option value="any">Any</option><option value="dark">Dark & Gritty</option><option value="colorful">Colorful</option><option value="luxurious">Luxurious</option></select></div>
+            <!-- USER DETAILS -->
+            <h2 style="color: #fff; margin: 0 0 10px 0; font-size: 26px;">My Account</h2>
+            <p id="user-email-display" style="color: var(--text-muted); font-size: 15px; margin-top: 0; margin-bottom: 15px;">Loading secure data...</p>
+            
+            <!-- STATUS BADGES -->
+            <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 35px;">
+                <span id="free-badge" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #ccc; padding: 6px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; letter-spacing: 1px;">FREE ACCOUNT</span>
+                <span id="vip-badge" style="display: none; background: linear-gradient(135deg, #BF953F, #FBF5B7); color: #000; padding: 6px 15px; border-radius: 20px; font-size: 12px; font-weight: 900; letter-spacing: 1px; box-shadow: 0 0 15px rgba(212,175,55,0.5);">💎 VIP AD-FREE ACTIVE</span>
             </div>
 
-            <button onclick="saveProfile()" class="gold-btn pulse" style="margin-top: 30px;">💾 Save Profile Settings</button>
+            <!-- 🎬 PORTFOLIO SECTION -->
+            <div style="text-align: left; background: rgba(0,0,0,0.4); padding: 25px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);">
+                <h3 style="color: var(--gold); margin: 0 0 15px 0; font-size: 18px; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 10px;">⭐ Saved Portfolio</h3>
+                
+                <div id="portfolio-grid">
+                    <!-- Default empty state -->
+                    <p style="color: var(--text-muted); font-size: 14px; text-align: center; margin: 20px 0;">You haven't saved any matches yet.<br>Go find your first perfect vibe!</p>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 30px;">
+                <button onclick="window.location.href='index.html'" class="gold-btn">🎬 Return to Concierge</button>
+                <button onclick="doLogout()" class="secondary-btn" style="border-color: #ff5252; color: #ff5252; background: rgba(255,82,82,0.1);">Log Out Safely</button>
+            </div>
         </div>
-
-        <!-- 📚 UNIVERSAL FOOTER -->
-        <footer class="app-footer fade-in">
-            <h4 style="color: var(--gold); margin: 0 0 15px 0; font-size: 20px;">🎬 How Match App Works</h4>
-            <p style="font-size: 14px; line-height: 1.6; color: var(--text-muted); margin-bottom: 10px;"><strong>1. The Algorithm:</strong> We mathematically score your mood, platform, and aesthetic vibe to find your perfect content.</p>
-            <p style="font-size: 14px; line-height: 1.6; color: var(--text-muted); margin-bottom: 10px;"><strong>2. Already Seen It?</strong> Click the "I've Seen This" button and the algorithm will instantly spin up a new match for free.</p>
-            <p style="font-size: 14px; line-height: 1.6; color: var(--text-muted); margin-bottom: 10px;"><strong>3. Strict Deduplication:</strong> Once you see a match, it is locked into your device's seen-list. You will NEVER be matched with it again.</p>
-            
-            <div style="border-top: 1px solid rgba(255,255,255,0.15); margin-top: 30px; padding-top: 30px;">
-                <span style="font-size: 10px; color: #888; display: block; margin-bottom: 15px; text-align: center; letter-spacing: 1.5px; font-weight: bold;">SPONSORED CONTENT</span>
-                <div style="display: flex; justify-content: center; margin-bottom: 25px; overflow: hidden; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.5);">
-                    <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script>
-                    <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
-                </div>
-                <div class="ad-placement" style="padding: 10px;">
-                    <ins class="adsbygoogle" style="display:block; width:100%; min-height: 100px;" data-ad-format="fluid" data-ad-layout-key="-6t+ed+2i-1n-4w" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117"></ins>
-                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-                </div>
-            </div>
-        </footer>
     </div>
+
+    <!-- Load the main app logic -->
+    <script src="app.js"></script>
     
-    <script type="text/javascript">
-        function googleTranslateElementInit() { new google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'pt,en,zh-CN,hi,es,fr,ar,bn,ru,de', layout: google.translate.TranslateElement.InlineLayout.SIMPLE }, 'google_translate_element'); }
+    <!-- Local Profile Renderer -->
+    <script>
+        // We wait a brief moment for app.js to initialize the Supabase session
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(async () => {
+                // 1. Fetch exact email from the server
+                if (window.isUserLoggedIn && window.supabaseClient) {
+                    const { data: { session } } = await window.supabaseClient.auth.getSession();
+                    if (session && session.user) {
+                        document.getElementById('user-email-display').innerText = session.user.email;
+                    }
+                    
+                    // 2. Toggle VIP badge if they bought a package
+                    if (window.isVIP || window.isAdFree) {
+                        document.getElementById('vip-badge').style.display = 'inline-block';
+                        document.getElementById('free-badge').style.display = 'none';
+                    }
+                } else {
+                    document.getElementById('user-email-display').innerText = "Unregistered Guest Account";
+                }
+
+                // 3. Render the Saved Movies dynamically from app.js memory
+                const portfolioGrid = document.getElementById('portfolio-grid');
+                if (window.savedList && window.savedList.length > 0) {
+                    portfolioGrid.innerHTML = ''; // Clear the empty message
+                    
+                    // Loop through their saved array and create nice UI boxes
+                    window.savedList.forEach(title => {
+                        portfolioGrid.innerHTML += `
+                            <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.2); padding: 16px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; transition: transform 0.2s;">
+                                <strong style="color: #fff; font-size: 15px;">${title}</strong>
+                                <span style="background: rgba(212,175,55,0.15); color: var(--gold); padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: bold;">SAVED</span>
+                            </div>
+                        `;
+                    });
+                }
+            }, 800); // 800ms delay ensures app.js variables are fully populated first
+        });
     </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-    <script src="profile.js"></script>
 </body>
 </html>
