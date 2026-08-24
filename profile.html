@@ -11,9 +11,8 @@
 <body>
     <div class="luxury-bg"><div class="floating-orb orb-1"></div><div class="floating-orb orb-2"></div></div>
 
-    <div class="container" style="margin-top: 40px;">
+    <div class="container" style="margin-top: 20px;">
         
-        <!-- 💰 TOP ADSTERRA BANNER -->
         <div class="ad-placement fade-in">
             <span style="font-size: 9px; color: #666; display: block; margin-bottom: 5px; font-weight: bold;">SPONSORED ADVERTISEMENT</span>
             <div class="ad-scale-wrapper">
@@ -25,27 +24,27 @@
         <header class="app-header fade-in" style="margin-bottom: 30px; justify-content: space-between;">
             <a href="index.html" class="header-brand-area" style="text-decoration: none;">
                 <div class="brand-text-container">
-                    <span class="app-title-main" style="font-size: 20px;">MatchApp</span>
+                    <span class="app-title-main" style="font-size: 26px;">MatchApp</span>
                     <span class="app-author">Dashboard</span>
                 </div>
             </a>
-            <button id="profile-link-tab-small" onclick="window.location.href='index.html'" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 8px 12px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 11px;">🏠 Home</button>
+            <button id="profile-link-tab-small" onclick="window.location.href='index.html'" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 10px 15px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 13px;">🏠 Return Home</button>
         </header>
 
         <div class="premium-card fade-in" style="padding: 40px 25px; text-align: left;">
             <div style="display: flex; justify-content: center; margin-bottom: 25px;">
                 <label for="profile-pic-upload" style="position: relative; cursor: pointer; display: inline-block;">
-                    <div style="width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--gold); overflow: hidden; box-shadow: 0 0 30px rgba(212,175,55,0.4);">
+                    <div style="width: 140px; height: 140px; border-radius: 50%; border: 3px solid var(--gold); overflow: hidden; box-shadow: 0 0 30px rgba(212,175,55,0.6);">
                         <img id="profile-pic-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23D4AF37'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
                 </label>
                 <input type="file" id="profile-pic-upload" accept="image/*" style="display: none;" onchange="handleProfilePic(event)">
             </div>
 
-            <h2 style="color: var(--gold); margin: 0 0 5px 0; font-size: 24px; text-align: center;">My Personal Profile</h2>
-            <p id="user-email-display" style="color: var(--text-muted); font-size: 13px; margin-top: 0; margin-bottom: 25px; text-align: center;">Loading session...</p>
+            <h2 style="color: var(--gold); margin: 0 0 5px 0; font-size: 28px; text-align: center;">My Profile</h2>
+            <p id="user-email-display" style="color: var(--text-muted); font-size: 14px; margin-top: 0; margin-bottom: 30px; text-align: center;">Loading session...</p>
             
-            <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px;">
+            <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px;">
                 <div class="input-group">
                     <label>Full Name</label>
                     <input type="text" id="profile-name" placeholder="Enter your name...">
@@ -56,70 +55,35 @@
                         <input type="text" id="profile-dob" placeholder="e.g. 10/10/1986">
                     </div>
                     <div class="input-group">
-                        <label>Age (Auto-Calculated)</label>
-                        <input type="text" id="profile-age-display" disabled style="opacity: 0.7; cursor: not-allowed;" placeholder="Calculated automatically">
+                        <label>Age</label>
+                        <input type="text" id="profile-age-display" disabled style="opacity: 0.7;" placeholder="Calculated automatically">
                     </div>
                 </div>
                 <div class="input-group">
                     <label>Star Sign <span style="color:#ff5252;">*Permanent</span></label>
                     <select id="profile-starsign">
                         <option value="">Select your Star Sign...</option>
-                        <option value="Aries">Aries ♈</option>
-                        <option value="Taurus">Taurus ♉</option>
-                        <option value="Gemini">Gemini ♊</option>
-                        <option value="Cancer">Cancer ♋</option>
-                        <option value="Leo">Leo ♌</option>
-                        <option value="Virgo">Virgo ♍</option>
-                        <option value="Libra">Libra ♎</option>
-                        <option value="Scorpio">Scorpio ♏</option>
-                        <option value="Sagittarius">Sagittarius ♐</option>
-                        <option value="Capricorn">Capricorn ♑</option>
-                        <option value="Aquarius">Aquarius ♒</option>
-                        <option value="Pisces">Pisces ♓</option>
+                        <option value="Aries">Aries ♈</option><option value="Taurus">Taurus ♉</option>
+                        <option value="Gemini">Gemini ♊</option><option value="Cancer">Cancer ♋</option>
+                        <option value="Leo">Leo ♌</option><option value="Virgo">Virgo ♍</option>
+                        <option value="Libra">Libra ♎</option><option value="Scorpio">Scorpio ♏</option>
+                        <option value="Sagittarius">Sagittarius ♐</option><option value="Capricorn">Capricorn ♑</option>
+                        <option value="Aquarius">Aquarius ♒</option><option value="Pisces">Pisces ♓</option>
                     </select>
                 </div>
             </div>
 
-            <button onclick="saveProfileData()" class="gold-btn" style="margin-bottom: 20px;">💾 Save & Lock Profile Info</button>
+            <button onclick="saveProfileData()" class="gold-btn" style="margin-bottom: 30px;">💾 Save & Lock Profile Info</button>
 
-            <div style="background: rgba(0,0,0,0.4); padding: 20px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 25px;">
-                <h3 style="color: var(--gold); margin: 0 0 10px 0; font-size: 16px;">⭐ Saved Portfolio</h3>
-                <div id="portfolio-grid"><p style="color: var(--text-muted); font-size: 13px;">No saved matches yet.</p></div>
+            <div style="background: rgba(0,0,0,0.4); padding: 25px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 25px;">
+                <h3 style="color: var(--gold); margin: 0 0 15px 0; font-size: 18px; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 10px;">⭐ Saved Portfolio</h3>
+                <div id="portfolio-grid"><p style="color: var(--text-muted); font-size: 14px;">No saved matches yet.</p></div>
             </div>
-
-            <div style="display: flex; gap: 10px;">
-                <button onclick="window.location.href='index.html'" class="secondary-btn" style="flex:1;">Return Home</button>
-                <button onclick="doLogout()" class="secondary-btn" style="flex:1; border-color:#ff5252; color:#ff5252;">Log Out</button>
-            </div>
-        </div>
-
-        <footer class="app-footer fade-in">
-            <!-- 💰 BOTTOM MONETIZATION (Adsterra + Google AdSense) -->
-            <div class="ad-placement" style="background: transparent; border-radius: 0;">
-                <span style="font-size: 10px; color: #888; display: block; margin-bottom: 15px; text-align: center; font-weight: bold;">SPONSORED CONTENT</span>
-                <div style="display: flex; justify-content: center; margin-bottom: 25px; overflow: hidden; border-radius: 12px;">
-                    <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script>
-                    <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
-                </div>
-                <div style="padding: 10px; width: 100%;">
-                    <ins class="adsbygoogle" style="display:block; width:100%; min-height: 100px;" data-ad-format="fluid" data-ad-layout-key="-6t+ed+2i-1n-4w" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117"></ins>
-                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-                </div>
-            </div>
-        </footer>
-    </div>
-
-    <!-- 🛑 STRICT AD BLOCK MODAL -->
-    <div id="adblock-modal" class="modal-overlay">
-        <div class="premium-card modal-content" style="border: 2px solid #ff5252; background: rgba(20,5,5,0.95);">
-            <div style="font-size: 65px; margin-bottom: 20px;">🛑</div>
-            <h2 style="color: #ff5252; font-size: 32px;">Ad-Blocker Detected</h2>
-            <p style="color: #fff; font-size: 15px;">Access is permanently blocked while ad-blockers are active.</p>
-            <button onclick="location.reload()" class="gold-btn" style="background: #ff5252; color: #fff; padding: 20px; margin-bottom:15px;">🔄 I Disabled It - Reload</button>
-            <button onclick="window.location.href='index.html'" class="secondary-btn" style="border-color: var(--gold); color: var(--gold);">Or Purchase VIP Ad-Free</button>
+            
+            <button onclick="doLogout()" class="secondary-btn" style="border-color:#ff5252; color:#ff5252; background: rgba(255,82,82,0.1);">Log Out</button>
         </div>
     </div>
-
+    
     <script src="app.js"></script>
     <script>
         window.addEventListener('DOMContentLoaded', () => {
@@ -142,9 +106,7 @@
                 const grid = document.getElementById('portfolio-grid');
                 if (window.savedList && window.savedList.length > 0) {
                     grid.innerHTML = '';
-                    window.savedList.forEach(title => {
-                        grid.innerHTML += `<div style="background:rgba(255,255,255,0.05); padding:10px 14px; border-radius:8px; margin-bottom:8px; color:#fff; font-size:14px;">🎬 ${title}</div>`;
-                    });
+                    window.savedList.forEach(title => { grid.innerHTML += `<div style="background:rgba(255,255,255,0.05); padding:12px 16px; border-radius:10px; margin-bottom:10px; color:#fff; font-size:15px; border: 1px solid rgba(212,175,55,0.2);">🎬 ${title}</div>`; });
                 }
             }, 800);
         });
