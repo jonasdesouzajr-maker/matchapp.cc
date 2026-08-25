@@ -3,19 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Match App | Choose Your Plan</title>
+    <title>Match App | Premium Store</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div class="luxury-bg"><div class="floating-orb orb-1"></div><div class="floating-orb orb-2"></div></div>
+    
+    <div class="stream-flags">
+        <span class="sf-item brand-netflix" style="top: 10%; animation: flyPath1 8s linear infinite;">NETFLIX</span>
+        <span class="sf-item brand-prime" style="top: 30%; animation: flyPath2 10s linear infinite 2s;">PRIME</span>
+        <span class="sf-item brand-max" style="top: 50%; animation: flyPath1 9s linear infinite 4s;">MAX</span>
+        <span class="sf-item brand-disney" style="top: 70%; animation: flyPath2 11s linear infinite 1s;">DISNEY+</span>
+    </div>
 
     <div class="container" style="margin-top: 40px; padding-bottom: 50px;">
         <header class="app-header fade-in" style="margin-bottom: 40px; justify-content: space-between;">
             <a href="index.html" class="header-brand-area" style="text-decoration: none;">
                 <div class="brand-text-container">
                     <span class="app-title-main" style="font-size: 24px;">MatchApp</span>
-                    <span class="app-author">Store</span>
+                    <span class="app-author">Premium Store</span>
                 </div>
             </a>
             <button onclick="window.location.href='index.html'" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 10px 15px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 12px;">🔙 Back</button>
@@ -28,7 +35,6 @@
 
         <div class="pricing-grid fade-in" style="animation-delay: 0.2s;">
             
-            <!-- Tier 1: Lifetime Ad-Free -->
             <div class="pricing-card" onclick="processCheckout('ad_free')">
                 <h3 class="pricing-title">Essential Ad-Free</h3>
                 <h2 class="pricing-price">$9.99 <span>/ Lifetime</span></h2>
@@ -40,7 +46,6 @@
                 <button id="btn-ad_free" class="secondary-btn" style="border-color: var(--gold); color: var(--gold-glow);">Unlock Lifetime</button>
             </div>
 
-            <!-- Tier 2: VIP Monthly (Featured) -->
             <div class="pricing-card featured" onclick="processCheckout('vip_monthly')">
                 <div class="badge-popular">Most Popular</div>
                 <h3 class="pricing-title" style="color: var(--gold-glow);">VIP Monthly</h3>
@@ -54,7 +59,6 @@
                 <button id="btn-vip_monthly" class="gold-btn" style="font-size: 18px; padding: 20px;">Start Monthly VIP</button>
             </div>
 
-            <!-- Tier 3: VIP Annual -->
             <div class="pricing-card" onclick="processCheckout('vip_annual')">
                 <h3 class="pricing-title">VIP Annual</h3>
                 <h2 class="pricing-price">$39.99 <span>/ Year</span></h2>
@@ -65,10 +69,11 @@
                 </ul>
                 <button id="btn-vip_annual" class="secondary-btn" style="border-color: #fff; color: #fff;">Get Annual Pass</button>
             </div>
-            
         </div>
         
-        <p style="text-align: center; color: var(--text-muted); font-size: 12px; margin-top: 30px;">Payments processed securely by Stripe. Cancel anytime.</p>
+        <div class="info-footer-small fade-in" style="margin-top: 40px;">
+            🔒 Payments are encrypted, fully secure, and processed internationally via <strong>Stripe Inc</strong>. Subscriptions can be canceled at any time.
+        </div>
     </div>
     
     <script src="app.js"></script>
