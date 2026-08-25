@@ -1,12 +1,10 @@
-:root {
-    --bg-dark: #05050A; --bg-card: rgba(15, 15, 22, 0.75);
-    --border: rgba(212, 175, 55, 0.4); --gold: #D4AF37; --gold-glow: #F3E5AB;
-    --text-main: #FFFFFF; --text-muted: #A0A0B5;
-}
-
+:root { --bg-dark: #05050A; --bg-card: rgba(15, 15, 22, 0.75); --border: rgba(212, 175, 55, 0.4); --gold: #D4AF37; --gold-glow: #F3E5AB; --text-main: #FFFFFF; --text-muted: #A0A0B5; }
 html, body { width: 100%; max-width: 100vw; overflow-x: hidden; margin: 0; padding: 0; }
-body { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-dark); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; box-sizing: border-box; padding: 15px; }
+body { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-dark); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; box-sizing: border-box; padding: 15px; padding-top: 55px; } /* Added padding for clock */
 body.ad-free-mode .ad-placement { display: none !important; }
+
+/* 🕒 REAL-TIME GLOBAL CLOCK */
+.real-time-clock { position: fixed; top: 15px; right: 20px; background: rgba(10,10,15,0.75); border: 1px solid rgba(212,175,55,0.3); border-radius: 12px; padding: 8px 15px; font-size: 12px; color: var(--gold-glow); font-weight: bold; z-index: 9999; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); box-shadow: 0 4px 20px rgba(0,0,0,0.6); font-family: "Courier New", Courier, monospace; letter-spacing: 0.5px; transition: opacity 0.3s; }
 
 /* 🌍 BACKGROUND ENGINE */
 .luxury-bg { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh; background: radial-gradient(circle at 20% 40%, rgba(48, 20, 75, 0.8), transparent 55%), radial-gradient(circle at 80% 60%, rgba(212, 175, 55, 0.25), transparent 55%); z-index: -2; pointer-events: none; }
@@ -49,6 +47,17 @@ body.ad-free-mode .ad-placement { display: none !important; }
 .premium-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 28px; box-shadow: 0 25px 60px rgba(0,0,0,0.9), inset 0 0 15px rgba(212,175,55,0.03); backdrop-filter: blur(30px); padding: 40px; margin-bottom: 30px; position: relative; overflow: hidden; text-align: center; transition: transform 0.4s, box-shadow 0.4s; }
 .premium-card:hover { transform: translateY(-5px); box-shadow: 0 30px 70px rgba(0,0,0,1), inset 0 0 25px rgba(212,175,55,0.2); }
 
+/* 🎥 CINEMATIC RESULT */
+.cinematic-header { position: relative; width: 100%; height: 350px; background-size: cover; background-position: center; border-radius: 16px; margin-bottom: 25px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
+.cinematic-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(15,15,22,1) 0%, rgba(15,15,22,0.4) 50%, transparent 100%); }
+.cinematic-title-box { position: absolute; bottom: 25px; left: 25px; right: 25px; text-align: left; }
+.cinematic-title { font-size: clamp(28px, 6vw, 42px); color: #fff; margin: 0; font-weight: 900; text-shadow: 0 4px 15px rgba(0,0,0,0.9); line-height: 1.1; }
+
+/* 🌟 INTERACTIVE PORTFOLIO UI */
+.portfolio-item { background:rgba(212,175,55,0.1); padding:15px 20px; border-radius:12px; margin-bottom:12px; color:#fff; font-size:15px; border: 1px solid rgba(212,175,55,0.3); cursor: pointer; transition: all 0.3s; font-weight: bold; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+.portfolio-item:hover { transform: scale(1.02); background:rgba(212,175,55,0.2); box-shadow: 0 8px 25px rgba(212,175,55,0.4); border-color: var(--gold); }
+.history-item { background:rgba(255,255,255,0.03); padding:12px 16px; border-radius:10px; margin-bottom:10px; color:#aaa; font-size:14px; border: 1px solid rgba(255,255,255,0.1); text-align: left; }
+
 /* ✨ BUTTONS */
 .gold-btn { background: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C); color: #000; border: none; padding: 18px; border-radius: 14px; font-weight: 900; font-size: 16px; cursor: pointer; width: 100%; transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5); text-transform: uppercase; letter-spacing: 1px; position: relative; overflow: hidden; }
 .gold-btn::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); animation: lightSweep 4s infinite; }
@@ -74,18 +83,12 @@ input:disabled, select:disabled { cursor: not-allowed; }
 .pricing-card:hover { transform: translateY(-10px) scale(1.02); border-color: var(--gold); box-shadow: 0 20px 40px rgba(212,175,55,0.2); }
 .pricing-card.featured { border: 2px solid var(--gold); background: linear-gradient(180deg, rgba(30,25,10,0.9) 0%, rgba(15,15,22,0.9) 100%); }
 .badge-popular { position: absolute; top: 15px; right: -35px; background: var(--gold); color: #000; font-size: 11px; font-weight: 900; padding: 5px 40px; transform: rotate(45deg); text-transform: uppercase; }
-.pricing-title { color: #fff; font-size: 22px; font-weight: 900; margin: 0 0 10px 0; text-transform: uppercase; }
-.pricing-price { color: var(--gold); font-size: 38px; font-weight: 900; margin: 0 0 20px 0; }
-.pricing-price span { font-size: 16px; color: var(--text-muted); font-weight: normal; }
-.pricing-features { list-style: none; padding: 0; margin: 0 0 25px 0; text-align: left; }
-.pricing-features li { color: #ddd; font-size: 15px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
-.pricing-features li::before { content: '✓'; color: #25D366; font-weight: bold; font-size: 18px; }
 
-/* 🛑 EXTENDED SCROLLABLE MODAL (For Adblocker) */
+/* 🛑 EXTENDED SCROLLABLE MODAL (For Adblocker & Portfolio Details) */
 .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; justify-content: center; align-items: center; padding: 15px; box-sizing: border-box; backdrop-filter: blur(40px); }
 .modal-content { width: 100%; max-width: 500px; text-align: center; position: relative; max-height: 90vh; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; }
 .modal-content::-webkit-scrollbar { display: none; }
-.close-x { position: absolute; top: 15px; right: 20px; font-size: 28px; color: var(--text-muted); cursor: pointer; transition: color 0.3s; z-index: 5; }
+.close-x { position: absolute; top: 15px; right: 20px; font-size: 28px; color: #fff; font-weight: bold; cursor: pointer; transition: color 0.3s; z-index: 5; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
 
 /* Profile Pic */
 .profile-pic-container { position: relative; width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--gold); overflow: hidden; cursor: pointer; box-shadow: 0 0 20px rgba(212,175,55,0.4); transition: transform 0.3s; display: none; flex-shrink: 0; }
@@ -97,6 +100,8 @@ input:disabled, select:disabled { cursor: not-allowed; }
 .ad-scale-wrapper { width: 100%; overflow: hidden; display: flex; justify-content: center; align-items: center; }
 
 @media (max-width: 600px) {
+    body { padding-top: 45px; }
+    .real-time-clock { top: 8px; right: 10px; font-size: 10px; padding: 6px 10px; }
     .container { padding-left: 12px; padding-right: 12px; }
     .chrome-banner { padding: 8px 15px; border-radius: 15px; flex-direction: row; align-items: center; }
     .chrome-text { font-size: 11px; text-align: left; }
