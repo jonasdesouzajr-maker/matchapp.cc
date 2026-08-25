@@ -10,17 +10,16 @@
 </head>
 <body>
     <div class="luxury-bg"><div class="floating-orb orb-1"></div><div class="floating-orb orb-2"></div></div>
+    
+    <!-- BACKGROUND FLAGS FOR CONTINUITY -->
+    <div class="stream-flags">
+        <span class="sf-item brand-netflix" style="top: 10%; animation: flyPath1 8s linear infinite;">NETFLIX</span>
+        <span class="sf-item brand-prime" style="top: 30%; animation: flyPath2 10s linear infinite 2s;">PRIME</span>
+        <span class="sf-item brand-max" style="top: 50%; animation: flyPath1 9s linear infinite 4s;">MAX</span>
+        <span class="sf-item brand-disney" style="top: 70%; animation: flyPath2 11s linear infinite 1s;">DISNEY+</span>
+    </div>
 
     <div class="container" style="margin-top: 20px;">
-        
-        <div class="ad-placement fade-in">
-            <span style="font-size: 9px; color: #666; display: block; margin-bottom: 5px; font-weight: bold;">SPONSORED ADVERTISEMENT</span>
-            <div class="ad-scale-wrapper">
-                <script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script>
-                <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
-            </div>
-        </div>
-
         <header class="app-header fade-in" style="margin-bottom: 30px; justify-content: space-between;">
             <a href="index.html" class="header-brand-area" style="text-decoration: none;">
                 <div class="brand-text-container">
@@ -28,7 +27,7 @@
                     <span class="app-author">Dashboard</span>
                 </div>
             </a>
-            <button id="profile-link-tab-small" onclick="window.location.href='index.html'" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 10px 15px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 13px;">🏠 Return Home</button>
+            <button onclick="window.location.href='index.html'" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 10px 15px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 13px;">🏠 Home</button>
         </header>
 
         <div class="premium-card fade-in" style="padding: 40px 25px; text-align: left;">
@@ -42,8 +41,10 @@
             </div>
 
             <h2 style="color: var(--gold); margin: 0 0 5px 0; font-size: 28px; text-align: center;">My Profile</h2>
-            <p id="user-email-display" style="color: var(--text-muted); font-size: 14px; margin-top: 0; margin-bottom: 30px; text-align: center;">Loading session...</p>
+            <p id="user-email-display" style="color: var(--text-muted); font-size: 14px; margin-top: 0; margin-bottom: 10px; text-align: center;">Loading session...</p>
             
+            <p id="lock-status" style="text-align: center; font-size: 12px; font-weight: bold; margin-bottom: 25px; color: #ff5252;">⚠️ Unsaved settings below</p>
+
             <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px;">
                 <div class="input-group">
                     <label>Full Name</label>
@@ -73,7 +74,7 @@
                 </div>
             </div>
 
-            <button onclick="saveProfileData()" class="gold-btn" style="margin-bottom: 30px;">💾 Save & Lock Profile Info</button>
+            <button id="save-profile-btn" onclick="saveProfileData()" class="gold-btn" style="margin-bottom: 30px;">💾 Save & Permanently Lock Info</button>
 
             <div style="background: rgba(0,0,0,0.4); padding: 25px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 25px;">
                 <h3 style="color: var(--gold); margin: 0 0 15px 0; font-size: 18px; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 10px;">⭐ Saved Portfolio</h3>
@@ -81,6 +82,10 @@
             </div>
             
             <button onclick="doLogout()" class="secondary-btn" style="border-color:#ff5252; color:#ff5252; background: rgba(255,82,82,0.1);">Log Out</button>
+        </div>
+
+        <div class="info-footer-small fade-in">
+            MatchApp AI carefully analyzes your profile against our curated global database to offer absolute perfection. <br>🔐 Secure Account Hub verified via Supabase.
         </div>
     </div>
     
@@ -97,9 +102,15 @@
                         if(meta.birthdate) document.getElementById('profile-dob').value = meta.birthdate;
                         if(meta.starsign) document.getElementById('profile-starsign').value = meta.starsign;
                         if(meta.birthdate) document.getElementById('profile-age-display').value = window.calculateAge(meta.birthdate) + " years old";
+                        
+                        // 🔒 STRICT PROFILE LOCK ENFORCEMENT
                         if (meta.profile_locked) {
-                            document.getElementById('profile-dob').disabled = true; document.getElementById('profile-dob').style.opacity = '0.6';
-                            document.getElementById('profile-starsign').disabled = true; document.getElementById('profile-starsign').style.opacity = '0.6';
+                            document.getElementById('profile-dob').disabled = true; document.getElementById('profile-dob').style.opacity = '0.5';
+                            document.getElementById('profile-starsign').disabled = true; document.getElementById('profile-starsign').style.opacity = '0.5';
+                            document.getElementById('profile-name').disabled = true; document.getElementById('profile-name').style.opacity = '0.5';
+                            document.getElementById('save-profile-btn').style.display = 'none'; // Hides the save button entirely!
+                            document.getElementById('lock-status').innerHTML = '🔒 Profile Data Permanently Locked';
+                            document.getElementById('lock-status').style.color = '#25D366';
                         }
                     }
                 }
