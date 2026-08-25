@@ -1,4 +1,4 @@
-console.log("Mastercode 46.0: Strict Profile Locking, Secure Flow & Flawless Ad Modals Active");
+console.log("Mastercode 47.0: Advanced Hardware Routing, Fallbacks, & VIP Modal Flows Active");
 
 let globalMatchTitle = "Match App";
 let supabaseClient = null;
@@ -38,15 +38,34 @@ function checkAdBlocker() {
     }, 500); 
 }
 
-// 🌐 COMPACT CHROME ROUTER
-window.openInChrome = function() {
+// 🌐 ADVANCED CHROME & INCOGNITO ROUTER
+window.openInChromeSmart = function() {
     const cleanUrl = 'matchapp.cc';
     const ua = navigator.userAgent;
+    
     if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) {
+        // iOS: Tries to open Chrome, if fails, opens Apple App Store for Chrome
+        setTimeout(() => { window.location.href = "https://apps.apple.com/app/google-chrome/id535886823"; }, 1500);
         window.location.href = 'googlechrome://' + cleanUrl;
+    } else if (/Android/.test(ua)) {
+        // Android: Intent natively falls back to Play Store if Chrome isn't installed
+        window.location.href = 'intent://' + cleanUrl + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.android.chrome;end;';
     } else {
-        window.location.href = 'intent://' + cleanUrl + '#Intent;scheme=https;package=com.android.chrome;end;';
+        // Desktop: If they aren't on Chrome, offer the download link
+        if(window.chrome) { alert("You are already using a Chrome-based browser!"); } 
+        else { window.open("https://www.google.com/chrome/", "_blank"); }
     }
+};
+
+window.openIncognitoHelper = function() {
+    // Browsers block forced incognito windows. Best UX is copying link and instructing.
+    navigator.clipboard.writeText("https://matchapp.cc");
+    alert("🕵️ INCOGNITO MODE:\n\nFor security reasons, browsers require you to open Incognito mode manually.\n\nWe have copied 'https://matchapp.cc' to your clipboard! Open your browser menu, click 'New Incognito Window', and paste it in.");
+};
+
+window.showAdblockGuide = function() {
+    // Browsers block direct access to chrome://extensions.
+    alert("🛠️ HOW TO DISABLE:\n\n1. Look for the puzzle piece 🧩 or shield 🛡️ icon in your browser's top right corner.\n2. Click your Ad-Blocker extension.\n3. Select 'Pause on this site' or 'Disable for matchapp.cc'.\n4. Click 'Reload Page'.");
 };
 
 window.dismissChromeBanner = function() {
@@ -57,10 +76,7 @@ window.dismissChromeBanner = function() {
 // 🔏 GOOGLE OAUTH
 window.signInWithGoogle = async function() {
     if (!supabaseClient) { alert("Server error. Try again."); return; }
-    const { data, error } = await supabaseClient.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: 'https://matchapp.cc/callback.html' }
-    });
+    const { data, error } = await supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: 'https://matchapp.cc/callback.html' } });
     if (error) alert("Google Login Error: " + error.message);
 };
 
@@ -96,10 +112,7 @@ window.handleProfilePic = function(event) {
     const file = event.target.files[0];
     if (file) {
         const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('profile-pic-preview').src = e.target.result;
-            localStorage.setItem('match_userAvatar', e.target.result);
-        };
+        reader.onload = function(e) { document.getElementById('profile-pic-preview').src = e.target.result; localStorage.setItem('match_userAvatar', e.target.result); };
         reader.readAsDataURL(file);
     }
 };
@@ -107,8 +120,7 @@ window.handleProfilePic = function(event) {
 window.processCheckout = async function(tier) {
     if (!isUserLoggedIn || !supabaseClient) { 
         alert("Please log in or register first to securely link your purchase!"); 
-        window.location.href = 'index.html'; 
-        return; 
+        window.location.href = 'index.html'; return; 
     }
     const btn = document.getElementById(`btn-${tier}`);
     if(btn) { btn.innerText = "Redirecting securely to Stripe..."; btn.style.opacity = '0.7'; }
@@ -154,6 +166,10 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (isVIP && document.getElementById('nav-upgrade-btn')) document.getElementById('nav-upgrade-btn').style.display = 'none';
             else if (!isAdFree && document.getElementById('nav-upgrade-btn')) document.getElementById('nav-upgrade-btn').style.display = 'block';
             if(document.getElementById('nav-logout-btn')) document.getElementById('nav-logout-btn').style.display = 'block';
+            
+            // Adjust Adblock Modal for Logged in Users
+            if(document.getElementById('adblock-signin-prompt')) document.getElementById('adblock-signin-prompt').style.display = 'none';
+            if(document.getElementById('adblock-buy-prompt')) document.getElementById('adblock-buy-prompt').style.display = 'block';
         }
     }
 });
@@ -167,8 +183,7 @@ async function syncListsToDatabase() {
 // 🎬 CATALOG
 const masterCatalog = [
     { title: "Superbad", category: "movie", platform: "Netflix", mood: "laugh", aesthetic: "colorful", era: "classic", pacing: "fast", trailerId: "MNpoTxeydiI", url: "https://www.netflix.com", synopsis: "High school seniors deal with separation anxiety during a wild party.", poster: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=800&q=80" },
-    { title: "Stranger Things", category: "series", platform: "Netflix", mood: "intense", aesthetic: "retro", era: "modern", pacing: "epic", trailerId: "b9EkMc79ZSU", url: "https://www.netflix.com", synopsis: "Kids uncover secret experiments and terrifying supernatural forces.", poster: "https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=800&q=80" },
-    { title: "Parasite", category: "movie", platform: "Max", mood: "intense", aesthetic: "dark", era: "modern", pacing: "standard", trailerId: "SEUXfv87Wpk", url: "https://www.max.com", synopsis: "Greed and class discrimination threaten a wealthy family.", poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80" }
+    { title: "Stranger Things", category: "series", platform: "Netflix", mood: "intense", aesthetic: "retro", era: "modern", pacing: "epic", trailerId: "b9EkMc79ZSU", url: "https://www.netflix.com", synopsis: "Kids uncover secret experiments and terrifying supernatural forces.", poster: "https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=800&q=80" }
 ];
 
 window.triggerMatch = async function() {
@@ -202,7 +217,6 @@ window.saveToList = function() {
     if (!savedList.includes(globalMatchTitle)) { savedList.push(globalMatchTitle); syncListsToDatabase(); alert(`⭐ "${globalMatchTitle}" saved!`); }
 };
 
-// ✖ CLOSE AD AND CLAIM MATCH FLOW
 window.triggerAdRetry = function() {
     if (isVIP || isAdFree) { triggerMatch(); return; }
     document.getElementById('reward-ad-modal').style.display = 'flex';
@@ -220,8 +234,8 @@ window.triggerAdRetry = function() {
         timeLeft--; timerSpan.innerText = timeLeft;
         if (timeLeft <= 0) {
             clearInterval(interval);
-            claimBtn.style.display = 'none'; // Hide wait button
-            closeBtn.style.display = 'block'; // Show Close 'X' button
+            claimBtn.style.display = 'none'; 
+            closeBtn.style.display = 'block'; 
         }
     }, 1000);
 };
