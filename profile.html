@@ -9,9 +9,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+    <div id="real-time-clock" class="real-time-clock fade-in">Loading Time...</div>
     <div class="luxury-bg"><div class="floating-orb orb-1"></div><div class="floating-orb orb-2"></div></div>
     
-    <!-- BACKGROUND FLAGS FOR CONTINUITY -->
     <div class="stream-flags">
         <span class="sf-item brand-netflix" style="top: 10%; animation: flyPath1 8s linear infinite;">NETFLIX</span>
         <span class="sf-item brand-prime" style="top: 30%; animation: flyPath2 10s linear infinite 2s;">PRIME</span>
@@ -42,7 +42,6 @@
 
             <h2 style="color: var(--gold); margin: 0 0 5px 0; font-size: 28px; text-align: center;">My Profile</h2>
             <p id="user-email-display" style="color: var(--text-muted); font-size: 14px; margin-top: 0; margin-bottom: 10px; text-align: center;">Loading session...</p>
-            
             <p id="lock-status" style="text-align: center; font-size: 12px; font-weight: bold; margin-bottom: 25px; color: #ff5252;">⚠️ Unsaved settings below</p>
 
             <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px;">
@@ -56,7 +55,7 @@
                         <input type="text" id="profile-dob" placeholder="e.g. 10/10/1986">
                     </div>
                     <div class="input-group">
-                        <label>Age</label>
+                        <label>Live Age</label>
                         <input type="text" id="profile-age-display" disabled style="opacity: 0.7;" placeholder="Calculated automatically">
                     </div>
                 </div>
@@ -73,60 +72,39 @@
                     </select>
                 </div>
             </div>
-
             <button id="save-profile-btn" onclick="saveProfileData()" class="gold-btn" style="margin-bottom: 30px;">💾 Save & Permanently Lock Info</button>
 
+            <!-- 🌟 THE SPLIT LISTS -->
             <div style="background: rgba(0,0,0,0.4); padding: 25px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 25px;">
-                <h3 style="color: var(--gold); margin: 0 0 15px 0; font-size: 18px; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 10px;">⭐ Saved Portfolio</h3>
-                <div id="portfolio-grid"><p style="color: var(--text-muted); font-size: 14px;">No saved matches yet.</p></div>
+                <h3 style="color: var(--gold-glow); margin: 0 0 15px 0; font-size: 18px; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 10px;">⭐ Watch Later Portfolio</h3>
+                <div id="portfolio-grid"><p style="color: var(--text-muted); font-size: 14px;">You haven't saved any matches to watch later.</p></div>
+            </div>
+
+            <div style="background: rgba(0,0,0,0.4); padding: 25px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 25px;">
+                <h3 style="color: #25D366; margin: 0 0 15px 0; font-size: 18px; border-bottom: 1px solid rgba(37,211,102,0.3); padding-bottom: 10px;">✔️ Watch History</h3>
+                <div id="history-grid"><p style="color: var(--text-muted); font-size: 14px;">Your history is empty.</p></div>
             </div>
             
             <button onclick="doLogout()" class="secondary-btn" style="border-color:#ff5252; color:#ff5252; background: rgba(255,82,82,0.1);">Log Out</button>
         </div>
-
-        <div class="info-footer-small fade-in">
-            MatchApp AI carefully analyzes your profile against our curated global database to offer absolute perfection. <br>🔐 Secure Account Hub verified via Supabase.
+    </div>
+    
+    <!-- 📺 PORTFOLIO INTERACTIVE DETAILS MODAL -->
+    <div id="portfolio-modal" class="modal-overlay">
+        <div class="premium-card modal-content" style="border: 2px solid var(--gold); padding: 0; overflow: hidden; max-height: 85vh;">
+            <span class="close-x" onclick="document.getElementById('portfolio-modal').style.display='none'">×</span>
+            <div id="port-modal-bg" class="cinematic-header" style="height: 200px; margin-bottom:0;">
+                <div class="cinematic-overlay"></div>
+                <div class="cinematic-title-box" style="bottom: 15px;"><h2 id="port-modal-title" class="cinematic-title" style="font-size:28px;">Title</h2></div>
+            </div>
+            <div style="padding: 25px; text-align: left; background: var(--bg-card);">
+                <p id="port-modal-synopsis" style="color: #ddd; font-size: 15px; margin-top: 0; margin-bottom: 20px; line-height: 1.5;"></p>
+                <button id="port-modal-link" class="gold-btn" style="margin-bottom:10px;">▶ Watch Now on <span id="port-modal-plat"></span></button>
+                <button onclick="document.getElementById('portfolio-modal').style.display='none'" class="secondary-btn" style="border: none;">Close</button>
+            </div>
         </div>
     </div>
     
-    <!-- 🛑 ADVANCED ADBLOCK MODAL -->
-    <div id="adblock-modal" class="modal-overlay">
-        <div class="premium-card modal-content" style="border: 2px solid #ff5252; background: rgba(20,5,5,0.95); padding: 30px 20px;">
-            <div style="font-size: 55px; margin-bottom: 10px;">🛑</div>
-            <h2 style="color: #ff5252; font-size: 28px; margin-top:0;">Ad-Blocker Detected</h2>
-            
-            <div style="background: rgba(0,0,0,0.6); padding: 15px; border-radius: 12px; text-align: left; margin-bottom: 20px; border-left: 3px solid var(--gold);">
-                <p style="color: #fff; font-size: 13px; margin: 0; line-height: 1.6;">MatchApp's AI concierge, matchmaking algorithms, and daily catalog updates are 100% free. We rely entirely on ads to keep our servers running. Please support us!</p>
-            </div>
-
-            <button onclick="showAdblockGuide()" class="secondary-btn" style="border-color: #ff5252; color: #ff5252; margin-bottom: 12px; font-size: 14px;">🛠️ How to Disable Ad-Blocker</button>
-            <button onclick="location.reload()" class="gold-btn" style="background: #ff5252; color: #fff; padding: 16px; margin-bottom: 20px;">🔄 I Disabled It - Reload Page</button>
-
-            <hr style="border-color: rgba(255,255,255,0.1); margin: 20px 0;">
-
-            <div id="adblock-signin-prompt">
-                <h4 style="color: #fff; margin: 0 0 10px 0;">Hate Ads? Go VIP!</h4>
-                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Get unlimited matches, zero ads, and priority support. Sign in or Register first to secure your account:</p>
-                <button onclick="signInWithGoogle()" class="google-btn" style="width: 100%; margin-bottom: 20px; padding: 15px; border-radius: 14px;">
-                    <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.95H1.23v3.15C3.21 21.32 7.27 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.25c-.25-.72-.38-1.49-.38-2.25s.13-1.53.38-2.25V6.6H1.23C.45 8.17 0 9.93 0 12s.45 3.83 1.23 5.4l4.05-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.27 0 3.21 2.68 1.23 6.6l4.05 3.15c.95-2.84 3.6-4.95 6.72-4.95z"/></svg>
-                    Sign in to Purchase VIP
-                </button>
-            </div>
-
-            <div id="adblock-buy-prompt" style="display: none;">
-                <button onclick="window.location.href='pricing.html'" class="gold-btn" style="margin-bottom: 20px;">💎 Purchase VIP Ad-Free</button>
-            </div>
-
-            <hr style="border-color: rgba(255,255,255,0.1); margin: 20px 0;">
-
-            <h4 style="color: #fff; margin: 0 0 10px 0;">Browser Options</h4>
-            <div style="display: flex; gap: 10px; flex-direction: column;">
-                <button onclick="openInChromeSmart()" class="secondary-btn" style="font-size: 13px; padding: 12px; display:flex; align-items:center; justify-content:center; gap:8px;">🌐 Open in Google Chrome</button>
-                <button onclick="openIncognitoHelper()" class="secondary-btn" style="font-size: 13px; padding: 12px; display:flex; align-items:center; justify-content:center; gap:8px;">🕵️ Open Incognito Tab</button>
-            </div>
-        </div>
-    </div>
-
     <script src="app.js"></script>
     <script>
         window.addEventListener('DOMContentLoaded', () => {
@@ -137,11 +115,14 @@
                         document.getElementById('user-email-display').innerText = session.user.email;
                         const meta = session.user.user_metadata || {};
                         if(meta.full_name) document.getElementById('profile-name').value = meta.full_name;
-                        if(meta.birthdate) document.getElementById('profile-dob').value = meta.birthdate;
                         if(meta.starsign) document.getElementById('profile-starsign').value = meta.starsign;
-                        if(meta.birthdate) document.getElementById('profile-age-display').value = window.calculateAge(meta.birthdate) + " years old";
                         
-                        // 🔒 STRICT PROFILE LOCK ENFORCEMENT
+                        // Age loads dynamically every time based on their saved birthday string
+                        if(meta.birthdate) {
+                            document.getElementById('profile-dob').value = meta.birthdate;
+                            document.getElementById('profile-age-display').value = window.calculateAge(meta.birthdate) + " years old";
+                        }
+                        
                         if (meta.profile_locked) {
                             document.getElementById('profile-dob').disabled = true; document.getElementById('profile-dob').style.opacity = '0.5';
                             document.getElementById('profile-starsign').disabled = true; document.getElementById('profile-starsign').style.opacity = '0.5';
@@ -152,10 +133,22 @@
                         }
                     }
                 }
-                const grid = document.getElementById('portfolio-grid');
+                
+                // Render Split Lists
+                const pGrid = document.getElementById('portfolio-grid');
                 if (window.savedList && window.savedList.length > 0) {
-                    grid.innerHTML = '';
-                    window.savedList.forEach(title => { grid.innerHTML += `<div style="background:rgba(255,255,255,0.05); padding:12px 16px; border-radius:10px; margin-bottom:10px; color:#fff; font-size:15px; border: 1px solid rgba(212,175,55,0.2);">🎬 ${title}</div>`; });
+                    pGrid.innerHTML = '';
+                    window.savedList.forEach(title => { 
+                        pGrid.innerHTML += `<div class="portfolio-item" onclick="openPortfolioModal('${title}')">🎬 ${title} <span style="color:var(--gold); font-size:12px;">▶ Details</span></div>`; 
+                    });
+                }
+                
+                const hGrid = document.getElementById('history-grid');
+                if (window.seenList && window.seenList.length > 0) {
+                    hGrid.innerHTML = '';
+                    window.seenList.forEach(title => { 
+                        hGrid.innerHTML += `<div class="history-item">✔️ ${title}</div>`; 
+                    });
                 }
             }, 800);
         });
