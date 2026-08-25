@@ -1,4 +1,4 @@
-console.log("Mastercode 45.0: Pricing Store, Auth Callbacks & 3D Engine Active");
+console.log("Mastercode 46.0: Strict Profile Locking, Secure Flow & Flawless Ad Modals Active");
 
 let globalMatchTitle = "Match App";
 let supabaseClient = null;
@@ -19,10 +19,10 @@ const STRIPE_LINKS = {
 
 try { if (window.supabase) supabaseClient = window.supabase.createClient('https://zkymvqrmbabngsqblyye.supabase.co', 'sb_publishable_j3kQUhd_9JHfWdfiV3iWog_RpEltrOU'); } catch(e){}
 
-// 🛑 AD BLOCK DETECTION (Disabled on pricing.html so they can buy)
+// 🛑 AD BLOCK DETECTION
 function checkAdBlocker() {
     if (isAdFree || isVIP) return; 
-    if (window.location.pathname.includes('pricing.html')) return; // NEVER block the checkout page
+    if (window.location.pathname.includes('pricing.html')) return; 
     
     const bait = document.createElement('div');
     bait.className = 'adsbox ad-placement doubleclick adSense pub_300x250 text-ad textAd';
@@ -35,7 +35,7 @@ function checkAdBlocker() {
             if(modal) modal.style.setProperty('display', 'flex', 'important'); 
         }
         bait.remove();
-    }, 400); 
+    }, 500); 
 }
 
 // 🌐 COMPACT CHROME ROUTER
@@ -54,20 +54,17 @@ window.dismissChromeBanner = function() {
     sessionStorage.setItem('dismissedChromeBanner', 'true');
 };
 
-// 🔏 GOOGLE OAUTH WITH CALLBACK
+// 🔏 GOOGLE OAUTH
 window.signInWithGoogle = async function() {
     if (!supabaseClient) { alert("Server error. Try again."); return; }
     const { data, error } = await supabaseClient.auth.signInWithOAuth({
         provider: 'google',
-        options: { 
-            // Routes to our chic loading screen
-            redirectTo: 'https://matchapp.cc/callback.html' 
-        }
+        options: { redirectTo: 'https://matchapp.cc/callback.html' }
     });
     if (error) alert("Google Login Error: " + error.message);
 };
 
-// 👤 PROFILE ENGINE
+// 👤 STRICT PROFILE ENGINE
 window.calculateAge = function(dobStr) {
     if (!dobStr || !dobStr.includes('/')) return 0;
     const parts = dobStr.split('/');
@@ -86,13 +83,13 @@ window.saveProfileData = async function() {
     const nameInput = document.getElementById('profile-name').value.trim();
 
     if (!dobInput || !starSignSelect) { alert("Please enter Birthdate and Star Sign."); return; }
-    const confirmLock = confirm("⚠️ PERMANENT WARNING:\n\nBirthdate and Star Sign CANNOT be changed later. Is this correct?");
+    const confirmLock = confirm("⚠️ PERMANENT WARNING:\n\nOnce confirmed, your Birthdate and Star Sign CANNOT be changed. Proceed?");
     if (!confirmLock) return;
 
     const newMetadata = { ...userProfileData, full_name: nameInput, birthdate: dobInput, age: window.calculateAge(dobInput), starsign: starSignSelect, profile_locked: true };
     if (supabaseClient && isUserLoggedIn) await supabaseClient.auth.updateUser({ data: newMetadata });
     localStorage.setItem('match_userProfile', JSON.stringify(newMetadata));
-    alert("✨ Profile locked & saved!"); window.location.reload();
+    alert("✨ Profile data locked and permanently saved."); window.location.reload();
 };
 
 window.handleProfilePic = function(event) {
@@ -109,7 +106,7 @@ window.handleProfilePic = function(event) {
 
 window.processCheckout = async function(tier) {
     if (!isUserLoggedIn || !supabaseClient) { 
-        alert("Please log in or register first so we can securely link your purchase!"); 
+        alert("Please log in or register first to securely link your purchase!"); 
         window.location.href = 'index.html'; 
         return; 
     }
@@ -124,7 +121,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (savedAvatar && document.getElementById('profile-pic-preview')) document.getElementById('profile-pic-preview').src = savedAvatar;
 
     if (isAdFree || isVIP) document.body.classList.add('ad-free-mode');
-    checkAdBlocker(); setInterval(checkAdBlocker, 5000); 
+    checkAdBlocker(); setInterval(checkAdBlocker, 6000); 
 
     if (sessionStorage.getItem('dismissedChromeBanner') === 'true' && document.getElementById('chrome-banner')) document.getElementById('chrome-banner').style.display = 'none';
 
@@ -142,7 +139,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (urlParams.get('payment') === 'success') {
                 isAdFree = true; localStorage.setItem('match_adFree', 'true'); document.body.classList.add('ad-free-mode');
                 if (urlParams.get('tier') === 'vip_monthly' || urlParams.get('tier') === 'vip_annual') { isVIP = true; localStorage.setItem('match_isVIP', 'true'); }
-                alert("🎉 Premium Status Activated! Enjoy MatchApp without limits."); window.history.replaceState({}, document.title, window.location.pathname); 
+                alert("🎉 Premium Status Activated!"); window.history.replaceState({}, document.title, window.location.pathname); 
             }
 
             if (userProfileData.ad_free || userProfileData.vip_tier) { isAdFree = true; document.body.classList.add('ad-free-mode'); }
@@ -167,6 +164,7 @@ async function syncListsToDatabase() {
     if (isUserLoggedIn && supabaseClient) await supabaseClient.auth.updateUser({ data: { seen_list: seenList, saved_list: savedList } });
 }
 
+// 🎬 CATALOG
 const masterCatalog = [
     { title: "Superbad", category: "movie", platform: "Netflix", mood: "laugh", aesthetic: "colorful", era: "classic", pacing: "fast", trailerId: "MNpoTxeydiI", url: "https://www.netflix.com", synopsis: "High school seniors deal with separation anxiety during a wild party.", poster: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=800&q=80" },
     { title: "Stranger Things", category: "series", platform: "Netflix", mood: "intense", aesthetic: "retro", era: "modern", pacing: "epic", trailerId: "b9EkMc79ZSU", url: "https://www.netflix.com", synopsis: "Kids uncover secret experiments and terrifying supernatural forces.", poster: "https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=800&q=80" },
@@ -204,7 +202,31 @@ window.saveToList = function() {
     if (!savedList.includes(globalMatchTitle)) { savedList.push(globalMatchTitle); syncListsToDatabase(); alert(`⭐ "${globalMatchTitle}" saved!`); }
 };
 
+// ✖ CLOSE AD AND CLAIM MATCH FLOW
 window.triggerAdRetry = function() {
     if (isVIP || isAdFree) { triggerMatch(); return; }
-    // Optional ad flow goes here
+    document.getElementById('reward-ad-modal').style.display = 'flex';
+    
+    let timeLeft = 15;
+    const timerSpan = document.getElementById('ad-timer');
+    const claimBtn = document.getElementById('claim-retry-btn');
+    const closeBtn = document.getElementById('close-ad-btn');
+    
+    claimBtn.style.display = 'block';
+    closeBtn.style.display = 'none';
+    claimBtn.disabled = true; claimBtn.style.opacity = '0.5';
+    
+    const interval = setInterval(() => {
+        timeLeft--; timerSpan.innerText = timeLeft;
+        if (timeLeft <= 0) {
+            clearInterval(interval);
+            claimBtn.style.display = 'none'; // Hide wait button
+            closeBtn.style.display = 'block'; // Show Close 'X' button
+        }
+    }, 1000);
+};
+
+window.closeAdAndClaim = function() {
+    document.getElementById('reward-ad-modal').style.display = 'none';
+    triggerMatch();
 };
