@@ -12,6 +12,14 @@
 </head>
 <body>
     <div class="luxury-bg"><div class="floating-orb orb-1"></div><div class="floating-orb orb-2"></div></div>
+    
+    <!-- FAST ANIMATED STREAMING FLAGS BACKGROUND -->
+    <div class="stream-flags">
+        <span class="sf-item brand-netflix" style="top: 10%; animation: flyPath1 8s linear infinite;">NETFLIX</span>
+        <span class="sf-item brand-prime" style="top: 30%; animation: flyPath2 10s linear infinite 2s;">PRIME</span>
+        <span class="sf-item brand-max" style="top: 50%; animation: flyPath1 9s linear infinite 4s;">MAX</span>
+        <span class="sf-item brand-disney" style="top: 70%; animation: flyPath2 11s linear infinite 1s;">DISNEY+</span>
+    </div>
 
     <div class="container">
         
@@ -19,7 +27,7 @@
             <div class="chrome-text">For the best experience, open in Chrome.</div>
             <div style="display: flex; align-items: center; gap: 10px;">
                 <button onclick="openInChrome()" class="chrome-btn">Open Chrome</button>
-                <span class="close-x" style="position: relative; top:0; right:0; font-size: 20px; color: #fff;" onclick="dismissChromeBanner()">×</span>
+                <span class="close-x" style="position: relative; top:0; right:0; font-size: 20px; color: #fff; cursor: pointer;" onclick="dismissChromeBanner()">×</span>
             </div>
         </div>
 
@@ -48,11 +56,23 @@
                 <input type="file" id="profile-pic-upload" accept="image/*" style="display: none;" onchange="handleProfilePic(event)">
 
                 <button id="profile-link-tab" onclick="window.location.href='profile.html'" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid var(--gold); color: var(--gold-glow); padding: 10px 15px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 12px;">👤 My Profile</button>
-                <button id="nav-upgrade-btn" onclick="window.location.href='pricing.html'" class="gold-btn" style="padding: 10px 15px; width: auto; font-size: 12px; border: 1px solid #fff;">💎 Get VIP Status</button>
-                <button id="nav-reg-btn" onclick="signInWithGoogle()" class="gold-btn" style="padding: 10px 15px; width: auto; font-size: 12px; background: #fff; color: #000;">Sign In With Google</button>
+                <button id="nav-upgrade-btn" onclick="window.location.href='pricing.html'" class="gold-btn" style="padding: 10px 15px; width: auto; font-size: 12px; border: 1px solid #fff;">💎 VIP Status</button>
+                
+                <!-- FLAWLESS GOOGLE BUTTON -->
+                <button id="nav-reg-btn" onclick="signInWithGoogle()" class="google-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.95H1.23v3.15C3.21 21.32 7.27 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.25c-.25-.72-.38-1.49-.38-2.25s.13-1.53.38-2.25V6.6H1.23C.45 8.17 0 9.93 0 12s.45 3.83 1.23 5.4l4.05-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.27 0 3.21 2.68 1.23 6.6l4.05 3.15c.95-2.84 3.6-4.95 6.72-4.95z"/></svg> Sign in with Google
+                </button>
                 <button id="nav-logout-btn" onclick="doLogout()" style="display: none; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 10px 15px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 12px;">Log Out</button>
             </div>
         </header>
+
+        <!-- 🌟 THE "HOW IT WORKS" EXPLANATION (BIG) -->
+        <div class="info-panel fade-in">
+            <h3 class="info-title">💡 How MatchApp Works</h3>
+            <p class="info-text" style="margin-bottom: 12px;"><strong>1. Answer the Questionnaire:</strong> Tell the AI your mood, or click "Surprise Me" to let the algorithm find an exact match you have never seen before.</p>
+            <p class="info-text" style="margin-bottom: 12px;"><strong>2. Watch & Save:</strong> Watch a short sponsor ad to unlock a match, or <a href="pricing.html" style="color:var(--gold);">upgrade to VIP</a> to remove all ads instantly. Save your matches to build your profile portfolio.</p>
+            <p class="info-text" style="font-size: 12px; color: #888;">🔒 All premium transactions are encrypted and processed securely by <strong>Stripe Checkout</strong>.</p>
+        </div>
         
         <div id="questionnaire-box" class="premium-card fade-in">
             <h2 style="margin: 0 0 15px 0; font-size: 32px; color: var(--gold);">Find Your Vibe</h2>
@@ -82,8 +102,8 @@
             </div>
         </div>
 
-        <footer class="app-footer fade-in">
-            <div class="ad-placement" style="background: transparent; border-radius: 0; padding-top:20px;">
+        <footer class="fade-in" style="margin-top: 25px;">
+            <div class="ad-placement" style="background: transparent; border-radius: 0; padding-top:20px; border:none; box-shadow:none;">
                 <span style="font-size: 10px; color: #888; display: block; margin-bottom: 15px; text-align: center; font-weight: bold;">SPONSORED CONTENT</span>
                 <div style="display: flex; justify-content: center; margin-bottom: 25px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.5);">
                     <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script>
@@ -93,7 +113,7 @@
         </footer>
     </div>
     
-    <!-- 🛑 THE FIX: Link points directly to pricing.html -->
+    <!-- 🛑 STRICT ADBLOCK MODAL -->
     <div id="adblock-modal" class="modal-overlay">
         <div class="premium-card modal-content" style="border: 2px solid #ff5252; background: rgba(20,5,5,0.95);">
             <div style="font-size: 65px; margin-bottom: 20px;">🛑</div>
@@ -103,6 +123,24 @@
             <button onclick="window.location.href='pricing.html'" class="secondary-btn" style="border-color: var(--gold); color: var(--gold);">Or Purchase VIP Ad-Free</button>
         </div>
     </div>
+
+    <!-- 📺 REWARDED AD MODAL (WITH 'X' CLOSE & CLAIM FIX) -->
+    <div id="reward-ad-modal" class="modal-overlay">
+        <div class="premium-card modal-content" style="border: 1px solid var(--gold);">
+            <h3 style="color: var(--gold); margin-top: 0; font-size: 24px;">Sponsor Break</h3>
+            <p style="font-size: 13px; color: var(--text-muted);">Watch this ad to unlock your exact match!</p>
+            <div class="ad-placement" style="background: rgba(0,0,0,0.8); padding: 15px; min-height: 220px; margin: 20px 0;">
+                <ins class="adsbygoogle" style="display:block; width:100%;" data-ad-format="fluid" data-ad-layout-key="-6t+ed+2i-1n-4w" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117"></ins>
+                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            </div>
+            
+            <button id="claim-retry-btn" class="gold-btn pulse" disabled style="width: 100%; opacity: 0.5; font-size: 16px; padding: 16px;">Wait <span id="ad-timer">15</span>s to claim...</button>
+            
+            <!-- This pops up AFTER timer hits 0 so they can officially close the ad and claim the match -->
+            <button id="close-ad-btn" class="secondary-btn" style="display: none; border-color: #25D366; color: #25D366; font-size: 16px; padding: 16px; font-weight: 900;" onclick="closeAdAndClaim()">✖ Close Ad & Get Match</button>
+        </div>
+    </div>
+
     <script src="app.js"></script>
 </body>
 </html>
