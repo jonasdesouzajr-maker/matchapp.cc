@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Match App | My Profile Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>MatchApp | My Profile Hub</title>
     <link rel="stylesheet" href="style.css">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -19,43 +19,43 @@
         <span class="sf-item brand-disney" style="top: 70%; animation: flyPath2 11s linear infinite 1s;">DISNEY+</span>
     </div>
 
-    <div class="container" style="margin-top: 20px;">
-        <header class="app-header fade-in" style="margin-bottom: 30px; justify-content: space-between;">
+    <div class="container">
+        <header class="app-header fade-in" style="justify-content: space-between;">
             <a href="index.html" class="header-brand-area" style="text-decoration: none;">
                 <div class="brand-text-container">
-                    <span class="app-title-main" style="font-size: 26px;">MatchApp</span>
+                    <span class="app-title-main" style="font-size: 24px;">MatchApp</span>
                     <span class="app-author">Dashboard</span>
                 </div>
             </a>
-            <button onclick="window.location.href='index.html'" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 10px 15px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 13px;">🏠 Home</button>
+            <button onclick="window.location.href='index.html'" class="secondary-btn" style="width: auto; padding: 8px 14px; font-size: 12px;">🏠 Home</button>
         </header>
 
-        <div class="premium-card fade-in" style="padding: 40px 25px; text-align: left;">
-            <div style="display: flex; justify-content: center; margin-bottom: 25px;">
-                <label for="profile-pic-upload" style="position: relative; cursor: pointer; display: inline-block;">
-                    <div style="width: 140px; height: 140px; border-radius: 50%; border: 3px solid var(--gold); overflow: hidden; box-shadow: 0 0 30px rgba(212,175,55,0.6);">
+        <div class="premium-card fade-in" style="text-align: left;">
+            <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+                <label for="profile-pic-upload" style="cursor: pointer;">
+                    <div style="width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--gold); overflow: hidden; box-shadow: 0 0 25px rgba(212,175,55,0.5);">
                         <img id="profile-pic-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23D4AF37'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
                 </label>
                 <input type="file" id="profile-pic-upload" accept="image/*" style="display: none;" onchange="handleProfilePic(event)">
             </div>
 
-            <h2 style="color: var(--gold); margin: 0 0 5px 0; font-size: 28px; text-align: center;">My Profile</h2>
-            <p id="user-email-display" style="color: var(--text-muted); font-size: 14px; margin-top: 0; margin-bottom: 10px; text-align: center;">Loading session...</p>
-            <p id="lock-status" style="text-align: center; font-size: 12px; font-weight: bold; margin-bottom: 25px; color: #ff5252;">⚠️ Unsaved settings below</p>
+            <h2 style="color: var(--gold); margin: 0 0 5px 0; font-size: 26px; text-align: center;">My Profile</h2>
+            <p id="user-email-display" style="color: var(--text-muted); font-size: 13px; margin: 0 0 10px 0; text-align: center;">Loading session...</p>
+            <p id="lock-status" style="text-align: center; font-size: 11px; font-weight: bold; margin-bottom: 20px; color: #ff5252;">⚠️ Unsaved settings below</p>
 
-            <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px;">
+            <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 25px;">
                 <div class="input-group">
                     <label>Full Name</label>
-                    <input type="text" id="profile-name" placeholder="Enter your name...">
+                    <input type="text" id="profile-name" placeholder="Enter your full name...">
                 </div>
                 <div class="input-grid">
                     <div class="input-group">
                         <label>Birthdate (DD/MM/YYYY) <span style="color:#ff5252;">*Permanent</span></label>
-                        <input type="text" id="profile-dob" placeholder="e.g. 10/10/1986">
+                        <input type="text" id="profile-dob" placeholder="e.g. 10/10/1986" maxlength="10">
                     </div>
                     <div class="input-group">
-                        <label>Live Age</label>
+                        <label>Dynamic Age</label>
                         <input type="text" id="profile-age-display" disabled style="opacity: 0.7;" placeholder="Calculated automatically">
                     </div>
                 </div>
@@ -72,35 +72,34 @@
                     </select>
                 </div>
             </div>
-            <button id="save-profile-btn" onclick="saveProfileData()" class="gold-btn" style="margin-bottom: 30px;">💾 Save & Permanently Lock Info</button>
+            <button id="save-profile-btn" onclick="saveProfileData()" class="gold-btn" style="margin-bottom: 25px;">💾 Save & Permanently Lock Info</button>
 
-            <!-- 🌟 THE SPLIT LISTS -->
-            <div style="background: rgba(0,0,0,0.4); padding: 25px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 25px;">
-                <h3 style="color: var(--gold-glow); margin: 0 0 15px 0; font-size: 18px; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 10px;">⭐ Watch Later Portfolio</h3>
-                <div id="portfolio-grid"><p style="color: var(--text-muted); font-size: 14px;">You haven't saved any matches to watch later.</p></div>
+            <!-- 🌟 SPLIT PORTFOLIO & HISTORY -->
+            <div style="background: rgba(0,0,0,0.4); padding: 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 20px;">
+                <h3 style="color: var(--gold-glow); margin: 0 0 12px 0; font-size: 16px; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 8px;">⭐ Watch Later Portfolio</h3>
+                <div id="portfolio-grid"><p style="color: var(--text-muted); font-size: 13px; margin: 0;">No saved titles yet.</p></div>
             </div>
 
-            <div style="background: rgba(0,0,0,0.4); padding: 25px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 25px;">
-                <h3 style="color: #25D366; margin: 0 0 15px 0; font-size: 18px; border-bottom: 1px solid rgba(37,211,102,0.3); padding-bottom: 10px;">✔️ Watch History</h3>
-                <div id="history-grid"><p style="color: var(--text-muted); font-size: 14px;">Your history is empty.</p></div>
+            <div style="background: rgba(0,0,0,0.4); padding: 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 20px;">
+                <h3 style="color: #25D366; margin: 0 0 12px 0; font-size: 16px; border-bottom: 1px solid rgba(37,211,102,0.3); padding-bottom: 8px;">✔️ Watch History</h3>
+                <div id="history-grid"><p style="color: var(--text-muted); font-size: 13px; margin: 0;">Your watch history is empty.</p></div>
             </div>
             
-            <button onclick="doLogout()" class="secondary-btn" style="border-color:#ff5252; color:#ff5252; background: rgba(255,82,82,0.1);">Log Out</button>
+            <button onclick="doLogout()" class="secondary-btn" style="border-color:#ff5252; color:#ff5252; background: rgba(255,82,82,0.1);">Logout</button>
         </div>
     </div>
     
     <!-- 📺 PORTFOLIO INTERACTIVE DETAILS MODAL -->
     <div id="portfolio-modal" class="modal-overlay">
-        <div class="premium-card modal-content" style="border: 2px solid var(--gold); padding: 0; overflow: hidden; max-height: 85vh;">
+        <div class="premium-card modal-content" style="border: 2px solid var(--gold); padding: 0; overflow: hidden;">
             <span class="close-x" onclick="document.getElementById('portfolio-modal').style.display='none'">×</span>
-            <div id="port-modal-bg" class="cinematic-header" style="height: 200px; margin-bottom:0;">
+            <div id="port-modal-bg" class="cinematic-header" style="height: 180px; margin-bottom:0;">
                 <div class="cinematic-overlay"></div>
-                <div class="cinematic-title-box" style="bottom: 15px;"><h2 id="port-modal-title" class="cinematic-title" style="font-size:28px;">Title</h2></div>
+                <div class="cinematic-title-box" style="bottom: 12px;"><h2 id="port-modal-title" class="cinematic-title" style="font-size:24px;">Title</h2></div>
             </div>
-            <div style="padding: 25px; text-align: left; background: var(--bg-card);">
-                <p id="port-modal-synopsis" style="color: #ddd; font-size: 15px; margin-top: 0; margin-bottom: 20px; line-height: 1.5;"></p>
+            <div style="padding: 20px; text-align: left; background: var(--bg-card);">
+                <p id="port-modal-synopsis" style="color: #ddd; font-size: 14px; margin: 0 0 18px 0; line-height: 1.5;"></p>
                 <button id="port-modal-link" class="gold-btn" style="margin-bottom:10px;">▶ Watch Now on <span id="port-modal-plat"></span></button>
-                <button onclick="document.getElementById('portfolio-modal').style.display='none'" class="secondary-btn" style="border: none;">Close</button>
             </div>
         </div>
     </div>
@@ -117,7 +116,6 @@
                         if(meta.full_name) document.getElementById('profile-name').value = meta.full_name;
                         if(meta.starsign) document.getElementById('profile-starsign').value = meta.starsign;
                         
-                        // Age loads dynamically every time based on their saved birthday string
                         if(meta.birthdate) {
                             document.getElementById('profile-dob').value = meta.birthdate;
                             document.getElementById('profile-age-display').value = window.calculateAge(meta.birthdate) + " years old";
@@ -134,12 +132,11 @@
                     }
                 }
                 
-                // Render Split Lists
                 const pGrid = document.getElementById('portfolio-grid');
                 if (window.savedList && window.savedList.length > 0) {
                     pGrid.innerHTML = '';
                     window.savedList.forEach(title => { 
-                        pGrid.innerHTML += `<div class="portfolio-item" onclick="openPortfolioModal('${title}')">🎬 ${title} <span style="color:var(--gold); font-size:12px;">▶ Details</span></div>`; 
+                        pGrid.innerHTML += `<div class="portfolio-item" onclick="openPortfolioModal('${title}')">🎬 ${title} <span style="color:var(--gold); font-size:11px;">▶ Details</span></div>`; 
                     });
                 }
                 
