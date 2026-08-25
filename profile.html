@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>MatchApp | My Profile Hub</title>
     <link rel="stylesheet" href="style.css">
+    
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -19,94 +20,117 @@
         <span class="sf-item brand-disney" style="top: 70%; animation: flyPath2 11s linear infinite 1s;">DISNEY+</span>
     </div>
 
-    <div class="container">
-        <header class="app-header fade-in" style="justify-content: space-between;">
-            <a href="index.html" class="header-brand-area" style="text-decoration: none;">
-                <div class="brand-text-container">
-                    <span class="app-title-main" style="font-size: 24px;">MatchApp</span>
-                    <span class="app-author">Dashboard</span>
+    <!-- 🚀 MASTER PAGE WRAPPER FOR DUAL-ADS -->
+    <div class="page-wrapper">
+        
+        <!-- 💎 LEFT ADSENSE SIDEBAR -->
+        <aside class="sidebar-ad fade-in">
+            <span class="ad-label">SPONSORED</span>
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </aside>
+
+        <!-- 📱 MAIN APP CONTAINER -->
+        <div class="container">
+            <header class="app-header fade-in" style="justify-content: space-between;">
+                <a href="index.html" class="header-brand-area" style="text-decoration: none;">
+                    <div class="brand-text-container">
+                        <span class="app-title-main" style="font-size: 24px;">MatchApp</span>
+                        <span class="app-author">Dashboard</span>
+                    </div>
+                </a>
+                <button onclick="window.location.href='index.html'" class="secondary-btn" style="width: auto; padding: 8px 14px; font-size: 12px;">🏠 Home</button>
+            </header>
+
+            <div class="premium-card fade-in" style="text-align: left;">
+                <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+                    <label for="profile-pic-upload" style="cursor: pointer;">
+                        <div style="width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--gold); overflow: hidden; box-shadow: 0 0 25px rgba(212,175,55,0.5);">
+                            <img id="profile-pic-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23D4AF37'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                    </label>
+                    <input type="file" id="profile-pic-upload" accept="image/*" style="display: none;" onchange="handleProfilePic(event)">
                 </div>
-            </a>
-            <button onclick="window.location.href='index.html'" class="secondary-btn" style="width: auto; padding: 8px 14px; font-size: 12px;">🏠 Home</button>
-        </header>
 
-        <div class="premium-card fade-in" style="text-align: left;">
-            <div style="display: flex; justify-content: center; margin-bottom: 20px;">
-                <label for="profile-pic-upload" style="cursor: pointer;">
-                    <div style="width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--gold); overflow: hidden; box-shadow: 0 0 25px rgba(212,175,55,0.5);">
-                        <img id="profile-pic-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23D4AF37'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                <h2 style="color: var(--gold); margin: 0 0 5px 0; font-size: 26px; text-align: center;">My Profile</h2>
+                <p id="user-email-display" style="color: var(--text-muted); font-size: 13px; margin: 0 0 10px 0; text-align: center;">Loading session...</p>
+                <p id="lock-status" style="text-align: center; font-size: 11px; font-weight: bold; margin-bottom: 20px; color: #ff5252;">⚠️ Unsaved settings below</p>
+
+                <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 25px;">
+                    <div class="input-group">
+                        <label>Full Name</label>
+                        <input type="text" id="profile-name" placeholder="Enter your full name...">
                     </div>
-                </label>
-                <input type="file" id="profile-pic-upload" accept="image/*" style="display: none;" onchange="handleProfilePic(event)">
-            </div>
-
-            <h2 style="color: var(--gold); margin: 0 0 5px 0; font-size: 26px; text-align: center;">My Profile</h2>
-            <p id="user-email-display" style="color: var(--text-muted); font-size: 13px; margin: 0 0 10px 0; text-align: center;">Loading session...</p>
-            <p id="lock-status" style="text-align: center; font-size: 11px; font-weight: bold; margin-bottom: 20px; color: #ff5252;">⚠️ Unsaved settings below</p>
-
-            <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 25px;">
-                <div class="input-group">
-                    <label>Full Name</label>
-                    <input type="text" id="profile-name" placeholder="Enter your full name...">
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label>Birthdate (DD/MM/YYYY) <span style="color:#ff5252;">*Permanent</span></label>
+                            <input type="text" id="profile-dob" placeholder="e.g. 10/10/1986" maxlength="10">
+                        </div>
+                        <div class="input-group">
+                            <label>Dynamic Age</label>
+                            <input type="text" id="profile-age-display" disabled style="opacity: 0.7;" placeholder="Calculated automatically">
+                        </div>
+                    </div>
+                    
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label>Star Sign <span style="color:#ff5252;">*Permanent</span></label>
+                            <select id="profile-starsign">
+                                <option value="">Select your Star Sign...</option>
+                                <option value="Aries">Aries ♈</option><option value="Taurus">Taurus ♉</option>
+                                <option value="Gemini">Gemini ♊</option><option value="Cancer">Cancer ♋</option>
+                                <option value="Leo">Leo ♌</option><option value="Virgo">Virgo ♍</option>
+                                <option value="Libra">Libra ♎</option><option value="Scorpio">Scorpio ♏</option>
+                                <option value="Sagittarius">Sagittarius ♐</option><option value="Capricorn">Capricorn ♑</option>
+                                <option value="Aquarius">Aquarius ♒</option><option value="Pisces">Pisces ♓</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Orientation <span style="color:#ff5252;">*Permanent</span></label>
+                            <select id="profile-orientation">
+                                <option value="">Select...</option>
+                                <option value="Straight">Straight</option><option value="Gay">Gay</option>
+                                <option value="Lesbian">Lesbian</option><option value="Bisexual">Bisexual</option>
+                                <option value="Pansexual">Pansexual</option><option value="Asexual">Asexual</option>
+                                <option value="Queer">Queer</option><option value="Other">Other</option>
+                                <option value="Prefer not to say">Prefer not to say</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-                <div class="input-grid">
-                    <div class="input-group">
-                        <label>Birthdate (DD/MM/YYYY) <span style="color:#ff5252;">*Permanent</span></label>
-                        <input type="text" id="profile-dob" placeholder="e.g. 10/10/1986" maxlength="10">
-                    </div>
-                    <div class="input-group">
-                        <label>Dynamic Age</label>
-                        <input type="text" id="profile-age-display" disabled style="opacity: 0.7;" placeholder="Calculated automatically">
-                    </div>
+                <button id="save-profile-btn" onclick="saveProfileData()" class="gold-btn" style="margin-bottom: 25px;">💾 Save & Permanently Lock Info</button>
+
+                <div style="background: rgba(0,0,0,0.4); padding: 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 20px;">
+                    <h3 style="color: var(--gold-glow); margin: 0 0 12px 0; font-size: 16px; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 8px;">⭐ Watch Later Portfolio</h3>
+                    <div id="portfolio-grid"><p style="color: var(--text-muted); font-size: 13px; margin: 0;">No saved titles yet.</p></div>
+                </div>
+
+                <div style="background: rgba(0,0,0,0.4); padding: 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 20px;">
+                    <h3 style="color: #25D366; margin: 0 0 12px 0; font-size: 16px; border-bottom: 1px solid rgba(37,211,102,0.3); padding-bottom: 8px;">✔️ Watch History</h3>
+                    <div id="history-grid"><p style="color: var(--text-muted); font-size: 13px; margin: 0;">Your watch history is empty.</p></div>
                 </div>
                 
-                <!-- NEW: STAR SIGN AND SEXUAL ORIENTATION GRID -->
-                <div class="input-grid">
-                    <div class="input-group">
-                        <label>Star Sign <span style="color:#ff5252;">*Permanent</span></label>
-                        <select id="profile-starsign">
-                            <option value="">Select your Star Sign...</option>
-                            <option value="Aries">Aries ♈</option><option value="Taurus">Taurus ♉</option>
-                            <option value="Gemini">Gemini ♊</option><option value="Cancer">Cancer ♋</option>
-                            <option value="Leo">Leo ♌</option><option value="Virgo">Virgo ♍</option>
-                            <option value="Libra">Libra ♎</option><option value="Scorpio">Scorpio ♏</option>
-                            <option value="Sagittarius">Sagittarius ♐</option><option value="Capricorn">Capricorn ♑</option>
-                            <option value="Aquarius">Aquarius ♒</option><option value="Pisces">Pisces ♓</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label>Orientation <span style="color:#ff5252;">*Permanent</span></label>
-                        <select id="profile-orientation">
-                            <option value="">Select...</option>
-                            <option value="Straight">Straight</option>
-                            <option value="Gay">Gay</option>
-                            <option value="Lesbian">Lesbian</option>
-                            <option value="Bisexual">Bisexual</option>
-                            <option value="Pansexual">Pansexual</option>
-                            <option value="Asexual">Asexual</option>
-                            <option value="Queer">Queer</option>
-                            <option value="Other">Other</option>
-                            <option value="Prefer not to say">Prefer not to say</option>
-                        </select>
-                    </div>
-                </div>
-
-            </div>
-            <button id="save-profile-btn" onclick="saveProfileData()" class="gold-btn" style="margin-bottom: 25px;">💾 Save & Permanently Lock Info</button>
-
-            <!-- 🌟 SPLIT PORTFOLIO & HISTORY -->
-            <div style="background: rgba(0,0,0,0.4); padding: 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 20px;">
-                <h3 style="color: var(--gold-glow); margin: 0 0 12px 0; font-size: 16px; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 8px;">⭐ Watch Later Portfolio</h3>
-                <div id="portfolio-grid"><p style="color: var(--text-muted); font-size: 13px; margin: 0;">No saved titles yet.</p></div>
-            </div>
-
-            <div style="background: rgba(0,0,0,0.4); padding: 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 20px;">
-                <h3 style="color: #25D366; margin: 0 0 12px 0; font-size: 16px; border-bottom: 1px solid rgba(37,211,102,0.3); padding-bottom: 8px;">✔️ Watch History</h3>
-                <div id="history-grid"><p style="color: var(--text-muted); font-size: 13px; margin: 0;">Your watch history is empty.</p></div>
+                <button onclick="doLogout()" class="secondary-btn" style="border-color:#ff5252; color:#ff5252; background: rgba(255,82,82,0.1);">Logout</button>
             </div>
             
-            <button onclick="doLogout()" class="secondary-btn" style="border-color:#ff5252; color:#ff5252; background: rgba(255,82,82,0.1);">Logout</button>
+            <!-- 🌟 ADSTERRA BOTTOM BANNER -->
+            <footer class="fade-in" style="margin-top: 20px;">
+                <div class="ad-placement" style="background: transparent; border: none; box-shadow: none;">
+                    <span class="ad-label">SPONSORED</span>
+                    <div class="adsterra-bot-wrapper">
+                        <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script>
+                        <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
+                    </div>
+                </div>
+            </footer>
         </div>
+
+        <!-- 💎 RIGHT ADSENSE SIDEBAR -->
+        <aside class="sidebar-ad fade-in">
+            <span class="ad-label">SPONSORED</span>
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </aside>
     </div>
     
     <!-- 📺 PORTFOLIO INTERACTIVE DETAILS MODAL -->
@@ -124,35 +148,6 @@
         </div>
     </div>
     
-    <!-- 🔐 MAIN AUTH MODAL (EMAIL & GOOGLE) -->
-    <div id="main-auth-modal" class="modal-overlay">
-        <div class="premium-card modal-content" style="border: 1px solid var(--gold); padding: 30px 20px;">
-            <span class="close-x" onclick="closeAuthModal()">×</span>
-            <h2 style="color: var(--gold); font-size: 24px; margin: 0 0 10px 0;">Welcome</h2>
-            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 25px;">Sign in or register to save your portfolio and lock in your profile details.</p>
-            
-            <button onclick="signInWithGoogle()" class="google-btn" style="width: 100%; padding: 14px; border-radius: 14px; margin-bottom: 20px; font-size: 15px;">
-                <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.95H1.23v3.15C3.21 21.32 7.27 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.25c-.25-.72-.38-1.49-.38-2.25s.13-1.53.38-2.25V6.6H1.23C.45 8.17 0 9.93 0 12s.45 3.83 1.23 5.4l4.05-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.27 0 3.21 2.68 1.23 6.6l4.05 3.15c.95-2.84 3.6-4.95 6.72-4.95z"/></svg> Continue with Google
-            </button>
-            
-            <div style="display: flex; align-items: center; margin-bottom: 20px;">
-                <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.15);"></div>
-                <span style="padding: 0 12px; color: var(--text-muted); font-size: 11px; font-weight: 900; letter-spacing: 1px;">OR EMAIL</span>
-                <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.15);"></div>
-            </div>
-
-            <input type="email" id="auth-email" placeholder="Email Address" style="margin-bottom: 12px; padding: 14px;">
-            <input type="password" id="auth-password" placeholder="Password (Min 6 chars)" style="margin-bottom: 20px; padding: 14px;">
-            
-            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                <button onclick="handleEmailLogin()" class="secondary-btn" style="flex: 1; border-color: var(--gold); color: var(--gold-glow);">Login</button>
-                <button onclick="handleEmailSignup()" class="gold-btn" style="flex: 1; padding: 14px;">Register</button>
-            </div>
-            
-            <p id="auth-message" style="font-size: 12px; margin-top: 15px; display: none; font-weight: bold;"></p>
-        </div>
-    </div>
-
     <script src="app.js"></script>
     <script>
         window.addEventListener('DOMContentLoaded', () => {
@@ -186,9 +181,7 @@
                 const pGrid = document.getElementById('portfolio-grid');
                 if (window.savedList && window.savedList.length > 0) {
                     pGrid.innerHTML = '';
-                    window.savedList.forEach(title => { 
-                        pGrid.innerHTML += `<div class="portfolio-item" onclick="openPortfolioModal('${title}')">🎬 ${title} <span style="color:var(--gold); font-size:11px;">▶ Details</span></div>`; 
-                    });
+                    window.savedList.forEach(title => { pGrid.innerHTML += `<div class="portfolio-item" onclick="openPortfolioModal('${title}')">🎬 ${title} <span style="color:var(--gold); font-size:11px;">▶ Details</span></div>`; });
                 }
                 
                 const hGrid = document.getElementById('history-grid');
