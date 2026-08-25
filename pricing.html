@@ -8,6 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+    <div id="real-time-clock" class="real-time-clock fade-in">Loading Time...</div>
     <div class="luxury-bg"><div class="floating-orb orb-1"></div><div class="floating-orb orb-2"></div></div>
     
     <div class="stream-flags">
@@ -76,44 +77,6 @@
         </div>
     </div>
     
-    <!-- 🛑 ADVANCED ADBLOCK MODAL -->
-    <div id="adblock-modal" class="modal-overlay">
-        <div class="premium-card modal-content" style="border: 2px solid #ff5252; background: rgba(20,5,5,0.95); padding: 30px 20px;">
-            <div style="font-size: 55px; margin-bottom: 10px;">🛑</div>
-            <h2 style="color: #ff5252; font-size: 28px; margin-top:0;">Ad-Blocker Detected</h2>
-            
-            <div style="background: rgba(0,0,0,0.6); padding: 15px; border-radius: 12px; text-align: left; margin-bottom: 20px; border-left: 3px solid var(--gold);">
-                <p style="color: #fff; font-size: 13px; margin: 0; line-height: 1.6;">MatchApp's AI concierge, matchmaking algorithms, and daily catalog updates are 100% free. We rely entirely on ads to keep our servers running. Please support us!</p>
-            </div>
-
-            <button onclick="showAdblockGuide()" class="secondary-btn" style="border-color: #ff5252; color: #ff5252; margin-bottom: 12px; font-size: 14px;">🛠️ How to Disable Ad-Blocker</button>
-            <button onclick="location.reload()" class="gold-btn" style="background: #ff5252; color: #fff; padding: 16px; margin-bottom: 20px;">🔄 I Disabled It - Reload Page</button>
-
-            <hr style="border-color: rgba(255,255,255,0.1); margin: 20px 0;">
-
-            <div id="adblock-signin-prompt">
-                <h4 style="color: #fff; margin: 0 0 10px 0;">Hate Ads? Go VIP!</h4>
-                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Get unlimited matches, zero ads, and priority support. Sign in or Register first to secure your account:</p>
-                <button onclick="signInWithGoogle()" class="google-btn" style="width: 100%; margin-bottom: 20px; padding: 15px; border-radius: 14px;">
-                    <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.95H1.23v3.15C3.21 21.32 7.27 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.25c-.25-.72-.38-1.49-.38-2.25s.13-1.53.38-2.25V6.6H1.23C.45 8.17 0 9.93 0 12s.45 3.83 1.23 5.4l4.05-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.27 0 3.21 2.68 1.23 6.6l4.05 3.15c.95-2.84 3.6-4.95 6.72-4.95z"/></svg>
-                    Sign in to Purchase VIP
-                </button>
-            </div>
-
-            <div id="adblock-buy-prompt" style="display: none;">
-                <button onclick="window.location.href='pricing.html'" class="gold-btn" style="margin-bottom: 20px;">💎 Purchase VIP Ad-Free</button>
-            </div>
-
-            <hr style="border-color: rgba(255,255,255,0.1); margin: 20px 0;">
-
-            <h4 style="color: #fff; margin: 0 0 10px 0;">Browser Options</h4>
-            <div style="display: flex; gap: 10px; flex-direction: column;">
-                <button onclick="openInChromeSmart()" class="secondary-btn" style="font-size: 13px; padding: 12px; display:flex; align-items:center; justify-content:center; gap:8px;">🌐 Open in Google Chrome</button>
-                <button onclick="openIncognitoHelper()" class="secondary-btn" style="font-size: 13px; padding: 12px; display:flex; align-items:center; justify-content:center; gap:8px;">🕵️ Open Incognito Tab</button>
-            </div>
-        </div>
-    </div>
-
     <script src="app.js"></script>
 </body>
 </html>
