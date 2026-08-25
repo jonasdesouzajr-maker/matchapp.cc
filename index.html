@@ -5,17 +5,12 @@
     <script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-2ECND229RR');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    
     <title>MatchApp | Your AI Streaming Concierge & Movie Finder</title>
     <meta name="description" content="MatchApp is your personal AI streaming concierge. Instantly discover personalized movie and TV show recommendations for Netflix, Max, and Prime Video.">
     <meta name="keywords" content="streaming concierge, AI movie finder, what to watch, movie recommendation app">
     <link rel="canonical" href="https://matchapp.cc/">
-
     <link rel="stylesheet" href="style.css">
-    
-    <!-- 💰 GOOGLE ADSENSE CORE SCRIPT -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -38,16 +33,10 @@
             </div>
         </div>
 
-        <!-- 🚀 TOP GOOGLE ADSENSE BANNER -->
         <div class="ad-placement fade-in" style="min-height: 100px;">
             <span style="font-size: 9px; color: #666; display: block; margin-bottom: 5px; font-weight: bold;">SPONSORED</span>
             <div class="ad-scale-wrapper" style="width: 100%; text-align: center;">
-                <ins class="adsbygoogle"
-                     style="display:block; width:100%;"
-                     data-ad-client="ca-pub-9541435081010948"
-                     data-ad-slot="2595698117"
-                     data-ad-format="auto"
-                     data-full-width-responsive="true"></ins>
+                <ins class="adsbygoogle" style="display:block; width:100%;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins>
                 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </div>
         </div>
@@ -71,9 +60,9 @@
                 <button id="profile-link-tab" onclick="window.location.href='profile.html'" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid var(--gold); color: var(--gold-glow); padding: 8px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 12px;">👤 Profile</button>
                 <button id="nav-upgrade-btn" onclick="window.location.href='pricing.html'" class="gold-btn" style="padding: 8px 12px; width: auto; font-size: 11px;">💎 VIP</button>
                 
-                <button id="nav-reg-btn" onclick="signInWithGoogle()" class="google-btn">
-                    <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.95H1.23v3.15C3.21 21.32 7.27 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.25c-.25-.72-.38-1.49-.38-2.25s.13-1.53.38-2.25V6.6H1.23C.45 8.17 0 9.93 0 12s.45 3.83 1.23 5.4l4.05-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.27 0 3.21 2.68 1.23 6.6l4.05 3.15c.95-2.84 3.6-4.95 6.72-4.95z"/></svg> Sign in
-                </button>
+                <!-- NEW AUTH BUTTON -->
+                <button id="nav-reg-btn" onclick="openAuthModal()" class="gold-btn" style="padding: 8px 14px; width: auto; font-size: 12px; box-shadow: none;">👤 Sign In</button>
+                
                 <button id="nav-logout-btn" onclick="doLogout()" style="display: none; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 8px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 11px;">Logout</button>
             </div>
         </header>
@@ -101,7 +90,6 @@
             <h3 style="color: var(--gold-glow); font-size: 20px; margin: 0;">Consulting AI Concierge...</h3>
         </div>
 
-        <!-- 🎥 IMMERSIVE MATCH RESULT PANEL -->
         <div id="result-box" class="premium-card fade-in" style="display: none; text-align: left;">
             <div id="res-header-bg" class="cinematic-header">
                 <div class="cinematic-overlay"></div>
@@ -110,81 +98,84 @@
                     <h2 id="res-title" class="cinematic-title">Movie Title</h2>
                 </div>
             </div>
-
             <p id="res-synopsis" style="color: #ddd; font-size: 15px; line-height: 1.6; margin: 0 0 20px 0;"></p>
-            
             <h4 style="color: var(--gold); font-size: 13px; text-transform: uppercase; margin: 0 0 10px 0; letter-spacing: 1px;">🎬 Official Trailer</h4>
-            <div class="video-container">
-                <iframe id="res-trailer" src="" allowfullscreen></iframe>
-            </div>
-
+            <div class="video-container"><iframe id="res-trailer" src="" allowfullscreen></iframe></div>
             <a id="res-direct-link" href="#" target="_blank" class="gold-btn" style="margin-bottom: 15px;">▶ Stream Now</a>
-
             <div class="action-grid">
                 <button onclick="saveToList()" class="secondary-btn" style="border-color: var(--gold); color: var(--gold-glow);">⭐ Watch Later</button>
                 <button onclick="markAsSeen()" class="secondary-btn" style="border-color: #25D366; color: #25D366;">✔️ I've Seen It</button>
                 <button onclick="markAsDisliked()" class="secondary-btn" style="border-color: #ff5252; color: #ff5252;">👎 Don't Like It</button>
             </div>
-
             <button onclick="location.reload()" class="secondary-btn" style="border: none; background: transparent; text-align: center;">🔙 Back to Concierge</button>
         </div>
 
-        <!-- 🚀 FOOTER GOOGLE ADSENSE BANNER -->
         <footer class="fade-in" style="margin-top: 20px;">
             <div class="ad-placement" style="background: transparent; border: none; box-shadow: none; min-height: 250px;">
                 <span style="font-size: 9px; color: #888; display: block; margin-bottom: 10px; font-weight: bold;">SPONSORED</span>
                 <div style="display: flex; justify-content: center; width: 100%;">
-                    <ins class="adsbygoogle"
-                         style="display:block; width:100%;"
-                         data-ad-client="ca-pub-9541435081010948"
-                         data-ad-slot="2595698117"
-                         data-ad-format="auto"
-                         data-full-width-responsive="true"></ins>
+                    <ins class="adsbygoogle" style="display:block; width:100%;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins>
                     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                 </div>
             </div>
         </footer>
 
-        <!-- 🛠️ POWERED BY / TECH STACK SECTION -->
         <div class="premium-card fade-in" style="padding: 25px 20px; text-align: center; margin-top: 35px; background: rgba(15, 15, 22, 0.5);">
             <h4 style="color: var(--gold); font-size: 13px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 15px 0;">Engineered With Industry-Leading Technology</h4>
             <div style="display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap; opacity: 0.85;">
-                <span style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 6px;">
-                    ⚡ Supabase <span style="font-size:10px; color:var(--text-muted);">(Auth & DB)</span>
-                </span>
-                <span style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 6px;">
-                    💳 Stripe <span style="font-size:10px; color:var(--text-muted);">(Secure Payments)</span>
-                </span>
-                <span style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 6px;">
-                    📊 Google Analytics <span style="font-size:10px; color:var(--text-muted);">(Metrics)</span>
-                </span>
-                <span style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 6px;">
-                    🎯 Google AdSense <span style="font-size:10px; color:var(--text-muted);">(Monetization)</span>
-                </span>
+                <span style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 6px;">⚡ Supabase</span>
+                <span style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 6px;">💳 Stripe</span>
+                <span style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 6px;">📊 Google Analytics</span>
+                <span style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 6px;">🎯 Google AdSense</span>
             </div>
         </div>
     </div>
     
+    <!-- 🔐 MAIN AUTH MODAL (EMAIL & GOOGLE) -->
+    <div id="main-auth-modal" class="modal-overlay">
+        <div class="premium-card modal-content" style="border: 1px solid var(--gold); padding: 30px 20px;">
+            <span class="close-x" onclick="closeAuthModal()">×</span>
+            <h2 style="color: var(--gold); font-size: 24px; margin: 0 0 10px 0;">Welcome</h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 25px;">Sign in or register to save your portfolio and lock in your profile details.</p>
+            
+            <button onclick="signInWithGoogle()" class="google-btn" style="width: 100%; padding: 14px; border-radius: 14px; margin-bottom: 20px; font-size: 15px;">
+                <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.95H1.23v3.15C3.21 21.32 7.27 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.25c-.25-.72-.38-1.49-.38-2.25s.13-1.53.38-2.25V6.6H1.23C.45 8.17 0 9.93 0 12s.45 3.83 1.23 5.4l4.05-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.27 0 3.21 2.68 1.23 6.6l4.05 3.15c.95-2.84 3.6-4.95 6.72-4.95z"/></svg> Continue with Google
+            </button>
+            
+            <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.15);"></div>
+                <span style="padding: 0 12px; color: var(--text-muted); font-size: 11px; font-weight: 900; letter-spacing: 1px;">OR EMAIL</span>
+                <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.15);"></div>
+            </div>
+
+            <input type="email" id="auth-email" placeholder="Email Address" style="margin-bottom: 12px; padding: 14px;">
+            <input type="password" id="auth-password" placeholder="Password (Min 6 chars)" style="margin-bottom: 20px; padding: 14px;">
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                <button onclick="handleEmailLogin()" class="secondary-btn" style="flex: 1; border-color: var(--gold); color: var(--gold-glow);">Login</button>
+                <button onclick="handleEmailSignup()" class="gold-btn" style="flex: 1; padding: 14px;">Register</button>
+            </div>
+            
+            <p id="auth-message" style="font-size: 12px; margin-top: 15px; display: none; font-weight: bold;"></p>
+        </div>
+    </div>
+
     <!-- 🛑 ADBLOCK MODAL -->
     <div id="adblock-modal" class="modal-overlay">
         <div class="premium-card modal-content" style="border: 2px solid #ff5252; background: rgba(20,5,5,0.95); padding: 25px 18px;">
             <div style="font-size: 50px; margin-bottom: 10px;">🛑</div>
             <h2 style="color: #ff5252; font-size: 24px; margin: 0 0 10px 0;">Ad-Blocker Detected</h2>
             <p style="color: #fff; font-size: 13px; line-height: 1.5; margin-bottom: 20px;">MatchApp is 100% free. Please support us by pausing your ad-blocker or upgrading to VIP status.</p>
-
             <button onclick="showAdblockGuide()" class="secondary-btn" style="border-color: #ff5252; color: #ff5252; margin-bottom: 10px;">🛠️ How to Disable</button>
             <button onclick="location.reload()" class="gold-btn" style="background: #ff5252; color: #fff; margin-bottom: 15px;">🔄 Reload Page</button>
-
             <div id="adblock-signin-prompt">
-                <button onclick="signInWithGoogle()" class="google-btn" style="width: 100%; padding: 12px;">Sign in to Get VIP Ad-Free</button>
+                <button onclick="openAuthModal()" class="google-btn" style="width: 100%; padding: 12px; background: var(--gold); border: none; color: #000;">👤 Sign in to Get VIP Ad-Free</button>
             </div>
-            <div id="adblock-buy-prompt" style="display: none;">
-                <button onclick="window.location.href='pricing.html'" class="gold-btn">💎 Upgrade to VIP</button>
-            </div>
+            <div id="adblock-buy-prompt" style="display: none;"><button onclick="window.location.href='pricing.html'" class="gold-btn">💎 Upgrade to VIP</button></div>
         </div>
     </div>
 
-    <!-- 📺 REWARDED AD MODAL (GOOGLE ADSENSE) -->
+    <!-- 📺 REWARDED AD MODAL -->
     <div id="reward-ad-modal" class="modal-overlay">
         <div class="premium-card modal-content" style="border: 1px solid var(--gold);">
             <h3 style="color: var(--gold); margin: 0 0 10px 0; font-size: 20px;">Sponsor Break</h3>
@@ -197,7 +188,6 @@
             <button id="close-ad-btn" class="secondary-btn" style="display: none; border-color: #25D366; color: #25D366; font-weight: 900;" onclick="closeAdAndClaim()">✖ Close & Get Match</button>
         </div>
     </div>
-
     <script src="app.js"></script>
 </body>
 </html>
