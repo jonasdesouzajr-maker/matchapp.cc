@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>MatchApp | VIP Store</title>
     <link rel="stylesheet" href="style.css">
+    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -18,62 +20,92 @@
         <span class="sf-item brand-disney" style="top: 70%; animation: flyPath2 11s linear infinite 1s;">DISNEY+</span>
     </div>
 
-    <div class="container">
-        <header class="app-header fade-in" style="justify-content: space-between;">
-            <a href="index.html" class="header-brand-area" style="text-decoration: none;">
-                <div class="brand-text-container">
-                    <span class="app-title-main" style="font-size: 24px;">MatchApp</span>
-                    <span class="app-author">Store</span>
-                </div>
-            </a>
-            <button onclick="window.location.href='index.html'" class="secondary-btn" style="width: auto; padding: 8px 14px; font-size: 12px;">🔙 Back</button>
-        </header>
-
-        <div class="fade-in" style="text-align: center; margin-bottom: 30px;">
-            <h1 style="color: var(--gold); font-size: clamp(28px, 5vw, 40px); margin: 0 0 8px 0;">Elevate Your Experience</h1>
-            <p style="color: #fff; font-size: 14px; opacity: 0.9; max-width: 480px; margin: 0 auto; line-height: 1.5;">Unlock unlimited AI matchmaking, remove all interruptions, and get priority support with MatchApp Premium.</p>
-        </div>
-
-        <div class="pricing-grid fade-in">
-            <div class="pricing-card" onclick="processCheckout('ad_free')">
-                <h3 class="pricing-title">Essential Ad-Free</h3>
-                <h2 class="pricing-price">$9.99 <span>/ Lifetime</span></h2>
-                <ul class="pricing-features">
-                    <li>Permanently Removes All Ads</li>
-                    <li>No ad-blocker popups ever</li>
-                    <li>Faster streaming load times</li>
-                </ul>
-                <button id="btn-ad_free" class="secondary-btn" style="border-color: var(--gold); color: var(--gold-glow);">Unlock Lifetime</button>
-            </div>
-
-            <div class="pricing-card featured" onclick="processCheckout('vip_monthly')">
-                <div class="badge-popular">Most Popular</div>
-                <h3 class="pricing-title" style="color: var(--gold-glow);">VIP Monthly</h3>
-                <h2 class="pricing-price">$4.99 <span>/ Month</span></h2>
-                <ul class="pricing-features">
-                    <li>Unlimited Daily Matchmaking</li>
-                    <li>100% Ad-Free Experience</li>
-                    <li>Exclusive Premium Profile Badge</li>
-                    <li>Priority Support</li>
-                </ul>
-                <button id="btn-vip_monthly" class="gold-btn" style="font-size: 16px; padding: 18px;">Start Monthly VIP</button>
-            </div>
-
-            <div class="pricing-card" onclick="processCheckout('vip_annual')">
-                <h3 class="pricing-title">VIP Annual</h3>
-                <h2 class="pricing-price">$39.99 <span>/ Year</span></h2>
-                <ul class="pricing-features">
-                    <li>All Monthly VIP Features</li>
-                    <li>Save 33% compared to Monthly</li>
-                    <li>Early access to new features</li>
-                </ul>
-                <button id="btn-vip_annual" class="secondary-btn">Get Annual Pass</button>
-            </div>
-        </div>
+    <!-- 🚀 MASTER PAGE WRAPPER FOR DUAL-ADS -->
+    <div class="page-wrapper">
         
-        <div class="info-footer-small fade-in" style="margin-top: 30px;">
-            🔒 Payments are encrypted, fully secure, and processed internationally via <strong>Stripe Inc</strong>.
+        <!-- 💎 LEFT ADSENSE SIDEBAR -->
+        <aside class="sidebar-ad fade-in">
+            <span class="ad-label">SPONSORED</span>
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </aside>
+
+        <!-- 📱 MAIN APP CONTAINER -->
+        <div class="container">
+            <header class="app-header fade-in" style="justify-content: space-between;">
+                <a href="index.html" class="header-brand-area" style="text-decoration: none;">
+                    <div class="brand-text-container">
+                        <span class="app-title-main" style="font-size: 24px;">MatchApp</span>
+                        <span class="app-author">Store</span>
+                    </div>
+                </a>
+                <button onclick="window.location.href='index.html'" class="secondary-btn" style="width: auto; padding: 8px 14px; font-size: 12px;">🔙 Back</button>
+            </header>
+
+            <div class="fade-in" style="text-align: center; margin-bottom: 30px;">
+                <h1 style="color: var(--gold); font-size: clamp(28px, 5vw, 40px); margin: 0 0 8px 0;">Elevate Your Experience</h1>
+                <p style="color: #fff; font-size: 14px; opacity: 0.9; max-width: 480px; margin: 0 auto; line-height: 1.5;">Unlock unlimited AI matchmaking, remove all interruptions, and get priority support with MatchApp Premium.</p>
+            </div>
+
+            <div class="pricing-grid fade-in">
+                <div class="pricing-card" onclick="processCheckout('ad_free')">
+                    <h3 class="pricing-title">Essential Ad-Free</h3>
+                    <h2 class="pricing-price">$9.99 <span>/ Lifetime</span></h2>
+                    <ul class="pricing-features">
+                        <li>Permanently Removes All Ads</li>
+                        <li>No ad-blocker popups ever</li>
+                        <li>Faster streaming load times</li>
+                    </ul>
+                    <button id="btn-ad_free" class="secondary-btn" style="border-color: var(--gold); color: var(--gold-glow);">Unlock Lifetime</button>
+                </div>
+
+                <div class="pricing-card featured" onclick="processCheckout('vip_monthly')">
+                    <div class="badge-popular">Most Popular</div>
+                    <h3 class="pricing-title" style="color: var(--gold-glow);">VIP Monthly</h3>
+                    <h2 class="pricing-price">$4.99 <span>/ Month</span></h2>
+                    <ul class="pricing-features">
+                        <li>Unlimited Daily Matchmaking</li>
+                        <li>100% Ad-Free Experience</li>
+                        <li>Exclusive Premium Profile Badge</li>
+                        <li>Priority Support</li>
+                    </ul>
+                    <button id="btn-vip_monthly" class="gold-btn" style="font-size: 16px; padding: 18px;">Start Monthly VIP</button>
+                </div>
+
+                <div class="pricing-card" onclick="processCheckout('vip_annual')">
+                    <h3 class="pricing-title">VIP Annual</h3>
+                    <h2 class="pricing-price">$39.99 <span>/ Year</span></h2>
+                    <ul class="pricing-features">
+                        <li>All Monthly VIP Features</li>
+                        <li>Save 33% compared to Monthly</li>
+                        <li>Early access to new features</li>
+                    </ul>
+                    <button id="btn-vip_annual" class="secondary-btn">Get Annual Pass</button>
+                </div>
+            </div>
+            
+            <div class="info-footer-small fade-in" style="margin-top: 30px;">
+                🔒 Payments are encrypted, fully secure, and processed internationally via <strong>Stripe Inc</strong>.
+            </div>
+
+            <!-- 🌟 ADSTERRA BOTTOM BANNER -->
+            <footer class="fade-in" style="margin-top: 20px;">
+                <div class="ad-placement" style="background: transparent; border: none; box-shadow: none;">
+                    <span class="ad-label">SPONSORED</span>
+                    <div class="adsterra-bot-wrapper">
+                        <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script>
+                        <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
+                    </div>
+                </div>
+            </footer>
         </div>
+
+        <!-- 💎 RIGHT ADSENSE SIDEBAR -->
+        <aside class="sidebar-ad fade-in">
+            <span class="ad-label">SPONSORED</span>
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </aside>
     </div>
     
     <!-- 🔐 MAIN AUTH MODAL (EMAIL & GOOGLE) -->
@@ -104,6 +136,7 @@
             <p id="auth-message" style="font-size: 12px; margin-top: 15px; display: none; font-weight: bold;"></p>
         </div>
     </div>
+    
     <script src="app.js"></script>
 </body>
 </html>
