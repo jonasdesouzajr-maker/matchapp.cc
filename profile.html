@@ -59,18 +59,38 @@
                         <input type="text" id="profile-age-display" disabled style="opacity: 0.7;" placeholder="Calculated automatically">
                     </div>
                 </div>
-                <div class="input-group">
-                    <label>Star Sign <span style="color:#ff5252;">*Permanent</span></label>
-                    <select id="profile-starsign">
-                        <option value="">Select your Star Sign...</option>
-                        <option value="Aries">Aries ♈</option><option value="Taurus">Taurus ♉</option>
-                        <option value="Gemini">Gemini ♊</option><option value="Cancer">Cancer ♋</option>
-                        <option value="Leo">Leo ♌</option><option value="Virgo">Virgo ♍</option>
-                        <option value="Libra">Libra ♎</option><option value="Scorpio">Scorpio ♏</option>
-                        <option value="Sagittarius">Sagittarius ♐</option><option value="Capricorn">Capricorn ♑</option>
-                        <option value="Aquarius">Aquarius ♒</option><option value="Pisces">Pisces ♓</option>
-                    </select>
+                
+                <!-- NEW: STAR SIGN AND SEXUAL ORIENTATION GRID -->
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Star Sign <span style="color:#ff5252;">*Permanent</span></label>
+                        <select id="profile-starsign">
+                            <option value="">Select your Star Sign...</option>
+                            <option value="Aries">Aries ♈</option><option value="Taurus">Taurus ♉</option>
+                            <option value="Gemini">Gemini ♊</option><option value="Cancer">Cancer ♋</option>
+                            <option value="Leo">Leo ♌</option><option value="Virgo">Virgo ♍</option>
+                            <option value="Libra">Libra ♎</option><option value="Scorpio">Scorpio ♏</option>
+                            <option value="Sagittarius">Sagittarius ♐</option><option value="Capricorn">Capricorn ♑</option>
+                            <option value="Aquarius">Aquarius ♒</option><option value="Pisces">Pisces ♓</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Orientation <span style="color:#ff5252;">*Permanent</span></label>
+                        <select id="profile-orientation">
+                            <option value="">Select...</option>
+                            <option value="Straight">Straight</option>
+                            <option value="Gay">Gay</option>
+                            <option value="Lesbian">Lesbian</option>
+                            <option value="Bisexual">Bisexual</option>
+                            <option value="Pansexual">Pansexual</option>
+                            <option value="Asexual">Asexual</option>
+                            <option value="Queer">Queer</option>
+                            <option value="Other">Other</option>
+                            <option value="Prefer not to say">Prefer not to say</option>
+                        </select>
+                    </div>
                 </div>
+
             </div>
             <button id="save-profile-btn" onclick="saveProfileData()" class="gold-btn" style="margin-bottom: 25px;">💾 Save & Permanently Lock Info</button>
 
@@ -104,6 +124,35 @@
         </div>
     </div>
     
+    <!-- 🔐 MAIN AUTH MODAL (EMAIL & GOOGLE) -->
+    <div id="main-auth-modal" class="modal-overlay">
+        <div class="premium-card modal-content" style="border: 1px solid var(--gold); padding: 30px 20px;">
+            <span class="close-x" onclick="closeAuthModal()">×</span>
+            <h2 style="color: var(--gold); font-size: 24px; margin: 0 0 10px 0;">Welcome</h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 25px;">Sign in or register to save your portfolio and lock in your profile details.</p>
+            
+            <button onclick="signInWithGoogle()" class="google-btn" style="width: 100%; padding: 14px; border-radius: 14px; margin-bottom: 20px; font-size: 15px;">
+                <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.95H1.23v3.15C3.21 21.32 7.27 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.25c-.25-.72-.38-1.49-.38-2.25s.13-1.53.38-2.25V6.6H1.23C.45 8.17 0 9.93 0 12s.45 3.83 1.23 5.4l4.05-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.27 0 3.21 2.68 1.23 6.6l4.05 3.15c.95-2.84 3.6-4.95 6.72-4.95z"/></svg> Continue with Google
+            </button>
+            
+            <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.15);"></div>
+                <span style="padding: 0 12px; color: var(--text-muted); font-size: 11px; font-weight: 900; letter-spacing: 1px;">OR EMAIL</span>
+                <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.15);"></div>
+            </div>
+
+            <input type="email" id="auth-email" placeholder="Email Address" style="margin-bottom: 12px; padding: 14px;">
+            <input type="password" id="auth-password" placeholder="Password (Min 6 chars)" style="margin-bottom: 20px; padding: 14px;">
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                <button onclick="handleEmailLogin()" class="secondary-btn" style="flex: 1; border-color: var(--gold); color: var(--gold-glow);">Login</button>
+                <button onclick="handleEmailSignup()" class="gold-btn" style="flex: 1; padding: 14px;">Register</button>
+            </div>
+            
+            <p id="auth-message" style="font-size: 12px; margin-top: 15px; display: none; font-weight: bold;"></p>
+        </div>
+    </div>
+
     <script src="app.js"></script>
     <script>
         window.addEventListener('DOMContentLoaded', () => {
@@ -115,6 +164,7 @@
                         const meta = session.user.user_metadata || {};
                         if(meta.full_name) document.getElementById('profile-name').value = meta.full_name;
                         if(meta.starsign) document.getElementById('profile-starsign').value = meta.starsign;
+                        if(meta.sexual_orientation) document.getElementById('profile-orientation').value = meta.sexual_orientation;
                         
                         if(meta.birthdate) {
                             document.getElementById('profile-dob').value = meta.birthdate;
@@ -124,6 +174,7 @@
                         if (meta.profile_locked) {
                             document.getElementById('profile-dob').disabled = true; document.getElementById('profile-dob').style.opacity = '0.5';
                             document.getElementById('profile-starsign').disabled = true; document.getElementById('profile-starsign').style.opacity = '0.5';
+                            document.getElementById('profile-orientation').disabled = true; document.getElementById('profile-orientation').style.opacity = '0.5';
                             document.getElementById('profile-name').disabled = true; document.getElementById('profile-name').style.opacity = '0.5';
                             document.getElementById('save-profile-btn').style.display = 'none';
                             document.getElementById('lock-status').innerHTML = '🔒 Profile Data Permanently Locked';
@@ -143,9 +194,7 @@
                 const hGrid = document.getElementById('history-grid');
                 if (window.seenList && window.seenList.length > 0) {
                     hGrid.innerHTML = '';
-                    window.seenList.forEach(title => { 
-                        hGrid.innerHTML += `<div class="history-item">✔️ ${title}</div>`; 
-                    });
+                    window.seenList.forEach(title => { hGrid.innerHTML += `<div class="history-item">✔️ ${title}</div>`; });
                 }
             }, 800);
         });
