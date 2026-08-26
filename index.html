@@ -8,23 +8,65 @@
     
     <!-- 🚀 2026 SEO OPTIMIZED META TAGS -->
     <title>MatchApp | Best AI Movie Finder & Streaming Recommendation App</title>
-    <meta name="description" content="Stop scrolling and find what to watch tonight. MatchApp is the best AI movie finder and recommendation app for Netflix, Max, Prime Video, Doramas, and Spotify. Duplicate-free matches.">
-    <meta name="keywords" content="ai movie finder, movie recommendation app, streaming concierge, what to watch tonight, stop scrolling what to watch, best movies on netflix 2026, where to stream, movie tracker app, ai streaming assistant, dorama recommendations, spotify podcast finder, prime video recommendations">
+    <meta name="description" content="Stop scrolling and find what to watch tonight. MatchApp is the best AI movie finder and streaming concierge for Netflix, Max, Prime Video, Doramas, and Spotify.">
+    <meta name="keywords" content="free ai movie finder, best movie recommendation app, streaming concierge, what to watch tonight, stop scrolling what to watch, best netflix movies 2026, where to stream, ai movie tracker, dorama recommendations, spotify podcast finder, prime video recommendations, hbo max finder, ai streaming assistant, matchapp">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://matchapp.cc/">
+    <meta name="author" content="Jonas Junior">
+
+    <!-- 🌐 OPEN GRAPH (FACEBOOK, LINKEDIN, DISCORD) -->
+    <meta property="og:title" content="MatchApp | AI Streaming Concierge">
+    <meta property="og:description" content="Find your perfect movie, dorama, or podcast match instantly without the endless scrolling.">
+    <meta property="og:image" content="https://matchapp.cc/logo.jpeg">
+    <meta property="og:url" content="https://matchapp.cc/">
+    <meta property="og:type" content="website">
+
+    <!-- 🐦 TWITTER CARDS -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="MatchApp | AI Movie Finder">
+    <meta name="twitter:description" content="Stop scrolling and find what to watch tonight on Netflix, Max, and Prime Video using AI.">
+    <meta name="twitter:image" content="https://matchapp.cc/logo.jpeg">
+    
+    <!-- 🧩 JSON-LD STRUCTURED DATA -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "MatchApp",
+      "operatingSystem": "Web, iOS, Android, Windows",
+      "applicationCategory": "EntertainmentApplication",
+      "description": "Your personal AI streaming concierge. Instantly discover duplicate-free movie, series, dorama, and podcast matches across Netflix, Max, Prime Video, and Spotify.",
+      "url": "https://matchapp.cc/",
+      "image": "https://matchapp.cc/logo.jpeg",
+      "creator": {
+        "@type": "Person",
+        "name": "Jonas Junior"
+      },
+      "offers": {
+        "@type": "AggregateOffer",
+        "priceCurrency": "USD",
+        "lowPrice": "0.00",
+        "highPrice": "39.99",
+        "offerCount": "3"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "reviewCount": "1250"
+      }
+    }
+    </script>
     
     <link rel="stylesheet" href="style.css">
     
     <!-- 🎯 Google AdSense Core Script -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div id="real-time-clock" class="real-time-clock fade-in">Loading Time...</div>
     <div class="luxury-bg"><div class="floating-orb orb-1"></div><div class="floating-orb orb-2"></div></div>
     
-    <!-- BRAND FLAGS BACKGROUND -->
     <div class="stream-flags">
         <span class="sf-item brand-netflix" style="top: 10%; animation: flyPath1 8s linear infinite;">NETFLIX</span>
         <span class="sf-item brand-prime" style="top: 30%; animation: flyPath2 10s linear infinite 2s;">PRIME</span>
@@ -32,19 +74,14 @@
         <span class="sf-item brand-disney" style="top: 70%; animation: flyPath2 11s linear infinite 1s;">DISNEY+</span>
     </div>
 
-    <!-- MAIN DUAL-AD LAYOUT -->
     <div class="page-wrapper">
-        
-        <!-- LEFT SIDEBAR: GOOGLE ADSENSE -->
         <aside class="sidebar-ad fade-in">
             <span class="ad-label">SPONSORED</span>
             <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins>
             <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </aside>
 
-        <!-- CENTER CONTENT CONTAINER -->
         <div class="container">
-            
             <div id="chrome-banner" class="chrome-banner fade-in">
                 <div class="chrome-text">Open in Chrome for best performance.</div>
                 <div style="display: flex; align-items: center; gap: 8px;">
@@ -53,7 +90,6 @@
                 </div>
             </div>
 
-            <!-- HEADER AD: ADSTERRA (728x90) -->
             <header class="ad-placement fade-in">
                 <span class="ad-label">SPONSORED</span>
                 <div class="adsterra-top-wrapper">
@@ -62,10 +98,9 @@
                 </div>
             </header>
 
-            <!-- APP NAVIGATION -->
             <nav class="app-header fade-in">
-                <a href="index.html" class="header-brand-area">
-                    <picture><source srcset="logo.jpeg" type="image/jpeg"><img src="logo.jpeg" alt="Logo" class="brand-logo"></picture>
+                <a href="/" class="header-brand-area">
+                    <picture><source srcset="logo.jpeg" type="image/jpeg"><img src="logo.jpeg" alt="Logo" class="brand-logo" loading="lazy" decoding="async"></picture>
                     <div class="brand-text-container">
                         <span class="app-title-main">MatchApp</span>
                         <span class="app-title-sub">Streaming Concierge</span>
@@ -74,12 +109,12 @@
                 
                 <div id="header-auth-area" style="display: flex; gap: 8px; align-items: center;">
                     <label for="profile-pic-upload" id="profile-pic-container" class="profile-pic-container">
-                        <img id="profile-pic-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 24 24' fill='%23D4AF37'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" alt="Avatar">
+                        <img id="profile-pic-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 24 24' fill='%23D4AF37'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" alt="Avatar" loading="lazy" decoding="async">
                     </label>
                     <input type="file" id="profile-pic-upload" accept="image/*" style="display: none;" onchange="handleProfilePic(event)">
 
-                    <button id="profile-link-tab" onclick="window.location.href='profile.html'" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid var(--gold); color: var(--gold-glow); padding: 8px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 12px;">👤 Profile</button>
-                    <button id="nav-upgrade-btn" onclick="window.location.href='pricing.html'" class="gold-btn" style="padding: 8px 12px; width: auto; font-size: 11px;">💎 VIP</button>
+                    <button id="profile-link-tab" onclick="window.location.href='/profile'" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid var(--gold); color: var(--gold-glow); padding: 8px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 12px;">👤 Profile</button>
+                    <button id="nav-upgrade-btn" onclick="window.location.href='/pricing'" class="gold-btn" style="padding: 8px 12px; width: auto; font-size: 11px;">💎 VIP</button>
                     <button id="nav-reg-btn" onclick="openAuthModal()" class="gold-btn" style="padding: 8px 14px; width: auto; font-size: 12px; box-shadow: none;">👤 Sign In</button>
                     <button id="nav-logout-btn" onclick="doLogout()" style="display: none; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 8px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 11px;">Logout</button>
                 </div>
@@ -98,37 +133,27 @@
                         <label>Format</label>
                         <select id="q-category">
                             <option value="any">Surprise Me (All Formats)</option>
-                            <option value="movie">Movies</option>
-                            <option value="series">TV Series</option>
-                            <option value="vertical_drama">Vertical Dramas & Doramas</option>
-                            <option value="short">YouTube Shorts</option>
-                            <option value="yt_video">YouTube Videos</option>
-                            <option value="spotify_track">Spotify Music</option>
-                            <option value="spotify_playlist">Spotify Playlists</option>
-                            <option value="spotify_podcast">Spotify Podcasts</option>
+                            <option value="movie">Movies</option><option value="series">TV Series</option>
+                            <option value="vertical_drama">Vertical Dramas & Doramas</option><option value="short">YouTube Shorts</option>
+                            <option value="yt_video">YouTube Videos</option><option value="spotify_track">Spotify Music</option>
+                            <option value="spotify_playlist">Spotify Playlists</option><option value="spotify_podcast">Spotify Podcasts</option>
                         </select>
                     </div>
                     <div class="input-group">
                         <label>Platform</label>
                         <select id="q-platform">
                             <option value="any">Any Platform</option>
-                            <option value="Netflix">Netflix</option>
-                            <option value="Max">Max</option>
-                            <option value="Prime">Prime Video</option>
-                            <option value="Globoplay">Globoplay</option>
-                            <option value="YouTube">YouTube</option>
-                            <option value="Spotify">Spotify</option>
-                            <option value="ReelShort">ReelShort / Viki</option>
+                            <option value="Netflix">Netflix</option><option value="Max">Max</option>
+                            <option value="Prime">Prime Video</option><option value="Globoplay">Globoplay</option>
+                            <option value="YouTube">YouTube</option><option value="Spotify">Spotify</option><option value="ReelShort">ReelShort / Viki</option>
                         </select>
                     </div>
                     <div class="input-group">
                         <label>Mood</label>
                         <select id="q-mood">
                             <option value="any">Any Mood</option>
-                            <option value="intense">Intense</option>
-                            <option value="laugh">Humor</option>
-                            <option value="romantic">Romance</option>
-                            <option value="chill">Chill & Relax</option>
+                            <option value="intense">Intense</option><option value="laugh">Humor</option>
+                            <option value="romantic">Romance</option><option value="chill">Chill & Relax</option>
                         </select>
                     </div>
                 </div>
@@ -140,11 +165,10 @@
                 <h3 style="color: var(--gold-glow); font-size: 20px; margin: 0;">Consulting AI Concierge...</h3>
             </div>
 
-            <!-- 🎥 IMMERSIVE & NON-CROPPED RESULT CARD -->
             <div id="result-box" class="premium-card fade-in" style="display: none; text-align: left;">
-                
                 <div class="poster-preview-card">
-                    <img id="res-poster-img" src="" alt="Poster">
+                    <!-- Added Lazy Loading for Performance -->
+                    <img id="res-poster-img" src="" alt="Poster" loading="lazy" decoding="async">
                 </div>
 
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -157,7 +181,7 @@
                 <div id="res-trailer-container">
                     <h4 style="color: var(--gold); font-size: 13px; text-transform: uppercase; margin: 0 0 10px 0; letter-spacing: 1px;">🎬 Official Video / Trailer</h4>
                     <div class="video-container">
-                        <iframe id="res-trailer" src="" allowfullscreen></iframe>
+                        <iframe id="res-trailer" src="" allowfullscreen loading="lazy"></iframe>
                     </div>
                 </div>
 
@@ -171,7 +195,6 @@
                     <button onclick="markAsDisliked()" class="secondary-btn" style="border-color: #ff5252; color: #ff5252;">👎 Don't Like It</button>
                 </div>
 
-                <!-- IN-FEED GOOGLE ADSENSE PLACEHOLDER (Will populate via Auto-Ads) -->
                 <div class="ad-placement" style="background: transparent; border: none; box-shadow: none; margin: 10px 0; min-height: 100px;">
                     <ins class="adsbygoogle" style="display:block" data-ad-format="fluid" data-ad-layout-key="-6t+ed+2i-1n-4w" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117"></ins>
                     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
@@ -180,7 +203,6 @@
                 <button onclick="location.reload()" class="secondary-btn" style="border: none; background: transparent; text-align: center;">🔙 Back to Concierge</button>
             </div>
 
-            <!-- FOOTER AD: ADSTERRA (300x250) -->
             <footer class="ad-placement fade-in" style="margin-top: 20px;">
                 <span class="ad-label">SPONSORED</span>
                 <div class="adsterra-bot-wrapper">
@@ -188,24 +210,13 @@
                     <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
                 </div>
             </footer>
-
-            <div class="premium-card fade-in" style="padding: 25px 20px; text-align: center; margin-top: 25px; background: rgba(15, 15, 22, 0.5);">
-                <h4 style="color: var(--gold); font-size: 13px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 15px 0;">Engineered With Industry-Leading Technology</h4>
-                <div style="display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap; opacity: 0.85;">
-                    <span style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 6px;">⚡ Supabase</span>
-                    <span style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 6px;">💳 Stripe</span>
-                    <span style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 6px;">📊 Google Analytics</span>
-                </div>
-            </div>
         </div>
 
-        <!-- RIGHT SIDEBAR: GOOGLE ADSENSE -->
         <aside class="sidebar-ad fade-in">
             <span class="ad-label">SPONSORED</span>
             <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins>
             <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </aside>
-
     </div>
     
     <!-- 🔐 MAIN AUTH MODAL -->
@@ -214,20 +225,14 @@
             <span class="close-x" onclick="closeAuthModal()">×</span>
             <h2 style="color: var(--gold); font-size: 24px; margin: 0 0 10px 0;">Welcome</h2>
             <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 25px;">Sign in or register to save your portfolio and lock in your profile details.</p>
-            
             <button onclick="signInWithGoogle()" class="google-btn" style="width: 100%; padding: 14px; border-radius: 14px; margin-bottom: 20px; font-size: 15px;">
                 <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.95H1.23v3.15C3.21 21.32 7.27 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.25c-.25-.72-.38-1.49-.38-2.25s.13-1.53.38-2.25V6.6H1.23C.45 8.17 0 9.93 0 12s.45 3.83 1.23 5.4l4.05-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.27 0 3.21 2.68 1.23 6.6l4.05 3.15c.95-2.84 3.6-4.95 6.72-4.95z"/></svg> Continue with Google
             </button>
-            
             <div style="display: flex; align-items: center; margin-bottom: 20px;">
-                <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.15);"></div>
-                <span style="padding: 0 12px; color: var(--text-muted); font-size: 11px; font-weight: 900; letter-spacing: 1px;">OR EMAIL</span>
-                <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.15);"></div>
+                <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.15);"></div><span style="padding: 0 12px; color: var(--text-muted); font-size: 11px; font-weight: 900; letter-spacing: 1px;">OR EMAIL</span><div style="flex: 1; height: 1px; background: rgba(255,255,255,0.15);"></div>
             </div>
-
             <input type="email" id="auth-email" placeholder="Email Address" style="margin-bottom: 12px; padding: 14px;">
             <input type="password" id="auth-password" placeholder="Password (Min 6 chars)" style="margin-bottom: 20px; padding: 14px;">
-            
             <div style="display: flex; gap: 10px; margin-bottom: 10px;">
                 <button onclick="handleEmailLogin()" class="secondary-btn" style="flex: 1; border-color: var(--gold); color: var(--gold-glow);">Login</button>
                 <button onclick="handleEmailSignup()" class="gold-btn" style="flex: 1; padding: 14px;">Register</button>
@@ -236,18 +241,21 @@
         </div>
     </div>
 
-    <!-- 🛑 ADBLOCK MODAL -->
+    <!-- 🛑 NEW ADBLOCK RECOVERY UI -->
     <div id="adblock-modal" class="modal-overlay">
         <div class="premium-card modal-content" style="border: 2px solid #ff5252; background: rgba(20,5,5,0.95); padding: 25px 18px;">
             <div style="font-size: 50px; margin-bottom: 10px;">🛑</div>
             <h2 style="color: #ff5252; font-size: 24px; margin: 0 0 10px 0;">Ad-Blocker Detected</h2>
-            <p style="color: #fff; font-size: 13px; line-height: 1.5; margin-bottom: 20px;">MatchApp is 100% free. Please support us by pausing your ad-blocker or upgrading to VIP status.</p>
+            <p style="color: #fff; font-size: 13px; line-height: 1.5; margin-bottom: 20px;">MatchApp is 100% free. Please support us by pausing your Ad-Blocker or Microsoft Edge Tracking Prevention.</p>
             <button onclick="showAdblockGuide()" class="secondary-btn" style="border-color: #ff5252; color: #ff5252; margin-bottom: 10px;">🛠️ How to Disable</button>
-            <button onclick="location.reload()" class="gold-btn" style="background: #ff5252; color: #fff; margin-bottom: 15px;">🔄 Reload Page</button>
+            
+            <!-- Real-Time Re-Check Button (Prevents Need for Full Refresh) -->
+            <button onclick="window.checkAdBlocker()" class="gold-btn" style="background: #ff5252; color: #fff; margin-bottom: 15px;">✔️ I Disabled It (Check Now)</button>
+            
             <div id="adblock-signin-prompt">
                 <button onclick="openAuthModal()" class="google-btn" style="width: 100%; padding: 12px; background: var(--gold); border: none; color: #000;">👤 Sign in to Get VIP Ad-Free</button>
             </div>
-            <div id="adblock-buy-prompt" style="display: none;"><button onclick="window.location.href='pricing.html'" class="gold-btn">💎 Upgrade to VIP</button></div>
+            <div id="adblock-buy-prompt" style="display: none;"><button onclick="window.location.href='/pricing'" class="gold-btn">💎 Upgrade to VIP</button></div>
         </div>
     </div>
 
@@ -256,12 +264,10 @@
         <div class="premium-card modal-content" style="border: 1px solid var(--gold);">
             <h3 style="color: var(--gold); margin: 0 0 10px 0; font-size: 20px;">Sponsor Break</h3>
             <p style="font-size: 12px; color: var(--text-muted);">Watch this short sponsor ad to unlock your next match!</p>
-            
             <div class="ad-placement" style="background: rgba(0,0,0,0.8); min-height: 200px; margin: 15px 0;">
                 <ins class="adsbygoogle" style="display:block; width:100%;" data-ad-format="fluid" data-ad-layout-key="-6t+ed+2i-1n-4w" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117"></ins>
                 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </div>
-            
             <button id="claim-retry-btn" class="gold-btn" disabled style="opacity: 0.5;">Wait <span id="ad-timer">15</span>s to claim...</button>
             <button id="close-ad-btn" class="secondary-btn" style="display: none; border-color: #25D366; color: #25D366; font-weight: 900;" onclick="closeAdAndClaim()">✖ Close & Get Match</button>
         </div>
