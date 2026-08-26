@@ -3,8 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
     <title>MatchApp | My Profile Hub</title>
+    <meta name="description" content="Manage your AI streaming concierge preferences, save your watch later portfolio, and lock your identity securely on MatchApp.">
+    <meta name="robots" content="noindex, follow">
+    
     <link rel="stylesheet" href="style.css">
+    
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -19,7 +24,9 @@
         <span class="sf-item brand-disney" style="top: 70%; animation: flyPath2 11s linear infinite 1s;">DISNEY+</span>
     </div>
 
+    <!-- MAIN DUAL-AD LAYOUT -->
     <div class="page-wrapper">
+        
         <aside class="sidebar-ad fade-in">
             <span class="ad-label">SPONSORED</span>
             <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins>
@@ -64,7 +71,7 @@
                     
                     <p id="lock-status" style="text-align: center; font-size: 11px; font-weight: bold; margin-bottom: 15px; color: var(--gold);">⚠️ Fields below are unsaved</p>
 
-                    <div class="input-grid" style="margin-bottom: 14px;">
+                    <div class="input-grid">
                         <div class="input-group">
                             <label>Full Name</label>
                             <input type="text" id="profile-name" placeholder="Enter your full name...">
@@ -75,7 +82,7 @@
                         </div>
                     </div>
                     
-                    <div class="input-grid" style="margin-bottom: 14px;">
+                    <div class="input-grid">
                         <div class="input-group">
                             <label>Birthdate (DD/MM/YYYY)</label>
                             <input type="text" id="profile-dob" placeholder="e.g. 10/10/1986" maxlength="10">
@@ -170,13 +177,11 @@
                 <button onclick="doLogout()" class="secondary-btn" style="border-color:#ff5252; color:#ff5252; background: rgba(255,82,82,0.1);">Logout</button>
             </div>
             
-            <footer class="fade-in" style="margin-top: 20px;">
-                <div class="ad-placement" style="background: transparent; border: none; box-shadow: none;">
-                    <span class="ad-label">SPONSORED</span>
-                    <div class="adsterra-bot-wrapper">
-                        <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script>
-                        <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
-                    </div>
+            <footer class="ad-placement fade-in" style="margin-top: 20px;">
+                <span class="ad-label">SPONSORED</span>
+                <div class="adsterra-bot-wrapper">
+                    <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script>
+                    <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
                 </div>
             </footer>
         </div>
@@ -186,6 +191,7 @@
             <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins>
             <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </aside>
+
     </div>
     
     <div id="portfolio-modal" class="modal-overlay">
@@ -212,12 +218,10 @@
                         document.getElementById('user-email-display').innerText = session.user.email;
                         const meta = session.user.user_metadata || {};
                         
-                        // Load Changeable Data
                         if(meta.pref_service) document.getElementById('pref-service').value = meta.pref_service;
                         if(meta.pref_genre) document.getElementById('pref-genre').value = meta.pref_genre;
                         if(meta.pref_audio) document.getElementById('pref-audio').value = meta.pref_audio;
 
-                        // Load Permanent Data
                         if(meta.full_name) document.getElementById('profile-name').value = meta.full_name;
                         if(meta.country) document.getElementById('profile-country').value = meta.country;
                         if(meta.starsign) document.getElementById('profile-starsign').value = meta.starsign;
