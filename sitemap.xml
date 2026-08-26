@@ -7,13 +7,13 @@
         <priority>1.0</priority>
     </url>
     <url>
-        <loc>https://matchapp.cc/pricing.html</loc>
+        <loc>https://matchapp.cc/pricing</loc>
         <lastmod>2026-08-26</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://matchapp.cc/profile.html</loc>
+        <loc>https://matchapp.cc/profile</loc>
         <lastmod>2026-08-26</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
