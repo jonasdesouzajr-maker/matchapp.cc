@@ -6,12 +6,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>MatchApp | Your AI Streaming Concierge & Movie Finder</title>
-    <meta name="description" content="MatchApp is your personal AI streaming concierge. Instantly discover personalized movie and TV show recommendations for Netflix, Max, and Prime Video.">
-    <meta name="keywords" content="streaming concierge, AI movie finder, what to watch, movie recommendation app">
+    <meta name="description" content="MatchApp is your personal AI streaming concierge. Instantly discover movies, series, Spotify tracks, and Doramas on Netflix, Max, and Prime Video.">
+    <meta name="keywords" content="streaming concierge, AI movie finder, what to watch, Spotify podcasts, Doramas, Globoplay">
     <link rel="canonical" href="https://matchapp.cc/">
     <link rel="stylesheet" href="style.css">
-    
-    <!-- 💰 GOOGLE ADSENSE CORE SCRIPT -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -26,17 +24,13 @@
         <span class="sf-item brand-disney" style="top: 70%; animation: flyPath2 11s linear infinite 1s;">DISNEY+</span>
     </div>
 
-    <!-- 🚀 MASTER PAGE WRAPPER FOR DUAL-ADS -->
     <div class="page-wrapper">
-        
-        <!-- 💎 LEFT ADSENSE SIDEBAR (Desktop Only) -->
         <aside class="sidebar-ad fade-in">
             <span class="ad-label">SPONSORED</span>
             <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins>
             <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </aside>
 
-        <!-- 📱 MAIN APP CONTAINER -->
         <div class="container">
             <div id="chrome-banner" class="chrome-banner fade-in">
                 <div class="chrome-text">Open in Chrome for best performance.</div>
@@ -46,7 +40,6 @@
                 </div>
             </div>
 
-            <!-- 🌟 ADSTERRA TOP BANNER (Scales on Mobile) -->
             <div class="ad-placement fade-in" style="min-height: auto; padding: 10px 0;">
                 <span class="ad-label">SPONSORED</span>
                 <div class="adsterra-top-wrapper">
@@ -73,27 +66,58 @@
 
                     <button id="profile-link-tab" onclick="window.location.href='profile.html'" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid var(--gold); color: var(--gold-glow); padding: 8px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 12px;">👤 Profile</button>
                     <button id="nav-upgrade-btn" onclick="window.location.href='pricing.html'" class="gold-btn" style="padding: 8px 12px; width: auto; font-size: 11px;">💎 VIP</button>
-                    
                     <button id="nav-reg-btn" onclick="openAuthModal()" class="gold-btn" style="padding: 8px 14px; width: auto; font-size: 12px; box-shadow: none;">👤 Sign In</button>
-                    
                     <button id="nav-logout-btn" onclick="doLogout()" style="display: none; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 8px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 11px;">Logout</button>
                 </div>
             </header>
 
             <div class="info-panel fade-in">
                 <h3 class="info-title">💡 How MatchApp Works</h3>
-                <p class="info-text" style="margin-bottom: 8px;"><strong>1. Select Your Vibe:</strong> Choose your preferred format or mood, or hit "Surprise Me".</p>
-                <p class="info-text" style="margin-bottom: 8px;"><strong>2. Instant Matching:</strong> Receive a tailored, duplicate-free match with full synopsis, trailer, and direct streaming links.</p>
+                <p class="info-text" style="margin-bottom: 8px;"><strong>1. Select Your Vibe:</strong> Discover Movies, Series, Doramas, YouTube Shorts, or Spotify Podcasts.</p>
+                <p class="info-text" style="margin-bottom: 8px;"><strong>2. Instant Matching:</strong> Get tailored, duplicate-free matches with playable media previews and direct links.</p>
                 <p class="info-text" style="font-size: 11px; color: #888;">🔒 All VIP purchases are processed securely via <strong>Stripe Checkout</strong>.</p>
             </div>
             
             <div id="questionnaire-box" class="premium-card fade-in">
                 <h2 style="margin: 0 0 15px 0; font-size: 26px; color: var(--gold);">Curate Your Match</h2>
                 <div class="input-grid">
-                    <div class="input-group"><label>Format</label><select id="q-category"><option value="any">Surprise Me</option><option value="movie">Movies</option><option value="series">Series</option></select></div>
-                    <div class="input-group"><label>Platform</label><select id="q-platform"><option value="any">Any Platform</option><option value="Netflix">Netflix</option><option value="Max">Max</option><option value="Prime">Prime Video</option></select></div>
-                    <div class="input-group"><label>Mood</label><select id="q-mood"><option value="any">Any Mood</option><option value="intense">Intense</option><option value="laugh">Humor</option></select></div>
-                    <div class="input-group"><label>Aesthetic</label><select id="q-aesthetic"><option value="any">Any Aesthetic</option><option value="dark">Dark & Gritty</option><option value="retro">Retro</option></select></div>
+                    <div class="input-group">
+                        <label>Format</label>
+                        <select id="q-category">
+                            <option value="any">Surprise Me (All Formats)</option>
+                            <option value="movie">Movies</option>
+                            <option value="series">TV Series</option>
+                            <option value="vertical_drama">Vertical Dramas & Doramas</option>
+                            <option value="short">YouTube Shorts</option>
+                            <option value="yt_video">YouTube Videos</option>
+                            <option value="spotify_track">Spotify Music</option>
+                            <option value="spotify_playlist">Spotify Playlists</option>
+                            <option value="spotify_podcast">Spotify Podcasts</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Platform</label>
+                        <select id="q-platform">
+                            <option value="any">Any Platform</option>
+                            <option value="Netflix">Netflix</option>
+                            <option value="Max">Max</option>
+                            <option value="Prime">Prime Video</option>
+                            <option value="Globoplay">Globoplay</option>
+                            <option value="YouTube">YouTube</option>
+                            <option value="Spotify">Spotify</option>
+                            <option value="ReelShort">ReelShort / Viki</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Mood</label>
+                        <select id="q-mood">
+                            <option value="any">Any Mood</option>
+                            <option value="intense">Intense</option>
+                            <option value="laugh">Humor</option>
+                            <option value="romantic">Romance</option>
+                            <option value="chill">Chill & Relax</option>
+                        </select>
+                    </div>
                 </div>
                 <button onclick="triggerMatch()" class="gold-btn" style="margin-top: 20px;">⚡ Find My Match</button>
             </div>
@@ -103,27 +127,43 @@
                 <h3 style="color: var(--gold-glow); font-size: 20px; margin: 0;">Consulting AI Concierge...</h3>
             </div>
 
+            <!-- 🎥 IMMERSIVE & NON-CROPPED RESULT CARD -->
             <div id="result-box" class="premium-card fade-in" style="display: none; text-align: left;">
-                <div id="res-header-bg" class="cinematic-header">
-                    <div class="cinematic-overlay"></div>
-                    <div class="cinematic-title-box">
-                        <span id="res-platform-badge" class="platform-badge">Platform</span>
-                        <h2 id="res-title" class="cinematic-title">Movie Title</h2>
+                
+                <!-- FULL UN-CROPPED POSTER DISPLAY -->
+                <div class="poster-preview-card">
+                    <img id="res-poster-img" src="" alt="Poster">
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <span id="res-platform-badge" class="platform-badge">Platform</span>
+                    <h2 id="res-title" style="color: #fff; font-size: 24px; margin: 0; font-weight: 900;">Title</h2>
+                </div>
+
+                <p id="res-synopsis" style="color: #ddd; font-size: 15px; line-height: 1.6; margin: 0 0 20px 0;"></p>
+                
+                <!-- YOUTUBE PLAYER CONTAINER -->
+                <div id="res-trailer-container">
+                    <h4 style="color: var(--gold); font-size: 13px; text-transform: uppercase; margin: 0 0 10px 0; letter-spacing: 1px;">🎬 Official Video / Trailer</h4>
+                    <div class="video-container">
+                        <iframe id="res-trailer" src="" allowfullscreen></iframe>
                     </div>
                 </div>
-                <p id="res-synopsis" style="color: #ddd; font-size: 15px; line-height: 1.6; margin: 0 0 20px 0;"></p>
-                <h4 style="color: var(--gold); font-size: 13px; text-transform: uppercase; margin: 0 0 10px 0; letter-spacing: 1px;">🎬 Official Trailer</h4>
-                <div class="video-container"><iframe id="res-trailer" src="" allowfullscreen></iframe></div>
+
+                <!-- SPOTIFY PLAYER CONTAINER -->
+                <div id="res-spotify-container" class="spotify-container" style="display: none;"></div>
+
                 <a id="res-direct-link" href="#" target="_blank" class="gold-btn" style="margin-bottom: 15px;">▶ Stream Now</a>
+
                 <div class="action-grid">
                     <button onclick="saveToList()" class="secondary-btn" style="border-color: var(--gold); color: var(--gold-glow);">⭐ Watch Later</button>
                     <button onclick="markAsSeen()" class="secondary-btn" style="border-color: #25D366; color: #25D366;">✔️ I've Seen It</button>
                     <button onclick="markAsDisliked()" class="secondary-btn" style="border-color: #ff5252; color: #ff5252;">👎 Don't Like It</button>
                 </div>
+
                 <button onclick="location.reload()" class="secondary-btn" style="border: none; background: transparent; text-align: center;">🔙 Back to Concierge</button>
             </div>
 
-            <!-- 🌟 ADSTERRA BOTTOM BANNER (Scales on Mobile) -->
             <footer class="fade-in" style="margin-top: 20px;">
                 <div class="ad-placement" style="background: transparent; border: none; box-shadow: none;">
                     <span class="ad-label">SPONSORED</span>
@@ -145,7 +185,6 @@
             </div>
         </div>
 
-        <!-- 💎 RIGHT ADSENSE SIDEBAR (Desktop Only) -->
         <aside class="sidebar-ad fade-in">
             <span class="ad-label">SPONSORED</span>
             <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins>
@@ -153,7 +192,7 @@
         </aside>
     </div>
     
-    <!-- 🔐 MAIN AUTH MODAL (EMAIL & GOOGLE) -->
+    <!-- 🔐 MAIN AUTH MODAL -->
     <div id="main-auth-modal" class="modal-overlay">
         <div class="premium-card modal-content" style="border: 1px solid var(--gold); padding: 30px 20px;">
             <span class="close-x" onclick="closeAuthModal()">×</span>
@@ -177,7 +216,6 @@
                 <button onclick="handleEmailLogin()" class="secondary-btn" style="flex: 1; border-color: var(--gold); color: var(--gold-glow);">Login</button>
                 <button onclick="handleEmailSignup()" class="gold-btn" style="flex: 1; padding: 14px;">Register</button>
             </div>
-            
             <p id="auth-message" style="font-size: 12px; margin-top: 15px; display: none; font-weight: bold;"></p>
         </div>
     </div>
@@ -197,7 +235,7 @@
         </div>
     </div>
 
-    <!-- 📺 REWARDED AD MODAL (Google AdSense) -->
+    <!-- 📺 REWARDED AD MODAL -->
     <div id="reward-ad-modal" class="modal-overlay">
         <div class="premium-card modal-content" style="border: 1px solid var(--gold);">
             <h3 style="color: var(--gold); margin: 0 0 10px 0; font-size: 20px;">Sponsor Break</h3>
