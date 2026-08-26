@@ -14,7 +14,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Generate Dynamic Sitemap
+      - name: Generate Clean-URL Sitemap
         run: |
           DATE=$(date -u +"%Y-%m-%d")
           cat << EOF > sitemap.xml
@@ -27,13 +27,13 @@ jobs:
                   <priority>1.0</priority>
               </url>
               <url>
-                  <loc>https://matchapp.cc/pricing.html</loc>
+                  <loc>https://matchapp.cc/pricing</loc>
                   <lastmod>${DATE}</lastmod>
                   <changefreq>weekly</changefreq>
                   <priority>0.8</priority>
               </url>
               <url>
-                  <loc>https://matchapp.cc/profile.html</loc>
+                  <loc>https://matchapp.cc/profile</loc>
                   <lastmod>${DATE}</lastmod>
                   <changefreq>monthly</changefreq>
                   <priority>0.5</priority>
@@ -46,13 +46,13 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add sitemap.xml sitemap.yml
-          git diff --staged --quiet || git commit -m "🤖 Auto-update sitemap timestamp [skip ci]"
+          git diff --staged --quiet || git commit -m "🤖 Auto-update clean sitemap timestamp [skip ci]"
           git push
 
       - name: Ping Google Search Console
         run: |
           curl -s "https://www.google.com/ping?sitemap=https://matchapp.cc/sitemap.xml"
-          echo "Google successfully notified!"
+          echo "Google successfully notified of clean URLs!"
 
       - name: Notify Bing via IndexNow
         run: |
@@ -60,12 +60,12 @@ jobs:
                -H "Content-Type: application/json; charset=utf-8" \
                -d '{
                      "host": "matchapp.cc",
-                     "key": "949c875423e84416a14aed545baba430",
-                     "keyLocation": "https://matchapp.cc/YOUR_ACTUAL_BING_KEY_HERE.txt",
+                     "key": "matchappindexnowkey2026",
+                     "keyLocation": "https://matchapp.cc/matchappindexnowkey2026.txt",
                      "urlList": [
                        "https://matchapp.cc/",
-                       "https://matchapp.cc/pricing.html",
-                       "https://matchapp.cc/profile.html"
+                       "https://matchapp.cc/pricing",
+                       "https://matchapp.cc/profile"
                      ]
                    }'
-          echo "Bing & IndexNow network successfully notified of updates!"
+          echo "Bing & IndexNow notified of clean URLs!"
