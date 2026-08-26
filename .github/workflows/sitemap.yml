@@ -1,4 +1,4 @@
-name: Auto-Update Sitemap & Ping Google
+name: Auto-Update Sitemap, Ping Google & Bing IndexNow
 
 on:
   push:
@@ -8,7 +8,7 @@ permissions:
   contents: write
 
 jobs:
-  sitemap:
+  seo-sync:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -52,4 +52,20 @@ jobs:
       - name: Ping Google Search Console
         run: |
           curl -s "https://www.google.com/ping?sitemap=https://matchapp.cc/sitemap.xml"
-          echo "Google successfully notified of sitemap update!"
+          echo "Google successfully notified!"
+
+      - name: Notify Bing via IndexNow
+        run: |
+          curl -X POST "https://api.indexnow.org/indexnow" \
+               -H "Content-Type: application/json; charset=utf-8" \
+               -d '{
+                     "host": "matchapp.cc",
+                     "key": "matchappindexnowkey2026",
+                     "keyLocation": "https://matchapp.cc/matchappindexnowkey2026.txt",
+                     "urlList": [
+                       "https://matchapp.cc/",
+                       "https://matchapp.cc/pricing.html",
+                       "https://matchapp.cc/profile.html"
+                     ]
+                   }'
+          echo "Bing & IndexNow network successfully notified of updates!"
