@@ -60,7 +60,7 @@ jobs:
                -H "Content-Type: application/json; charset=utf-8" \
                -d '{
                      "host": "matchapp.cc",
-                     "key": "YOUR_ACTUAL_BING_KEY_HERE",
+                     "key": "949c875423e84416a14aed545baba430",
                      "keyLocation": "https://matchapp.cc/YOUR_ACTUAL_BING_KEY_HERE.txt",
                      "urlList": [
                        "https://matchapp.cc/",
