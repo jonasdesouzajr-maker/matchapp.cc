@@ -45,8 +45,8 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add sitemap.xml
-          git diff --staged --quiet || git commit -m "🤖 Auto-update sitemap.xml timestamp [skip ci]"
+          git add sitemap.xml sitemap.yml
+          git diff --staged --quiet || git commit -m "🤖 Auto-update sitemap timestamp [skip ci]"
           git push
 
       - name: Ping Google Search Console
@@ -60,8 +60,8 @@ jobs:
                -H "Content-Type: application/json; charset=utf-8" \
                -d '{
                      "host": "matchapp.cc",
-                     "key": "matchappindexnowkey2026",
-                     "keyLocation": "https://matchapp.cc/matchappindexnowkey2026.txt",
+                     "key": "YOUR_ACTUAL_BING_KEY_HERE",
+                     "keyLocation": "https://matchapp.cc/YOUR_ACTUAL_BING_KEY_HERE.txt",
                      "urlList": [
                        "https://matchapp.cc/",
                        "https://matchapp.cc/pricing.html",
