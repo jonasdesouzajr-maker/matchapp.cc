@@ -3,13 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    
     <title>MatchApp | My Profile Hub</title>
     <meta name="description" content="Manage your AI streaming concierge preferences, save your watch later portfolio, and lock your identity securely on MatchApp.">
     <meta name="robots" content="noindex, follow">
-    
     <link rel="stylesheet" href="style.css">
-    
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -26,7 +23,6 @@
 
     <!-- MAIN DUAL-AD LAYOUT -->
     <div class="page-wrapper">
-        
         <aside class="sidebar-ad fade-in">
             <span class="ad-label">SPONSORED</span>
             <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins>
@@ -68,7 +64,6 @@
                     <p style="color: #bbb; font-size: 12px; line-height: 1.5; margin-bottom: 18px;">
                         Why do we lock this? To ensure our AI consistently builds an authentic profile of your identity without manipulation. After saving, <strong>these fields cannot be changed.</strong> Your age will auto-update on your birthday. To change these, a new account registration is required.
                     </p>
-                    
                     <p id="lock-status" style="text-align: center; font-size: 11px; font-weight: bold; margin-bottom: 15px; color: var(--gold);">⚠️ Fields below are unsaved</p>
 
                     <div class="input-grid">
@@ -128,26 +123,19 @@
                     <div class="input-group" style="margin-bottom: 14px;">
                         <label>Most Used Streaming Service</label>
                         <select id="pref-service">
-                            <option value="Netflix">Netflix</option>
-                            <option value="Max">Max</option>
-                            <option value="Prime Video">Prime Video</option>
-                            <option value="Globoplay">Globoplay</option>
-                            <option value="Disney+">Disney+</option>
-                            <option value="Crunchyroll">Crunchyroll / Anime</option>
-                            <option value="Spotify">Spotify</option>
-                            <option value="Viki">Viki / K-Dramas</option>
+                            <option value="Netflix">Netflix</option><option value="Max">Max</option>
+                            <option value="Prime Video">Prime Video</option><option value="Globoplay">Globoplay</option>
+                            <option value="Disney+">Disney+</option><option value="Crunchyroll">Crunchyroll / Anime</option>
+                            <option value="Spotify">Spotify</option><option value="Viki">Viki / K-Dramas</option>
                         </select>
                     </div>
                     <div class="input-grid">
                         <div class="input-group">
                             <label>Favorite Genre</label>
                             <select id="pref-genre">
-                                <option value="Thriller">Thriller & Suspense</option>
-                                <option value="Comedy">Comedy</option>
-                                <option value="Romance">Romance & Doramas</option>
-                                <option value="Horror">Horror</option>
-                                <option value="Sci-Fi">Sci-Fi & Fantasy</option>
-                                <option value="Action">Action</option>
+                                <option value="Thriller">Thriller & Suspense</option><option value="Comedy">Comedy</option>
+                                <option value="Romance">Romance & Doramas</option><option value="Horror">Horror</option>
+                                <option value="Sci-Fi">Sci-Fi & Fantasy</option><option value="Action">Action</option>
                                 <option value="Documentary">Documentary</option>
                             </select>
                         </div>
@@ -163,14 +151,14 @@
 
                 <button id="save-profile-btn" onclick="saveProfileData()" class="gold-btn" style="margin-bottom: 25px;">💾 Save & Update Profile</button>
 
-                <!-- PORTFOLIOS -->
+                <!-- 🎬 FIXED PORTFOLIOS -->
                 <div style="background: rgba(0,0,0,0.4); padding: 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 20px;">
                     <h3 style="color: var(--gold-glow); margin: 0 0 12px 0; font-size: 16px; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 8px;">⭐ Watch Later Portfolio</h3>
                     <div id="portfolio-grid"><p style="color: var(--text-muted); font-size: 13px; margin: 0;">No saved titles yet.</p></div>
                 </div>
 
                 <div style="background: rgba(0,0,0,0.4); padding: 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 20px;">
-                    <h3 style="color: #25D366; margin: 0 0 12px 0; font-size: 16px; border-bottom: 1px solid rgba(37,211,102,0.3); padding-bottom: 8px;">✔️ Watch History</h3>
+                    <h3 style="color: #25D366; margin: 0 0 12px 0; font-size: 16px; border-bottom: 1px solid rgba(37,211,102,0.3); padding-bottom: 8px;">✔️ Watch History (Seen It)</h3>
                     <div id="history-grid"><p style="color: var(--text-muted); font-size: 13px; margin: 0;">Your watch history is empty.</p></div>
                 </div>
                 
@@ -191,7 +179,6 @@
             <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins>
             <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </aside>
-
     </div>
     
     <div id="portfolio-modal" class="modal-overlay">
@@ -211,7 +198,9 @@
     <script src="app.js"></script>
     <script>
         window.addEventListener('DOMContentLoaded', () => {
+            // Wait slightly for app.js and Supabase to initialize
             setTimeout(async () => {
+                // 1. POPULATE SECURE DATA
                 if (window.isUserLoggedIn && window.supabaseClient) {
                     const { data: { session } } = await window.supabaseClient.auth.getSession();
                     if (session && session.user) {
@@ -245,16 +234,24 @@
                     }
                 }
                 
+                // 2. FIXED PORTFOLIO RENDER (Direct Local Storage Pull)
                 const pGrid = document.getElementById('portfolio-grid');
-                if (window.savedList && window.savedList.length > 0) {
+                const localSaved = JSON.parse(localStorage.getItem('match_savedList') || '[]');
+                if (localSaved && localSaved.length > 0) {
                     pGrid.innerHTML = '';
-                    window.savedList.forEach(title => { pGrid.innerHTML += `<div class="portfolio-item" onclick="openPortfolioModal('${title}')">🎬 ${title} <span style="color:var(--gold); font-size:11px;">▶ Details</span></div>`; });
+                    localSaved.forEach(title => { 
+                        const safeTitle = title.replace(/'/g, "\\'"); // Prevent breaking the onclick string
+                        pGrid.innerHTML += `<div class="portfolio-item" onclick="openPortfolioModal('${safeTitle}')">🎬 ${title} <span style="color:var(--gold); font-size:11px;">▶ Details</span></div>`; 
+                    });
                 }
                 
                 const hGrid = document.getElementById('history-grid');
-                if (window.seenList && window.seenList.length > 0) {
+                const localSeen = JSON.parse(localStorage.getItem('match_seenList') || '[]');
+                if (localSeen && localSeen.length > 0) {
                     hGrid.innerHTML = '';
-                    window.seenList.forEach(title => { hGrid.innerHTML += `<div class="history-item">✔️ ${title}</div>`; });
+                    localSeen.forEach(title => { 
+                        hGrid.innerHTML += `<div class="history-item" style="display:flex; justify-content:space-between;"><span>✔️ ${title}</span><span style="color:#25D366; font-size:10px;">Already Seen</span></div>`; 
+                    });
                 }
             }, 800);
         });
