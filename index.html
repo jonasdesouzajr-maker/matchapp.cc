@@ -9,18 +9,22 @@
     <!-- 🚀 2026 SEO OPTIMIZED META TAGS -->
     <title>MatchApp | Best AI Movie Finder & Streaming Recommendation App</title>
     <meta name="description" content="Stop scrolling and find what to watch tonight. MatchApp is the best AI movie finder and recommendation app for Netflix, Max, Prime Video, Doramas, and Spotify. Duplicate-free matches.">
-    <meta name="keywords" content="what to watch tonight, ai movie finder, movie recommendation app, streaming concierge, best series on netflix, where to stream, good film netflix, dorama recommendation, stop scrolling what to watch, movie tracker app">
+    <meta name="keywords" content="ai movie finder, movie recommendation app, streaming concierge, what to watch tonight, stop scrolling what to watch, best movies on netflix 2026, where to stream, movie tracker app, ai streaming assistant, dorama recommendations, spotify podcast finder, prime video recommendations">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://matchapp.cc/">
     
     <link rel="stylesheet" href="style.css">
+    
+    <!-- 🎯 Google AdSense Core Script -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div id="real-time-clock" class="real-time-clock fade-in">Loading Time...</div>
     <div class="luxury-bg"><div class="floating-orb orb-1"></div><div class="floating-orb orb-2"></div></div>
     
+    <!-- BRAND FLAGS BACKGROUND -->
     <div class="stream-flags">
         <span class="sf-item brand-netflix" style="top: 10%; animation: flyPath1 8s linear infinite;">NETFLIX</span>
         <span class="sf-item brand-prime" style="top: 30%; animation: flyPath2 10s linear infinite 2s;">PRIME</span>
@@ -28,14 +32,19 @@
         <span class="sf-item brand-disney" style="top: 70%; animation: flyPath2 11s linear infinite 1s;">DISNEY+</span>
     </div>
 
+    <!-- MAIN DUAL-AD LAYOUT -->
     <div class="page-wrapper">
+        
+        <!-- LEFT SIDEBAR: GOOGLE ADSENSE -->
         <aside class="sidebar-ad fade-in">
             <span class="ad-label">SPONSORED</span>
             <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins>
             <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </aside>
 
+        <!-- CENTER CONTENT CONTAINER -->
         <div class="container">
+            
             <div id="chrome-banner" class="chrome-banner fade-in">
                 <div class="chrome-text">Open in Chrome for best performance.</div>
                 <div style="display: flex; align-items: center; gap: 8px;">
@@ -44,21 +53,22 @@
                 </div>
             </div>
 
-            <div class="ad-placement fade-in" style="min-height: auto; padding: 10px 0;">
+            <!-- HEADER AD: ADSTERRA (728x90) -->
+            <header class="ad-placement fade-in">
                 <span class="ad-label">SPONSORED</span>
                 <div class="adsterra-top-wrapper">
                     <script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script>
                     <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
                 </div>
-            </div>
+            </header>
 
-            <header class="app-header fade-in">
+            <!-- APP NAVIGATION -->
+            <nav class="app-header fade-in">
                 <a href="index.html" class="header-brand-area">
                     <picture><source srcset="logo.jpeg" type="image/jpeg"><img src="logo.jpeg" alt="Logo" class="brand-logo"></picture>
                     <div class="brand-text-container">
                         <span class="app-title-main">MatchApp</span>
                         <span class="app-title-sub">Streaming Concierge</span>
-                        <span class="app-author">By Jonas Junior</span>
                     </div>
                 </a>
                 
@@ -73,13 +83,12 @@
                     <button id="nav-reg-btn" onclick="openAuthModal()" class="gold-btn" style="padding: 8px 14px; width: auto; font-size: 12px; box-shadow: none;">👤 Sign In</button>
                     <button id="nav-logout-btn" onclick="doLogout()" style="display: none; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 8px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 11px;">Logout</button>
                 </div>
-            </header>
+            </nav>
 
             <div class="info-panel fade-in">
                 <h3 class="info-title">💡 Stop Scrolling. Start Watching.</h3>
                 <p class="info-text" style="margin-bottom: 8px;"><strong>1. Select Your Vibe:</strong> Discover Movies, Series, Doramas, YouTube Shorts, or Spotify Podcasts.</p>
-                <p class="info-text" style="margin-bottom: 8px;"><strong>2. Instant Matching:</strong> Get tailored, duplicate-free matches with playable media previews and direct links to Netflix, Max, or Prime.</p>
-                <p class="info-text" style="font-size: 11px; color: #888;">🔒 All VIP purchases are processed securely via <strong>Stripe Checkout</strong>.</p>
+                <p class="info-text" style="margin-bottom: 8px;"><strong>2. Instant Matching:</strong> Get tailored, duplicate-free matches with playable media previews and direct links to your favorite platforms.</p>
             </div>
             
             <div id="questionnaire-box" class="premium-card fade-in">
@@ -162,35 +171,41 @@
                     <button onclick="markAsDisliked()" class="secondary-btn" style="border-color: #ff5252; color: #ff5252;">👎 Don't Like It</button>
                 </div>
 
+                <!-- IN-FEED GOOGLE ADSENSE PLACEHOLDER (Will populate via Auto-Ads) -->
+                <div class="ad-placement" style="background: transparent; border: none; box-shadow: none; margin: 10px 0; min-height: 100px;">
+                    <ins class="adsbygoogle" style="display:block" data-ad-format="fluid" data-ad-layout-key="-6t+ed+2i-1n-4w" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117"></ins>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                </div>
+
                 <button onclick="location.reload()" class="secondary-btn" style="border: none; background: transparent; text-align: center;">🔙 Back to Concierge</button>
             </div>
 
-            <footer class="fade-in" style="margin-top: 20px;">
-                <div class="ad-placement" style="background: transparent; border: none; box-shadow: none;">
-                    <span class="ad-label">SPONSORED</span>
-                    <div class="adsterra-bot-wrapper">
-                        <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script>
-                        <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
-                    </div>
+            <!-- FOOTER AD: ADSTERRA (300x250) -->
+            <footer class="ad-placement fade-in" style="margin-top: 20px;">
+                <span class="ad-label">SPONSORED</span>
+                <div class="adsterra-bot-wrapper">
+                    <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script>
+                    <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
                 </div>
             </footer>
 
-            <div class="premium-card fade-in" style="padding: 25px 20px; text-align: center; margin-top: 35px; background: rgba(15, 15, 22, 0.5);">
+            <div class="premium-card fade-in" style="padding: 25px 20px; text-align: center; margin-top: 25px; background: rgba(15, 15, 22, 0.5);">
                 <h4 style="color: var(--gold); font-size: 13px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 15px 0;">Engineered With Industry-Leading Technology</h4>
                 <div style="display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap; opacity: 0.85;">
                     <span style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 6px;">⚡ Supabase</span>
                     <span style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 6px;">💳 Stripe</span>
                     <span style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 6px;">📊 Google Analytics</span>
-                    <span style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 6px;">🎯 Google AdSense</span>
                 </div>
             </div>
         </div>
 
+        <!-- RIGHT SIDEBAR: GOOGLE ADSENSE -->
         <aside class="sidebar-ad fade-in">
             <span class="ad-label">SPONSORED</span>
             <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins>
             <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </aside>
+
     </div>
     
     <!-- 🔐 MAIN AUTH MODAL -->
@@ -236,19 +251,22 @@
         </div>
     </div>
 
-    <!-- 📺 REWARDED AD MODAL -->
+    <!-- 📺 REWARDED AD MODAL (GOOGLE ADSENSE) -->
     <div id="reward-ad-modal" class="modal-overlay">
         <div class="premium-card modal-content" style="border: 1px solid var(--gold);">
             <h3 style="color: var(--gold); margin: 0 0 10px 0; font-size: 20px;">Sponsor Break</h3>
             <p style="font-size: 12px; color: var(--text-muted);">Watch this short sponsor ad to unlock your next match!</p>
+            
             <div class="ad-placement" style="background: rgba(0,0,0,0.8); min-height: 200px; margin: 15px 0;">
                 <ins class="adsbygoogle" style="display:block; width:100%;" data-ad-format="fluid" data-ad-layout-key="-6t+ed+2i-1n-4w" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117"></ins>
                 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </div>
+            
             <button id="claim-retry-btn" class="gold-btn" disabled style="opacity: 0.5;">Wait <span id="ad-timer">15</span>s to claim...</button>
             <button id="close-ad-btn" class="secondary-btn" style="display: none; border-color: #25D366; color: #25D366; font-weight: 900;" onclick="closeAdAndClaim()">✖ Close & Get Match</button>
         </div>
     </div>
+    
     <script src="app.js"></script>
 </body>
 </html>
