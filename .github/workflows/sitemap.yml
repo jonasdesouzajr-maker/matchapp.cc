@@ -1,0 +1,55 @@
+name: Auto-Update Sitemap & Ping Google
+
+on:
+  push:
+    branches: [ main, master ]
+
+permissions:
+  contents: write
+
+jobs:
+  sitemap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate Dynamic Sitemap
+        run: |
+          DATE=$(date -u +"%Y-%m-%d")
+          cat << EOF > sitemap.xml
+          <?xml version="1.0" encoding="UTF-8"?>
+          <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+              <url>
+                  <loc>https://matchapp.cc/</loc>
+                  <lastmod>${DATE}</lastmod>
+                  <changefreq>daily</changefreq>
+                  <priority>1.0</priority>
+              </url>
+              <url>
+                  <loc>https://matchapp.cc/pricing.html</loc>
+                  <lastmod>${DATE}</lastmod>
+                  <changefreq>weekly</changefreq>
+                  <priority>0.8</priority>
+              </url>
+              <url>
+                  <loc>https://matchapp.cc/profile.html</loc>
+                  <lastmod>${DATE}</lastmod>
+                  <changefreq>monthly</changefreq>
+                  <priority>0.5</priority>
+              </url>
+          </urlset>
+          EOF
+
+      - name: Commit and push updated sitemap
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add sitemap.xml
+          git diff --staged --quiet || git commit -m "🤖 Auto-update sitemap.xml timestamp [skip ci]"
+          git push
+
+      - name: Ping Google Search Console
+        run: |
+          curl -s "https://www.google.com/ping?sitemap=https://matchapp.cc/sitemap.xml"
+          echo "Google successfully notified of sitemap update!"
