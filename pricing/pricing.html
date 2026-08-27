@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- 📊 Google Analytics Tag -->
+    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
-    <script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-2ECND229RR');</script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2ECND229RR');
+    </script>
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -14,7 +19,6 @@
     <link rel="canonical" href="https://matchapp.cc/pricing.html">
     <meta name="author" content="Jonas Junior">
 
-    <!-- 🌐 OPEN GRAPH TAGS -->
     <meta property="og:title" content="MatchApp Pricing | VIP & Ad-Free Plans">
     <meta property="og:description" content="Unlock unlimited AI streaming matches and enjoy an ad-free experience.">
     <meta property="og:image" content="https://matchapp.cc/logo.jpeg">
@@ -22,7 +26,6 @@
     <meta property="og:type" content="website">
 
     <link rel="stylesheet" href="style.css">
-    
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -47,22 +50,16 @@
         <div class="container">
             <header class="app-header fade-in" style="justify-content: space-between;">
                 <a href="index.html" class="header-brand-area" style="text-decoration: none;">
-                    <div class="brand-text-container">
-                        <span class="app-title-main" style="font-size: 24px;">MatchApp</span>
-                        <span class="app-author">Pricing Tiers</span>
-                    </div>
+                    <div class="brand-text-container"><span class="app-title-main" style="font-size: 24px;">MatchApp</span><span class="app-author">Pricing Tiers</span></div>
                 </a>
-                <button onclick="window.location.href='index.html'" class="secondary-btn" style="width: auto; padding: 8px 14px; font-size: 12px;">🏠 Home</button>
+                <a href="index.html" class="secondary-btn" style="width: auto; padding: 8px 14px; font-size: 12px; text-decoration: none; align-items: center; display: inline-flex;">🏠 Home</a>
             </header>
 
             <div class="premium-card fade-in" style="text-align: center; padding: 30px 20px;">
                 <h1 style="color: var(--gold); font-size: 28px; margin: 0 0 10px 0;">Unlock Full Power</h1>
                 <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 30px;">Choose a tier to remove ads, unlock unlimited daily matches, and get premium AI features.</p>
 
-                <!-- PRICING CARDS GRID -->
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; text-align: left; margin-bottom: 30px;">
-                    
-                    <!-- AD-FREE TIER -->
                     <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 25px; display: flex; flex-direction: column; justify-content: space-between;">
                         <div>
                             <h3 style="color: #fff; font-size: 20px; margin: 0 0 8px 0;">🛡️ Ad-Free Pass</h3>
@@ -77,7 +74,6 @@
                         <button id="btn-ad_free" onclick="processCheckout('ad_free')" class="secondary-btn" style="border-color: var(--gold); color: var(--gold-glow);">Get Ad-Free</button>
                     </div>
 
-                    <!-- VIP MONTHLY TIER -->
                     <div style="background: rgba(212,175,55,0.05); border: 2px solid var(--gold); border-radius: 16px; padding: 25px; display: flex; flex-direction: column; justify-content: space-between; position: relative;">
                         <div style="position: absolute; top: -12px; right: 20px; background: var(--gold); color: #000; font-size: 10px; font-weight: bold; padding: 3px 8px; border-radius: 8px;">POPULAR</div>
                         <div>
@@ -93,7 +89,6 @@
                         <button id="btn-vip_monthly" onclick="processCheckout('vip_monthly')" class="gold-btn">Upgrade to Monthly</button>
                     </div>
 
-                    <!-- VIP ANNUAL TIER -->
                     <div style="background: rgba(0,0,0,0.4); border: 1px solid var(--gold); border-radius: 16px; padding: 25px; display: flex; flex-direction: column; justify-content: space-between;">
                         <div>
                             <h3 style="color: var(--gold-glow); font-size: 20px; margin: 0 0 8px 0;">🚀 VIP Annual</h3>
@@ -107,26 +102,17 @@
                         </div>
                         <button id="btn-vip_annual" onclick="processCheckout('vip_annual')" class="gold-btn" style="background: linear-gradient(135deg, #FFD700, #FFA500); color: #000;">Go Annual (Best Value)</button>
                     </div>
-
                 </div>
             </div>
             
             <footer class="ad-placement fade-in" style="margin-top: 20px;">
                 <span class="ad-label">SPONSORED</span>
-                <div class="adsterra-bot-wrapper">
-                    <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script>
-                    <script src="https://brunettesir.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
-                </div>
+                <div class="adsterra-bot-wrapper"><script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script><script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script></div>
             </footer>
         </div>
-
-        <aside class="sidebar-ad fade-in">
-            <span class="ad-label">SPONSORED</span>
-            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </aside>
+        <aside class="sidebar-ad fade-in"><span class="ad-label">SPONSORED</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
     </div>
-
+    
     <script src="app.js"></script>
 </body>
 </html>
