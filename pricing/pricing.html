@@ -17,31 +17,26 @@
     <link rel="stylesheet" href="/style.css">
     
     <style>
-        /* Stream Flags Global CSS */
-        .stream-flags { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; opacity: 0.15; }
-        .sf-item { position: absolute; font-size: 8vw; font-weight: 900; color: #fff; white-space: nowrap; opacity: 0.3; }
-        .brand-netflix { color: #E50914; } .brand-prime { color: #00A8E1; } .brand-max { color: #5822b4; } .brand-disney { color: #113CCF; }
+        /* BIG, GLOWING BACKGROUND ANIMATIONS */
+        .stream-flags { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; opacity: 0.35; }
+        .sf-item { position: absolute; font-size: 14vw; font-weight: 900; color: #fff; white-space: nowrap; opacity: 0.8; text-shadow: 0 0 20px currentColor, 0 0 40px currentColor, 0 0 60px currentColor; }
+        .brand-netflix { color: #E50914; } .brand-prime { color: #00A8E1; } .brand-max { color: #8A2BE2; } .brand-disney { color: #113CCF; }
         @keyframes flyPath1 { 0% { transform: translateX(-100%) rotate(-5deg); } 100% { transform: translateX(100vw) rotate(5deg); } }
         @keyframes flyPath2 { 0% { transform: translateX(100vw) rotate(5deg); } 100% { transform: translateX(-100%) rotate(-5deg); } }
     </style>
-
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M7J3NNBN"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
-
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M7J3NNBN" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    
     <div id="real-time-clock" class="real-time-clock fade-in">Loading Time...</div>
     <div class="luxury-bg"><div class="floating-orb orb-1"></div><div class="floating-orb orb-2"></div></div>
 
     <div class="stream-flags">
-        <span class="sf-item brand-netflix" style="top: 10%; animation: flyPath1 8s linear infinite;">NETFLIX</span>
-        <span class="sf-item brand-prime" style="top: 30%; animation: flyPath2 10s linear infinite 2s;">PRIME</span>
-        <span class="sf-item brand-max" style="top: 50%; animation: flyPath1 9s linear infinite 4s;">MAX</span>
-        <span class="sf-item brand-disney" style="top: 70%; animation: flyPath2 11s linear infinite 1s;">DISNEY+</span>
+        <span class="sf-item brand-netflix" style="top: 10%; animation: flyPath1 15s linear infinite;">NETFLIX</span>
+        <span class="sf-item brand-prime" style="top: 35%; animation: flyPath2 18s linear infinite 2s;">PRIME</span>
+        <span class="sf-item brand-max" style="top: 60%; animation: flyPath1 16s linear infinite 4s;">MAX</span>
+        <span class="sf-item brand-disney" style="top: 85%; animation: flyPath2 19s linear infinite 1s;">DISNEY+</span>
     </div>
 
     <div class="page-wrapper">
@@ -70,7 +65,6 @@
             </div>
         </div>
     </div>
-    
     <script src="/app.js"></script>
     <script src="/pricing.js"></script>
 </body>
