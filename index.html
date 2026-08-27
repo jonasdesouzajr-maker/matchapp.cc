@@ -33,7 +33,6 @@
     }
     </script>
 
-    <!-- FIXED ASSET PATH -->
     <link rel="stylesheet" href="/style.css">
     
     <style>
@@ -42,9 +41,11 @@
         .how-it-works-glow h3 { color: #fff; font-size: 26px; font-weight: 900; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
         .how-it-works-glow p { color: #ddd; font-size: 16px; line-height: 1.6; margin: 0 0 10px 0; font-weight: 500; }
         .how-it-works-glow strong { color: var(--gold-glow); }
+        
         .how-it-works-subtle { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 20px; text-align: left; }
         .how-it-works-subtle h4 { color: var(--gold); font-size: 14px; margin: 0 0 8px 0; }
         .how-it-works-subtle p { color: #aaa; font-size: 12px; margin: 0; line-height: 1.5; }
+        
         .seo-streaming-links { margin-top: 30px; padding: 25px 15px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center; }
         .seo-streaming-links h4 { color: #888; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
         .seo-link-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
@@ -54,10 +55,14 @@
         .star-rating-container { display: inline-flex; flex-direction: row-reverse; cursor: pointer; font-size: 2.2rem; justify-content: center; width: 100%; }
         .star-rating-container .star { color: rgba(255,255,255,0.15); transition: color 0.2s ease, transform 0.2s ease; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
         .star-rating-container .star:hover { transform: scale(1.15); }
-        .star-rating-container .star:hover,
-        .star-rating-container .star:hover ~ .star,
-        .star-rating-container .star.selected,
-        .star-rating-container .star.selected ~ .star { color: #f5c518; }
+        .star-rating-container .star:hover, .star-rating-container .star:hover ~ .star, .star-rating-container .star.selected, .star-rating-container .star.selected ~ .star { color: #f5c518; }
+
+        /* Stream Flags Global CSS */
+        .stream-flags { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; opacity: 0.15; }
+        .sf-item { position: absolute; font-size: 8vw; font-weight: 900; color: #fff; white-space: nowrap; opacity: 0.3; }
+        .brand-netflix { color: #E50914; } .brand-prime { color: #00A8E1; } .brand-max { color: #5822b4; } .brand-disney { color: #113CCF; }
+        @keyframes flyPath1 { 0% { transform: translateX(-100%) rotate(-5deg); } 100% { transform: translateX(100vw) rotate(5deg); } }
+        @keyframes flyPath2 { 0% { transform: translateX(100vw) rotate(5deg); } 100% { transform: translateX(-100%) rotate(-5deg); } }
     </style>
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
@@ -80,11 +85,7 @@
     </div>
 
     <div class="page-wrapper">
-        <aside class="sidebar-ad fade-in">
-            <span class="ad-label">SPONSORED</span>
-            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </aside>
+        <aside class="sidebar-ad fade-in"><span class="ad-label">SPONSORED</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
 
         <div class="container">
             <div id="chrome-banner" class="chrome-banner fade-in">
@@ -105,7 +106,6 @@
 
             <nav class="app-header fade-in">
                 <a href="/index.html" class="header-brand-area" style="text-decoration: none;">
-                    <!-- FIXED LOGO PATH -->
                     <picture><source srcset="/logo.jpeg" type="image/jpeg"><img src="/logo.jpeg" alt="Logo" class="brand-logo" loading="lazy" decoding="async"></picture>
                     <div class="brand-text-container"><span class="app-title-main">MatchApp</span><span class="app-title-sub">Streaming Concierge</span></div>
                 </a>
@@ -116,10 +116,8 @@
                     </label>
                     <input type="file" id="profile-pic-upload" accept="image/*" style="display: none;" onchange="handleProfilePic(event)">
                     
-                    <!-- FIXED PROFILE LINK -->
                     <a id="profile-link-tab" href="/profile/profile.html" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid var(--gold); color: var(--gold-glow); padding: 8px 12px; border-radius: 12px; font-weight: bold; text-decoration: none; font-size: 12px; align-items: center;">👤 Profile</a>
                     
-                    <!-- FIXED PRICING LINK -->
                     <a id="nav-upgrade-btn" href="/pricing/pricing.html" class="gold-btn" style="padding: 8px 12px; font-size: 11px; text-decoration: none; width: auto; align-items: center; display: inline-flex;">💎 VIP</a>
                     
                     <button id="nav-reg-btn" onclick="openAuthModal()" class="gold-btn" style="padding: 8px 14px; width: auto; font-size: 12px; box-shadow: none;">👤 Sign In</button>
@@ -138,26 +136,11 @@
             <div id="questionnaire-box" class="premium-card fade-in">
                 <h2 style="margin: 0 0 15px 0; font-size: 26px; color: var(--gold); text-align: center;">Curate Your Match</h2>
                 <div class="input-grid">
-                    <div class="input-group">
-                        <label>Content Format</label>
-                        <select id="q-category"><option value="any">Surprise Me (All Formats)</option><option value="movie">Feature Films</option><option value="series">TV Series & Shows</option><option value="vertical_drama">Vertical Dramas & Doramas</option><option value="short">YouTube Shorts</option><option value="yt_video">YouTube Videos</option><option value="spotify_track">Spotify Music</option><option value="spotify_podcast">Spotify Podcasts</option></select>
-                    </div>
-                    <div class="input-group">
-                        <label>Streaming Platform</label>
-                        <select id="q-platform"><option value="any">Any Platform Available</option><option value="Netflix">Netflix</option><option value="Max">Max (HBO)</option><option value="Prime">Prime Video</option><option value="Disney+">Disney+</option><option value="Globoplay">Globoplay</option><option value="YouTube">YouTube</option><option value="Spotify">Spotify</option><option value="ReelShort">ReelShort / Viki</option></select>
-                    </div>
-                    <div class="input-group">
-                        <label>Emotional Mood</label>
-                        <select id="q-mood"><option value="any">Any Mood</option><option value="intense">Intense & Thrilling</option><option value="laugh">Humorous & Light</option><option value="romantic">Romantic & Heartfelt</option><option value="chill">Chill & Relaxing</option></select>
-                    </div>
-                    <div class="input-group">
-                        <label>Visual Aesthetic</label>
-                        <select id="q-aesthetic"><option value="any">Any Vibe</option><option value="dark">Dark & Gritty</option><option value="colorful">Bright & Colorful</option><option value="epic">Epic & Grand</option><option value="retro">Retro & Nostalgic</option></select>
-                    </div>
-                    <div class="input-group" style="grid-column: 1 / -1;">
-                        <label>Content Pacing</label>
-                        <select id="q-pacing"><option value="any">Any Pacing</option><option value="fast">Fast-Paced & Action-Packed</option><option value="steady">Steady & Story-Driven</option><option value="slow">Slow Burn & Thoughtful</option></select>
-                    </div>
+                    <div class="input-group"><label>Content Format</label><select id="q-category"><option value="any">Surprise Me (All Formats)</option><option value="movie">Feature Films</option><option value="series">TV Series & Shows</option><option value="vertical_drama">Vertical Dramas & Doramas</option><option value="short">YouTube Shorts</option><option value="yt_video">YouTube Videos</option><option value="spotify_track">Spotify Music</option><option value="spotify_podcast">Spotify Podcasts</option></select></div>
+                    <div class="input-group"><label>Streaming Platform</label><select id="q-platform"><option value="any">Any Platform Available</option><option value="Netflix">Netflix</option><option value="Max">Max (HBO)</option><option value="Prime">Prime Video</option><option value="Disney+">Disney+</option><option value="Globoplay">Globoplay</option><option value="YouTube">YouTube</option><option value="Spotify">Spotify</option><option value="ReelShort">ReelShort / Viki</option></select></div>
+                    <div class="input-group"><label>Emotional Mood</label><select id="q-mood"><option value="any">Any Mood</option><option value="intense">Intense & Thrilling</option><option value="laugh">Humorous & Light</option><option value="romantic">Romantic & Heartfelt</option><option value="chill">Chill & Relaxing</option></select></div>
+                    <div class="input-group"><label>Visual Aesthetic</label><select id="q-aesthetic"><option value="any">Any Vibe</option><option value="dark">Dark & Gritty</option><option value="colorful">Bright & Colorful</option><option value="epic">Epic & Grand</option><option value="retro">Retro & Nostalgic</option></select></div>
+                    <div class="input-group" style="grid-column: 1 / -1;"><label>Content Pacing</label><select id="q-pacing"><option value="any">Any Pacing</option><option value="fast">Fast-Paced & Action-Packed</option><option value="steady">Steady & Story-Driven</option><option value="slow">Slow Burn & Thoughtful</option></select></div>
                 </div>
                 <button onclick="triggerMatch()" class="gold-btn" style="margin-top: 20px; width: 100%; font-size: 18px; padding: 16px;">⚡ Consult AI Concierge</button>
             </div>
@@ -197,6 +180,21 @@
                 <span class="ad-label">SPONSORED</span>
                 <div class="adsterra-bot-wrapper"><script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script><script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script></div>
             </footer>
+            
+            <div class="seo-streaming-links fade-in">
+                <h4>Official Supported Platforms</h4>
+                <div class="seo-link-grid">
+                    <a href="https://www.netflix.com/" target="_blank" rel="noopener noreferrer">Netflix</a>
+                    <a href="https://www.max.com/" target="_blank" rel="noopener noreferrer">Max</a>
+                    <a href="https://www.primevideo.com/" target="_blank" rel="noopener noreferrer">Prime Video</a>
+                    <a href="https://www.disneyplus.com/" target="_blank" rel="noopener noreferrer">Disney+</a>
+                    <a href="https://open.spotify.com/" target="_blank" rel="noopener noreferrer">Spotify</a>
+                    <a href="https://globoplay.globo.com/" target="_blank" rel="noopener noreferrer">Globoplay</a>
+                    <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer">YouTube</a>
+                    <a href="https://tv.apple.com/" target="_blank" rel="noopener noreferrer">Apple TV+</a>
+                    <a href="https://www.viki.com/" target="_blank" rel="noopener noreferrer">Rakuten Viki</a>
+                </div>
+            </div>
         </div>
         <aside class="sidebar-ad fade-in"><span class="ad-label">SPONSORED</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
     </div>
@@ -214,22 +212,7 @@
             <p id="auth-message" style="font-size: 12px; margin-top: 15px; display: none; font-weight: bold;"></p>
         </div>
     </div>
-
-    <div id="adblock-modal" class="modal-overlay">
-        <div class="premium-card modal-content" style="border: 2px solid #ff5252; background: rgba(20,5,5,0.95); padding: 25px 18px;">
-            <div style="font-size: 50px; margin-bottom: 10px;">🛑</div>
-            <h2 style="color: #ff5252; font-size: 24px; margin: 0 0 10px 0;">Ad-Blocker Detected</h2>
-            <div class="how-it-works-subtle" style="border-color: rgba(255,82,82,0.3);">
-                <h4 style="color: #ff5252;">💡 How MatchApp Works</h4>
-                <p>MatchApp's AI processes millions of streaming titles to serve you personalized, duplicate-free matches instantly. Our free service relies on sponsor views to keep the servers running.</p>
-            </div>
-            <p style="color: #fff; font-size: 13px; line-height: 1.5; margin-bottom: 20px;">Please support us by pausing your Ad-Blocker or Microsoft Edge Tracking Prevention.</p>
-            <button onclick="window.checkAdBlocker()" class="gold-btn" style="background: #ff5252; color: #fff; margin-bottom: 10px;">✔️ I Disabled It (Check Now)</button>
-            <div id="adblock-buy-prompt" style="display: none;"><a href="/pricing/pricing.html" class="gold-btn" style="text-decoration: none; display: block; text-align: center;">💎 Upgrade to VIP</a></div>
-        </div>
-    </div>
     
-    <!-- FIXED JS SCRIPT PATH -->
     <script src="/app.js"></script>
 </body>
 </html>
