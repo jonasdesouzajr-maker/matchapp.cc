@@ -1,8 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
-    <script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-2ECND229RR');</script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2ECND229RR');
+    </script>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
@@ -59,18 +66,23 @@
             </header>
 
             <nav class="app-header fade-in">
-                <a href="index.html" class="header-brand-area">
+                <a href="index.html" class="header-brand-area" style="text-decoration: none;">
                     <picture><source srcset="logo.jpeg" type="image/jpeg"><img src="logo.jpeg" alt="Logo" class="brand-logo" loading="lazy" decoding="async"></picture>
                     <div class="brand-text-container"><span class="app-title-main">MatchApp</span><span class="app-title-sub">Streaming Concierge</span></div>
                 </a>
+                
                 <div id="header-auth-area" style="display: flex; gap: 8px; align-items: center;">
                     <label for="profile-pic-upload" id="profile-pic-container" class="profile-pic-container">
                         <img id="profile-pic-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 24 24' fill='%23D4AF37'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" alt="Avatar" loading="lazy" decoding="async">
                     </label>
                     <input type="file" id="profile-pic-upload" accept="image/*" style="display: none;" onchange="handleProfilePic(event)">
-                    <button id="profile-link-tab" onclick="window.location.href='profile.html'" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid var(--gold); color: var(--gold-glow); padding: 8px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 12px;">👤 Profile</button>
-                    <button id="nav-upgrade-btn" onclick="window.location.href='pricing.html'" class="gold-btn" style="padding: 8px 12px; width: auto; font-size: 11px;">💎 VIP</button>
+                    
+                    <a id="profile-link-tab" href="profile.html" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid var(--gold); color: var(--gold-glow); padding: 8px 12px; border-radius: 12px; font-weight: bold; text-decoration: none; font-size: 12px; align-items: center;">👤 Profile</a>
+                    
+                    <a id="nav-upgrade-btn" href="pricing.html" class="gold-btn" style="padding: 8px 12px; font-size: 11px; text-decoration: none; width: auto; align-items: center; display: inline-flex;">💎 VIP</a>
+                    
                     <button id="nav-reg-btn" onclick="openAuthModal()" class="gold-btn" style="padding: 8px 14px; width: auto; font-size: 12px; box-shadow: none;">👤 Sign In</button>
+                    
                     <button id="nav-logout-btn" onclick="doLogout()" style="display: none; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 8px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 11px;">Logout</button>
                 </div>
             </nav>
@@ -102,7 +114,7 @@
                     </div>
                     <div class="input-group" style="grid-column: 1 / -1;">
                         <label>Content Pacing</label>
-                        <select id="q-pacing"><option value="any">Any Pacing</option><option value="fast">Fast-Paced & Action-Packed</option><option value="steady">Steady & Balanced</option><option value="slow">Slow Burn & Thoughtful</option></select>
+                        <select id="q-pacing"><option value="any">Any Pacing</option><option value="fast">Fast-Paced & Action-Packed</option><option value="steady">Steady & Story-Driven</option><option value="slow">Slow Burn & Thoughtful</option></select>
                     </div>
                 </div>
                 <button onclick="triggerMatch()" class="gold-btn" style="margin-top: 20px; width: 100%; font-size: 18px; padding: 16px;">⚡ Consult AI Concierge</button>
@@ -118,7 +130,7 @@
                 <p id="res-synopsis" style="color: #ddd; font-size: 15px; line-height: 1.6; margin: 0 0 20px 0;"></p>
                 <div id="res-trailer-container"><h4 style="color: var(--gold); font-size: 13px; text-transform: uppercase; margin: 0 0 10px 0;">🎬 Official Video / Trailer</h4><div class="video-container"><iframe id="res-trailer" src="" allowfullscreen loading="lazy"></iframe></div></div>
                 <div id="res-spotify-container" class="spotify-container" style="display: none;"></div>
-                <a id="res-direct-link" href="#" target="_blank" class="gold-btn" style="margin-bottom: 15px;">▶ Stream Now</a>
+                <a id="res-direct-link" href="#" target="_blank" class="gold-btn" style="margin-bottom: 15px; text-decoration: none; text-align: center; display: block;">▶ Stream Now</a>
                 <div class="action-grid">
                     <button onclick="saveToList()" class="secondary-btn" style="border-color: var(--gold); color: var(--gold-glow);">⭐ Watch Later</button>
                     <button onclick="markAsSeen()" class="secondary-btn" style="border-color: #25D366; color: #25D366;">✔️ I've Seen It</button>
@@ -139,7 +151,6 @@
         <aside class="sidebar-ad fade-in"><span class="ad-label">SPONSORED</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
     </div>
     
-    <!-- Modals (Auth, Adblock, Adsterra Reward) remain identical to maintain integrations -->
     <div id="main-auth-modal" class="modal-overlay">
         <div class="premium-card modal-content" style="border: 1px solid var(--gold); padding: 30px 20px;">
             <span class="close-x" onclick="closeAuthModal()">×</span>
@@ -163,7 +174,7 @@
             <button onclick="openIncognitoHelper()" class="secondary-btn" style="border-color: #9A5CFF; color: #fff; background: rgba(154, 92, 255, 0.15); margin-bottom: 10px;">🕵️ Open In Incognito/Private Tab</button>
             <button onclick="showAdblockGuide()" class="secondary-btn" style="border-color: rgba(255,255,255,0.2); color: #bbb; margin-bottom: 15px; font-weight: normal;">How to disable?</button>
             <div id="adblock-signin-prompt"><button onclick="openAuthModal()" class="google-btn" style="width: 100%; padding: 12px; background: var(--gold); border: none; color: #000;">👤 Sign in to Get VIP Ad-Free</button></div>
-            <div id="adblock-buy-prompt" style="display: none;"><button onclick="window.location.href='pricing.html'" class="gold-btn">💎 Upgrade to VIP</button></div>
+            <div id="adblock-buy-prompt" style="display: none;"><a href="pricing.html" class="gold-btn" style="text-decoration: none; display: block; text-align: center;">💎 Upgrade to VIP</a></div>
         </div>
     </div>
 
