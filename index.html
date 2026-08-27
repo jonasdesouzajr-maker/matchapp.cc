@@ -20,20 +20,6 @@
     <link rel="canonical" href="https://matchapp.cc/">
     <meta name="author" content="Jonas Junior">
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://matchapp.cc/">
-    <meta property="og:title" content="MatchApp | Best AI Movie Finder & Streaming Recommendation App">
-    <meta property="og:description" content="Stop scrolling and find what to watch tonight. Let our AI match you with movies, series, and podcasts instantly.">
-    <meta property="og:image" content="https://matchapp.cc/logo.jpeg">
-
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://matchapp.cc/">
-    <meta property="twitter:title" content="MatchApp | AI Streaming Concierge">
-    <meta property="twitter:description" content="Find your perfect movie, dorama, or podcast match instantly without the endless scrolling.">
-    <meta property="twitter:image" content="https://matchapp.cc/logo.jpeg">
-
     <!-- Schema.org Markup -->
     <script type="application/ld+json">
     {
@@ -43,13 +29,11 @@
       "url": "https://matchapp.cc/",
       "description": "An AI-powered streaming recommendation app that finds the perfect movies, TV shows, doramas, and podcasts based on your mood, pacing, and platform preferences.",
       "applicationCategory": "EntertainmentApplication",
-      "operatingSystem": "All",
-      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-      "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "ratingCount": "1580" }
+      "operatingSystem": "All"
     }
     </script>
 
-    <!-- Fixed Asset Path -->
+    <!-- FIXED ASSET PATH -->
     <link rel="stylesheet" href="/style.css">
     
     <style>
@@ -120,8 +104,8 @@
             </header>
 
             <nav class="app-header fade-in">
-                <!-- Fixed Logo Path -->
                 <a href="/index.html" class="header-brand-area" style="text-decoration: none;">
+                    <!-- FIXED LOGO PATH -->
                     <picture><source srcset="/logo.jpeg" type="image/jpeg"><img src="/logo.jpeg" alt="Logo" class="brand-logo" loading="lazy" decoding="async"></picture>
                     <div class="brand-text-container"><span class="app-title-main">MatchApp</span><span class="app-title-sub">Streaming Concierge</span></div>
                 </a>
@@ -132,11 +116,11 @@
                     </label>
                     <input type="file" id="profile-pic-upload" accept="image/*" style="display: none;" onchange="handleProfilePic(event)">
                     
-                    <!-- FIXED FOLDER PATH TO PROFILE -->
+                    <!-- FIXED PROFILE LINK -->
                     <a id="profile-link-tab" href="/profile/profile.html" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid var(--gold); color: var(--gold-glow); padding: 8px 12px; border-radius: 12px; font-weight: bold; text-decoration: none; font-size: 12px; align-items: center;">👤 Profile</a>
                     
-                    <!-- Fixed Path to Pricing -->
-                    <a id="nav-upgrade-btn" href="/pricing.html" class="gold-btn" style="padding: 8px 12px; font-size: 11px; text-decoration: none; width: auto; align-items: center; display: inline-flex;">💎 VIP</a>
+                    <!-- FIXED PRICING LINK -->
+                    <a id="nav-upgrade-btn" href="/pricing/pricing.html" class="gold-btn" style="padding: 8px 12px; font-size: 11px; text-decoration: none; width: auto; align-items: center; display: inline-flex;">💎 VIP</a>
                     
                     <button id="nav-reg-btn" onclick="openAuthModal()" class="gold-btn" style="padding: 8px 14px; width: auto; font-size: 12px; box-shadow: none;">👤 Sign In</button>
                     
@@ -213,21 +197,6 @@
                 <span class="ad-label">SPONSORED</span>
                 <div class="adsterra-bot-wrapper"><script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script><script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script></div>
             </footer>
-            
-            <div class="seo-streaming-links fade-in">
-                <h4>Official Supported Platforms</h4>
-                <div class="seo-link-grid">
-                    <a href="https://www.netflix.com/" target="_blank" rel="noopener noreferrer">Netflix</a>
-                    <a href="https://www.max.com/" target="_blank" rel="noopener noreferrer">Max</a>
-                    <a href="https://www.primevideo.com/" target="_blank" rel="noopener noreferrer">Prime Video</a>
-                    <a href="https://www.disneyplus.com/" target="_blank" rel="noopener noreferrer">Disney+</a>
-                    <a href="https://open.spotify.com/" target="_blank" rel="noopener noreferrer">Spotify</a>
-                    <a href="https://globoplay.globo.com/" target="_blank" rel="noopener noreferrer">Globoplay</a>
-                    <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer">YouTube</a>
-                    <a href="https://tv.apple.com/" target="_blank" rel="noopener noreferrer">Apple TV+</a>
-                    <a href="https://www.viki.com/" target="_blank" rel="noopener noreferrer">Rakuten Viki</a>
-                </div>
-            </div>
         </div>
         <aside class="sidebar-ad fade-in"><span class="ad-label">SPONSORED</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
     </div>
@@ -245,8 +214,22 @@
             <p id="auth-message" style="font-size: 12px; margin-top: 15px; display: none; font-weight: bold;"></p>
         </div>
     </div>
+
+    <div id="adblock-modal" class="modal-overlay">
+        <div class="premium-card modal-content" style="border: 2px solid #ff5252; background: rgba(20,5,5,0.95); padding: 25px 18px;">
+            <div style="font-size: 50px; margin-bottom: 10px;">🛑</div>
+            <h2 style="color: #ff5252; font-size: 24px; margin: 0 0 10px 0;">Ad-Blocker Detected</h2>
+            <div class="how-it-works-subtle" style="border-color: rgba(255,82,82,0.3);">
+                <h4 style="color: #ff5252;">💡 How MatchApp Works</h4>
+                <p>MatchApp's AI processes millions of streaming titles to serve you personalized, duplicate-free matches instantly. Our free service relies on sponsor views to keep the servers running.</p>
+            </div>
+            <p style="color: #fff; font-size: 13px; line-height: 1.5; margin-bottom: 20px;">Please support us by pausing your Ad-Blocker or Microsoft Edge Tracking Prevention.</p>
+            <button onclick="window.checkAdBlocker()" class="gold-btn" style="background: #ff5252; color: #fff; margin-bottom: 10px;">✔️ I Disabled It (Check Now)</button>
+            <div id="adblock-buy-prompt" style="display: none;"><a href="/pricing/pricing.html" class="gold-btn" style="text-decoration: none; display: block; text-align: center;">💎 Upgrade to VIP</a></div>
+        </div>
+    </div>
     
-    <!-- Fixed Script Path -->
+    <!-- FIXED JS SCRIPT PATH -->
     <script src="/app.js"></script>
 </body>
 </html>
