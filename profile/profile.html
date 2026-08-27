@@ -15,18 +15,13 @@
     
     <meta name="robots" content="noindex, follow">
     
-    <!-- FIXED PATH TO CSS FROM ROOT -->
+    <!-- FIXED CSS PATH -->
     <link rel="stylesheet" href="/style.css">
     
     <style>
         .how-it-works-subtle { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 25px; text-align: left; }
         .how-it-works-subtle h4 { color: var(--gold); font-size: 14px; margin: 0 0 8px 0; }
         .how-it-works-subtle p { color: #aaa; font-size: 12px; margin: 0; line-height: 1.5; }
-        .seo-streaming-links { margin-top: 30px; padding: 25px 15px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center; }
-        .seo-streaming-links h4 { color: #888; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
-        .seo-link-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
-        .seo-link-grid a { color: #bbb; font-size: 11px; text-decoration: none; padding: 6px 12px; background: rgba(0,0,0,0.5); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s ease; }
-        .seo-link-grid a:hover { color: var(--gold); border-color: var(--gold); background: rgba(212,175,55,0.1); }
     </style>
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
@@ -40,23 +35,15 @@
 
     <div id="real-time-clock" class="real-time-clock fade-in">Loading Time...</div>
     <div class="luxury-bg"><div class="floating-orb orb-1"></div><div class="floating-orb orb-2"></div></div>
-    
-    <div class="stream-flags">
-        <span class="sf-item brand-netflix" style="top: 10%; animation: flyPath1 8s linear infinite;">NETFLIX</span>
-        <span class="sf-item brand-prime" style="top: 30%; animation: flyPath2 10s linear infinite 2s;">PRIME</span>
-        <span class="sf-item brand-max" style="top: 50%; animation: flyPath1 9s linear infinite 4s;">MAX</span>
-    </div>
 
     <div class="page-wrapper">
         <aside class="sidebar-ad fade-in"><span class="ad-label">SPONSORED</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
 
         <div class="container">
             <header class="app-header fade-in" style="justify-content: space-between;">
-                <!-- Fixed Path -->
                 <a href="/index.html" class="header-brand-area" style="text-decoration: none;">
                     <div class="brand-text-container"><span class="app-title-main" style="font-size: 24px;">MatchApp</span><span class="app-author">Dashboard</span></div>
                 </a>
-                <!-- Fixed Path -->
                 <a href="/index.html" class="secondary-btn" style="width: auto; padding: 8px 14px; font-size: 12px; text-decoration: none; align-items: center; display: inline-flex;">🏠 Home</a>
             </header>
 
@@ -79,7 +66,6 @@
                     <p>By locking in your identity and tuning your AI preferences below, the MatchApp engine will automatically prioritize titles that match your demographic profile and habitual viewing style.</p>
                 </div>
 
-                <!-- SECTION 1: IDENTITY -->
                 <div style="background: rgba(0,0,0,0.5); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,82,82,0.3); margin-bottom: 25px;">
                     <h3 style="color: #ff5252; margin: 0 0 10px 0; font-size: 18px;">🔒 Core Identity</h3>
                     <p style="color: #bbb; font-size: 12px; line-height: 1.5; margin-bottom: 18px;">After saving, <strong>these fields cannot be changed.</strong></p>
@@ -95,7 +81,6 @@
                     </div>
                 </div>
 
-                <!-- SECTION 2: AI PREFERENCES -->
                 <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 25px;">
                     <h3 style="color: var(--gold-glow); margin: 0 0 15px 0; font-size: 18px;">⚙️ AI Tuning (Changeable)</h3>
                     <div class="input-grid">
@@ -110,7 +95,6 @@
 
                 <button id="save-profile-btn" onclick="saveProfileData()" class="gold-btn" style="margin-bottom: 35px; width: 100%; font-size: 16px;">💾 Save & Update Profile</button>
 
-                <!-- SECTION 3: VISUAL PORTFOLIO & HISTORY -->
                 <div style="background: rgba(212,175,55,0.05); padding: 20px; border-radius: 16px; border: 1px solid rgba(212,175,55,0.3); margin-bottom: 25px;">
                     <h3 style="color: var(--gold-glow); margin: 0 0 15px 0; font-size: 18px;">⭐ Watch Later Portfolio</h3>
                     <div id="portfolio-grid"><p style="color: var(--text-muted); font-size: 13px;">Loading portfolio...</p></div>
@@ -123,28 +107,11 @@
                 
                 <button onclick="doLogout()" class="secondary-btn" style="border-color:#ff5252; color:#ff5252; background: rgba(255,82,82,0.1); width: 100%;">Log Out Securely</button>
             </div>
-            
-            <footer class="ad-placement fade-in" style="margin-top: 20px;">
-                <span class="ad-label">SPONSORED</span>
-                <div class="adsterra-bot-wrapper"><script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script><script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script></div>
-            </footer>
         </div>
+    </div>
 
-        <aside class="sidebar-ad fade-in"><span class="ad-label">SPONSORED</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
-    </div>
-    
-    <div id="portfolio-modal" class="modal-overlay">
-        <div class="premium-card modal-content" style="border: 2px solid var(--gold); padding: 0; overflow: hidden;">
-            <span class="close-x" onclick="document.getElementById('portfolio-modal').style.display='none'">×</span>
-            <div id="port-modal-bg" class="cinematic-header" style="height: 180px; margin-bottom:0;"><div class="cinematic-overlay"></div><div class="cinematic-title-box" style="bottom: 12px;"><h2 id="port-modal-title" class="cinematic-title" style="font-size:24px;">Title</h2></div></div>
-            <div style="padding: 20px; text-align: left; background: var(--bg-card);">
-                <p id="port-modal-synopsis" style="color: #ddd; font-size: 14px; margin: 0 0 18px 0; line-height: 1.5;"></p>
-                <a id="port-modal-link" href="#" target="_blank" class="gold-btn" style="margin-bottom:10px; width: 100%; display: block; text-align: center; text-decoration: none;">▶ Watch Now on <span id="port-modal-plat"></span></a>
-            </div>
-        </div>
-    </div>
-    
-    <!-- FIXED PATH TO JS FROM ROOT -->
+    <!-- FIXED JS PATH -->
     <script src="/app.js"></script>
+    <script src="/profile.js"></script>
 </body>
 </html>
