@@ -49,7 +49,8 @@
     }
     </script>
 
-    <link rel="stylesheet" href="style.css">
+    <!-- Fixed Asset Path -->
+    <link rel="stylesheet" href="/style.css">
     
     <style>
         .how-it-works-glow { background: rgba(20, 5, 5, 0.75); border: 2px solid var(--gold); border-radius: 16px; padding: 25px; margin: 25px 0; text-align: center; box-shadow: 0 0 20px rgba(212, 175, 55, 0.4), inset 0 0 15px rgba(212, 175, 55, 0.2); animation: goldPulse 3s infinite alternate; }
@@ -119,8 +120,9 @@
             </header>
 
             <nav class="app-header fade-in">
-                <a href="index.html" class="header-brand-area" style="text-decoration: none;">
-                    <picture><source srcset="logo.jpeg" type="image/jpeg"><img src="logo.jpeg" alt="Logo" class="brand-logo" loading="lazy" decoding="async"></picture>
+                <!-- Fixed Logo Path -->
+                <a href="/index.html" class="header-brand-area" style="text-decoration: none;">
+                    <picture><source srcset="/logo.jpeg" type="image/jpeg"><img src="/logo.jpeg" alt="Logo" class="brand-logo" loading="lazy" decoding="async"></picture>
                     <div class="brand-text-container"><span class="app-title-main">MatchApp</span><span class="app-title-sub">Streaming Concierge</span></div>
                 </a>
                 
@@ -130,9 +132,11 @@
                     </label>
                     <input type="file" id="profile-pic-upload" accept="image/*" style="display: none;" onchange="handleProfilePic(event)">
                     
-                    <a id="profile-link-tab" href="profile.html" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid var(--gold); color: var(--gold-glow); padding: 8px 12px; border-radius: 12px; font-weight: bold; text-decoration: none; font-size: 12px; align-items: center;">👤 Profile</a>
+                    <!-- FIXED FOLDER PATH TO PROFILE -->
+                    <a id="profile-link-tab" href="/profile/profile.html" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid var(--gold); color: var(--gold-glow); padding: 8px 12px; border-radius: 12px; font-weight: bold; text-decoration: none; font-size: 12px; align-items: center;">👤 Profile</a>
                     
-                    <a id="nav-upgrade-btn" href="pricing.html" class="gold-btn" style="padding: 8px 12px; font-size: 11px; text-decoration: none; width: auto; align-items: center; display: inline-flex;">💎 VIP</a>
+                    <!-- Fixed Path to Pricing -->
+                    <a id="nav-upgrade-btn" href="/pricing.html" class="gold-btn" style="padding: 8px 12px; font-size: 11px; text-decoration: none; width: auto; align-items: center; display: inline-flex;">💎 VIP</a>
                     
                     <button id="nav-reg-btn" onclick="openAuthModal()" class="gold-btn" style="padding: 8px 14px; width: auto; font-size: 12px; box-shadow: none;">👤 Sign In</button>
                     
@@ -242,6 +246,7 @@
         </div>
     </div>
     
-    <script src="app.js"></script>
+    <!-- Fixed Script Path -->
+    <script src="/app.js"></script>
 </body>
 </html>
