@@ -14,7 +14,20 @@
     <!-- End Google Tag Manager -->
     
     <meta name="robots" content="noindex, follow">
-    <link rel="stylesheet" href="style.css">
+    
+    <!-- FIXED PATH TO CSS FROM ROOT -->
+    <link rel="stylesheet" href="/style.css">
+    
+    <style>
+        .how-it-works-subtle { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 25px; text-align: left; }
+        .how-it-works-subtle h4 { color: var(--gold); font-size: 14px; margin: 0 0 8px 0; }
+        .how-it-works-subtle p { color: #aaa; font-size: 12px; margin: 0; line-height: 1.5; }
+        .seo-streaming-links { margin-top: 30px; padding: 25px 15px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center; }
+        .seo-streaming-links h4 { color: #888; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
+        .seo-link-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+        .seo-link-grid a { color: #bbb; font-size: 11px; text-decoration: none; padding: 6px 12px; background: rgba(0,0,0,0.5); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s ease; }
+        .seo-link-grid a:hover { color: var(--gold); border-color: var(--gold); background: rgba(212,175,55,0.1); }
+    </style>
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -27,22 +40,77 @@
 
     <div id="real-time-clock" class="real-time-clock fade-in">Loading Time...</div>
     <div class="luxury-bg"><div class="floating-orb orb-1"></div><div class="floating-orb orb-2"></div></div>
+    
+    <div class="stream-flags">
+        <span class="sf-item brand-netflix" style="top: 10%; animation: flyPath1 8s linear infinite;">NETFLIX</span>
+        <span class="sf-item brand-prime" style="top: 30%; animation: flyPath2 10s linear infinite 2s;">PRIME</span>
+        <span class="sf-item brand-max" style="top: 50%; animation: flyPath1 9s linear infinite 4s;">MAX</span>
+    </div>
 
     <div class="page-wrapper">
         <aside class="sidebar-ad fade-in"><span class="ad-label">SPONSORED</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
 
         <div class="container">
             <header class="app-header fade-in" style="justify-content: space-between;">
-                <a href="index.html" class="header-brand-area" style="text-decoration: none;">
+                <!-- Fixed Path -->
+                <a href="/index.html" class="header-brand-area" style="text-decoration: none;">
                     <div class="brand-text-container"><span class="app-title-main" style="font-size: 24px;">MatchApp</span><span class="app-author">Dashboard</span></div>
                 </a>
-                <a href="index.html" class="secondary-btn" style="width: auto; padding: 8px 14px; font-size: 12px; text-decoration: none; align-items: center; display: inline-flex;">🏠 Home</a>
+                <!-- Fixed Path -->
+                <a href="/index.html" class="secondary-btn" style="width: auto; padding: 8px 14px; font-size: 12px; text-decoration: none; align-items: center; display: inline-flex;">🏠 Home</a>
             </header>
 
             <div class="premium-card fade-in" style="text-align: left; padding: 30px 20px;">
+                <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+                    <label for="profile-pic-upload" style="cursor: pointer; position: relative;">
+                        <div style="width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--gold); overflow: hidden; box-shadow: 0 0 25px rgba(212,175,55,0.5);">
+                            <img id="profile-pic-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23D4AF37'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
+                        </div>
+                        <div style="position: absolute; bottom: -5px; right: 0; background: var(--gold); color: #000; padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;">Edit (Private)</div>
+                    </label>
+                    <input type="file" id="profile-pic-upload" accept="image/*" style="display: none;" onchange="handleProfilePic(event)">
+                </div>
+
                 <h2 style="color: var(--gold); margin: 0 0 5px 0; font-size: 26px; text-align: center;">My Hub</h2>
                 <p id="user-email-display" style="color: var(--text-muted); font-size: 13px; margin: 0 0 20px 0; text-align: center;">Loading session...</p>
                 
+                <div class="how-it-works-subtle">
+                    <h4>💡 How MatchApp Profiling Works</h4>
+                    <p>By locking in your identity and tuning your AI preferences below, the MatchApp engine will automatically prioritize titles that match your demographic profile and habitual viewing style.</p>
+                </div>
+
+                <!-- SECTION 1: IDENTITY -->
+                <div style="background: rgba(0,0,0,0.5); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,82,82,0.3); margin-bottom: 25px;">
+                    <h3 style="color: #ff5252; margin: 0 0 10px 0; font-size: 18px;">🔒 Core Identity</h3>
+                    <p style="color: #bbb; font-size: 12px; line-height: 1.5; margin-bottom: 18px;">After saving, <strong>these fields cannot be changed.</strong></p>
+                    <p id="lock-status" style="text-align: center; font-size: 12px; font-weight: bold; margin-bottom: 15px; color: var(--gold);">⚠️ Fields below are unsaved</p>
+
+                    <div class="input-grid">
+                        <div class="input-group"><label>Full Name</label><input type="text" id="profile-name" placeholder="Enter full name..."></div>
+                        <div class="input-group"><label>Country</label><input type="text" id="profile-country" placeholder="e.g. Brazil, USA, UK..."></div>
+                        <div class="input-group"><label>Birthdate (DD/MM/YYYY)</label><input type="text" id="profile-dob" placeholder="e.g. 10/10/1986" maxlength="10"></div>
+                        <div class="input-group"><label>Dynamic Age</label><input type="text" id="profile-age-display" disabled style="opacity: 0.7;" placeholder="Calculated automatically"></div>
+                        <div class="input-group"><label>Star Sign</label><select id="profile-starsign"><option value="">Select...</option><option value="Aries">Aries ♈</option><option value="Taurus">Taurus ♉</option><option value="Gemini">Gemini ♊</option><option value="Cancer">Cancer ♋</option><option value="Leo">Leo ♌</option><option value="Virgo">Virgo ♍</option><option value="Libra">Libra ♎</option><option value="Scorpio">Scorpio ♏</option><option value="Sagittarius">Sagittarius ♐</option><option value="Capricorn">Capricorn ♑</option><option value="Aquarius">Aquarius ♒</option><option value="Pisces">Pisces ♓</option></select></div>
+                        <div class="input-group"><label>Orientation</label><select id="profile-orientation"><option value="">Select...</option><option value="Straight">Straight</option><option value="Gay">Gay</option><option value="Lesbian">Lesbian</option><option value="Bisexual">Bisexual</option><option value="Pansexual">Pansexual</option><option value="Asexual">Asexual</option><option value="Queer">Queer</option><option value="Other">Other</option><option value="Prefer not to say">Prefer not to say</option></select></div>
+                    </div>
+                </div>
+
+                <!-- SECTION 2: AI PREFERENCES -->
+                <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 25px;">
+                    <h3 style="color: var(--gold-glow); margin: 0 0 15px 0; font-size: 18px;">⚙️ AI Tuning (Changeable)</h3>
+                    <div class="input-grid">
+                        <div class="input-group"><label>Primary Service</label><select id="pref-service"><option value="Netflix">Netflix</option><option value="Max">Max</option><option value="Prime Video">Prime Video</option><option value="Globoplay">Globoplay</option><option value="Disney+">Disney+</option><option value="Spotify">Spotify</option><option value="Viki">Viki / K-Dramas</option></select></div>
+                        <div class="input-group"><label>Secondary Service</label><select id="pref-service-sec"><option value="None">None</option><option value="Netflix">Netflix</option><option value="Max">Max</option><option value="Prime Video">Prime Video</option><option value="Disney+">Disney+</option><option value="YouTube">YouTube Premium</option></select></div>
+                        <div class="input-group"><label>Favorite Genre</label><select id="pref-genre"><option value="Thriller">Thriller & Suspense</option><option value="Comedy">Comedy</option><option value="Romance">Romance & Doramas</option><option value="Horror">Horror</option><option value="Sci-Fi">Sci-Fi & Fantasy</option><option value="Action">Action</option><option value="Documentary">Documentary</option></select></div>
+                        <div class="input-group"><label>Preferred Decade</label><select id="pref-decade"><option value="New">Brand New (2024+)</option><option value="2010s">Modern (2010s)</option><option value="2000s">Y2K Era (2000s)</option><option value="Classic">Classics (Pre-2000)</option></select></div>
+                        <div class="input-group"><label>Usual Pacing</label><select id="pref-pacing"><option value="Fast">Fast-Paced (Action/Thrills)</option><option value="Steady">Steady & Story-Driven</option><option value="Slow">Slow Burn & Artistic</option></select></div>
+                        <div class="input-group"><label>Preferred Audio</label><select id="pref-audio"><option value="Subbed">Original Audio (Subbed)</option><option value="Dubbed">Dubbed (Local Language)</option></select></div>
+                    </div>
+                </div>
+
+                <button id="save-profile-btn" onclick="saveProfileData()" class="gold-btn" style="margin-bottom: 35px; width: 100%; font-size: 16px;">💾 Save & Update Profile</button>
+
+                <!-- SECTION 3: VISUAL PORTFOLIO & HISTORY -->
                 <div style="background: rgba(212,175,55,0.05); padding: 20px; border-radius: 16px; border: 1px solid rgba(212,175,55,0.3); margin-bottom: 25px;">
                     <h3 style="color: var(--gold-glow); margin: 0 0 15px 0; font-size: 18px;">⭐ Watch Later Portfolio</h3>
                     <div id="portfolio-grid"><p style="color: var(--text-muted); font-size: 13px;">Loading portfolio...</p></div>
@@ -55,10 +123,28 @@
                 
                 <button onclick="doLogout()" class="secondary-btn" style="border-color:#ff5252; color:#ff5252; background: rgba(255,82,82,0.1); width: 100%;">Log Out Securely</button>
             </div>
+            
+            <footer class="ad-placement fade-in" style="margin-top: 20px;">
+                <span class="ad-label">SPONSORED</span>
+                <div class="adsterra-bot-wrapper"><script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script><script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script></div>
+            </footer>
         </div>
+
         <aside class="sidebar-ad fade-in"><span class="ad-label">SPONSORED</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
     </div>
     
-    <script src="app.js"></script>
+    <div id="portfolio-modal" class="modal-overlay">
+        <div class="premium-card modal-content" style="border: 2px solid var(--gold); padding: 0; overflow: hidden;">
+            <span class="close-x" onclick="document.getElementById('portfolio-modal').style.display='none'">×</span>
+            <div id="port-modal-bg" class="cinematic-header" style="height: 180px; margin-bottom:0;"><div class="cinematic-overlay"></div><div class="cinematic-title-box" style="bottom: 12px;"><h2 id="port-modal-title" class="cinematic-title" style="font-size:24px;">Title</h2></div></div>
+            <div style="padding: 20px; text-align: left; background: var(--bg-card);">
+                <p id="port-modal-synopsis" style="color: #ddd; font-size: 14px; margin: 0 0 18px 0; line-height: 1.5;"></p>
+                <a id="port-modal-link" href="#" target="_blank" class="gold-btn" style="margin-bottom:10px; width: 100%; display: block; text-align: center; text-decoration: none;">▶ Watch Now on <span id="port-modal-plat"></span></a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- FIXED PATH TO JS FROM ROOT -->
+    <script src="/app.js"></script>
 </body>
 </html>
