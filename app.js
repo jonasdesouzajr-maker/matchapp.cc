@@ -1,4 +1,4 @@
-console.log("Mastercode 60.0: Advanced AI Matchmaker & Rich Profile Engine Active");
+console.log("Mastercode 60.1: Deep Link Exact Routing Fix Active");
 
 let globalMatchTitle = "Match App";
 let supabaseClient = null;
@@ -103,24 +103,34 @@ window.saveProfileData = async function() {
 window.handleProfilePic = function(event) { const file = event.target.files[0]; if (file) { const reader = new FileReader(); reader.onload = function(e) { if (document.getElementById('profile-pic-preview')) document.getElementById('profile-pic-preview').src = e.target.result; localStorage.setItem('match_userAvatar', e.target.result); }; reader.readAsDataURL(file); } };
 window.processCheckout = async function(tier) { if (!isUserLoggedIn || !supabaseClient) { alert("Please log in or register first to link your purchase securely!"); openAuthModal(); return; } const btn = document.getElementById(`btn-${tier}`); if (btn) { btn.innerText = "Redirecting securely to Stripe..."; btn.style.opacity = '0.7'; } const { data: { session } } = await supabaseClient.auth.getSession(); window.location.href = `${STRIPE_LINKS[tier]}?client_reference_id=${session.user.id}___${tier}`; };
 
-/* 🎬 EXPANDED MASTER CATALOG (Now with Pacing & Aesthetics) */
+/* 🎬 EXACT APP/DEEP-LINK CATALOG */
 const masterCatalog = [
     { title: "Superbad", category: "movie", platform: "Netflix", mood: "laugh", aesthetic: "colorful", pacing: "fast", trailerId: "MNpoTxeydiI", url: "https://www.netflix.com/title/70075482", synopsis: "High school seniors Seth and Evan attempt to buy booze for a wild house party, spiraling into an unforgettable night of hilarious chaos.", poster: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1000&q=80" },
-    { title: "Parasite", category: "movie", platform: "Max", mood: "intense", aesthetic: "dark", pacing: "steady", trailerId: "SEUXfv87Wpk", url: "https://www.max.com", synopsis: "Greed and class discrimination threaten the symbiotic relationship between the wealthy Park family and the destitute Kim clan.", poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1000&q=80" },
-    { title: "The Dark Knight", category: "movie", platform: "Max", mood: "intense", aesthetic: "dark", pacing: "fast", trailerId: "EXeTwQWrcwY", url: "https://www.max.com", synopsis: "When the Joker wreaks havoc on Gotham, Batman must accept his greatest psychological test of fighting injustice.", poster: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1000&q=80" },
-    { title: "Interstellar", category: "movie", platform: "Prime", mood: "intense", aesthetic: "epic", pacing: "slow", trailerId: "zSWdZVtXT7E", url: "https://www.amazon.com", synopsis: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.", poster: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1000&q=80" },
-    { title: "Inception", category: "movie", platform: "Max", mood: "intense", aesthetic: "dark", pacing: "fast", trailerId: "YoHD9XEInc0", url: "https://www.max.com", synopsis: "A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea.", poster: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1000&q=80" },
-    { title: "Everything Everywhere All at Once", category: "movie", platform: "Prime", mood: "laugh", aesthetic: "colorful", pacing: "fast", trailerId: "wxN1T1uxQ2g", url: "https://www.amazon.com", synopsis: "An aging Chinese immigrant is swept up in an insane adventure, where she alone can save the world by exploring other universes.", poster: "https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=1000&q=80" },
-    { title: "Dune: Part Two", category: "movie", platform: "Max", mood: "intense", aesthetic: "epic", pacing: "steady", trailerId: "Way9Dexny3w", url: "https://www.max.com", synopsis: "Paul Atreides unites with Chani and the Fremen while on a warpath of revenge against the conspirators who destroyed his family.", poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1000&q=80" },
-    { title: "Glass Onion", category: "movie", platform: "Netflix", mood: "laugh", aesthetic: "bright", pacing: "steady", trailerId: "gj5ibYSz8C0", url: "https://www.netflix.com", synopsis: "Famed Southern detective Benoit Blanc travels to Greece for his latest case.", poster: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1000&q=80" },
+    { title: "Parasite", category: "movie", platform: "Max", mood: "intense", aesthetic: "dark", pacing: "steady", trailerId: "SEUXfv87Wpk", url: "https://play.max.com/movie/parasite", synopsis: "Greed and class discrimination threaten the symbiotic relationship between the wealthy Park family and the destitute Kim clan.", poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1000&q=80" },
+    { title: "The Dark Knight", category: "movie", platform: "Max", mood: "intense", aesthetic: "dark", pacing: "fast", trailerId: "EXeTwQWrcwY", url: "https://play.max.com/movie/the-dark-knight", synopsis: "When the Joker wreaks havoc on Gotham, Batman must accept his greatest psychological test of fighting injustice.", poster: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1000&q=80" },
+    { title: "Interstellar", category: "movie", platform: "Prime", mood: "intense", aesthetic: "epic", pacing: "slow", trailerId: "zSWdZVtXT7E", url: "https://www.primevideo.com/detail/Interstellar/", synopsis: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.", poster: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1000&q=80" },
+    { title: "Inception", category: "movie", platform: "Max", mood: "intense", aesthetic: "dark", pacing: "fast", trailerId: "YoHD9XEInc0", url: "https://play.max.com/movie/inception", synopsis: "A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea.", poster: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1000&q=80" },
+    { title: "Everything Everywhere All at Once", category: "movie", platform: "Prime", mood: "laugh", aesthetic: "colorful", pacing: "fast", trailerId: "wxN1T1uxQ2g", url: "https://www.primevideo.com/detail/Everything-Everywhere-All-At-Once/", synopsis: "An aging Chinese immigrant is swept up in an insane adventure, where she alone can save the world by exploring other universes.", poster: "https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=1000&q=80" },
+    { title: "Dune: Part Two", category: "movie", platform: "Max", mood: "intense", aesthetic: "epic", pacing: "steady", trailerId: "Way9Dexny3w", url: "https://play.max.com/movie/dune-part-two", synopsis: "Paul Atreides unites with Chani and the Fremen while on a warpath of revenge against the conspirators who destroyed his family.", poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1000&q=80" },
+    { title: "Glass Onion", category: "movie", platform: "Netflix", mood: "laugh", aesthetic: "bright", pacing: "steady", trailerId: "gj5ibYSz8C0", url: "https://www.netflix.com/title/81458416", synopsis: "Famed Southern detective Benoit Blanc travels to Greece for his latest case.", poster: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1000&q=80" },
     { title: "Stranger Things", category: "series", platform: "Netflix", mood: "intense", aesthetic: "retro", pacing: "steady", trailerId: "b9EkMc79ZSU", url: "https://www.netflix.com/title/80057281", synopsis: "When a young boy vanishes, a small town uncovers a mystery involving secret experiments and supernatural forces.", poster: "https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=1000&q=80" },
-    { title: "The Last of Us", category: "series", platform: "Max", mood: "intense", aesthetic: "dark", pacing: "slow", trailerId: "uLtkt8BonwM", url: "https://www.max.com", synopsis: "After a global pandemic destroys civilization, a hardened survivor takes charge of a 14-year-old girl who may be humanity's last hope.", poster: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1000&q=80" },
-    { title: "The Boys", category: "series", platform: "Prime", mood: "intense", aesthetic: "dark", pacing: "fast", trailerId: "M1bhOaLV4FU", url: "https://www.amazon.com", synopsis: "A group of vigilantes set out to take down corrupt superheroes who abuse their superpowers.", poster: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1000&q=80" },
+    { title: "The Last of Us", category: "series", platform: "Max", mood: "intense", aesthetic: "dark", pacing: "slow", trailerId: "uLtkt8BonwM", url: "https://play.max.com/show/the-last-of-us", synopsis: "After a global pandemic destroys civilization, a hardened survivor takes charge of a 14-year-old girl who may be humanity's last hope.", poster: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1000&q=80" },
+    { title: "The Boys", category: "series", platform: "Prime", mood: "intense", aesthetic: "dark", pacing: "fast", trailerId: "M1bhOaLV4FU", url: "https://www.amazon.com/dp/B0875L4522", synopsis: "A group of vigilantes set out to take down corrupt superheroes who abuse their superpowers.", poster: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1000&q=80" },
+    { title: "Succession", category: "series", platform: "Max", mood: "intense", aesthetic: "dark", pacing: "steady", trailerId: "OzYxJV_rmv8", url: "https://play.max.com/show/succession", synopsis: "The Roy family is known for controlling the biggest media and entertainment company in the world. However, their world changes when their father steps down from the company.", poster: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1000&q=80" },
+    { title: "Squid Game", category: "series", platform: "Netflix", mood: "intense", aesthetic: "colorful", pacing: "fast", trailerId: "oqxA15ArgGQ", url: "https://www.netflix.com/title/81040344", synopsis: "Hundreds of cash-strapped players accept a strange invitation to compete in children's games. Inside, a tempting prize awaits with deadly high stakes.", poster: "https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=1000&q=80" },
     { title: "Crash Landing on You", category: "vertical_drama", platform: "Netflix", mood: "romantic", aesthetic: "bright", pacing: "steady", trailerId: "eXMjTXL221g", url: "https://www.netflix.com/title/81159258", synopsis: "A South Korean heiress accidentally paraglides into North Korea and into the life of an army officer who decides to help her hide.", poster: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1000&q=80" },
-    { title: "Queen of Tears", category: "vertical_drama", platform: "Netflix", mood: "romantic", aesthetic: "bright", pacing: "steady", trailerId: "3mZz7A3hWjY", url: "https://www.netflix.com", synopsis: "The queen of department stores and her small-town husband weather a marital crisis until love miraculously begins to bloom again.", poster: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1000&q=80" }
+    { title: "Todas as Flores", category: "vertical_drama", platform: "Globoplay", mood: "intense", aesthetic: "dramatic", pacing: "steady", trailerId: "y10p-M08A_A", url: "https://globoplay.globo.com/todas-as-flores/t/pp7sN9wfdb/", synopsis: "A thrilling Brazilian novela about passion, vengeance, and family secrets in the fashion universe.", poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1000&q=80" },
+    { title: "Billionaire's Secret Heiress", category: "vertical_drama", platform: "ReelShort", mood: "intense", aesthetic: "modern", pacing: "fast", trailerId: "ScMzIvxBSi4", url: "https://www.reelshort.com/search?q=Billionaires+Secret+Heiress", synopsis: "A high-stakes vertical drama filled with romance, betrayal, and secret identity twists.", poster: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1000&q=80" },
+    { title: "Queen of Tears", category: "vertical_drama", platform: "Netflix", mood: "romantic", aesthetic: "bright", pacing: "steady", trailerId: "3mZz7A3hWjY", url: "https://www.netflix.com/title/81707950", synopsis: "The queen of department stores and her small-town husband weather a marital crisis until love miraculously begins to bloom again.", poster: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1000&q=80" },
+    { title: "The Ultimate Cinema Breakdown", category: "yt_video", platform: "YouTube", mood: "intense", aesthetic: "modern", pacing: "steady", trailerId: "d9MyW72ELq0", url: "https://www.youtube.com/watch?v=d9MyW72ELq0", synopsis: "Deep-dive analysis into the greatest film editing and storytelling techniques of the decade.", poster: "https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=1000&q=80" },
+    { title: "Fast Film Hacks Short", category: "short", platform: "YouTube", mood: "laugh", aesthetic: "colorful", pacing: "fast", trailerId: "L_LUpnjgPso", url: "https://www.youtube.com/shorts/L_LUpnjgPso", synopsis: "60-second quick movie recommendations you can watch tonight!", poster: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1000&q=80" },
+    { title: "Top 10 Hidden Gem Movies", category: "yt_video", platform: "YouTube", mood: "chill", aesthetic: "modern", pacing: "steady", trailerId: "B7bqAsxee4I", url: "https://www.youtube.com/watch?v=B7bqAsxee4I", synopsis: "A deep dive into 10 masterpieces you probably missed streaming this year.", poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1000&q=80" },
+    { title: "Cinematic Chillout Playlist", category: "spotify_playlist", platform: "Spotify", mood: "chill", aesthetic: "atmospheric", pacing: "slow", spotifyId: "37i9dQZF1DX4sWSpwq3LiO", spotifyType: "playlist", url: "https://open.spotify.com/playlist/37i9dQZF1DX4sWSpwq3LiO", synopsis: "Curated ambient soundscapes and iconic acoustic film themes for relaxation.", poster: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1000&q=80" },
+    { title: "Movie Review Daily Podcast", category: "spotify_podcast", platform: "Spotify", mood: "chill", aesthetic: "informative", pacing: "steady", spotifyId: "0fA28Nnef4X3O6Oq0K1L5i", spotifyType: "show", url: "https://open.spotify.com/show/0fA28Nnef4X3O6Oq0K1L5i", synopsis: "The daily podcast reviewing the hottest new arrivals on streaming platforms.", poster: "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?auto=format&fit=crop&w=1000&q=80" },
+    { title: "Midnight City (Movie Vibe)", category: "spotify_track", platform: "Spotify", mood: "chill", aesthetic: "retro", pacing: "steady", spotifyId: "6GyDYK2LW23fO3A25L3C3a", spotifyType: "track", url: "https://open.spotify.com/track/6GyDYK2LW23fO3A25L3C3a", synopsis: "An iconic synthetic masterpiece that sets the ultimate late-night cinematic mood.", poster: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1000&q=80" },
+    { title: "The Joe Rogan Experience", category: "spotify_podcast", platform: "Spotify", mood: "laugh", aesthetic: "informative", pacing: "steady", spotifyId: "4rOoJ6Egrf8K2IrywzwOMk", spotifyType: "show", url: "https://open.spotify.com/show/4rOoJ6Egrf8K2IrywzwOMk", synopsis: "Long form conversations with friends and guests that have included comedians, actors, musicians, and more.", poster: "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?auto=format&fit=crop&w=1000&q=80" }
 ];
 
-/* 🚀 SMART MATCH ENGINE (Multi-Level Filtering) */
 window.triggerMatch = async function() {
     window.checkAdBlocker(); if (adblockEnabled) return; 
     if (!checkDailyLimit()) return;
@@ -134,22 +144,18 @@ window.triggerMatch = async function() {
     let pool = masterCatalog.filter(item => !seenList.includes(item.title) && !savedList.includes(item.title) && !dislikedList.includes(item.title));
     let targetedPool = pool;
     
-    // Level 1: Strict Filtering
     if (selCategory !== 'any') targetedPool = targetedPool.filter(i => i.category === selCategory);
     if (selPlatform !== 'any') targetedPool = targetedPool.filter(i => i.platform === selPlatform);
     if (selMood !== 'any') targetedPool = targetedPool.filter(i => i.mood === selMood);
     if (selAesthetic !== 'any') targetedPool = targetedPool.filter(i => i.aesthetic === selAesthetic);
     if (selPacing !== 'any') targetedPool = targetedPool.filter(i => i.pacing === selPacing);
     
-    // Level 2: Fallback (Drop Aesthetic & Pacing if too specific)
     if (targetedPool.length === 0) {
         targetedPool = pool.filter(i => (selCategory === 'any' || i.category === selCategory) && (selPlatform === 'any' || i.platform === selPlatform) && (selMood === 'any' || i.mood === selMood));
     }
-    // Level 3: Ultimate Fallback (Just find something in the category)
     if (targetedPool.length === 0) {
         targetedPool = pool.filter(i => (selCategory === 'any' || i.category === selCategory));
     }
-    // Level 4: Reset Cache
     if (targetedPool.length === 0) {
         alert("✨ You have reviewed every title in our database for this query! Clearing temporary view cache to rediscover matches...");
         seenList = []; syncListsToDatabase(); targetedPool = masterCatalog;
@@ -228,13 +234,11 @@ window.triggerAdRetry = function() {
 window.closeAdAndClaim = function() { document.getElementById('reward-ad-modal').style.display = 'none'; document.getElementById('result-box').style.display = 'none'; triggerMatch(); };
 window.openPortfolioModal = function(title) { const item = masterCatalog.find(m => m.title === title); if (item) { document.getElementById('port-modal-title').innerText = item.title; document.getElementById('port-modal-synopsis').innerText = item.synopsis; document.getElementById('port-modal-plat').innerText = item.platform; document.getElementById('port-modal-bg').style.backgroundImage = `url('${item.poster}')`; document.getElementById('port-modal-link').onclick = function() { window.open(item.url, '_blank'); }; document.getElementById('portfolio-modal').style.display = 'flex'; } };
 
-/* 🖼️ RICH PROFILE RENDERING ENGINE */
 window.renderProfileGrids = function() {
     const pGrid = document.getElementById('portfolio-grid');
     const hGrid = document.getElementById('history-grid');
-    if (!pGrid || !hGrid) return; // Only runs if on profile page
+    if (!pGrid || !hGrid) return; 
 
-    // Render Watch Later (Portfolio)
     if (savedList.length > 0) {
         pGrid.innerHTML = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px;">' + savedList.map(title => {
             const item = masterCatalog.find(m => m.title === title);
@@ -248,7 +252,6 @@ window.renderProfileGrids = function() {
         }).join('') + '</div>';
     } else { pGrid.innerHTML = `<p style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 20px 0;">No saved titles yet. Go find your match!</p>`; }
 
-    // Render Seen It (History)
     if (seenList.length > 0) {
         hGrid.innerHTML = '<div style="display: flex; flex-direction: column; gap: 8px;">' + seenList.map(title => {
             return `<div style="background: rgba(255,255,255,0.05); padding: 10px 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid #25D366;">
@@ -262,7 +265,6 @@ window.renderProfileGrids = function() {
 window.addEventListener('DOMContentLoaded', async () => {
     updateClock();
     
-    // Auto-format Date of Birth
     const dobInput = document.getElementById('profile-dob');
     if (dobInput) {
         dobInput.addEventListener('input', function(e) {
@@ -283,14 +285,13 @@ window.addEventListener('DOMContentLoaded', async () => {
     window.checkAdBlocker(); setInterval(window.checkAdBlocker, 5000); 
     if (sessionStorage.getItem('dismissedChromeBanner') === 'true' && document.getElementById('chrome-banner')) document.getElementById('chrome-banner').style.display = 'none';
 
-    renderProfileGrids(); // Initial render for guests
+    renderProfileGrids(); 
 
     if (supabaseClient) {
         const { data: { session } } = await supabaseClient.auth.getSession();
         if (session) {
             isUserLoggedIn = true; userProfileData = session.user.user_metadata || {};
             
-            // Populate Profile Data if on profile page
             if (document.getElementById('user-email-display')) {
                 document.getElementById('user-email-display').innerText = session.user.email;
                 if(userProfileData.pref_service) document.getElementById('pref-service').value = userProfileData.pref_service;
@@ -324,7 +325,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (userProfileData.seen_list) seenList = userProfileData.seen_list;
             if (userProfileData.saved_list) savedList = userProfileData.saved_list;
             if (userProfileData.disliked_list) dislikedList = userProfileData.disliked_list;
-            renderProfileGrids(); // Re-render with logged-in user data
+            renderProfileGrids(); 
 
             if(document.getElementById('nav-reg-btn')) document.getElementById('nav-reg-btn').style.display = 'none';
             if(document.getElementById('profile-link-tab')) document.getElementById('profile-link-tab').style.display = 'inline-block';
