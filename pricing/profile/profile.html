@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Google tag (gtag.js) -->
+    <!-- Google Tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -12,9 +12,25 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
     <title>MatchApp | My Profile Hub</title>
-    <meta name="robots" content="noindex, follow">
+    <meta name="description" content="Manage your MatchApp Watch Later portfolio, streaming preferences, and secure identity locker.">
+    <meta name="robots" content="noindex, follow"> <!-- Keeping noindex as profiles are private -->
+    
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Appended Styles -->
+    <style>
+        .how-it-works-subtle { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 25px; text-align: left; }
+        .how-it-works-subtle h4 { color: var(--gold); font-size: 14px; margin: 0 0 8px 0; }
+        .how-it-works-subtle p { color: #aaa; font-size: 12px; margin: 0; line-height: 1.5; }
+        .seo-streaming-links { margin-top: 30px; padding: 25px 15px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center; }
+        .seo-streaming-links h4 { color: #888; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
+        .seo-link-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+        .seo-link-grid a { color: #bbb; font-size: 11px; text-decoration: none; padding: 6px 12px; background: rgba(0,0,0,0.5); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s ease; }
+        .seo-link-grid a:hover { color: var(--gold); border-color: var(--gold); background: rgba(212,175,55,0.1); }
+    </style>
+
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -52,6 +68,11 @@
 
                 <h2 style="color: var(--gold); margin: 0 0 5px 0; font-size: 26px; text-align: center;">My Hub</h2>
                 <p id="user-email-display" style="color: var(--text-muted); font-size: 13px; margin: 0 0 20px 0; text-align: center;">Loading session...</p>
+                
+                <div class="how-it-works-subtle">
+                    <h4>💡 How MatchApp Profiling Works</h4>
+                    <p>By locking in your identity and tuning your AI preferences below, the MatchApp engine will automatically prioritize titles that match your demographic profile and habitual viewing style.</p>
+                </div>
 
                 <!-- SECTION 1: IDENTITY -->
                 <div style="background: rgba(0,0,0,0.5); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,82,82,0.3); margin-bottom: 25px;">
@@ -103,6 +124,21 @@
                 <span class="ad-label">SPONSORED</span>
                 <div class="adsterra-bot-wrapper"><script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script><script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script></div>
             </footer>
+
+            <div class="seo-streaming-links fade-in">
+                <h4>Official Supported Platforms</h4>
+                <div class="seo-link-grid">
+                    <a href="https://www.netflix.com/" target="_blank" rel="noopener noreferrer">Netflix</a>
+                    <a href="https://www.max.com/" target="_blank" rel="noopener noreferrer">Max</a>
+                    <a href="https://www.primevideo.com/" target="_blank" rel="noopener noreferrer">Prime Video</a>
+                    <a href="https://www.disneyplus.com/" target="_blank" rel="noopener noreferrer">Disney+</a>
+                    <a href="https://open.spotify.com/" target="_blank" rel="noopener noreferrer">Spotify</a>
+                    <a href="https://globoplay.globo.com/" target="_blank" rel="noopener noreferrer">Globoplay</a>
+                    <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer">YouTube</a>
+                    <a href="https://tv.apple.com/" target="_blank" rel="noopener noreferrer">Apple TV+</a>
+                    <a href="https://www.viki.com/" target="_blank" rel="noopener noreferrer">Rakuten Viki</a>
+                </div>
+            </div>
         </div>
 
         <aside class="sidebar-ad fade-in"><span class="ad-label">SPONSORED</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
