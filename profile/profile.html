@@ -21,13 +21,33 @@
         .how-it-works-subtle h4 { color: var(--gold); font-size: 14px; margin: 0 0 8px 0; }
         .how-it-works-subtle p { color: #aaa; font-size: 12px; margin: 0; line-height: 1.5; }
         
-        /* Danger Zone / Delete Modal Specific Styles */
+        /* Danger Zone / Delete Modal */
         .danger-checkbox-container { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: left; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s ease; }
         .danger-checkbox-container.checked-active { border-color: #2196F3; background: rgba(33, 150, 243, 0.1); }
         .danger-checkbox-container label { display: flex; align-items: center; cursor: pointer; gap: 10px; margin: 0; }
         input[type="checkbox"].blue-checkbox { width: 20px; height: 20px; accent-color: #2196F3; cursor: pointer; }
         .btn-disabled { border-color: #555 !important; color: #555 !important; cursor: not-allowed !important; background: transparent !important; }
         .btn-danger-active { border-color: #ff5252 !important; color: #fff !important; background: #ff5252 !important; }
+
+        /* Grid Items & Animated Deletion UI */
+        .grid-item-card { position: relative; display: inline-block; width: 100px; margin: 5px; border-radius: 8px; overflow: hidden; background: #111; vertical-align: top; transition: transform 0.3s ease, opacity 0.3s ease; }
+        .grid-item-card img { width: 100%; height: 150px; object-fit: cover; display: block; }
+        .delete-item-btn { position: absolute; top: 4px; right: 4px; background: rgba(255,82,82,0.9); color: white; border: none; border-radius: 50%; width: 22px; height: 22px; font-weight: bold; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.5); transition: transform 0.2s, background 0.2s; font-size: 12px; }
+        .delete-item-btn:hover { transform: scale(1.15); background: #ff0000; }
+        .item-rating-badge { position: absolute; bottom: 4px; left: 4px; background: rgba(0,0,0,0.85); color: #f5c518; padding: 3px 6px; border-radius: 6px; font-size: 11px; font-weight: 900; z-index: 10; border: 1px solid rgba(212,175,55,0.4); text-shadow: 0 1px 2px #000; }
+        
+        .removing-anim { animation: shrinkFade 0.4s forwards; pointer-events: none; }
+        @keyframes shrinkFade { to { transform: scale(0.6); opacity: 0; } }
+
+        .clear-list-btn { width: 100%; margin-top: 15px; border-color: rgba(255,255,255,0.2) !important; color: #bbb !important; font-size: 12px; padding: 10px; background: transparent; }
+        .clear-list-btn:hover { border-color: #ff5252 !important; color: #ff5252 !important; background: rgba(255,82,82,0.1); }
+
+        /* Stream Flags Global CSS */
+        .stream-flags { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; opacity: 0.15; }
+        .sf-item { position: absolute; font-size: 8vw; font-weight: 900; color: #fff; white-space: nowrap; opacity: 0.3; }
+        .brand-netflix { color: #E50914; } .brand-prime { color: #00A8E1; } .brand-max { color: #5822b4; } .brand-disney { color: #113CCF; }
+        @keyframes flyPath1 { 0% { transform: translateX(-100%) rotate(-5deg); } 100% { transform: translateX(100vw) rotate(5deg); } }
+        @keyframes flyPath2 { 0% { transform: translateX(100vw) rotate(5deg); } 100% { transform: translateX(-100%) rotate(-5deg); } }
     </style>
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
@@ -41,6 +61,13 @@
 
     <div id="real-time-clock" class="real-time-clock fade-in">Loading Time...</div>
     <div class="luxury-bg"><div class="floating-orb orb-1"></div><div class="floating-orb orb-2"></div></div>
+
+    <div class="stream-flags">
+        <span class="sf-item brand-netflix" style="top: 10%; animation: flyPath1 8s linear infinite;">NETFLIX</span>
+        <span class="sf-item brand-prime" style="top: 30%; animation: flyPath2 10s linear infinite 2s;">PRIME</span>
+        <span class="sf-item brand-max" style="top: 50%; animation: flyPath1 9s linear infinite 4s;">MAX</span>
+        <span class="sf-item brand-disney" style="top: 70%; animation: flyPath2 11s linear infinite 1s;">DISNEY+</span>
+    </div>
 
     <div class="page-wrapper">
         <aside class="sidebar-ad fade-in"><span class="ad-label">SPONSORED</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
@@ -104,11 +131,13 @@
                 <div style="background: rgba(212,175,55,0.05); padding: 20px; border-radius: 16px; border: 1px solid rgba(212,175,55,0.3); margin-bottom: 25px;">
                     <h3 style="color: var(--gold-glow); margin: 0 0 15px 0; font-size: 18px;">⭐ Watch Later Portfolio</h3>
                     <div id="portfolio-grid"><p style="color: var(--text-muted); font-size: 13px;">Loading portfolio...</p></div>
+                    <button onclick="clearListEntirely('portfolio')" class="secondary-btn clear-list-btn">🗑️ Remove All Saved for Later</button>
                 </div>
 
                 <div style="background: rgba(37,211,102,0.05); padding: 20px; border-radius: 16px; border: 1px solid rgba(37,211,102,0.3); margin-bottom: 25px;">
                     <h3 style="color: #25D366; margin: 0 0 15px 0; font-size: 18px;">✔️ Watch History & Ratings</h3>
                     <div id="history-grid"><p style="color: var(--text-muted); font-size: 13px;">Loading history...</p></div>
+                    <button onclick="clearListEntirely('history')" class="secondary-btn clear-list-btn">🗑️ Remove All History & Ratings</button>
                 </div>
                 
                 <div style="display: flex; gap: 10px; margin-top: 20px;">
@@ -117,6 +146,7 @@
                 </div>
             </div>
         </div>
+        <aside class="sidebar-ad fade-in"><span class="ad-label">SPONSORED</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
     </div>
 
     <!-- DANGER ZONE: ACCOUNT DELETION MODAL -->
@@ -124,18 +154,9 @@
         <div class="premium-card modal-content" style="border: 2px solid #ff5252; max-width: 400px; text-align: center; padding: 30px 20px;">
             <div style="font-size: 60px; margin-bottom: 15px; animation: pulse 2s infinite;">⚠️</div>
             <h2 style="color: #ff5252; font-size: 24px; margin: 0 0 15px 0;">Are you absolutely sure?</h2>
-            
-            <p style="color: #ddd; font-size: 14px; margin-bottom: 15px; line-height: 1.6;">
-                We would love for you to stay and continue discovering great content with us! If you proceed, <strong>your profile, portfolio, and all viewing data will be permanently erased.</strong>
-            </p>
-            
-            <p style="color: #ff5252; font-size: 13px; font-weight: bold; margin-bottom: 15px; line-height: 1.5; background: rgba(255,82,82,0.1); padding: 10px; border-radius: 8px;">
-                Any purchased products or VIP tiers will NOT be refunded or restored.
-            </p>
-
-            <p style="color: #fff; font-size: 14px; margin-bottom: 20px; line-height: 1.5; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px;">
-                Additionally, you will <strong>never be able to register again</strong> using this email address.
-            </p>
+            <p style="color: #ddd; font-size: 14px; margin-bottom: 15px; line-height: 1.6;">We would love for you to stay! If you proceed, <strong>your profile, portfolio, and all viewing data will be permanently erased.</strong></p>
+            <p style="color: #ff5252; font-size: 13px; font-weight: bold; margin-bottom: 15px; line-height: 1.5; background: rgba(255,82,82,0.1); padding: 10px; border-radius: 8px;">Any purchased products or VIP tiers will NOT be refunded or restored.</p>
+            <p style="color: #fff; font-size: 14px; margin-bottom: 20px; line-height: 1.5; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px;">Additionally, you will <strong>never be able to register again</strong> using this email address.</p>
 
             <div id="delete-checkbox-wrapper" class="danger-checkbox-container">
                 <label>
