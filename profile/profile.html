@@ -17,10 +17,13 @@
     <link rel="stylesheet" href="/style.css">
     
     <style>
-        .how-it-works-subtle { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 25px; text-align: left; }
-        .how-it-works-subtle h4 { color: var(--gold); font-size: 14px; margin: 0 0 8px 0; }
-        .how-it-works-subtle p { color: #aaa; font-size: 12px; margin: 0; line-height: 1.5; }
-        
+        /* BIG, GLOWING BACKGROUND ANIMATIONS */
+        .stream-flags { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; opacity: 0.35; }
+        .sf-item { position: absolute; font-size: 14vw; font-weight: 900; color: #fff; white-space: nowrap; opacity: 0.8; text-shadow: 0 0 20px currentColor, 0 0 40px currentColor, 0 0 60px currentColor; }
+        .brand-netflix { color: #E50914; } .brand-prime { color: #00A8E1; } .brand-max { color: #8A2BE2; } .brand-disney { color: #113CCF; }
+        @keyframes flyPath1 { 0% { transform: translateX(-100%) rotate(-5deg); } 100% { transform: translateX(100vw) rotate(5deg); } }
+        @keyframes flyPath2 { 0% { transform: translateX(100vw) rotate(5deg); } 100% { transform: translateX(-100%) rotate(-5deg); } }
+
         /* Danger Zone / Delete Modal */
         .danger-checkbox-container { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: left; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s ease; }
         .danger-checkbox-container.checked-active { border-color: #2196F3; background: rgba(33, 150, 243, 0.1); }
@@ -29,25 +32,19 @@
         .btn-disabled { border-color: #555 !important; color: #555 !important; cursor: not-allowed !important; background: transparent !important; }
         .btn-danger-active { border-color: #ff5252 !important; color: #fff !important; background: #ff5252 !important; }
 
-        /* Grid Items & Animated Deletion UI */
-        .grid-item-card { position: relative; display: inline-block; width: 100px; margin: 5px; border-radius: 8px; overflow: hidden; background: #111; vertical-align: top; transition: transform 0.3s ease, opacity 0.3s ease; }
-        .grid-item-card img { width: 100%; height: 150px; object-fit: cover; display: block; }
-        .delete-item-btn { position: absolute; top: 4px; right: 4px; background: rgba(255,82,82,0.9); color: white; border: none; border-radius: 50%; width: 22px; height: 22px; font-weight: bold; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.5); transition: transform 0.2s, background 0.2s; font-size: 12px; }
+        /* Animated Deletion UI for Grid */
+        .grid-item-card { position: relative; display: inline-block; width: 110px; margin: 5px; border-radius: 8px; overflow: hidden; background: #111; vertical-align: top; transition: transform 0.4s ease, opacity 0.4s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.5); border: 1px solid rgba(212,175,55,0.3); }
+        .grid-item-card img { width: 100%; height: 160px; object-fit: cover; display: block; cursor: pointer; }
+        .delete-item-btn { position: absolute; top: 5px; right: 5px; background: rgba(255,82,82,0.9); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-weight: bold; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.5); transition: transform 0.2s, background 0.2s; font-size: 14px; }
         .delete-item-btn:hover { transform: scale(1.15); background: #ff0000; }
-        .item-rating-badge { position: absolute; bottom: 4px; left: 4px; background: rgba(0,0,0,0.85); color: #f5c518; padding: 3px 6px; border-radius: 6px; font-size: 11px; font-weight: 900; z-index: 10; border: 1px solid rgba(212,175,55,0.4); text-shadow: 0 1px 2px #000; }
+        .item-rating-badge { position: absolute; bottom: 5px; left: 5px; background: rgba(0,0,0,0.85); color: #f5c518; padding: 4px 6px; border-radius: 6px; font-size: 11px; font-weight: 900; z-index: 10; border: 1px solid rgba(212,175,55,0.4); text-shadow: 0 1px 2px #000; }
+        .item-title-overlay { position: absolute; bottom: 0; left: 0; width: 100%; padding: 25px 5px 5px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); color: #fff; font-size: 10px; font-weight: bold; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; z-index: 5; pointer-events: none; }
         
         .removing-anim { animation: shrinkFade 0.4s forwards; pointer-events: none; }
-        @keyframes shrinkFade { to { transform: scale(0.6); opacity: 0; } }
-
+        @keyframes shrinkFade { to { transform: scale(0.5); opacity: 0; } }
+        
         .clear-list-btn { width: 100%; margin-top: 15px; border-color: rgba(255,255,255,0.2) !important; color: #bbb !important; font-size: 12px; padding: 10px; background: transparent; }
         .clear-list-btn:hover { border-color: #ff5252 !important; color: #ff5252 !important; background: rgba(255,82,82,0.1); }
-
-        /* Stream Flags Global CSS */
-        .stream-flags { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; opacity: 0.15; }
-        .sf-item { position: absolute; font-size: 8vw; font-weight: 900; color: #fff; white-space: nowrap; opacity: 0.3; }
-        .brand-netflix { color: #E50914; } .brand-prime { color: #00A8E1; } .brand-max { color: #5822b4; } .brand-disney { color: #113CCF; }
-        @keyframes flyPath1 { 0% { transform: translateX(-100%) rotate(-5deg); } 100% { transform: translateX(100vw) rotate(5deg); } }
-        @keyframes flyPath2 { 0% { transform: translateX(100vw) rotate(5deg); } 100% { transform: translateX(-100%) rotate(-5deg); } }
     </style>
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
@@ -55,18 +52,16 @@
 </head>
 <body>
     <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M7J3NNBN"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
-
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M7J3NNBN" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    
     <div id="real-time-clock" class="real-time-clock fade-in">Loading Time...</div>
     <div class="luxury-bg"><div class="floating-orb orb-1"></div><div class="floating-orb orb-2"></div></div>
 
     <div class="stream-flags">
-        <span class="sf-item brand-netflix" style="top: 10%; animation: flyPath1 8s linear infinite;">NETFLIX</span>
-        <span class="sf-item brand-prime" style="top: 30%; animation: flyPath2 10s linear infinite 2s;">PRIME</span>
-        <span class="sf-item brand-max" style="top: 50%; animation: flyPath1 9s linear infinite 4s;">MAX</span>
-        <span class="sf-item brand-disney" style="top: 70%; animation: flyPath2 11s linear infinite 1s;">DISNEY+</span>
+        <span class="sf-item brand-netflix" style="top: 10%; animation: flyPath1 15s linear infinite;">NETFLIX</span>
+        <span class="sf-item brand-prime" style="top: 35%; animation: flyPath2 18s linear infinite 2s;">PRIME</span>
+        <span class="sf-item brand-max" style="top: 60%; animation: flyPath1 16s linear infinite 4s;">MAX</span>
+        <span class="sf-item brand-disney" style="top: 85%; animation: flyPath2 19s linear infinite 1s;">DISNEY+</span>
     </div>
 
     <div class="page-wrapper">
@@ -81,53 +76,9 @@
             </header>
 
             <div class="premium-card fade-in" style="text-align: left; padding: 30px 20px;">
-                <div style="display: flex; justify-content: center; margin-bottom: 20px;">
-                    <label for="profile-pic-upload" style="cursor: pointer; position: relative;">
-                        <div style="width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--gold); overflow: hidden; box-shadow: 0 0 25px rgba(212,175,55,0.5);">
-                            <img id="profile-pic-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23D4AF37'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
-                        </div>
-                        <div style="position: absolute; bottom: -5px; right: 0; background: var(--gold); color: #000; padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;">Edit (Private)</div>
-                    </label>
-                    <input type="file" id="profile-pic-upload" accept="image/*" style="display: none;" onchange="handleProfilePic(event)">
-                </div>
-
                 <h2 style="color: var(--gold); margin: 0 0 5px 0; font-size: 26px; text-align: center;">My Hub</h2>
                 <p id="user-email-display" style="color: var(--text-muted); font-size: 13px; margin: 0 0 20px 0; text-align: center;">Loading session...</p>
                 
-                <div class="how-it-works-subtle">
-                    <h4>💡 How MatchApp Profiling Works</h4>
-                    <p>By locking in your identity and tuning your AI preferences below, the MatchApp engine will automatically prioritize titles that match your demographic profile and habitual viewing style.</p>
-                </div>
-
-                <div style="background: rgba(0,0,0,0.5); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,82,82,0.3); margin-bottom: 25px;">
-                    <h3 style="color: #ff5252; margin: 0 0 10px 0; font-size: 18px;">🔒 Core Identity</h3>
-                    <p style="color: #bbb; font-size: 12px; line-height: 1.5; margin-bottom: 18px;">After saving, <strong>these fields cannot be changed.</strong></p>
-                    <p id="lock-status" style="text-align: center; font-size: 12px; font-weight: bold; margin-bottom: 15px; color: var(--gold);">⚠️ Fields below are unsaved</p>
-
-                    <div class="input-grid">
-                        <div class="input-group"><label>Full Name</label><input type="text" id="profile-name" placeholder="Enter full name..."></div>
-                        <div class="input-group"><label>Country</label><input type="text" id="profile-country" placeholder="e.g. Brazil, USA, UK..."></div>
-                        <div class="input-group"><label>Birthdate (DD/MM/YYYY)</label><input type="text" id="profile-dob" placeholder="e.g. 10/10/1986" maxlength="10"></div>
-                        <div class="input-group"><label>Dynamic Age</label><input type="text" id="profile-age-display" disabled style="opacity: 0.7;" placeholder="Calculated automatically"></div>
-                        <div class="input-group"><label>Star Sign</label><select id="profile-starsign"><option value="">Select...</option><option value="Aries">Aries ♈</option><option value="Taurus">Taurus ♉</option><option value="Gemini">Gemini ♊</option><option value="Cancer">Cancer ♋</option><option value="Leo">Leo ♌</option><option value="Virgo">Virgo ♍</option><option value="Libra">Libra ♎</option><option value="Scorpio">Scorpio ♏</option><option value="Sagittarius">Sagittarius ♐</option><option value="Capricorn">Capricorn ♑</option><option value="Aquarius">Aquarius ♒</option><option value="Pisces">Pisces ♓</option></select></div>
-                        <div class="input-group"><label>Orientation</label><select id="profile-orientation"><option value="">Select...</option><option value="Straight">Straight</option><option value="Gay">Gay</option><option value="Lesbian">Lesbian</option><option value="Bisexual">Bisexual</option><option value="Pansexual">Pansexual</option><option value="Asexual">Asexual</option><option value="Queer">Queer</option><option value="Other">Other</option><option value="Prefer not to say">Prefer not to say</option></select></div>
-                    </div>
-                </div>
-
-                <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 25px;">
-                    <h3 style="color: var(--gold-glow); margin: 0 0 15px 0; font-size: 18px;">⚙️ AI Tuning (Changeable)</h3>
-                    <div class="input-grid">
-                        <div class="input-group"><label>Primary Service</label><select id="pref-service"><option value="Netflix">Netflix</option><option value="Max">Max</option><option value="Prime Video">Prime Video</option><option value="Globoplay">Globoplay</option><option value="Disney+">Disney+</option><option value="Spotify">Spotify</option><option value="Viki">Viki / K-Dramas</option></select></div>
-                        <div class="input-group"><label>Secondary Service</label><select id="pref-service-sec"><option value="None">None</option><option value="Netflix">Netflix</option><option value="Max">Max</option><option value="Prime Video">Prime Video</option><option value="Disney+">Disney+</option><option value="YouTube">YouTube Premium</option></select></div>
-                        <div class="input-group"><label>Favorite Genre</label><select id="pref-genre"><option value="Thriller">Thriller & Suspense</option><option value="Comedy">Comedy</option><option value="Romance">Romance & Doramas</option><option value="Horror">Horror</option><option value="Sci-Fi">Sci-Fi & Fantasy</option><option value="Action">Action</option><option value="Documentary">Documentary</option></select></div>
-                        <div class="input-group"><label>Preferred Decade</label><select id="pref-decade"><option value="New">Brand New (2024+)</option><option value="2010s">Modern (2010s)</option><option value="2000s">Y2K Era (2000s)</option><option value="Classic">Classics (Pre-2000)</option></select></div>
-                        <div class="input-group"><label>Usual Pacing</label><select id="pref-pacing"><option value="Fast">Fast-Paced (Action/Thrills)</option><option value="Steady">Steady & Story-Driven</option><option value="Slow">Slow Burn & Artistic</option></select></div>
-                        <div class="input-group"><label>Preferred Audio</label><select id="pref-audio"><option value="Subbed">Original Audio (Subbed)</option><option value="Dubbed">Dubbed (Local Language)</option></select></div>
-                    </div>
-                </div>
-
-                <button id="save-profile-btn" onclick="saveProfileData()" class="gold-btn" style="margin-bottom: 35px; width: 100%; font-size: 16px;">💾 Save & Update Profile</button>
-
                 <div style="background: rgba(212,175,55,0.05); padding: 20px; border-radius: 16px; border: 1px solid rgba(212,175,55,0.3); margin-bottom: 25px;">
                     <h3 style="color: var(--gold-glow); margin: 0 0 15px 0; font-size: 18px;">⭐ Watch Later Portfolio</h3>
                     <div id="portfolio-grid"><p style="color: var(--text-muted); font-size: 13px;">Loading portfolio...</p></div>
@@ -142,32 +93,41 @@
                 
                 <div style="display: flex; gap: 10px; margin-top: 20px;">
                     <button onclick="doLogout()" class="secondary-btn" style="flex: 1; border-color:#fff; color:#fff; background: rgba(255,255,255,0.1);">Log Out Securely</button>
-                    <button onclick="openDeleteModal()" class="secondary-btn" style="flex: 1; border-color:#ff5252; color:#ff5252; background: rgba(255,82,82,0.1);">🗑️ Delete Account & Data</button>
+                    <button onclick="openDeleteModal()" class="secondary-btn" style="flex: 1; border-color:#ff5252; color:#ff5252; background: rgba(255,82,82,0.1);">🗑️ Delete Account</button>
                 </div>
             </div>
         </div>
-        <aside class="sidebar-ad fade-in"><span class="ad-label">SPONSORED</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
     </div>
-
+    
     <!-- DANGER ZONE: ACCOUNT DELETION MODAL -->
     <div id="delete-modal" class="modal-overlay" style="display:none;">
         <div class="premium-card modal-content" style="border: 2px solid #ff5252; max-width: 400px; text-align: center; padding: 30px 20px;">
             <div style="font-size: 60px; margin-bottom: 15px; animation: pulse 2s infinite;">⚠️</div>
             <h2 style="color: #ff5252; font-size: 24px; margin: 0 0 15px 0;">Are you absolutely sure?</h2>
             <p style="color: #ddd; font-size: 14px; margin-bottom: 15px; line-height: 1.6;">We would love for you to stay! If you proceed, <strong>your profile, portfolio, and all viewing data will be permanently erased.</strong></p>
-            <p style="color: #ff5252; font-size: 13px; font-weight: bold; margin-bottom: 15px; line-height: 1.5; background: rgba(255,82,82,0.1); padding: 10px; border-radius: 8px;">Any purchased products or VIP tiers will NOT be refunded or restored.</p>
-            <p style="color: #fff; font-size: 14px; margin-bottom: 20px; line-height: 1.5; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px;">Additionally, you will <strong>never be able to register again</strong> using this email address.</p>
-
+            <p style="color: #ff5252; font-size: 13px; font-weight: bold; margin-bottom: 15px; line-height: 1.5; background: rgba(255,82,82,0.1); padding: 10px; border-radius: 8px;">Any purchased products or VIP tiers will NOT be refunded.</p>
+            <p style="color: #fff; font-size: 14px; margin-bottom: 20px; line-height: 1.5; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px;">You will <strong>never be able to register again</strong> using this email address.</p>
             <div id="delete-checkbox-wrapper" class="danger-checkbox-container">
                 <label>
                     <input type="checkbox" id="delete-confirm-check" class="blue-checkbox" onchange="toggleDeleteBtn()">
-                    <span id="delete-checkbox-text" style="color: #bbb; font-size: 13px; font-weight: 500; transition: color 0.3s ease;">I understand and I want to delete my account completely.</span>
+                    <span id="delete-checkbox-text" style="color: #bbb; font-size: 13px; font-weight: 500;">I understand and want to delete my account completely.</span>
                 </label>
             </div>
-            
             <div style="display: flex; gap: 10px; flex-direction: column;">
-                <button onclick="closeDeleteModal()" class="gold-btn" style="width: 100%; font-weight: bold; padding: 14px;">Cancel (Keep My Account)</button>
+                <button onclick="closeDeleteModal()" class="gold-btn" style="width: 100%; font-weight: bold; padding: 14px;">Cancel (Keep Account)</button>
                 <button id="final-delete-btn" onclick="executeAccountDeletion()" class="secondary-btn btn-disabled" style="width: 100%; padding: 14px;" disabled>Delete Completely</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Portfolio Item Preview Modal -->
+    <div id="portfolio-modal" class="modal-overlay">
+        <div class="premium-card modal-content" style="border: 2px solid var(--gold); padding: 0; overflow: hidden;">
+            <span class="close-x" onclick="document.getElementById('portfolio-modal').style.display='none'">×</span>
+            <div id="port-modal-bg" class="cinematic-header" style="height: 180px; margin-bottom:0;"><div class="cinematic-overlay"></div><div class="cinematic-title-box" style="bottom: 12px;"><h2 id="port-modal-title" class="cinematic-title" style="font-size:24px;">Title</h2></div></div>
+            <div style="padding: 20px; text-align: left; background: var(--bg-card);">
+                <p id="port-modal-synopsis" style="color: #ddd; font-size: 14px; margin: 0 0 18px 0; line-height: 1.5;"></p>
+                <a id="port-modal-link" href="#" target="_blank" class="gold-btn" style="margin-bottom:10px; width: 100%; display: block; text-align: center; text-decoration: none;">▶ Stream Now on <span id="port-modal-plat"></span></a>
             </div>
         </div>
     </div>
