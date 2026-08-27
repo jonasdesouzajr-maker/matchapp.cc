@@ -35,7 +35,7 @@
     <meta property="twitter:description" content="Find your perfect movie, dorama, or podcast match instantly without the endless scrolling.">
     <meta property="twitter:image" content="https://matchapp.cc/logo.jpeg">
 
-    <!-- Schema.org Markup (WebApplication) for Rich SERP Crawling -->
+    <!-- Schema.org Markup -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -45,22 +45,14 @@
       "description": "An AI-powered streaming recommendation app that finds the perfect movies, TV shows, doramas, and podcasts based on your mood, pacing, and platform preferences.",
       "applicationCategory": "EntertainmentApplication",
       "operatingSystem": "All",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.9",
-        "ratingCount": "1580"
-      }
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "ratingCount": "1580" }
     }
     </script>
 
     <link rel="stylesheet" href="style.css">
     
-    <!-- Embedded Animation & External Links Styles -->
+    <!-- Embedded Animation, Stars, & External Links Styles -->
     <style>
         .how-it-works-glow { background: rgba(20, 5, 5, 0.75); border: 2px solid var(--gold); border-radius: 16px; padding: 25px; margin: 25px 0; text-align: center; box-shadow: 0 0 20px rgba(212, 175, 55, 0.4), inset 0 0 15px rgba(212, 175, 55, 0.2); animation: goldPulse 3s infinite alternate; }
         @keyframes goldPulse { 0% { box-shadow: 0 0 15px rgba(212, 175, 55, 0.3), inset 0 0 10px rgba(212, 175, 55, 0.1); border-color: rgba(212, 175, 55, 0.6); } 100% { box-shadow: 0 0 30px rgba(212, 175, 55, 0.7), inset 0 0 20px rgba(212, 175, 55, 0.4); border-color: rgba(212, 175, 55, 1); } }
@@ -75,6 +67,15 @@
         .seo-link-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
         .seo-link-grid a { color: #bbb; font-size: 11px; text-decoration: none; padding: 6px 12px; background: rgba(0,0,0,0.5); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s ease; }
         .seo-link-grid a:hover { color: var(--gold); border-color: var(--gold); background: rgba(212,175,55,0.1); }
+        
+        /* STAR RATING COMPONENT CSS */
+        .star-rating-container { display: inline-flex; flex-direction: row-reverse; cursor: pointer; font-size: 2.2rem; justify-content: center; width: 100%; }
+        .star-rating-container .star { color: rgba(255,255,255,0.15); transition: color 0.2s ease, transform 0.2s ease; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
+        .star-rating-container .star:hover { transform: scale(1.15); }
+        .star-rating-container .star:hover,
+        .star-rating-container .star:hover ~ .star,
+        .star-rating-container .star.selected,
+        .star-rating-container .star.selected ~ .star { color: #f5c518; }
     </style>
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
@@ -181,7 +182,20 @@
                 <p id="res-synopsis" style="color: #ddd; font-size: 15px; line-height: 1.6; margin: 0 0 20px 0;"></p>
                 <div id="res-trailer-container"><h4 style="color: var(--gold); font-size: 13px; text-transform: uppercase; margin: 0 0 10px 0;">🎬 Official Video / Trailer</h4><div class="video-container"><iframe id="res-trailer" src="" allowfullscreen loading="lazy"></iframe></div></div>
                 <div id="res-spotify-container" class="spotify-container" style="display: none;"></div>
-                <a id="res-direct-link" href="#" target="_blank" class="gold-btn" style="margin-bottom: 15px; text-decoration: none; text-align: center; display: block;">▶ Stream Now</a>
+                <a id="res-direct-link" href="#" target="_blank" class="gold-btn" style="margin-bottom: 25px; text-decoration: none; text-align: center; display: block;">▶ Stream Now</a>
+                
+                <!-- ⭐ PRO RATING SYSTEM UI -->
+                <div id="star-rating-ui" style="text-align: center; margin-bottom: 20px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 12px; border: 1px solid rgba(212,175,55,0.2);">
+                    <h4 style="color: var(--gold); font-size: 13px; text-transform: uppercase; margin: 0 0 5px 0;">Rate this Match</h4>
+                    <div class="star-rating-container" id="current-star-rating">
+                        <span class="star" data-value="5">★</span>
+                        <span class="star" data-value="4">★</span>
+                        <span class="star" data-value="3">★</span>
+                        <span class="star" data-value="2">★</span>
+                        <span class="star" data-value="1">★</span>
+                    </div>
+                </div>
+
                 <div class="action-grid">
                     <button onclick="saveToList()" class="secondary-btn" style="border-color: var(--gold); color: var(--gold-glow);">⭐ Watch Later</button>
                     <button onclick="markAsSeen()" class="secondary-btn" style="border-color: #25D366; color: #25D366;">✔️ I've Seen It</button>
