@@ -51,7 +51,6 @@
 
     <link rel="stylesheet" href="style.css">
     
-    <!-- Embedded Animation, Stars, & External Links Styles -->
     <style>
         .how-it-works-glow { background: rgba(20, 5, 5, 0.75); border: 2px solid var(--gold); border-radius: 16px; padding: 25px; margin: 25px 0; text-align: center; box-shadow: 0 0 20px rgba(212, 175, 55, 0.4), inset 0 0 15px rgba(212, 175, 55, 0.2); animation: goldPulse 3s infinite alternate; }
         @keyframes goldPulse { 0% { box-shadow: 0 0 15px rgba(212, 175, 55, 0.3), inset 0 0 10px rgba(212, 175, 55, 0.1); border-color: rgba(212, 175, 55, 0.6); } 100% { box-shadow: 0 0 30px rgba(212, 175, 55, 0.7), inset 0 0 20px rgba(212, 175, 55, 0.4); border-color: rgba(212, 175, 55, 1); } }
@@ -67,7 +66,6 @@
         .seo-link-grid a { color: #bbb; font-size: 11px; text-decoration: none; padding: 6px 12px; background: rgba(0,0,0,0.5); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s ease; }
         .seo-link-grid a:hover { color: var(--gold); border-color: var(--gold); background: rgba(212,175,55,0.1); }
         
-        /* STAR RATING COMPONENT CSS */
         .star-rating-container { display: inline-flex; flex-direction: row-reverse; cursor: pointer; font-size: 2.2rem; justify-content: center; width: 100%; }
         .star-rating-container .star { color: rgba(255,255,255,0.15); transition: color 0.2s ease, transform 0.2s ease; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
         .star-rating-container .star:hover { transform: scale(1.15); }
@@ -188,7 +186,6 @@
                 <div id="res-spotify-container" class="spotify-container" style="display: none;"></div>
                 <a id="res-direct-link" href="#" target="_blank" class="gold-btn" style="margin-bottom: 25px; text-decoration: none; text-align: center; display: block;">▶ Stream Now</a>
                 
-                <!-- ⭐ PRO RATING SYSTEM UI -->
                 <div id="star-rating-ui" style="text-align: center; margin-bottom: 20px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 12px; border: 1px solid rgba(212,175,55,0.2);">
                     <h4 style="color: var(--gold); font-size: 13px; text-transform: uppercase; margin: 0 0 5px 0;">Rate this Match</h4>
                     <div class="star-rating-container" id="current-star-rating">
@@ -205,11 +202,7 @@
                     <button onclick="markAsSeen()" class="secondary-btn" style="border-color: #25D366; color: #25D366;">✔️ I've Seen It</button>
                     <button onclick="markAsDisliked()" class="secondary-btn" style="border-color: #ff5252; color: #ff5252;">👎 Don't Like It</button>
                 </div>
-                <div class="ad-placement" style="background: transparent; border: none; box-shadow: none; margin: 10px 0; min-height: 100px;">
-                    <ins class="adsbygoogle" style="display:block" data-ad-format="fluid" data-ad-layout-key="-6t+ed+2i-1n-4w" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117"></ins>
-                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-                </div>
-                <button onclick="location.reload()" class="secondary-btn" style="border: none; background: transparent; text-align: center;">🔙 Return to Concierge</button>
+                <button onclick="location.reload()" class="secondary-btn" style="border: none; background: transparent; text-align: center; margin-top: 15px;">🔙 Return to Concierge</button>
             </div>
 
             <footer class="ad-placement fade-in" style="margin-top: 20px;">
@@ -246,38 +239,6 @@
             <input type="password" id="auth-password" placeholder="Password (Min 6 chars)" style="margin-bottom: 20px; padding: 14px;">
             <div style="display: flex; gap: 10px; margin-bottom: 10px;"><button onclick="handleEmailLogin()" class="secondary-btn" style="flex: 1; border-color: var(--gold); color: var(--gold-glow);">Login</button><button onclick="handleEmailSignup()" class="gold-btn" style="flex: 1; padding: 14px;">Register</button></div>
             <p id="auth-message" style="font-size: 12px; margin-top: 15px; display: none; font-weight: bold;"></p>
-        </div>
-    </div>
-
-    <div id="adblock-modal" class="modal-overlay">
-        <div class="premium-card modal-content" style="border: 2px solid #ff5252; background: rgba(20,5,5,0.95); padding: 25px 18px;">
-            <div style="font-size: 50px; margin-bottom: 10px;">🛑</div>
-            <h2 style="color: #ff5252; font-size: 24px; margin: 0 0 10px 0;">Ad-Blocker Detected</h2>
-            
-            <div class="how-it-works-subtle" style="border-color: rgba(255,82,82,0.3);">
-                <h4 style="color: #ff5252;">💡 How MatchApp Works</h4>
-                <p>MatchApp's AI processes millions of streaming titles to serve you personalized, duplicate-free matches instantly. Our free service relies on sponsor views to keep the servers running.</p>
-            </div>
-            
-            <p style="color: #fff; font-size: 13px; line-height: 1.5; margin-bottom: 20px;">Please support us by pausing your Ad-Blocker or Microsoft Edge Tracking Prevention.</p>
-            <button onclick="window.checkAdBlocker()" class="gold-btn" style="background: #ff5252; color: #fff; margin-bottom: 10px;">✔️ I Disabled It (Check Now)</button>
-            <button onclick="openIncognitoHelper()" class="secondary-btn" style="border-color: #9A5CFF; color: #fff; background: rgba(154, 92, 255, 0.15); margin-bottom: 10px;">🕵️ Open In Incognito/Private Tab</button>
-            <button onclick="showAdblockGuide()" class="secondary-btn" style="border-color: rgba(255,255,255,0.2); color: #bbb; margin-bottom: 15px; font-weight: normal;">How to disable?</button>
-            <div id="adblock-signin-prompt"><button onclick="openAuthModal()" class="google-btn" style="width: 100%; padding: 12px; background: var(--gold); border: none; color: #000;">👤 Sign in to Get VIP Ad-Free</button></div>
-            <div id="adblock-buy-prompt" style="display: none;"><a href="pricing.html" class="gold-btn" style="text-decoration: none; display: block; text-align: center;">💎 Upgrade to VIP</a></div>
-        </div>
-    </div>
-
-    <div id="reward-ad-modal" class="modal-overlay">
-        <div class="premium-card modal-content" style="border: 1px solid var(--gold);">
-            <h3 style="color: var(--gold); margin: 0 0 10px 0; font-size: 20px;">Sponsor Break</h3>
-            <p style="font-size: 12px; color: var(--text-muted);">Please view this 30-second sponsor break to unlock your next AI match!</p>
-            <div class="ad-placement" style="background: rgba(0,0,0,0.8); min-height: 250px; margin: 15px auto; width: 300px; display:flex; justify-content:center; align-items:center;">
-                <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script>
-                <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
-            </div>
-            <button id="claim-retry-btn" class="gold-btn" disabled style="opacity: 0.5;">Wait <span id="ad-timer">30</span>s to claim...</button>
-            <button id="close-ad-btn" class="secondary-btn" style="display: none; border-color: #25D366; color: #25D366; font-weight: 900;" onclick="closeAdAndClaim()">✖ Close & Get Match</button>
         </div>
     </div>
     
