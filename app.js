@@ -1,40 +1,63 @@
-function checkDailyLimit() {
-    if (isVIP || isAdFree) return true; 
-    const todayStr = new Date().toLocaleDateString();
-    let lastDate = localStorage.getItem('match_lastDate');
-    let dailyCount = parseInt(localStorage.getItem('match_dailyCount') || '0');
-    if (lastDate !== todayStr) { dailyCount = 0; localStorage.setItem('match_lastDate', todayStr); }
-    if (!isUserLoggedIn && dailyCount >= 5) { 
-        alert("🔒 You've used your 5 free guest matches today!\n\nPlease register for a FREE account to lock in your identity, save your history, and unlock your next daily allowance!"); 
-        openAuthModal(); 
-        return false; 
-    }
-    if (isUserLoggedIn && dailyCount >= 5) { 
-        alert("💎 You've reached your daily limit of 5 free matches!\n\nUpgrade to a VIP Pack for unlimited matches, zero ads, and premium AI features!"); 
-        // FIXED PRICING REDIRECT PATH
-        window.location.href = '/pricing/pricing.html'; 
-        return false; 
-    }
-    dailyCount++; 
-    localStorage.setItem('match_dailyCount', dailyCount.toString()); 
-    return true;
+// --- ADD THIS HELPER FUNCTION ANYWHERE IN APP.JS ---
+async function checkIfBanned(email) {
+    if (!email) return false;
+    const { data, error } = await supabaseClient
+        .from('banned_emails')
+        .select('email')
+        .eq('email', email)
+        .single();
+    
+    if (data) return true; // Email found in banned list
+    return false;
 }
 
-// FIXED LOGOUT REDIRECT PATH
-window.doLogout = async function() { 
-    if (supabaseClient) { 
-        await supabaseClient.auth.signOut(); 
-        localStorage.clear(); 
-        window.location.href = '/index.html'; 
-    } 
-};
+// --- UPDATE YOUR AUTH STATE CHANGE LISTENER IN APP.JS ---
+// Usually looks like: supabaseClient.auth.onAuthStateChange(...)
+supabaseClient.auth.onAuthStateChange(async (event, session) => {
+    if (session && session.user) {
+        // Enforce the permanent ban on fresh logins (catches Google OAuth too)
+        const isBanned = await checkIfBanned(session.user.email);
+        if (isBanned) {
+            alert("⚠️ This email address has been permanently deleted and cannot be used to access or create a new account.");
+            await supabaseClient.auth.signOut();
+            localStorage.clear();
+            window.location.href = '/index.html';
+            return;
+        }
+        
+        isUserLoggedIn = true;
+        // ... (rest of your normal login UI updates: hide reg buttons, show profile tab, etc.)
+    } else {
+        isUserLoggedIn = false;
+        // ... (rest of your normal logout UI updates)
+    }
+});
 
-// FIXED OAUTH REDIRECT PATH (If you use Google Auth in App.js)
-window.signInWithGoogle = async function() { 
-    if (!supabaseClient) { alert("Server connection failed. Please refresh."); return; } 
-    const { error } = await supabaseClient.auth.signInWithOAuth({ 
-        provider: 'google', 
-        options: { redirectTo: window.location.origin + '/index.html' } 
-    }); 
-    if (error) alert("Google Login Error: " + error.message); 
+// --- UPDATE YOUR handleEmailSignup() FUNCTION IN APP.JS ---
+window.handleEmailSignup = async function() {
+    const email = document.getElementById('auth-email').value.trim();
+    const password = document.getElementById('auth-password').value;
+    const msgEl = document.getElementById('auth-message');
+    
+    if(!email || !password) {
+        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please fill both fields."; return;
+    }
+
+    // 1. Check if email is permanently deleted/banned BEFORE creating the account
+    const isBanned = await checkIfBanned(email);
+    if (isBanned) {
+        msgEl.style.display = 'block'; 
+        msgEl.style.color = '#ff5252'; 
+        msgEl.innerText = "This email address has been permanently deleted and cannot be used to create a new account."; 
+        return; // Stop signup process
+    }
+
+    // 2. Proceed with normal signup
+    const { data, error } = await supabaseClient.auth.signUp({ email, password });
+    if(error) {
+        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = error.message;
+    } else {
+        msgEl.style.display = 'block'; msgEl.style.color = '#25D366'; msgEl.innerText = "Registration successful! You are now signed in.";
+        setTimeout(closeAuthModal, 1500);
+    }
 };
