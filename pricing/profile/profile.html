@@ -17,15 +17,10 @@
         <span class="sf-item brand-netflix" style="top: 10%; animation: flyPath1 8s linear infinite;">NETFLIX</span>
         <span class="sf-item brand-prime" style="top: 30%; animation: flyPath2 10s linear infinite 2s;">PRIME</span>
         <span class="sf-item brand-max" style="top: 50%; animation: flyPath1 9s linear infinite 4s;">MAX</span>
-        <span class="sf-item brand-disney" style="top: 70%; animation: flyPath2 11s linear infinite 1s;">DISNEY+</span>
     </div>
 
     <div class="page-wrapper">
-        <aside class="sidebar-ad fade-in">
-            <span class="ad-label">SPONSORED</span>
-            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </aside>
+        <aside class="sidebar-ad fade-in"><span class="ad-label">SPONSORED</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
 
         <div class="container">
             <header class="app-header fade-in" style="justify-content: space-between;">
@@ -35,7 +30,7 @@
                 <button onclick="window.location.href='index.html'" class="secondary-btn" style="width: auto; padding: 8px 14px; font-size: 12px;">🏠 Home</button>
             </header>
 
-            <div class="premium-card fade-in" style="text-align: left;">
+            <div class="premium-card fade-in" style="text-align: left; padding: 30px 20px;">
                 <div style="display: flex; justify-content: center; margin-bottom: 20px;">
                     <label for="profile-pic-upload" style="cursor: pointer; position: relative;">
                         <div style="width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--gold); overflow: hidden; box-shadow: 0 0 25px rgba(212,175,55,0.5);">
@@ -49,47 +44,52 @@
                 <h2 style="color: var(--gold); margin: 0 0 5px 0; font-size: 26px; text-align: center;">My Hub</h2>
                 <p id="user-email-display" style="color: var(--text-muted); font-size: 13px; margin: 0 0 20px 0; text-align: center;">Loading session...</p>
 
-                <div style="background: rgba(0,0,0,0.5); padding: 18px; border-radius: 16px; border: 1px solid rgba(255,82,82,0.3); margin-bottom: 25px;">
-                    <h3 style="color: #ff5252; margin: 0 0 10px 0; font-size: 16px; display: flex; align-items: center; gap: 8px;"><span>🔒</span> Core Identity (Permanent)</h3>
-                    <p style="color: #bbb; font-size: 12px; line-height: 1.5; margin-bottom: 18px;">After saving, <strong>these fields cannot be changed.</strong> Your age will auto-update on your birthday.</p>
-                    <p id="lock-status" style="text-align: center; font-size: 11px; font-weight: bold; margin-bottom: 15px; color: var(--gold);">⚠️ Fields below are unsaved</p>
+                <!-- SECTION 1: IDENTITY -->
+                <div style="background: rgba(0,0,0,0.5); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,82,82,0.3); margin-bottom: 25px;">
+                    <h3 style="color: #ff5252; margin: 0 0 10px 0; font-size: 18px;">🔒 Core Identity</h3>
+                    <p style="color: #bbb; font-size: 12px; line-height: 1.5; margin-bottom: 18px;">After saving, <strong>these fields cannot be changed.</strong> To change these later, a new account registration is required.</p>
+                    <p id="lock-status" style="text-align: center; font-size: 12px; font-weight: bold; margin-bottom: 15px; color: var(--gold);">⚠️ Fields below are unsaved</p>
 
                     <div class="input-grid">
-                        <div class="input-group"><label>Full Name</label><input type="text" id="profile-name" placeholder="Enter your full name..."></div>
+                        <div class="input-group"><label>Full Name</label><input type="text" id="profile-name" placeholder="Enter full name..."></div>
                         <div class="input-group"><label>Country</label><input type="text" id="profile-country" placeholder="e.g. Brazil, USA, UK..."></div>
-                    </div>
-                    <div class="input-grid">
                         <div class="input-group"><label>Birthdate (DD/MM/YYYY)</label><input type="text" id="profile-dob" placeholder="e.g. 10/10/1986" maxlength="10"></div>
                         <div class="input-group"><label>Dynamic Age</label><input type="text" id="profile-age-display" disabled style="opacity: 0.7;" placeholder="Calculated automatically"></div>
-                    </div>
-                    <div class="input-grid">
                         <div class="input-group"><label>Star Sign</label><select id="profile-starsign"><option value="">Select...</option><option value="Aries">Aries ♈</option><option value="Taurus">Taurus ♉</option><option value="Gemini">Gemini ♊</option><option value="Cancer">Cancer ♋</option><option value="Leo">Leo ♌</option><option value="Virgo">Virgo ♍</option><option value="Libra">Libra ♎</option><option value="Scorpio">Scorpio ♏</option><option value="Sagittarius">Sagittarius ♐</option><option value="Capricorn">Capricorn ♑</option><option value="Aquarius">Aquarius ♒</option><option value="Pisces">Pisces ♓</option></select></div>
                         <div class="input-group"><label>Orientation</label><select id="profile-orientation"><option value="">Select...</option><option value="Straight">Straight</option><option value="Gay">Gay</option><option value="Lesbian">Lesbian</option><option value="Bisexual">Bisexual</option><option value="Pansexual">Pansexual</option><option value="Asexual">Asexual</option><option value="Queer">Queer</option><option value="Other">Other</option><option value="Prefer not to say">Prefer not to say</option></select></div>
                     </div>
                 </div>
 
-                <div style="background: rgba(0,0,0,0.3); padding: 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 25px;">
-                    <h3 style="color: var(--gold-glow); margin: 0 0 10px 0; font-size: 16px;">⚙️ Viewing Preferences (Changeable)</h3>
-                    <div class="input-group" style="margin-bottom: 14px;"><label>Most Used Streaming Service</label><select id="pref-service"><option value="Netflix">Netflix</option><option value="Max">Max</option><option value="Prime Video">Prime Video</option><option value="Globoplay">Globoplay</option><option value="Disney+">Disney+</option><option value="Crunchyroll">Crunchyroll / Anime</option><option value="Spotify">Spotify</option><option value="Viki">Viki / K-Dramas</option></select></div>
+                <!-- SECTION 2: AI PREFERENCES -->
+                <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 25px;">
+                    <h3 style="color: var(--gold-glow); margin: 0 0 15px 0; font-size: 18px;">⚙️ AI Tuning (Changeable)</h3>
+                    
                     <div class="input-grid">
+                        <div class="input-group"><label>Primary Service</label><select id="pref-service"><option value="Netflix">Netflix</option><option value="Max">Max</option><option value="Prime Video">Prime Video</option><option value="Globoplay">Globoplay</option><option value="Disney+">Disney+</option><option value="Spotify">Spotify</option><option value="Viki">Viki / K-Dramas</option></select></div>
+                        <div class="input-group"><label>Secondary Service</label><select id="pref-service-sec"><option value="None">None</option><option value="Netflix">Netflix</option><option value="Max">Max</option><option value="Prime Video">Prime Video</option><option value="Disney+">Disney+</option><option value="YouTube">YouTube Premium</option></select></div>
                         <div class="input-group"><label>Favorite Genre</label><select id="pref-genre"><option value="Thriller">Thriller & Suspense</option><option value="Comedy">Comedy</option><option value="Romance">Romance & Doramas</option><option value="Horror">Horror</option><option value="Sci-Fi">Sci-Fi & Fantasy</option><option value="Action">Action</option><option value="Documentary">Documentary</option></select></div>
-                        <div class="input-group"><label>Preferred Audio</label><select id="pref-audio"><option value="Subbed">Original Audio (Subtitles)</option><option value="Dubbed">Dubbed (Local Language)</option></select></div>
+                        <div class="input-group"><label>Preferred Decade</label><select id="pref-decade"><option value="New">Brand New (2024+)</option><option value="2010s">Modern (2010s)</option><option value="2000s">Y2K Era (2000s)</option><option value="Classic">Classics (Pre-2000)</option></select></div>
+                        <div class="input-group"><label>Usual Pacing</label><select id="pref-pacing"><option value="Fast">Fast-Paced (Action/Thrills)</option><option value="Steady">Steady & Story-Driven</option><option value="Slow">Slow Burn & Artistic</option></select></div>
+                        <div class="input-group"><label>Preferred Audio</label><select id="pref-audio"><option value="Subbed">Original Audio (Subbed)</option><option value="Dubbed">Dubbed (Local Language)</option></select></div>
                     </div>
                 </div>
 
-                <button id="save-profile-btn" onclick="saveProfileData()" class="gold-btn" style="margin-bottom: 25px;">💾 Save & Update Profile</button>
+                <button id="save-profile-btn" onclick="saveProfileData()" class="gold-btn" style="margin-bottom: 35px; width: 100%; font-size: 16px;">💾 Save & Update Profile</button>
 
-                <div style="background: rgba(0,0,0,0.4); padding: 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 20px;">
-                    <h3 style="color: var(--gold-glow); margin: 0 0 12px 0; font-size: 16px; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 8px;">⭐ Watch Later Portfolio</h3>
-                    <div id="portfolio-grid"><p style="color: var(--text-muted); font-size: 13px; margin: 0;">No saved titles yet.</p></div>
+                <!-- SECTION 3: VISUAL PORTFOLIO & HISTORY -->
+                <div style="background: rgba(212,175,55,0.05); padding: 20px; border-radius: 16px; border: 1px solid rgba(212,175,55,0.3); margin-bottom: 25px;">
+                    <h3 style="color: var(--gold-glow); margin: 0 0 15px 0; font-size: 18px;">⭐ Watch Later Portfolio</h3>
+                    <!-- JS Injects Rich Cards Here -->
+                    <div id="portfolio-grid"><p style="color: var(--text-muted); font-size: 13px;">Loading portfolio...</p></div>
                 </div>
 
-                <div style="background: rgba(0,0,0,0.4); padding: 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 20px;">
-                    <h3 style="color: #25D366; margin: 0 0 12px 0; font-size: 16px; border-bottom: 1px solid rgba(37,211,102,0.3); padding-bottom: 8px;">✔️ Watch History (Seen It)</h3>
-                    <div id="history-grid"><p style="color: var(--text-muted); font-size: 13px; margin: 0;">Your watch history is empty.</p></div>
+                <div style="background: rgba(37,211,102,0.05); padding: 20px; border-radius: 16px; border: 1px solid rgba(37,211,102,0.3); margin-bottom: 25px;">
+                    <h3 style="color: #25D366; margin: 0 0 15px 0; font-size: 18px;">✔️ Watch History (Seen It)</h3>
+                    <!-- JS Injects History List Here -->
+                    <div id="history-grid"><p style="color: var(--text-muted); font-size: 13px;">Loading history...</p></div>
                 </div>
                 
-                <button onclick="doLogout()" class="secondary-btn" style="border-color:#ff5252; color:#ff5252; background: rgba(255,82,82,0.1);">Logout</button>
+                <button onclick="doLogout()" class="secondary-btn" style="border-color:#ff5252; color:#ff5252; background: rgba(255,82,82,0.1); width: 100%;">Log Out Securely</button>
             </div>
             
             <footer class="ad-placement fade-in" style="margin-top: 20px;">
@@ -101,58 +101,18 @@
         <aside class="sidebar-ad fade-in"><span class="ad-label">SPONSORED</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
     </div>
     
+    <!-- Portfolio Details Modal -->
     <div id="portfolio-modal" class="modal-overlay">
         <div class="premium-card modal-content" style="border: 2px solid var(--gold); padding: 0; overflow: hidden;">
             <span class="close-x" onclick="document.getElementById('portfolio-modal').style.display='none'">×</span>
             <div id="port-modal-bg" class="cinematic-header" style="height: 180px; margin-bottom:0;"><div class="cinematic-overlay"></div><div class="cinematic-title-box" style="bottom: 12px;"><h2 id="port-modal-title" class="cinematic-title" style="font-size:24px;">Title</h2></div></div>
             <div style="padding: 20px; text-align: left; background: var(--bg-card);">
                 <p id="port-modal-synopsis" style="color: #ddd; font-size: 14px; margin: 0 0 18px 0; line-height: 1.5;"></p>
-                <button id="port-modal-link" class="gold-btn" style="margin-bottom:10px;">▶ Watch Now on <span id="port-modal-plat"></span></button>
+                <button id="port-modal-link" class="gold-btn" style="margin-bottom:10px; width: 100%;">▶ Watch Now on <span id="port-modal-plat"></span></button>
             </div>
         </div>
     </div>
     
     <script src="app.js"></script>
-    <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(async () => {
-                if (window.isUserLoggedIn && window.supabaseClient) {
-                    const { data: { session } } = await window.supabaseClient.auth.getSession();
-                    if (session && session.user) {
-                        document.getElementById('user-email-display').innerText = session.user.email;
-                        const meta = session.user.user_metadata || {};
-                        if(meta.pref_service) document.getElementById('pref-service').value = meta.pref_service;
-                        if(meta.pref_genre) document.getElementById('pref-genre').value = meta.pref_genre;
-                        if(meta.pref_audio) document.getElementById('pref-audio').value = meta.pref_audio;
-                        if(meta.full_name) document.getElementById('profile-name').value = meta.full_name;
-                        if(meta.country) document.getElementById('profile-country').value = meta.country;
-                        if(meta.starsign) document.getElementById('profile-starsign').value = meta.starsign;
-                        if(meta.sexual_orientation) document.getElementById('profile-orientation').value = meta.sexual_orientation;
-                        if(meta.birthdate) { document.getElementById('profile-dob').value = meta.birthdate; document.getElementById('profile-age-display').value = window.calculateAge(meta.birthdate) + " years old"; }
-                        if (meta.profile_locked) {
-                            document.getElementById('profile-dob').disabled = true; document.getElementById('profile-dob').style.opacity = '0.5';
-                            document.getElementById('profile-starsign').disabled = true; document.getElementById('profile-starsign').style.opacity = '0.5';
-                            document.getElementById('profile-orientation').disabled = true; document.getElementById('profile-orientation').style.opacity = '0.5';
-                            document.getElementById('profile-name').disabled = true; document.getElementById('profile-name').style.opacity = '0.5';
-                            document.getElementById('profile-country').disabled = true; document.getElementById('profile-country').style.opacity = '0.5';
-                            document.getElementById('lock-status').innerHTML = '✅ Identity Data Securely Locked'; document.getElementById('lock-status').style.color = '#25D366';
-                        }
-                    }
-                }
-                const pGrid = document.getElementById('portfolio-grid');
-                const localSaved = JSON.parse(localStorage.getItem('match_savedList') || '[]');
-                if (localSaved && localSaved.length > 0) {
-                    pGrid.innerHTML = '';
-                    localSaved.forEach(title => { const safeTitle = title.replace(/'/g, "\\'"); pGrid.innerHTML += `<div class="portfolio-item" onclick="openPortfolioModal('${safeTitle}')">🎬 ${title} <span style="color:var(--gold); font-size:11px;">▶ Details</span></div>`; });
-                }
-                const hGrid = document.getElementById('history-grid');
-                const localSeen = JSON.parse(localStorage.getItem('match_seenList') || '[]');
-                if (localSeen && localSeen.length > 0) {
-                    hGrid.innerHTML = '';
-                    localSeen.forEach(title => { hGrid.innerHTML += `<div class="history-item" style="display:flex; justify-content:space-between;"><span>✔️ ${title}</span><span style="color:#25D366; font-size:10px;">Already Seen</span></div>`; });
-                }
-            }, 800);
-        });
-    </script>
 </body>
 </html>
