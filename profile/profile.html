@@ -14,14 +14,20 @@
     <!-- End Google Tag Manager -->
     
     <meta name="robots" content="noindex, follow">
-    
-    <!-- FIXED CSS PATH -->
     <link rel="stylesheet" href="/style.css">
     
     <style>
         .how-it-works-subtle { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 25px; text-align: left; }
         .how-it-works-subtle h4 { color: var(--gold); font-size: 14px; margin: 0 0 8px 0; }
         .how-it-works-subtle p { color: #aaa; font-size: 12px; margin: 0; line-height: 1.5; }
+        
+        /* Danger Zone / Delete Modal Specific Styles */
+        .danger-checkbox-container { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: left; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s ease; }
+        .danger-checkbox-container.checked-active { border-color: #2196F3; background: rgba(33, 150, 243, 0.1); }
+        .danger-checkbox-container label { display: flex; align-items: center; cursor: pointer; gap: 10px; margin: 0; }
+        input[type="checkbox"].blue-checkbox { width: 20px; height: 20px; accent-color: #2196F3; cursor: pointer; }
+        .btn-disabled { border-color: #555 !important; color: #555 !important; cursor: not-allowed !important; background: transparent !important; }
+        .btn-danger-active { border-color: #ff5252 !important; color: #fff !important; background: #ff5252 !important; }
     </style>
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
@@ -105,12 +111,46 @@
                     <div id="history-grid"><p style="color: var(--text-muted); font-size: 13px;">Loading history...</p></div>
                 </div>
                 
-                <button onclick="doLogout()" class="secondary-btn" style="border-color:#ff5252; color:#ff5252; background: rgba(255,82,82,0.1); width: 100%;">Log Out Securely</button>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="doLogout()" class="secondary-btn" style="flex: 1; border-color:#fff; color:#fff; background: rgba(255,255,255,0.1);">Log Out Securely</button>
+                    <button onclick="openDeleteModal()" class="secondary-btn" style="flex: 1; border-color:#ff5252; color:#ff5252; background: rgba(255,82,82,0.1);">🗑️ Delete Account & Data</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- FIXED JS PATH -->
+    <!-- DANGER ZONE: ACCOUNT DELETION MODAL -->
+    <div id="delete-modal" class="modal-overlay" style="display:none;">
+        <div class="premium-card modal-content" style="border: 2px solid #ff5252; max-width: 400px; text-align: center; padding: 30px 20px;">
+            <div style="font-size: 60px; margin-bottom: 15px; animation: pulse 2s infinite;">⚠️</div>
+            <h2 style="color: #ff5252; font-size: 24px; margin: 0 0 15px 0;">Are you absolutely sure?</h2>
+            
+            <p style="color: #ddd; font-size: 14px; margin-bottom: 15px; line-height: 1.6;">
+                We would love for you to stay and continue discovering great content with us! If you proceed, <strong>your profile, portfolio, and all viewing data will be permanently erased.</strong>
+            </p>
+            
+            <p style="color: #ff5252; font-size: 13px; font-weight: bold; margin-bottom: 15px; line-height: 1.5; background: rgba(255,82,82,0.1); padding: 10px; border-radius: 8px;">
+                Any purchased products or VIP tiers will NOT be refunded or restored.
+            </p>
+
+            <p style="color: #fff; font-size: 14px; margin-bottom: 20px; line-height: 1.5; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px;">
+                Additionally, you will <strong>never be able to register again</strong> using this email address.
+            </p>
+
+            <div id="delete-checkbox-wrapper" class="danger-checkbox-container">
+                <label>
+                    <input type="checkbox" id="delete-confirm-check" class="blue-checkbox" onchange="toggleDeleteBtn()">
+                    <span id="delete-checkbox-text" style="color: #bbb; font-size: 13px; font-weight: 500; transition: color 0.3s ease;">I understand and I want to delete my account completely.</span>
+                </label>
+            </div>
+            
+            <div style="display: flex; gap: 10px; flex-direction: column;">
+                <button onclick="closeDeleteModal()" class="gold-btn" style="width: 100%; font-weight: bold; padding: 14px;">Cancel (Keep My Account)</button>
+                <button id="final-delete-btn" onclick="executeAccountDeletion()" class="secondary-btn btn-disabled" style="width: 100%; padding: 14px;" disabled>Delete Completely</button>
+            </div>
+        </div>
+    </div>
+
     <script src="/app.js"></script>
     <script src="/profile.js"></script>
 </body>
