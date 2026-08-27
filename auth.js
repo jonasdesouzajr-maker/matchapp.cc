@@ -53,7 +53,9 @@ window.signUpEmail = async function() {
                 matches_left: 1,
                 is_vip: false,
                 seen_list: [],
-                saved_list: []
+                saved_list: [],
+                disliked_list: [],
+                user_ratings: {}
             }
         }
     });
