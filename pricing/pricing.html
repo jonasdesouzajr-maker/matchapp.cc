@@ -13,7 +13,7 @@
     
     <meta name="robots" content="index, follow">
     <link rel="stylesheet" href="/style.css">
-    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
 
     <style>
@@ -22,15 +22,14 @@
         .brand-logo { width: 65px; height: 65px; border-radius: 50%; border: 2px solid var(--gold); box-shadow: 0 0 15px var(--gold); animation: pulseGlow 2s infinite alternate; }
         .app-title-main { font-size: 34px; font-weight: 900; background: linear-gradient(90deg, #FFD700, #FFF, #FFA500, #FFD700); background-size: 200% auto; -webkit-background-clip: text; color: transparent; animation: gradientShift 3s infinite linear; text-transform: uppercase; letter-spacing: 1px; }
         .app-title-sub { font-size: 13px; color: #ddd; letter-spacing: 2px; text-transform: uppercase; font-weight: bold; margin-top: -5px; display: block; text-shadow: 0 2px 4px #000; }
-        
         @keyframes gradientShift { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
         @keyframes pulseGlow { from { box-shadow: 0 0 10px rgba(212,175,55,0.5); transform: scale(1); } to { box-shadow: 0 0 25px rgba(212,175,55,1), inset 0 0 10px rgba(255,255,255,0.5); transform: scale(1.05); } }
 
-        .main-layout { display: flex; width: 100%; max-width: 1400px; margin: 0 auto; gap: 20px; align-items: flex-start; justify-content: center; }
+        .main-layout { display: flex; width: 100%; max-width: 1400px; margin: 0 auto; gap: 20px; align-items: flex-start; justify-content: center; min-height: 80vh; }
         .sidebar-ad-left, .sidebar-ad-right { display: none; width: 160px; flex-shrink: 0; position: sticky; top: 20px; }
-        .container { flex: 1; max-width: 800px; width: 100%; }
-        .mobile-ad-bottom { display: block; width: 100%; margin-top: 25px; text-align: center; }
-        @media (min-width: 1100px) { .sidebar-ad-left, .sidebar-ad-right { display: block; } .mobile-ad-bottom { display: none; } }
+        .container { flex: 1; max-width: 800px; width: 100%; padding-bottom: 50px; }
+        .mobile-ad-bottom { display: block; width: 100%; margin-top: 25px; text-align: center; min-height: 100px; }
+        @media (min-width: 1100px) { .sidebar-ad-left, .sidebar-ad-right { display: block; } .mobile-ad-bottom { display: none; } .chrome-banner { display: none !important; } }
 
         .chrome-banner { background: linear-gradient(90deg, #111, #333); border: 1px solid #FFD700; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
         .chrome-text { color: #fff; font-size: 13px; line-height: 1.5; text-align: left; flex: 1; margin-right: 15px; }
@@ -45,9 +44,15 @@
         .brand-netflix { color: #E50914; } .brand-prime { color: #00A8E1; } .brand-max { color: #8A2BE2; } .brand-disney { color: #113CCF; }
         @keyframes flyPath1 { 0% { transform: translateX(-100%) rotate(-5deg); } 100% { transform: translateX(100vw) rotate(5deg); } }
         @keyframes flyPath2 { 0% { transform: translateX(100vw) rotate(5deg); } 100% { transform: translateX(-100%) rotate(-5deg); } }
+
+        .seo-footer { background: rgba(10,5,5,0.95); border-top: 2px solid var(--gold); padding: 30px 20px; text-align: center; margin-top: auto; width: 100%; }
+        .seo-footer h4 { color: var(--gold); font-size: 18px; margin-bottom: 15px; text-transform: uppercase; }
+        .streaming-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
+        .streaming-links a { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 13px; transition: 0.3s; }
+        .streaming-links a:hover { border-color: var(--gold); background: rgba(212,175,55,0.1); transform: scale(1.05); }
     </style>
 </head>
-<body>
+<body style="display: flex; flex-direction: column; min-height: 100vh;">
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M7J3NNBN" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     
     <div id="real-time-clock" class="real-time-clock fade-in">Loading Time...</div>
@@ -70,21 +75,21 @@
         </div>
     </nav>
 
-    <div class="page-wrapper">
+    <div class="page-wrapper" style="flex: 1;">
         <div class="main-layout fade-in">
             <!-- Left AdSense -->
-            <aside class="sidebar-ad-left"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
+            <aside class="sidebar-ad-left"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block; min-height: 600px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
 
             <div class="container" style="text-align: center;">
-                <div id="chrome-banner" class="chrome-banner fade-in">
-                    <div class="chrome-text"><strong>MatchApp relies on ads to stay free!</strong><br>For the absolute best performance, please open us in Chrome.</div>
+                <div class="chrome-banner fade-in">
+                    <div class="chrome-text"><strong>MatchApp relies on ads to stay free!</strong><br>For the absolute best performance, open us in Chrome.</div>
                     <a href="intent://matchapp.cc/#Intent;scheme=https;package=com.android.chrome;end" class="chrome-btn">Open in Chrome</a>
                 </div>
 
                 <div class="how-it-works-glow fade-in">
                     <h3>💡 How MatchApp Works</h3>
                     <p><strong>1. Curate:</strong> Tell the AI your exact vibe, pacing, and platform preferences.</p>
-                    <p><strong>2. Match:</strong> Get tailored, duplicate-free matches with playable previews.</p>
+                    <p><strong>2. Match:</strong> Gemini AI finds a duplicate-free match across the internet in seconds.</p>
                     <p><strong>3. Save:</strong> Build your ultimate Watch Later Portfolio securely.</p>
                 </div>
 
@@ -105,13 +110,29 @@
                 </div>
 
                 <!-- Mobile AdSense -->
-                <div class="mobile-ad-bottom"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
+                <div class="mobile-ad-bottom"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block; min-height: 100px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
             </div>
             
             <!-- Right AdSense -->
-            <aside class="sidebar-ad-right"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
+            <aside class="sidebar-ad-right"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block; min-height: 600px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
         </div>
     </div>
+
+    <!-- SEO BACKLINKS FOOTER -->
+    <footer class="seo-footer">
+        <h4>Stream Directly on Your Favorite Platforms</h4>
+        <p style="color: #888; font-size: 12px; margin-bottom: 20px;">MatchApp searches the web and links you directly to the official apps and websites to watch legally.</p>
+        <div class="streaming-links">
+            <a href="https://www.netflix.com" target="_blank" rel="noopener noreferrer">Netflix</a>
+            <a href="https://www.max.com" target="_blank" rel="noopener noreferrer">Max</a>
+            <a href="https://www.primevideo.com" target="_blank" rel="noopener noreferrer">Prime Video</a>
+            <a href="https://www.disneyplus.com" target="_blank" rel="noopener noreferrer">Disney+</a>
+            <a href="https://www.hulu.com" target="_blank" rel="noopener noreferrer">Hulu</a>
+            <a href="https://tv.apple.com" target="_blank" rel="noopener noreferrer">Apple TV+</a>
+            <a href="https://www.spotify.com" target="_blank" rel="noopener noreferrer">Spotify</a>
+        </div>
+        <p style="color: #555; font-size: 11px; margin-top: 25px;">&copy; 2026 MatchApp.cc - Your Ultimate AI Streaming Concierge</p>
+    </footer>
     
     <script src="/app.js"></script>
     <script src="/pricing.js"></script>
