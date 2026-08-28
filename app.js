@@ -1,11 +1,10 @@
-console.log("Mastercode 76.0: Full Database Sync, Live Auth Routing & Protected Timer");
+console.log("Mastercode 77.0: Live Auth, 20s Adsterra Progress Bar & Randomized Matching Engine");
 
 // ==========================================
-// 1. SUPABASE LIVE INITIALIZATION
+// 1. SUPABASE LIVE INITIALIZATION (KEYS INSERTED)
 // ==========================================
 const SUPABASE_URL = 'https://zkymvqrmbabngsqblyye.supabase.co'; 
-// NOTE: If auth fails, ensure this is the long JWT token starting with "eyJ..." from Project Settings > API
-const SUPABASE_ANON_KEY = 'sb_publishable_j3kQUhd_9JHfWdfiV3iWog_RpEltrOU';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpreW12cXJtYmFibmdzcWJseXllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY4MDUyNDIsImV4cCI6MjEwMjM4MTI0Mn0._yEVFMfwVU6GBqQ8m3ljfOgA0HSLEDiKMOfYae6ZD8Q';
 
 let supabaseClient = null;
 try {
@@ -67,7 +66,7 @@ window.fireConfetti = function() {
 };
 
 // ==========================================
-// MODAL & AUTHENTICATION LOGIC (FULLY ROUTED)
+// MODAL & AUTHENTICATION LOGIC
 // ==========================================
 window.openAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'flex'; };
 window.closeAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'none'; };
@@ -89,7 +88,6 @@ window.switchAuthTab = function(tab) {
     if(activeForm) activeForm.classList.add('active');
 };
 
-// 1. Google Auth (Redirects to Profile on Success)
 window.signInWithGoogle = async function() { 
     if (!supabaseClient) { alert("Server connection failed. Database client not initialized."); return; } 
     const { error } = await supabaseClient.auth.signInWithOAuth({ 
@@ -99,7 +97,6 @@ window.signInWithGoogle = async function() {
     if (error) alert("Google Login Error: " + error.message); 
 };
 
-// 2. Email Sign Up (Creates Account & Redirects)
 window.handleEmailSignup = async function() {
     const email = document.getElementById('reg-email').value.trim();
     const password = document.getElementById('reg-password').value;
@@ -111,21 +108,18 @@ window.handleEmailSignup = async function() {
     if (!supabaseClient) {
         msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Server error: Database not connected."; return;
     }
-
     msgEl.style.display = 'block'; msgEl.style.color = '#fff'; msgEl.innerText = "Connecting...";
 
     const { data, error } = await supabaseClient.auth.signUp({ email, password });
-    
     if(error) { 
         msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; 
     } else { 
         msgEl.style.color = '#25D366'; msgEl.innerText = "Account created successfully! Redirecting..."; 
-        window.dataLayer = window.dataLayer || []; window.dataLayer.push({ 'event': 'user_registration', 'user_email': email });
+        if(typeof gtag === 'function') gtag('event', 'sign_up', { method: 'email' });
         setTimeout(() => { window.location.href = '/profile/profile.html'; }, 1500); 
     }
 };
 
-// 3. Email Log In (Authenticates & Redirects)
 window.handleEmailLogin = async function() {
     const email = document.getElementById('login-email').value.trim();
     const password = document.getElementById('login-password').value;
@@ -137,16 +131,14 @@ window.handleEmailLogin = async function() {
     if (!supabaseClient) {
         msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Server error: Database not connected."; return;
     }
-
     msgEl.style.display = 'block'; msgEl.style.color = '#fff'; msgEl.innerText = "Authenticating...";
 
     const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-    
     if(error) { 
         msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; 
     } else { 
         msgEl.style.color = '#25D366'; msgEl.innerText = "Login successful! Routing to Hub..."; 
-        window.dataLayer = window.dataLayer || []; window.dataLayer.push({'event': 'user_login'});
+        if(typeof gtag === 'function') gtag('event', 'login', { method: 'email' });
         setTimeout(() => { window.location.href = '/profile/profile.html'; }, 1000); 
     }
 };
@@ -157,7 +149,6 @@ window.doLogout = async function() {
     window.location.href = '/index.html'; 
 };
 
-// Auth State Listener (Updates UI headers instantly)
 if (supabaseClient) {
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
         if (session && session.user) {
@@ -171,14 +162,12 @@ if (supabaseClient) {
             if (profTab) profTab.style.display = 'inline-flex';
             if (logoutBtn) logoutBtn.style.display = 'inline-block';
             if (upgradeBtn) { upgradeBtn.style.display = 'inline-flex'; if (isVIP || isAdFree) upgradeBtn.innerText = '👑 VIP Active'; }
-        } else { 
-            isUserLoggedIn = false; 
-        }
+        } else { isUserLoggedIn = false; }
     });
 }
 
 // ==========================================
-// SECURE GEMINI AI ENGINE & 20s LOADING SEQUENCE
+// SECURE GEMINI AI ENGINE (RANDOMIZED) & 20s PROGRESS BAR
 // ==========================================
 function checkDailyLimit() {
     if (isVIP || isAdFree) return true; 
@@ -187,20 +176,14 @@ function checkDailyLimit() {
     let dailyCount = parseInt(localStorage.getItem('match_dailyCount') || '0');
     
     if (lastDate !== todayStr) { dailyCount = 0; localStorage.setItem('match_lastDate', todayStr); }
-    
     if (!isUserLoggedIn && dailyCount >= 5) { 
         alert("🔒 You've used your 5 free matches today!\n\nPlease register to unlock your next daily allowance!"); 
         window.openAuthModal(); 
         return false; 
     }
-    if (isUserLoggedIn && dailyCount >= 5) { 
-        window.location.href = '/pricing/pricing.html'; 
-        return false; 
-    }
+    if (isUserLoggedIn && dailyCount >= 5) { window.location.href = '/pricing/pricing.html'; return false; }
     
-    dailyCount++; 
-    localStorage.setItem('match_dailyCount', dailyCount.toString()); 
-    return true;
+    dailyCount++; localStorage.setItem('match_dailyCount', dailyCount.toString()); return true;
 }
 
 async function fetchGeminiData(promptText) {
@@ -215,8 +198,9 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     if (window.checkAdBlocker && window.adblockEnabled) return; 
     if (!checkDailyLimit()) return;
 
-    window.dataLayer = window.dataLayer || [];
     let promptText = "";
+    // FORCE RANDOMIZATION so they never get the same result twice
+    const randomSeed = Math.floor(Math.random() * 999999); 
     
     if (isSpecificSearch) {
         const input = document.getElementById('specific-search-input');
@@ -224,8 +208,8 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         const query = input.value.trim();
         if(!query) { alert("Please enter a title to search."); return; }
         
-        window.dataLayer.push({ 'event': 'search_requested', 'search_term': query });
-        promptText = `You are a streaming concierge AI in late 2026. The user is specifically searching for where to stream: "${query}". Find the exact streaming platform where it is currently available globally/US. Output MUST be a valid JSON object matching this structure exactly: {"title": "Correct Title", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The exact streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID of the official trailer"}`;
+        if(typeof gtag === 'function') gtag('event', 'search', { search_term: query });
+        promptText = `You are a streaming concierge AI in late 2026. The user is searching for where to stream: "${query}". Find the exact streaming platform where it is currently available. Random seed for processing variant: ${randomSeed}. Output MUST be exactly: {"title": "Correct Title", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The exact streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID of the official trailer"}`;
     } else {
         const cat = document.getElementById('q-category')?.value || 'any'; 
         const plat = document.getElementById('q-platform')?.value || 'any';
@@ -233,12 +217,13 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         const aest = document.getElementById('q-aesthetic')?.value || 'any'; 
         const pac = document.getElementById('q-pacing')?.value || 'any';
         
-        window.dataLayer.push({ 'event': 'match_requested' });
+        if(typeof gtag === 'function') gtag('event', 'ai_match_requested');
         const excludeStr = [...seenList, ...dislikedList].join(', ');
-        promptText = `You are a streaming concierge AI in late 2026. Find a highly-rated streaming title based on these preferences: Format: ${cat}, Platform: ${plat}, Mood: ${mood}, Aesthetic: ${aest}, Pacing: ${pac}. CRITICAL: Do NOT recommend any of the following titles: ${excludeStr}. Return exactly one match. Ensure it is a real title currently available. Output MUST be a valid JSON object matching this structure exactly: {"title": "Title of movie/series", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID of the official trailer"}`;
+        
+        promptText = `You are a streaming concierge AI in late 2026. Find a highly-rated, hidden gem streaming title based on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}, Aesthetic: ${aest}, Pacing: ${pac}. CRITICAL: Do NOT recommend any of these: ${excludeStr}. RANDOMIZATION SEED: ${randomSeed}. You MUST scour your catalog and provide a highly unique, varied recommendation different from common defaults. Output MUST be a valid JSON object matching exactly: {"title": "Title of movie/series", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID"}`;
     }
 
-    // Safely Hide UI Blocks
+    // Hide all UI
     const qBox = document.getElementById('questionnaire-box');
     const sBox = document.getElementById('search-box');
     const rBox = document.getElementById('result-box');
@@ -246,7 +231,7 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     if (sBox) sBox.style.display = 'none';
     if (rBox) rBox.style.display = 'none';
     
-    // Activate 20s Loading UI & Adsterra Placement
+    // ACTIVATE 20S LOADING SEQUENCE
     const loadBox = document.getElementById('loading-box');
     if (!loadBox) return;
     loadBox.style.display = 'block';
@@ -270,7 +255,7 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         if(vipMsg) vipMsg.style.display = 'block';
     }
 
-    // Precise Meter Animation
+    // Beautiful Fill Meter Animation
     let timerInterval = setInterval(() => {
         let elapsed = (Date.now() - startTime) / 1000;
         let pct = Math.min((elapsed / totalTime) * 100, 100);
@@ -281,13 +266,20 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     let matchResult = null;
     try {
         let fetchPromise = fetchGeminiData(promptText);
-        // Guarantee 20s display time (syncs ads exactly)
         let delayPromise = new Promise(resolve => setTimeout(resolve, totalTime * 1000));
         let [apiResult] = await Promise.all([fetchPromise, delayPromise]); 
         matchResult = apiResult;
     } catch (err) {
-        console.error("AI Generation timeout or Proxy error. Loading graceful fallback.", err);
-        matchResult = { title: "Dune: Part Two", synopsis: "Paul Atreides unites with Chani and the Fremen while on a warpath of revenge...", platform: "Max", imdb: "8.6", trailerId: "Way9Dexny3w" };
+        console.error("AI Fallback Invoked. Randomizing catalog selection...");
+        // Expanded Fallback Array so it never shows just Dune repeatedly if DB is offline
+        const fallbacks = [
+            { title: "Dune: Part Two", synopsis: "Paul Atreides unites with Chani and the Fremen on a warpath of revenge against the conspirators who destroyed his family.", platform: "Max", imdb: "8.6", trailerId: "Way9Dexny3w" },
+            { title: "Severance", synopsis: "Mark leads a team of office workers whose memories have been surgically divided between their work and personal lives.", platform: "Apple TV+", imdb: "8.7", trailerId: "xEQP4VVukv8" },
+            { title: "Shogun", synopsis: "When a mysterious European ship is found marooned in a nearby fishing village, Lord Yoshii Toranaga discovers secrets that could tip the scales of power.", platform: "Hulu", imdb: "8.7", trailerId: "yAN5uspO_hk" },
+            { title: "Fallout", synopsis: "In a future, post-apocalyptic Los Angeles brought about by nuclear decimation, citizens must live in underground bunkers to protect themselves.", platform: "Prime Video", imdb: "8.4", trailerId: "V-mugKDQRug" },
+            { title: "Dark Matter", synopsis: "A physicist is abducted into an alternate version of his life. To get back to his true family, he must embark on a harrowing journey to save them.", platform: "Apple TV+", imdb: "7.7", trailerId: "j6ucGbOkaG8" }
+        ];
+        matchResult = fallbacks[Math.floor(Math.random() * fallbacks.length)];
     }
 
     clearInterval(timerInterval);
@@ -301,15 +293,12 @@ function renderResult(selected) {
     if (!resultBox) return;
     resultBox.style.display = 'block';
     
-    // Trigger Effects
     window.playPremiumSound();
     window.fireConfetti();
-    window.dataLayer.push({ 'event': 'match_revealed', 'title': selected.title });
 
     globalMatchTitle = selected.title;
     document.querySelectorAll('.star-rating-container .star').forEach(s => s.classList.remove('selected'));
 
-    // Inject Results
     const titleEl = document.getElementById('res-title');
     const synEl = document.getElementById('res-synopsis');
     if (titleEl) titleEl.innerText = selected.title;
@@ -323,8 +312,9 @@ function renderResult(selected) {
         else if (pLower.includes('max') || pLower.includes('hbo')) badge.style.background = '#8A2BE2';
         else if (pLower.includes('prime')) badge.style.background = '#00A8E1';
         else if (pLower.includes('disney')) badge.style.background = '#113CCF';
+        else if (pLower.includes('apple')) badge.style.background = '#fff'; 
         else badge.style.background = 'var(--gold)';
-        badge.style.color = '#fff';
+        badge.style.color = pLower.includes('apple') ? '#000' : '#fff';
     }
 
     const imdbBadge = document.getElementById('res-imdb-badge');
@@ -346,10 +336,7 @@ function renderResult(selected) {
     resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// ==========================================
-// PORTFOLIO / LIST MANAGEMENT
-// ==========================================
-window.saveToList = function() { if (globalMatchTitle && !savedList.includes(globalMatchTitle)) { savedList.push(globalMatchTitle); syncListsToDatabase(); alert(`⭐ "${globalMatchTitle}" saved to your Portfolio!`); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } const rBox = document.getElementById('result-box'); if(rBox) rBox.style.display = 'none'; triggerMatch(false); };
+window.saveToList = function() { if (globalMatchTitle && !savedList.includes(globalMatchTitle)) { savedList.push(globalMatchTitle); syncListsToDatabase(); alert(`⭐ "${globalMatchTitle}" saved!`); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } const rBox = document.getElementById('result-box'); if(rBox) rBox.style.display = 'none'; triggerMatch(false); };
 window.markAsSeen = function() { if (globalMatchTitle && !seenList.includes(globalMatchTitle)) { seenList.push(globalMatchTitle); syncListsToDatabase(); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } const rBox = document.getElementById('result-box'); if(rBox) rBox.style.display = 'none'; triggerMatch(false); };
 window.markAsLiked = function() { if (globalMatchTitle) { userRatings[globalMatchTitle] = 5; if (!seenList.includes(globalMatchTitle)) seenList.push(globalMatchTitle); syncListsToDatabase(); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } const rBox = document.getElementById('result-box'); if(rBox) rBox.style.display = 'none'; triggerMatch(false); };
 window.markAsDisliked = function() { if (globalMatchTitle && !dislikedList.includes(globalMatchTitle)) { dislikedList.push(globalMatchTitle); userRatings[globalMatchTitle] = 1; syncListsToDatabase(); } const rBox = document.getElementById('result-box'); if(rBox) rBox.style.display = 'none'; triggerMatch(false); };
@@ -363,14 +350,6 @@ document.addEventListener('click', function (event) {
 });
 
 async function syncListsToDatabase() { 
-    localStorage.setItem('match_seenList', JSON.stringify(seenList)); 
-    localStorage.setItem('match_savedList', JSON.stringify(savedList)); 
-    localStorage.setItem('match_dislikedList', JSON.stringify(dislikedList)); 
-    localStorage.setItem('match_userRatings', JSON.stringify(userRatings)); 
-    
-    if (isUserLoggedIn && supabaseClient) { 
-        await supabaseClient.auth.updateUser({ 
-            data: { seen_list: seenList, saved_list: savedList, disliked_list: dislikedList, user_ratings: userRatings } 
-        }); 
-    } 
+    localStorage.setItem('match_seenList', JSON.stringify(seenList)); localStorage.setItem('match_savedList', JSON.stringify(savedList)); localStorage.setItem('match_dislikedList', JSON.stringify(dislikedList)); localStorage.setItem('match_userRatings', JSON.stringify(userRatings)); 
+    if (isUserLoggedIn && supabaseClient) { await supabaseClient.auth.updateUser({ data: { seen_list: seenList, saved_list: savedList, disliked_list: dislikedList, user_ratings: userRatings } }); } 
 }
