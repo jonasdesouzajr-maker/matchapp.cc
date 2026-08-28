@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>MatchApp | My Private Profile & Portfolio</title>
     
-    <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
@@ -15,28 +14,24 @@
     <meta name="robots" content="noindex, follow">
     <link rel="stylesheet" href="/style.css">
     
-    <!-- Supabase, Confetti, and AdSense -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
 
     <style>
-        /* Premium Header 4K Effects */
         .app-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 25px; background: rgba(10,5,5,0.95); border-bottom: 2px solid var(--gold); box-shadow: 0 4px 25px rgba(212,175,55,0.4); flex-wrap: wrap; gap: 15px; }
         .header-brand-area { display: flex; align-items: center; gap: 15px; text-decoration: none; }
         .brand-logo { width: 65px; height: 65px; border-radius: 50%; border: 2px solid var(--gold); box-shadow: 0 0 15px var(--gold); animation: pulseGlow 2s infinite alternate; }
         .app-title-main { font-size: 34px; font-weight: 900; background: linear-gradient(90deg, #FFD700, #FFF, #FFA500, #FFD700); background-size: 200% auto; -webkit-background-clip: text; color: transparent; animation: gradientShift 3s infinite linear; text-transform: uppercase; letter-spacing: 1px; }
         .app-title-sub { font-size: 13px; color: #ddd; letter-spacing: 2px; text-transform: uppercase; font-weight: bold; margin-top: -5px; display: block; text-shadow: 0 2px 4px #000; }
-        
         @keyframes gradientShift { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
         @keyframes pulseGlow { from { box-shadow: 0 0 10px rgba(212,175,55,0.5); transform: scale(1); } to { box-shadow: 0 0 25px rgba(212,175,55,1), inset 0 0 10px rgba(255,255,255,0.5); transform: scale(1.05); } }
 
-        /* Responsive Layout */
         .main-layout { display: flex; width: 100%; max-width: 1400px; margin: 0 auto; gap: 20px; align-items: flex-start; justify-content: center; min-height: 80vh; }
         .sidebar-ad-left, .sidebar-ad-right { display: none; width: 160px; flex-shrink: 0; position: sticky; top: 20px; }
         .container { flex: 1; max-width: 800px; width: 100%; padding-bottom: 50px; }
-        .mobile-ad-bottom { display: block; width: 100%; margin-top: 25px; text-align: center; }
-        @media (min-width: 1100px) { .sidebar-ad-left, .sidebar-ad-right { display: block; } .mobile-ad-bottom { display: none; } }
+        .mobile-ad-bottom { display: block; width: 100%; margin-top: 25px; text-align: center; min-height: 100px; }
+        @media (min-width: 1100px) { .sidebar-ad-left, .sidebar-ad-right { display: block; } .mobile-ad-bottom { display: none; } .chrome-banner { display: none !important; } }
 
         .chrome-banner { background: linear-gradient(90deg, #111, #333); border: 1px solid #FFD700; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
         .chrome-text { color: #fff; font-size: 13px; line-height: 1.5; text-align: left; flex: 1; margin-right: 15px; }
@@ -46,7 +41,6 @@
         .how-it-works-glow h3 { color: #fff; font-size: 26px; font-weight: 900; margin: 0 0 15px 0; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
         .how-it-works-glow p { color: #ddd; font-size: 16px; line-height: 1.6; margin: 0 0 10px 0; }
         
-        /* Background Stream Flags */
         .stream-flags { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; opacity: 0.35; }
         .sf-item { position: absolute; font-size: 14vw; font-weight: 900; color: #fff; white-space: nowrap; opacity: 0.8; text-shadow: 0 0 20px currentColor, 0 0 40px currentColor; }
         .brand-netflix { color: #E50914; } .brand-prime { color: #00A8E1; } .brand-max { color: #8A2BE2; } .brand-disney { color: #113CCF; }
@@ -72,7 +66,6 @@
         .clear-list-btn { width: 100%; margin-top: 15px; border-color: rgba(255,255,255,0.2) !important; color: #bbb !important; font-size: 12px; padding: 10px; background: transparent; }
         .clear-list-btn:hover { border-color: #ff5252 !important; color: #ff5252 !important; background: rgba(255,82,82,0.1); }
 
-        /* SEO Backlinks Footer */
         .seo-footer { background: rgba(10,5,5,0.95); border-top: 2px solid var(--gold); padding: 30px 20px; text-align: center; margin-top: auto; width: 100%; }
         .seo-footer h4 { color: var(--gold); font-size: 18px; margin-bottom: 15px; text-transform: uppercase; }
         .streaming-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
@@ -81,7 +74,6 @@
     </style>
 </head>
 <body style="display: flex; flex-direction: column; min-height: 100vh;">
-    <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M7J3NNBN" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     
     <div id="real-time-clock" class="real-time-clock fade-in">Loading Time...</div>
@@ -107,10 +99,10 @@
     <div class="page-wrapper" style="flex: 1;">
         <div class="main-layout fade-in">
             <!-- Left AdSense -->
-            <aside class="sidebar-ad-left"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
+            <aside class="sidebar-ad-left"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block; min-height: 600px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
 
             <div class="container">
-                <div id="chrome-banner" class="chrome-banner fade-in">
+                <div class="chrome-banner fade-in">
                     <div class="chrome-text"><strong>MatchApp relies on ads to stay free!</strong><br>For the absolute best performance, open us in Chrome.</div>
                     <a href="intent://matchapp.cc/#Intent;scheme=https;package=com.android.chrome;end" class="chrome-btn">Open in Chrome</a>
                 </div>
@@ -172,11 +164,11 @@
                 </div>
 
                 <!-- Mobile AdSense -->
-                <div class="mobile-ad-bottom"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
+                <div class="mobile-ad-bottom"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block; min-height: 100px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
             </div>
 
             <!-- Right AdSense -->
-            <aside class="sidebar-ad-right"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
+            <aside class="sidebar-ad-right"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block; min-height: 600px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
         </div>
     </div>
     
