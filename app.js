@@ -1,9 +1,8 @@
-console.log("Mastercode 68.0: 4K Premium Header, AdSense Layout, Audio/Confetti, and Auth Active");
+console.log("Mastercode 69.0: Google Gemini AI Integrated, Real-Time Search, Analytics Sync Active");
 
 let globalMatchTitle = "MatchApp";
 let supabaseClient = null; // Ensure this is initialized with your Supabase credentials!
 let isUserLoggedIn = false;
-let userProfileData = {};
 
 let seenList = JSON.parse(localStorage.getItem('match_seenList') || '[]');
 let savedList = JSON.parse(localStorage.getItem('match_savedList') || '[]');
@@ -13,13 +12,7 @@ let userRatings = JSON.parse(localStorage.getItem('match_userRatings') || '{}');
 let isAdFree = localStorage.getItem('match_adFree') === 'true'; 
 let isVIP = localStorage.getItem('match_isVIP') === 'true';
 
-/* FIXED TRAILER IDs - Real Working Previews */
-const masterCatalog = [
-    { title: "The Wizard of Oz", category: "movie", platform: "Max", mood: "chill", aesthetic: "colorful", pacing: "steady", imdb: "8.1", trailerId: "VNkgJAJTCsw", url: "https://play.max.com/movie/the-wizard-of-oz", synopsis: "A tornado transports a young Kansas girl to a magical land...", poster: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1000&q=80" },
-    { title: "The Shawshank Redemption", category: "movie", platform: "Max", mood: "intense", aesthetic: "dark", pacing: "slow", imdb: "9.3", trailerId: "NmzuHjWmXOc", url: "https://play.max.com/movie/the-shawshank-redemption", synopsis: "Two imprisoned men bond over a number of years, finding solace...", poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1000&q=80" },
-    { title: "Stranger Things", category: "series", platform: "Netflix", mood: "intense", aesthetic: "retro", pacing: "steady", imdb: "8.7", trailerId: "b9EkMc79ZSU", url: "https://www.netflix.com/title/80057281", synopsis: "When a young boy vanishes, a small town uncovers a mystery involving supernatural forces...", poster: "https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=1000&q=80" },
-    { title: "Spider-Man: Into the Spider-Verse", category: "movie", platform: "Netflix", mood: "laugh", aesthetic: "colorful", pacing: "fast", imdb: "8.4", trailerId: "g4Hbz2jLxvQ", url: "https://www.netflix.com/title/81002747", synopsis: "Teen Miles Morales becomes the Spider-Man of his universe...", poster: "https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=1000&q=80" }
-];
+const GEMINI_API_KEY = "AQ.Ab8RN6LMWIL1BNnk6eq3OziRUm9qKnkhTXuazXI7AnNxKzFiOw";
 
 // SFX & VFX Engine
 window.playPremiumSound = function() {
@@ -49,16 +42,10 @@ function updateClock() { const clock = document.getElementById('real-time-clock'
 setInterval(updateClock, 1000);
 
 // ==========================================
-// MODAL & AUTHENTICATION LOGIC
+// MODAL & AUTHENTICATION LOGIC (WITH GTM & SUPABASE SYNC)
 // ==========================================
 window.openAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'flex'; };
 window.closeAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'none'; };
-
-async function checkIfBanned(email) {
-    if (!email || !supabaseClient) return false;
-    const { data } = await supabaseClient.from('banned_emails').select('email').eq('email', email).single();
-    return !!data;
-}
 
 window.signInWithGoogle = async function() { 
     if (!supabaseClient) { alert("Server connection failed. Please refresh."); return; } 
@@ -67,18 +54,39 @@ window.signInWithGoogle = async function() {
 };
 
 window.handleEmailSignup = async function() {
+    const name = document.getElementById('auth-name').value.trim();
+    const dob = document.getElementById('auth-dob').value.trim();
+    const country = document.getElementById('auth-country').value.trim();
     const email = document.getElementById('auth-email').value.trim();
     const password = document.getElementById('auth-password').value;
     const msgEl = document.getElementById('auth-message');
-    if(!email || !password) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please fill both fields."; return; }
-
-    const isBanned = await checkIfBanned(email);
-    if (isBanned) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "This email has been permanently deleted and cannot be used again."; return; }
+    
+    if(!email || !password || !name) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please fill at least Name, Email, and Password to register."; return; }
 
     if (supabaseClient) {
-        const { data, error } = await supabaseClient.auth.signUp({ email, password });
+        const { data, error } = await supabaseClient.auth.signUp({ 
+            email, password,
+            options: { data: { full_name: name, dob: dob, country: country } }
+        });
         if(error) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; } 
-        else { msgEl.style.display = 'block'; msgEl.style.color = '#25D366'; msgEl.innerText = "Registration successful!"; setTimeout(closeAuthModal, 1500); }
+        else { 
+            msgEl.style.display = 'block'; msgEl.style.color = '#25D366'; msgEl.innerText = "Registration successful!"; 
+            
+            // Push to Google Analytics
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                'event': 'user_registration',
+                'user_name': name,
+                'user_country': country,
+                'user_email': email
+            });
+
+            // Sync to custom Supabase profiles table
+            if (data && data.user) {
+                await supabaseClient.from('profiles').upsert({ id: data.user.id, full_name: name, dob: dob, country: country });
+            }
+            setTimeout(closeAuthModal, 1500); 
+        }
     }
 };
 
@@ -86,12 +94,17 @@ window.handleEmailLogin = async function() {
     const email = document.getElementById('auth-email').value.trim();
     const password = document.getElementById('auth-password').value;
     const msgEl = document.getElementById('auth-message');
-    if(!email || !password) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please fill both fields."; return; }
+    if(!email || !password) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please fill email and password."; return; }
 
     if (supabaseClient) {
         const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
         if(error) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; } 
-        else { msgEl.style.display = 'block'; msgEl.style.color = '#25D366'; msgEl.innerText = "Login successful!"; setTimeout(closeAuthModal, 1000); }
+        else { 
+            msgEl.style.display = 'block'; msgEl.style.color = '#25D366'; msgEl.innerText = "Login successful!"; 
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({'event': 'user_login', 'user_email': email});
+            setTimeout(closeAuthModal, 1000); 
+        }
     }
 };
 
@@ -101,12 +114,9 @@ if (supabaseClient) {
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
         if (session && session.user) {
             isUserLoggedIn = true;
-            
-            // Extract Google Name if exists for Profile auto-fill
             if (session.user.user_metadata && session.user.user_metadata.full_name) {
                 localStorage.setItem('match_googleName', session.user.user_metadata.full_name);
             }
-
             const regBtn = document.getElementById('nav-reg-btn');
             const profTab = document.getElementById('profile-link-tab');
             const logoutBtn = document.getElementById('nav-logout-btn');
@@ -115,19 +125,13 @@ if (supabaseClient) {
             if (regBtn) regBtn.style.display = 'none';
             if (profTab) profTab.style.display = 'inline-flex';
             if (logoutBtn) logoutBtn.style.display = 'inline-block';
-            
-            if (upgradeBtn) {
-                upgradeBtn.style.display = 'inline-flex';
-                if (isVIP || isAdFree) upgradeBtn.innerText = '👑 VIP Active';
-            }
-        } else {
-            isUserLoggedIn = false;
-        }
+            if (upgradeBtn) { upgradeBtn.style.display = 'inline-flex'; if (isVIP || isAdFree) upgradeBtn.innerText = '👑 VIP Active'; }
+        } else { isUserLoggedIn = false; }
     });
 }
 
 // ==========================================
-// MATCHING & LOADING ENGINE
+// GOOGLE GEMINI AI MATCHING ENGINE 
 // ==========================================
 function checkDailyLimit() {
     if (isVIP || isAdFree) return true; 
@@ -140,50 +144,97 @@ function checkDailyLimit() {
     dailyCount++; localStorage.setItem('match_dailyCount', dailyCount.toString()); return true;
 }
 
-window.triggerMatch = async function() {
+async function fetchGeminiData(promptText) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            contents: [{ parts: [{ text: promptText }] }],
+            generationConfig: { temperature: 0.8, responseMimeType: "application/json" }
+        })
+    });
+    
+    if (!response.ok) throw new Error("Gemini API Request Failed");
+    const data = await response.json();
+    let rawText = data.candidates[0].content.parts[0].text;
+    rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+    return JSON.parse(rawText);
+}
+
+window.triggerMatch = async function(isSpecificSearch = false) {
     if (window.checkAdBlocker && window.adblockEnabled) return; 
     if (!checkDailyLimit()) return;
 
-    let pool = masterCatalog.filter(item => !seenList.includes(item.title) && !savedList.includes(item.title) && !dislikedList.includes(item.title) && userRatings[item.title] !== 1);
-    if (pool.length === 0) { seenList = []; syncListsToDatabase(); pool = masterCatalog; } 
+    // Track Request
+    window.dataLayer = window.dataLayer || [];
     
-    pool.sort(() => 0.5 - Math.random());
-    const selected = pool[0];
-    globalMatchTitle = selected.title; 
+    let promptText = "";
+    if (isSpecificSearch) {
+        const query = document.getElementById('specific-search-input').value.trim();
+        if(!query) { alert("Please enter a title to search."); return; }
+        window.dataLayer.push({ 'event': 'search_requested', 'search_term': query });
+        promptText = `You are a streaming concierge AI in late 2026. The user is specifically searching for where to stream: "${query}". Find the exact streaming platform where it is currently available globally/US. Output MUST be a valid JSON object matching this structure exactly: {"title": "Correct Title", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The exact streaming service (e.g. Netflix, Disney+, Max, Prime, Apple TV, Spotify, etc.)", "imdb": "IMDb rating as a string (e.g. '8.7')", "trailerId": "Exact 11-character YouTube video ID of the official trailer"}`;
+    } else {
+        const cat = document.getElementById('q-category').value;
+        const plat = document.getElementById('q-platform').value;
+        const mood = document.getElementById('q-mood').value;
+        const aest = document.getElementById('q-aesthetic').value;
+        const pac = document.getElementById('q-pacing').value;
+        
+        window.dataLayer.push({ 'event': 'match_requested', 'preferences': { cat, plat, mood, aest, pac } });
+        
+        const excludeStr = [...seenList, ...dislikedList].join(', ');
+        promptText = `You are a streaming concierge AI in late 2026. Find a highly-rated streaming title based on these preferences: Format: ${cat}, Platform: ${plat}, Mood: ${mood}, Aesthetic: ${aest}, Pacing: ${pac}. CRITICAL: Do NOT recommend any of the following titles: ${excludeStr}. Return exactly one match. Ensure it is a real title currently available on the chosen platform. Output MUST be a valid JSON object matching this structure exactly: {"title": "Title of movie/series", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID of the official trailer"}`;
+    }
 
     if (document.getElementById('questionnaire-box')) document.getElementById('questionnaire-box').style.display = 'none';
+    if (document.getElementById('search-box')) document.getElementById('search-box').style.display = 'none';
     if (document.getElementById('result-box')) document.getElementById('result-box').style.display = 'none';
     
     const loadBox = document.getElementById('loading-box');
     loadBox.style.display = 'block';
 
-    let totalTime = isVIP || isAdFree ? 2 : 20; 
-    let timeLeft = totalTime;
+    let totalTime = isVIP || isAdFree ? 4 : 15; // Wait min 15s for free to serve Adsterra, 4s for VIP
+    let startTime = Date.now();
     
     loadBox.innerHTML = `
         <div style="font-size: 50px; margin-bottom: 15px; animation: pulse 1.5s infinite;">🔮</div>
-        <h3 style="color: var(--gold-glow); font-size: 20px; margin: 0;">Consulting AI Concierge...</h3>
-        ${!isVIP && !isAdFree ? `
+        <h3 class="magic-loading-text">✨ LOOKING FOR YOUR BEST MATCH ✨</h3>
         <div class="progress-bar-container"><div id="ai-progress-bar" class="progress-bar-fill"></div></div>
-        <p style="color: #aaa; margin-top: 15px; font-size: 13px;">Sponsor break: Searching for the perfect match in <strong id="ad-timer-sim" style="color:#fff; font-size: 16px;">${timeLeft}</strong>s</p>
+        <p style="color: #aaa; margin-top: 15px; font-size: 13px;">Analyzing millions of titles... <strong id="ad-timer-sim" style="color:#fff; font-size: 16px;">${totalTime}</strong>s</p>
+        ${!isVIP && !isAdFree ? `
         <div class="ad-placement" style="margin-top:20px; background:transparent;">
             <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script><script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
-        </div>` : `<p style="color: var(--gold); margin-top: 10px;">VIP Fast-Track Active</p>`}
+        </div>` : `<p style="color: var(--gold); margin-top: 10px;">VIP Fast-Track Routing</p>`}
     `;
 
-    const simInterval = setInterval(() => {
-        timeLeft--;
-        const timerEl = document.getElementById('ad-timer-sim');
+    // 1. Start parallel timers
+    let timerInterval = setInterval(() => {
+        let elapsed = (Date.now() - startTime) / 1000;
+        let pct = Math.min((elapsed / totalTime) * 100, 100);
         const barEl = document.getElementById('ai-progress-bar');
+        const timeEl = document.getElementById('ad-timer-sim');
+        if (barEl) barEl.style.width = pct + '%';
+        if (timeEl) timeEl.innerText = Math.max(Math.ceil(totalTime - elapsed), 0);
+    }, 50);
+
+    // 2. Fetch from Gemini + enforce delay
+    let matchResult = null;
+    try {
+        let fetchPromise = fetchGeminiData(promptText);
+        let delayPromise = new Promise(resolve => setTimeout(resolve, totalTime * 1000));
         
-        if (timerEl) timerEl.innerText = timeLeft;
-        if (barEl) { let pct = ((totalTime - timeLeft) / totalTime) * 100; barEl.style.width = pct + '%'; }
-        
-        if (timeLeft <= 0) {
-            clearInterval(simInterval);
-            renderResult(selected);
-        }
-    }, 1000);
+        let [apiResult] = await Promise.all([fetchPromise, delayPromise]);
+        matchResult = apiResult;
+    } catch (err) {
+        console.error("Gemini Fallback Triggered: ", err);
+        // Fallback to static catalog if API fails
+        matchResult = { title: "Dune: Part Two", synopsis: "Paul Atreides unites with Chani and the Fremen while on a warpath of revenge...", platform: "Max", imdb: "8.6", trailerId: "Way9Dexny3w" };
+    }
+
+    clearInterval(timerInterval);
+    renderResult(matchResult);
 };
 
 function renderResult(selected) {
@@ -194,18 +245,21 @@ function renderResult(selected) {
     // SFX & VFX trigger
     window.playPremiumSound();
     window.fireConfetti();
+    
+    window.dataLayer.push({ 'event': 'match_revealed', 'title': selected.title });
 
+    globalMatchTitle = selected.title;
     document.querySelectorAll('.star-rating-container .star').forEach(s => s.classList.remove('selected'));
 
-    const posterImg = document.getElementById('res-poster-img'); if (posterImg && selected.poster) posterImg.src = selected.poster;
     document.getElementById('res-title').innerText = selected.title;
     document.getElementById('res-synopsis').innerText = selected.synopsis;
 
     const badge = document.getElementById('res-platform-badge');
     badge.innerText = selected.platform;
-    if (selected.platform === 'Netflix') badge.style.background = '#E50914';
-    else if (selected.platform === 'Max') badge.style.background = '#8A2BE2';
-    else if (selected.platform === 'Prime') badge.style.background = '#00A8E1';
+    if (selected.platform.toLowerCase().includes('netflix')) badge.style.background = '#E50914';
+    else if (selected.platform.toLowerCase().includes('max') || selected.platform.toLowerCase().includes('hbo')) badge.style.background = '#8A2BE2';
+    else if (selected.platform.toLowerCase().includes('prime')) badge.style.background = '#00A8E1';
+    else if (selected.platform.toLowerCase().includes('disney')) badge.style.background = '#113CCF';
     else badge.style.background = 'var(--gold)';
     badge.style.color = '#fff';
 
@@ -213,11 +267,11 @@ function renderResult(selected) {
     if(imdbBadge) imdbBadge.innerText = `IMDb: ${selected.imdb || 'N/A'}`;
 
     const directBtn = document.getElementById('res-direct-link');
-    directBtn.href = selected.url;
-    directBtn.innerText = `▶ Stream on ${selected.platform}`;
+    directBtn.href = "#"; // Replace with dynamic deep-link logic later if needed
+    directBtn.innerText = `▶ Search on ${selected.platform}`;
 
     const trailerBox = document.getElementById('res-trailer-container');
-    if (trailerBox) {
+    if (trailerBox && selected.trailerId) {
         trailerBox.style.display = 'block';
         const iframe = document.getElementById('res-trailer');
         if (iframe) iframe.src = `https://www.youtube-nocookie.com/embed/${selected.trailerId}?autoplay=0&rel=0`;
@@ -225,10 +279,11 @@ function renderResult(selected) {
     resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-window.saveToList = function() { if (globalMatchTitle && !savedList.includes(globalMatchTitle)) { savedList.push(globalMatchTitle); syncListsToDatabase(); alert(`⭐ "${globalMatchTitle}" saved to your Watch Later Portfolio!`); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } document.getElementById('result-box').style.display = 'none'; triggerMatch(); };
-window.markAsSeen = function() { if (globalMatchTitle && !seenList.includes(globalMatchTitle)) { seenList.push(globalMatchTitle); syncListsToDatabase(); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } document.getElementById('result-box').style.display = 'none'; triggerMatch(); };
-window.markAsLiked = function() { if (globalMatchTitle) { userRatings[globalMatchTitle] = 5; if (!seenList.includes(globalMatchTitle)) seenList.push(globalMatchTitle); syncListsToDatabase(); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } document.getElementById('result-box').style.display = 'none'; triggerMatch(); };
-window.markAsDisliked = function() { if (globalMatchTitle && !dislikedList.includes(globalMatchTitle)) { dislikedList.push(globalMatchTitle); userRatings[globalMatchTitle] = 1; syncListsToDatabase(); } document.getElementById('result-box').style.display = 'none'; triggerMatch(); };
+// Action Grid
+window.saveToList = function() { if (globalMatchTitle && !savedList.includes(globalMatchTitle)) { savedList.push(globalMatchTitle); syncListsToDatabase(); alert(`⭐ "${globalMatchTitle}" saved to your Watch Later Portfolio!`); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } document.getElementById('result-box').style.display = 'none'; triggerMatch(false); };
+window.markAsSeen = function() { if (globalMatchTitle && !seenList.includes(globalMatchTitle)) { seenList.push(globalMatchTitle); syncListsToDatabase(); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } document.getElementById('result-box').style.display = 'none'; triggerMatch(false); };
+window.markAsLiked = function() { if (globalMatchTitle) { userRatings[globalMatchTitle] = 5; if (!seenList.includes(globalMatchTitle)) seenList.push(globalMatchTitle); syncListsToDatabase(); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } document.getElementById('result-box').style.display = 'none'; triggerMatch(false); };
+window.markAsDisliked = function() { if (globalMatchTitle && !dislikedList.includes(globalMatchTitle)) { dislikedList.push(globalMatchTitle); userRatings[globalMatchTitle] = 1; syncListsToDatabase(); } document.getElementById('result-box').style.display = 'none'; triggerMatch(false); };
 
 document.addEventListener('click', function (event) {
     if (!event.target.classList.contains('star')) return;
