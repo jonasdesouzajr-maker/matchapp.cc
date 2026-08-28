@@ -1,7 +1,20 @@
-console.log("Mastercode 71.0: Secure Supabase Edge Function Proxy Active");
+console.log("Mastercode 72.0: Auth Fixed, Age Calculation, 20s Locked Ad Animations");
+
+// ==========================================
+// 1. SUPABASE INITIALIZATION (FIX FOR GOOGLE LOGIN)
+// ==========================================
+// CRITICAL: Replace these with your actual Supabase Project URL and Anon Key!
+const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+
+let supabaseClient = null;
+if (window.supabase) {
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+} else {
+    console.error("Supabase script failed to load. Authentication will not work.");
+}
 
 let globalMatchTitle = "MatchApp";
-let supabaseClient = null; 
 let isUserLoggedIn = false;
 
 let seenList = JSON.parse(localStorage.getItem('match_seenList') || '[]');
@@ -18,68 +31,81 @@ window.playPremiumSound = function() {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(600, ctx.currentTime);
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.type = 'sine'; osc.frequency.setValueAtTime(600, ctx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
-        gain.gain.setValueAtTime(0.3, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
-        osc.start(ctx.currentTime);
-        osc.stop(ctx.currentTime + 0.2);
-    } catch (e) { console.log('Audio not supported or blocked'); }
+        gain.gain.setValueAtTime(0.3, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+        osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.2);
+    } catch (e) { console.log('Audio blocked'); }
 };
 
 window.fireConfetti = function() {
-    if (typeof confetti !== 'undefined') {
-        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#D4AF37', '#FFF', '#8A2BE2', '#E50914'], zIndex: 9999 });
-    }
+    if (typeof confetti !== 'undefined') confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#D4AF37', '#FFF', '#8A2BE2', '#E50914'], zIndex: 9999 });
 };
 
-function updateClock() { const clock = document.getElementById('real-time-clock'); if (clock) { const now = new Date(); clock.innerHTML = `${now.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })} | ${now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`; } }
-setInterval(updateClock, 1000);
-
 // ==========================================
-// MODAL & AUTHENTICATION LOGIC
+// MODAL & AUTHENTICATION LOGIC (TABBED)
 // ==========================================
 window.openAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'flex'; };
 window.closeAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'none'; };
 
+window.switchAuthTab = function(tab) {
+    document.getElementById('tab-login').classList.remove('active');
+    document.getElementById('tab-signup').classList.remove('active');
+    document.getElementById('form-login').classList.remove('active');
+    document.getElementById('form-signup').classList.remove('active');
+    
+    document.getElementById(`tab-${tab}`).classList.add('active');
+    document.getElementById(`form-${tab}`).classList.add('active');
+};
+
+window.calculateAge = function(dobString) {
+    // Expects DD/MM/YYYY
+    const parts = dobString.split('/');
+    if (parts.length === 3 && parts[2].length === 4) {
+        const dob = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+        const diff = Date.now() - dob.getTime();
+        const ageDate = new Date(diff); 
+        const age = Math.abs(ageDate.getUTCFullYear() - 1970);
+        document.getElementById('reg-age').value = isNaN(age) ? '' : age;
+    } else {
+        document.getElementById('reg-age').value = '';
+    }
+};
+
 window.signInWithGoogle = async function() { 
-    if (!supabaseClient) { alert("Server connection failed. Please refresh."); return; } 
+    if (!supabaseClient) { alert("Server connection failed. Please ensure Supabase keys are set in app.js."); return; } 
     const { error } = await supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + '/index.html' } }); 
     if (error) alert("Google Login Error: " + error.message); 
 };
 
 window.handleEmailSignup = async function() {
-    const name = document.getElementById('auth-name').value.trim();
-    const dob = document.getElementById('auth-dob').value.trim();
-    const country = document.getElementById('auth-country').value.trim();
-    const email = document.getElementById('auth-email').value.trim();
-    const password = document.getElementById('auth-password').value;
+    const name = document.getElementById('reg-name').value.trim();
+    const dob = document.getElementById('reg-dob').value.trim();
+    const age = document.getElementById('reg-age').value;
+    const orientation = document.getElementById('reg-orientation').value;
+    const email = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
     const msgEl = document.getElementById('auth-message');
     
-    if(!email || !password || !name) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please fill at least Name, Email, and Password to register."; return; }
+    if(!email || !password || !name || !dob || !orientation) { 
+        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please fill all fields to build your profile."; return; 
+    }
 
     if (supabaseClient) {
         const { data, error } = await supabaseClient.auth.signUp({ 
             email, password,
-            options: { data: { full_name: name, dob: dob, country: country } }
+            options: { data: { full_name: name, dob: dob, age: age, sexual_orientation: orientation } }
         });
         if(error) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; } 
         else { 
-            msgEl.style.display = 'block'; msgEl.style.color = '#25D366'; msgEl.innerText = "Registration successful!"; 
+            msgEl.style.display = 'block'; msgEl.style.color = '#25D366'; msgEl.innerText = "Profile successfully created!"; 
             
             window.dataLayer = window.dataLayer || [];
-            window.dataLayer.push({
-                'event': 'user_registration',
-                'user_name': name,
-                'user_country': country,
-                'user_email': email
-            });
+            window.dataLayer.push({ 'event': 'user_registration', 'user_name': name, 'user_orientation': orientation });
 
             if (data && data.user) {
-                await supabaseClient.from('profiles').upsert({ id: data.user.id, full_name: name, dob: dob, country: country });
+                await supabaseClient.from('profiles').upsert({ id: data.user.id, full_name: name, dob: dob, age: age, sexual_orientation: orientation });
             }
             setTimeout(closeAuthModal, 1500); 
         }
@@ -87,18 +113,17 @@ window.handleEmailSignup = async function() {
 };
 
 window.handleEmailLogin = async function() {
-    const email = document.getElementById('auth-email').value.trim();
-    const password = document.getElementById('auth-password').value;
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
     const msgEl = document.getElementById('auth-message');
-    if(!email || !password) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please fill email and password."; return; }
+    if(!email || !password) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please enter email and password."; return; }
 
     if (supabaseClient) {
         const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
         if(error) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; } 
         else { 
             msgEl.style.display = 'block'; msgEl.style.color = '#25D366'; msgEl.innerText = "Login successful!"; 
-            window.dataLayer = window.dataLayer || [];
-            window.dataLayer.push({'event': 'user_login', 'user_email': email});
+            window.dataLayer = window.dataLayer || []; window.dataLayer.push({'event': 'user_login'});
             setTimeout(closeAuthModal, 1000); 
         }
     }
@@ -110,9 +135,6 @@ if (supabaseClient) {
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
         if (session && session.user) {
             isUserLoggedIn = true;
-            if (session.user.user_metadata && session.user.user_metadata.full_name) {
-                localStorage.setItem('match_googleName', session.user.user_metadata.full_name);
-            }
             const regBtn = document.getElementById('nav-reg-btn');
             const profTab = document.getElementById('profile-link-tab');
             const logoutBtn = document.getElementById('nav-logout-btn');
@@ -127,7 +149,7 @@ if (supabaseClient) {
 }
 
 // ==========================================
-// SECURE GEMINI AI MATCHING ENGINE (VIA PROXY)
+// SECURE GEMINI AI MATCHING ENGINE (20s Adsterra Wait)
 // ==========================================
 function checkDailyLimit() {
     if (isVIP || isAdFree) return true; 
@@ -142,19 +164,10 @@ function checkDailyLimit() {
 
 async function fetchGeminiData(promptText) {
     if (!supabaseClient) throw new Error("Supabase client not initialized.");
-    
-    // Call securely through Supabase Edge Function (Key stays hidden on server)
-    const { data, error } = await supabaseClient.functions.invoke('gemini-proxy', {
-        body: { prompt: promptText }
-    });
-
-    if (error || !data || !data.candidates) {
-        throw new Error(error?.message || "Gemini Proxy Request Failed");
-    }
-
+    const { data, error } = await supabaseClient.functions.invoke('gemini-proxy', { body: { prompt: promptText } });
+    if (error || !data || !data.candidates) throw new Error(error?.message || "Gemini Proxy Request Failed");
     let rawText = data.candidates[0].content.parts[0].text;
-    rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
-    return JSON.parse(rawText);
+    return JSON.parse(rawText.replace(/```json/gi, '').replace(/```/g, '').trim());
 }
 
 window.triggerMatch = async function(isSpecificSearch = false) {
@@ -162,24 +175,20 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     if (!checkDailyLimit()) return;
 
     window.dataLayer = window.dataLayer || [];
-    
     let promptText = "";
+    
     if (isSpecificSearch) {
         const query = document.getElementById('specific-search-input').value.trim();
         if(!query) { alert("Please enter a title to search."); return; }
         window.dataLayer.push({ 'event': 'search_requested', 'search_term': query });
-        promptText = `You are a streaming concierge AI in late 2026. The user is specifically searching for where to stream: "${query}". Find the exact streaming platform where it is currently available globally/US. Output MUST be a valid JSON object matching this structure exactly: {"title": "Correct Title", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The exact streaming service (e.g. Netflix, Disney+, Max, Prime, Apple TV, Spotify, etc.)", "imdb": "IMDb rating as a string (e.g. '8.7')", "trailerId": "Exact 11-character YouTube video ID of the official trailer"}`;
+        promptText = `You are a streaming concierge AI in late 2026. The user is specifically searching for where to stream: "${query}". Find the exact streaming platform where it is currently available globally/US. Output MUST be a valid JSON object matching this structure exactly: {"title": "Correct Title", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The exact streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID of the official trailer"}`;
     } else {
-        const cat = document.getElementById('q-category').value;
-        const plat = document.getElementById('q-platform').value;
-        const mood = document.getElementById('q-mood').value;
-        const aest = document.getElementById('q-aesthetic').value;
-        const pac = document.getElementById('q-pacing').value;
+        const cat = document.getElementById('q-category').value; const plat = document.getElementById('q-platform').value;
+        const mood = document.getElementById('q-mood').value; const aest = document.getElementById('q-aesthetic').value; const pac = document.getElementById('q-pacing').value;
         
-        window.dataLayer.push({ 'event': 'match_requested', 'preferences': { cat, plat, mood, aest, pac } });
-        
+        window.dataLayer.push({ 'event': 'match_requested' });
         const excludeStr = [...seenList, ...dislikedList].join(', ');
-        promptText = `You are a streaming concierge AI in late 2026. Find a highly-rated streaming title based on these preferences: Format: ${cat}, Platform: ${plat}, Mood: ${mood}, Aesthetic: ${aest}, Pacing: ${pac}. CRITICAL: Do NOT recommend any of the following titles: ${excludeStr}. Return exactly one match. Ensure it is a real title currently available on the chosen platform. Output MUST be a valid JSON object matching this structure exactly: {"title": "Title of movie/series", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID of the official trailer"}`;
+        promptText = `You are a streaming concierge AI in late 2026. Find a highly-rated streaming title based on these preferences: Format: ${cat}, Platform: ${plat}, Mood: ${mood}, Aesthetic: ${aest}, Pacing: ${pac}. CRITICAL: Do NOT recommend any of the following titles: ${excludeStr}. Return exactly one match. Ensure it is a real title currently available. Output MUST be a valid JSON object matching this structure exactly: {"title": "Title of movie/series", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID of the official trailer"}`;
     }
 
     if (document.getElementById('questionnaire-box')) document.getElementById('questionnaire-box').style.display = 'none';
@@ -189,20 +198,23 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     const loadBox = document.getElementById('loading-box');
     loadBox.style.display = 'block';
 
-    let totalTime = isVIP || isAdFree ? 4 : 15; 
+    // Strictly enforce 20 seconds for free users, 4 for VIP
+    let totalTime = isVIP || isAdFree ? 4 : 20; 
     let startTime = Date.now();
     
     loadBox.innerHTML = `
-        <div style="font-size: 50px; margin-bottom: 15px; animation: pulse 1.5s infinite;">🔮</div>
-        <h3 class="magic-loading-text">✨ LOOKING FOR YOUR BEST MATCH ✨</h3>
+        <div style="font-size: 50px; margin-bottom: 15px; animation: pulse 1s infinite alternate;">⏳</div>
+        <h3 class="magic-loading-text">✨ SEARCHING FOR YOUR MATCH ✨</h3>
         <div class="progress-bar-container"><div id="ai-progress-bar" class="progress-bar-fill"></div></div>
-        <p style="color: #aaa; margin-top: 15px; font-size: 13px;">Analyzing millions of titles... <strong id="ad-timer-sim" style="color:#fff; font-size: 16px;">${totalTime}</strong>s</p>
+        <p style="color: #aaa; margin-top: 15px; font-size: 13px;">Analyzing databases... Match ready in <strong id="ad-timer-sim" style="color:#fff; font-size: 16px;">${totalTime}</strong>s</p>
         ${!isVIP && !isAdFree ? `
-        <div class="ad-placement" style="margin-top:20px; background:transparent;">
-            <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script><script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
-        </div>` : `<p style="color: var(--gold); margin-top: 10px;">VIP Fast-Track Routing</p>`}
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:20px; align-items:center;">
+            <div class="ad-placement" style="background:transparent;"><script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script><script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script></div>
+            <div class="ad-placement" style="background:transparent;"><script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script><script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script></div>
+        </div>` : `<p style="color: var(--gold); margin-top: 10px;">VIP Fast-Track Active</p>`}
     `;
 
+    // Visual Meter Timer Sync
     let timerInterval = setInterval(() => {
         let elapsed = (Date.now() - startTime) / 1000;
         let pct = Math.min((elapsed / totalTime) * 100, 100);
@@ -210,13 +222,13 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         const timeEl = document.getElementById('ad-timer-sim');
         if (barEl) barEl.style.width = pct + '%';
         if (timeEl) timeEl.innerText = Math.max(Math.ceil(totalTime - elapsed), 0);
-    }, 50);
+    }, 100);
 
     let matchResult = null;
     try {
         let fetchPromise = fetchGeminiData(promptText);
         let delayPromise = new Promise(resolve => setTimeout(resolve, totalTime * 1000));
-        let [apiResult] = await Promise.all([fetchPromise, delayPromise]);
+        let [apiResult] = await Promise.all([fetchPromise, delayPromise]); // Guarantees it waits exactly the specified time (20s)
         matchResult = apiResult;
     } catch (err) {
         console.error("Gemini Fallback Triggered: ", err);
@@ -234,7 +246,6 @@ function renderResult(selected) {
     
     window.playPremiumSound();
     window.fireConfetti();
-    
     window.dataLayer.push({ 'event': 'match_revealed', 'title': selected.title });
 
     globalMatchTitle = selected.title;
@@ -255,8 +266,9 @@ function renderResult(selected) {
     const imdbBadge = document.getElementById('res-imdb-badge');
     if(imdbBadge) imdbBadge.innerText = `IMDb: ${selected.imdb || 'N/A'}`;
 
+    // Universal platform search link (SEO fallback)
     const directBtn = document.getElementById('res-direct-link');
-    directBtn.href = "#";
+    directBtn.href = `https://www.google.com/search?q=Watch+${encodeURIComponent(selected.title)}+on+${encodeURIComponent(selected.platform)}`;
     directBtn.innerText = `▶ Search on ${selected.platform}`;
 
     const trailerBox = document.getElementById('res-trailer-container');
@@ -282,9 +294,6 @@ document.addEventListener('click', function (event) {
 });
 
 async function syncListsToDatabase() { 
-    localStorage.setItem('match_seenList', JSON.stringify(seenList)); 
-    localStorage.setItem('match_savedList', JSON.stringify(savedList)); 
-    localStorage.setItem('match_dislikedList', JSON.stringify(dislikedList)); 
-    localStorage.setItem('match_userRatings', JSON.stringify(userRatings)); 
+    localStorage.setItem('match_seenList', JSON.stringify(seenList)); localStorage.setItem('match_savedList', JSON.stringify(savedList)); localStorage.setItem('match_dislikedList', JSON.stringify(dislikedList)); localStorage.setItem('match_userRatings', JSON.stringify(userRatings)); 
     if (isUserLoggedIn && supabaseClient) { await supabaseClient.auth.updateUser({ data: { seen_list: seenList, saved_list: savedList, disliked_list: dislikedList, user_ratings: userRatings } }); } 
 }
