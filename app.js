@@ -1,17 +1,19 @@
-console.log("Mastercode 73.0: Fixed Auth Redirects, 20s Loading Sync, and Supabase Init");
+console.log("Mastercode 74.0: Safe Execution, Fixed Clock, Auth Routes, & Perfect 20s Ad Sync");
 
 // ==========================================
-// 1. SUPABASE INITIALIZATION (CRITICAL FOR AUTH)
+// 1. SUPABASE SAFE INITIALIZATION
 // ==========================================
-// YOU MUST REPLACE THESE WITH YOUR EXACT PROJECT KEYS
+// CRITICAL: Replace with your actual Supabase URL & Anon Key to fix the "Server Connection Error"
 const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
 const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
 
 let supabaseClient = null;
-if (window.supabase) {
-    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-} else {
-    console.error("Supabase CDN failed to load. Authentication is offline.");
+try {
+    if (window.supabase) {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+} catch (e) {
+    console.error("Supabase Initialization Error (Auth disabled):", e);
 }
 
 let globalMatchTitle = "MatchApp";
@@ -25,12 +27,26 @@ let userRatings = JSON.parse(localStorage.getItem('match_userRatings') || '{}');
 let isAdFree = localStorage.getItem('match_adFree') === 'true'; 
 let isVIP = localStorage.getItem('match_isVIP') === 'true';
 
+// ------------------------------------------
+// CLOCK FUNCTION - FIXED & PROTECTED
+// ------------------------------------------
+function updateClock() { 
+    try {
+        const clock = document.getElementById('real-time-clock'); 
+        if (clock) { 
+            const now = new Date(); 
+            clock.innerHTML = `${now.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })} | ${now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`; 
+        } 
+    } catch(e) {}
+}
+updateClock(); // Initialize immediately
+setInterval(updateClock, 1000); // Run every second
+
 // SFX & VFX Engine
 window.playPremiumSound = function() {
     try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
+        const osc = ctx.createOscillator(); const gain = ctx.createGain();
         osc.connect(gain); gain.connect(ctx.destination);
         osc.type = 'sine'; osc.frequency.setValueAtTime(600, ctx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
@@ -43,9 +59,6 @@ window.fireConfetti = function() {
     if (typeof confetti !== 'undefined') confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#D4AF37', '#FFF', '#8A2BE2', '#E50914'], zIndex: 9999 });
 };
 
-function updateClock() { const clock = document.getElementById('real-time-clock'); if (clock) { const now = new Date(); clock.innerHTML = `${now.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })} | ${now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`; } }
-setInterval(updateClock, 1000);
-
 // ==========================================
 // MODAL & AUTHENTICATION LOGIC (TABBED & REDIRECTING)
 // ==========================================
@@ -53,13 +66,20 @@ window.openAuthModal = function() { document.getElementById('main-auth-modal').s
 window.closeAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'none'; };
 
 window.switchAuthTab = function(tab) {
-    document.getElementById('tab-login').classList.remove('active');
-    document.getElementById('tab-signup').classList.remove('active');
-    document.getElementById('form-login').classList.remove('active');
-    document.getElementById('form-signup').classList.remove('active');
+    const tabLog = document.getElementById('tab-login');
+    const tabSign = document.getElementById('tab-signup');
+    const formLog = document.getElementById('form-login');
+    const formSign = document.getElementById('form-signup');
     
-    document.getElementById(`tab-${tab}`).classList.add('active');
-    document.getElementById(`form-${tab}`).classList.add('active');
+    if(tabLog) tabLog.classList.remove('active');
+    if(tabSign) tabSign.classList.remove('active');
+    if(formLog) formLog.classList.remove('active');
+    if(formSign) formSign.classList.remove('active');
+    
+    const activeTab = document.getElementById(`tab-${tab}`);
+    const activeForm = document.getElementById(`form-${tab}`);
+    if(activeTab) activeTab.classList.add('active');
+    if(activeForm) activeForm.classList.add('active');
 };
 
 window.signInWithGoogle = async function() { 
@@ -77,7 +97,7 @@ window.handleEmailSignup = async function() {
         msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please provide an email and password."; return; 
     }
     if (!supabaseClient) {
-        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Server configuration error. Keys missing."; return;
+        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Server configuration error. Keys missing in app.js."; return;
     }
 
     const { data, error } = await supabaseClient.auth.signUp({ email, password });
@@ -94,16 +114,17 @@ window.handleEmailLogin = async function() {
     const email = document.getElementById('login-email').value.trim();
     const password = document.getElementById('login-password').value;
     const msgEl = document.getElementById('auth-message');
+    
     if(!email || !password) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please enter email and password."; return; }
     if (!supabaseClient) {
-        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Server configuration error. Keys missing."; return;
+        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Server configuration error. Keys missing in app.js."; return;
     }
 
     const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
     if(error) { 
         msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; 
     } else { 
-        msgEl.style.display = 'block'; msgEl.style.color = '#25D366'; msgEl.innerText = "Login successful! Redirecting to Profile..."; 
+        msgEl.style.display = 'block'; msgEl.style.color = '#25D366'; msgEl.innerText = "Login successful! Redirecting..."; 
         window.dataLayer = window.dataLayer || []; window.dataLayer.push({'event': 'user_login'});
         setTimeout(() => { window.location.href = '/profile/profile.html'; }, 1000); 
     }
@@ -129,7 +150,7 @@ if (supabaseClient) {
 }
 
 // ==========================================
-// SECURE GEMINI AI MATCHING ENGINE (20s Locked Native Ads)
+// SECURE GEMINI AI MATCHING ENGINE (20s Adsterra Wait)
 // ==========================================
 function checkDailyLimit() {
     if (isVIP || isAdFree) return true; 
@@ -137,7 +158,7 @@ function checkDailyLimit() {
     let lastDate = localStorage.getItem('match_lastDate'); 
     let dailyCount = parseInt(localStorage.getItem('match_dailyCount') || '0');
     if (lastDate !== todayStr) { dailyCount = 0; localStorage.setItem('match_lastDate', todayStr); }
-    if (!isUserLoggedIn && dailyCount >= 5) { alert("🔒 You've used your 5 free guest matches today!\n\nPlease register to unlock your next daily allowance!"); window.openAuthModal(); return false; }
+    if (!isUserLoggedIn && dailyCount >= 5) { alert("🔒 You've used your 5 free matches today!\n\nPlease register to unlock your next daily allowance!"); window.openAuthModal(); return false; }
     if (isUserLoggedIn && dailyCount >= 5) { window.location.href = '/pricing/pricing.html'; return false; }
     dailyCount++; localStorage.setItem('match_dailyCount', dailyCount.toString()); return true;
 }
@@ -158,57 +179,73 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     let promptText = "";
     
     if (isSpecificSearch) {
-        const query = document.getElementById('specific-search-input').value.trim();
+        const input = document.getElementById('specific-search-input');
+        if (!input) return;
+        const query = input.value.trim();
         if(!query) { alert("Please enter a title to search."); return; }
         window.dataLayer.push({ 'event': 'search_requested', 'search_term': query });
         promptText = `You are a streaming concierge AI in late 2026. The user is specifically searching for where to stream: "${query}". Find the exact streaming platform where it is currently available globally/US. Output MUST be a valid JSON object matching this structure exactly: {"title": "Correct Title", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The exact streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID of the official trailer"}`;
     } else {
-        const cat = document.getElementById('q-category').value; const plat = document.getElementById('q-platform').value;
-        const mood = document.getElementById('q-mood').value; const aest = document.getElementById('q-aesthetic').value; const pac = document.getElementById('q-pacing').value;
+        const cat = document.getElementById('q-category')?.value || 'any'; 
+        const plat = document.getElementById('q-platform')?.value || 'any';
+        const mood = document.getElementById('q-mood')?.value || 'any'; 
+        const aest = document.getElementById('q-aesthetic')?.value || 'any'; 
+        const pac = document.getElementById('q-pacing')?.value || 'any';
+        
         window.dataLayer.push({ 'event': 'match_requested' });
         const excludeStr = [...seenList, ...dislikedList].join(', ');
         promptText = `You are a streaming concierge AI in late 2026. Find a highly-rated streaming title based on these preferences: Format: ${cat}, Platform: ${plat}, Mood: ${mood}, Aesthetic: ${aest}, Pacing: ${pac}. CRITICAL: Do NOT recommend any of the following titles: ${excludeStr}. Return exactly one match. Ensure it is a real title currently available. Output MUST be a valid JSON object matching this structure exactly: {"title": "Title of movie/series", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID of the official trailer"}`;
     }
 
-    // Hide UI, Show Native Loading HTML Box
-    if (document.getElementById('questionnaire-box')) document.getElementById('questionnaire-box').style.display = 'none';
-    if (document.getElementById('search-box')) document.getElementById('search-box').style.display = 'none';
-    if (document.getElementById('result-box')) document.getElementById('result-box').style.display = 'none';
+    // Hide UI, Show Loading Box
+    const qBox = document.getElementById('questionnaire-box');
+    const sBox = document.getElementById('search-box');
+    const rBox = document.getElementById('result-box');
+    if (qBox) qBox.style.display = 'none';
+    if (sBox) sBox.style.display = 'none';
+    if (rBox) rBox.style.display = 'none';
     
     const loadBox = document.getElementById('loading-box');
+    if (!loadBox) return;
     loadBox.style.display = 'block';
 
     let totalTime = isVIP || isAdFree ? 4 : 20; 
     let startTime = Date.now();
     
     // Reset Bar & Enable Ads explicitly
-    document.getElementById('ai-progress-bar').style.width = '0%';
-    document.getElementById('ad-timer-sim').innerText = totalTime;
+    const pBar = document.getElementById('ai-progress-bar');
+    const tSim = document.getElementById('ad-timer-sim');
+    const freeAds = document.getElementById('free-loading-ads');
+    const vipMsg = document.getElementById('vip-loading-msg');
+    
+    if (pBar) pBar.style.width = '0%';
+    if (tSim) tSim.innerText = totalTime;
+    
     if (!isVIP && !isAdFree) {
-        document.getElementById('free-loading-ads').style.display = 'flex';
-        document.getElementById('vip-loading-msg').style.display = 'none';
+        if(freeAds) freeAds.style.display = 'flex';
+        if(vipMsg) vipMsg.style.display = 'none';
     } else {
-        document.getElementById('free-loading-ads').style.display = 'none';
-        document.getElementById('vip-loading-msg').style.display = 'block';
+        if(freeAds) freeAds.style.display = 'none';
+        if(vipMsg) vipMsg.style.display = 'block';
     }
 
-    // Precise Smooth Progress Bar Logic
+    // Smooth Timer
     let timerInterval = setInterval(() => {
         let elapsed = (Date.now() - startTime) / 1000;
         let pct = Math.min((elapsed / totalTime) * 100, 100);
-        document.getElementById('ai-progress-bar').style.width = pct + '%';
-        document.getElementById('ad-timer-sim').innerText = Math.max(Math.ceil(totalTime - elapsed), 0);
+        if (pBar) pBar.style.width = pct + '%';
+        if (tSim) tSim.innerText = Math.max(Math.ceil(totalTime - elapsed), 0);
     }, 50);
 
     let matchResult = null;
     try {
         let fetchPromise = fetchGeminiData(promptText);
-        // Force exactly the delay specified (e.g., 20 seconds for free users to see ads)
+        // Guarantee the 20 seconds wait even if API is faster
         let delayPromise = new Promise(resolve => setTimeout(resolve, totalTime * 1000));
         let [apiResult] = await Promise.all([fetchPromise, delayPromise]); 
         matchResult = apiResult;
     } catch (err) {
-        console.error("Gemini Fallback Triggered: ", err);
+        console.error("Gemini Proxy failed or Timeout. Using intelligent fallback.", err);
         matchResult = { title: "Dune: Part Two", synopsis: "Paul Atreides unites with Chani and the Fremen while on a warpath of revenge...", platform: "Max", imdb: "8.6", trailerId: "Way9Dexny3w" };
     }
 
@@ -217,8 +254,10 @@ window.triggerMatch = async function(isSpecificSearch = false) {
 };
 
 function renderResult(selected) {
-    document.getElementById('loading-box').style.display = 'none';
+    const loadBox = document.getElementById('loading-box');
     const resultBox = document.getElementById('result-box');
+    if (loadBox) loadBox.style.display = 'none';
+    if (!resultBox) return;
     resultBox.style.display = 'block';
     
     window.playPremiumSound();
@@ -228,38 +267,45 @@ function renderResult(selected) {
     globalMatchTitle = selected.title;
     document.querySelectorAll('.star-rating-container .star').forEach(s => s.classList.remove('selected'));
 
-    document.getElementById('res-title').innerText = selected.title;
-    document.getElementById('res-synopsis').innerText = selected.synopsis;
+    const titleEl = document.getElementById('res-title');
+    const synEl = document.getElementById('res-synopsis');
+    if (titleEl) titleEl.innerText = selected.title;
+    if (synEl) synEl.innerText = selected.synopsis;
 
     const badge = document.getElementById('res-platform-badge');
-    badge.innerText = selected.platform;
-    if (selected.platform.toLowerCase().includes('netflix')) badge.style.background = '#E50914';
-    else if (selected.platform.toLowerCase().includes('max') || selected.platform.toLowerCase().includes('hbo')) badge.style.background = '#8A2BE2';
-    else if (selected.platform.toLowerCase().includes('prime')) badge.style.background = '#00A8E1';
-    else if (selected.platform.toLowerCase().includes('disney')) badge.style.background = '#113CCF';
-    else badge.style.background = 'var(--gold)';
-    badge.style.color = '#fff';
+    if (badge) {
+        badge.innerText = selected.platform;
+        const pLower = selected.platform.toLowerCase();
+        if (pLower.includes('netflix')) badge.style.background = '#E50914';
+        else if (pLower.includes('max') || pLower.includes('hbo')) badge.style.background = '#8A2BE2';
+        else if (pLower.includes('prime')) badge.style.background = '#00A8E1';
+        else if (pLower.includes('disney')) badge.style.background = '#113CCF';
+        else badge.style.background = 'var(--gold)';
+        badge.style.color = '#fff';
+    }
 
     const imdbBadge = document.getElementById('res-imdb-badge');
     if(imdbBadge) imdbBadge.innerText = `IMDb: ${selected.imdb || 'N/A'}`;
 
     const directBtn = document.getElementById('res-direct-link');
-    directBtn.href = `https://www.google.com/search?q=Watch+${encodeURIComponent(selected.title)}+on+${encodeURIComponent(selected.platform)}`;
-    directBtn.innerText = `▶ Search on ${selected.platform}`;
+    if (directBtn) {
+        directBtn.href = `https://www.google.com/search?q=Watch+${encodeURIComponent(selected.title)}+on+${encodeURIComponent(selected.platform)}`;
+        directBtn.innerText = `▶ Search on ${selected.platform}`;
+    }
 
     const trailerBox = document.getElementById('res-trailer-container');
-    if (trailerBox && selected.trailerId) {
+    const iframe = document.getElementById('res-trailer');
+    if (trailerBox && iframe && selected.trailerId) {
         trailerBox.style.display = 'block';
-        const iframe = document.getElementById('res-trailer');
-        if (iframe) iframe.src = `https://www.youtube-nocookie.com/embed/${selected.trailerId}?autoplay=0&rel=0`;
+        iframe.src = `https://www.youtube-nocookie.com/embed/${selected.trailerId}?autoplay=0&rel=0`;
     }
     resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-window.saveToList = function() { if (globalMatchTitle && !savedList.includes(globalMatchTitle)) { savedList.push(globalMatchTitle); syncListsToDatabase(); alert(`⭐ "${globalMatchTitle}" saved!`); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } document.getElementById('result-box').style.display = 'none'; triggerMatch(false); };
-window.markAsSeen = function() { if (globalMatchTitle && !seenList.includes(globalMatchTitle)) { seenList.push(globalMatchTitle); syncListsToDatabase(); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } document.getElementById('result-box').style.display = 'none'; triggerMatch(false); };
-window.markAsLiked = function() { if (globalMatchTitle) { userRatings[globalMatchTitle] = 5; if (!seenList.includes(globalMatchTitle)) seenList.push(globalMatchTitle); syncListsToDatabase(); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } document.getElementById('result-box').style.display = 'none'; triggerMatch(false); };
-window.markAsDisliked = function() { if (globalMatchTitle && !dislikedList.includes(globalMatchTitle)) { dislikedList.push(globalMatchTitle); userRatings[globalMatchTitle] = 1; syncListsToDatabase(); } document.getElementById('result-box').style.display = 'none'; triggerMatch(false); };
+window.saveToList = function() { if (globalMatchTitle && !savedList.includes(globalMatchTitle)) { savedList.push(globalMatchTitle); syncListsToDatabase(); alert(`⭐ "${globalMatchTitle}" saved!`); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } const rBox = document.getElementById('result-box'); if(rBox) rBox.style.display = 'none'; triggerMatch(false); };
+window.markAsSeen = function() { if (globalMatchTitle && !seenList.includes(globalMatchTitle)) { seenList.push(globalMatchTitle); syncListsToDatabase(); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } const rBox = document.getElementById('result-box'); if(rBox) rBox.style.display = 'none'; triggerMatch(false); };
+window.markAsLiked = function() { if (globalMatchTitle) { userRatings[globalMatchTitle] = 5; if (!seenList.includes(globalMatchTitle)) seenList.push(globalMatchTitle); syncListsToDatabase(); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } const rBox = document.getElementById('result-box'); if(rBox) rBox.style.display = 'none'; triggerMatch(false); };
+window.markAsDisliked = function() { if (globalMatchTitle && !dislikedList.includes(globalMatchTitle)) { dislikedList.push(globalMatchTitle); userRatings[globalMatchTitle] = 1; syncListsToDatabase(); } const rBox = document.getElementById('result-box'); if(rBox) rBox.style.display = 'none'; triggerMatch(false); };
 
 document.addEventListener('click', function (event) {
     if (!event.target.classList.contains('star')) return;
