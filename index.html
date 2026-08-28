@@ -12,9 +12,12 @@
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-M7J3NNBN');</script>
     
+    <!-- Ultra SEO Tags for 2026 Trends -->
     <meta name="description" content="MatchApp is your AI streaming concierge. Discover the perfect movies, TV series, doramas, and Spotify podcasts tailored to your exact mood and pacing.">
+    <meta name="keywords" content="AI movie recommendation, what to watch tonight, Netflix streaming guide, best series on Max, Prime Video finder, Disney+ hidden gems, Spotify podcast AI, Doramas AI recommendation, streaming concierge, free movie finder, top rated movies 2026, personalized streaming algorithm, where to watch movies online, AI tv show picker, MatchApp">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
     <link rel="canonical" href="https://matchapp.cc/">
+    
     <link rel="stylesheet" href="/style.css">
     
     <!-- Supabase, Confetti, and AdSense -->
@@ -38,8 +41,23 @@
         .sidebar-ad-left, .sidebar-ad-right { display: none; width: 160px; flex-shrink: 0; position: sticky; top: 20px; }
         .container { flex: 1; max-width: 800px; width: 100%; padding-bottom: 50px; }
         .mobile-ad-bottom { display: block; width: 100%; margin-top: 25px; text-align: center; min-height: 100px; }
-        @media (min-width: 1100px) { .sidebar-ad-left, .sidebar-ad-right { display: block; } .mobile-ad-bottom { display: none; } }
+        @media (min-width: 1100px) { 
+            .sidebar-ad-left, .sidebar-ad-right { display: block; } 
+            .mobile-ad-bottom { display: none; } 
+            .chrome-banner { display: none !important; } /* Hide Chrome Intent on Desktop */
+        }
 
+        /* Chrome Banner */
+        .chrome-banner { background: linear-gradient(90deg, #111, #333); border: 1px solid #FFD700; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .chrome-text { color: #fff; font-size: 13px; line-height: 1.5; text-align: left; flex: 1; margin-right: 15px; }
+        .chrome-btn { background: var(--gold); color: #000; font-weight: bold; padding: 8px 16px; border-radius: 20px; text-decoration: none; white-space: nowrap; box-shadow: 0 2px 10px rgba(212,175,55,0.5); transition: transform 0.2s; }
+
+        /* How it Works */
+        .how-it-works-glow { background: rgba(20, 5, 5, 0.85); border: 2px solid var(--gold); border-radius: 16px; padding: 25px; margin: 0 0 25px 0; text-align: center; box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
+        .how-it-works-glow h3 { color: #fff; font-size: 26px; font-weight: 900; margin: 0 0 15px 0; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        .how-it-works-glow p { color: #ddd; font-size: 16px; line-height: 1.6; margin: 0 0 10px 0; }
+        .how-it-works-glow strong { color: var(--gold-glow); }
+        
         /* Auth Tabs UI */
         .auth-tabs { display: flex; border-bottom: 1px solid rgba(212,175,55,0.3); margin-bottom: 20px; }
         .auth-tab { flex: 1; text-align: center; padding: 12px; color: #bbb; cursor: pointer; font-weight: bold; transition: 0.3s; }
@@ -53,8 +71,19 @@
         .progress-bar-container { width: 100%; height: 28px; background: rgba(0, 0, 0, 0.7); border: 2px solid var(--gold); border-radius: 14px; margin: 20px 0; overflow: hidden; position: relative; box-shadow: 0 0 15px rgba(212,175,55,0.3), inset 0 0 10px rgba(0,0,0,0.8); }
         .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #D4AF37, #FFF, #D4AF37, #FFA500); background-size: 300% 100%; animation: goldShimmer 1.5s infinite linear; transition: width 0.1s linear; }
         
+        /* Stream Flags BG */
+        .stream-flags { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; opacity: 0.35; }
+        .sf-item { position: absolute; font-size: 14vw; font-weight: 900; color: #fff; white-space: nowrap; opacity: 0.8; text-shadow: 0 0 20px currentColor, 0 0 40px currentColor; }
+        .brand-netflix { color: #E50914; } .brand-prime { color: #00A8E1; } .brand-max { color: #8A2BE2; } .brand-disney { color: #113CCF; }
+        @keyframes flyPath1 { 0% { transform: translateX(-100%) rotate(-5deg); } 100% { transform: translateX(100vw) rotate(5deg); } }
+        @keyframes flyPath2 { 0% { transform: translateX(100vw) rotate(5deg); } 100% { transform: translateX(-100%) rotate(-5deg); } }
+
+        /* Results & Action Grid */
+        .four-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .badge-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 10px; }
+
         /* SEO Backlinks Footer */
-        .seo-footer { background: rgba(10,5,5,0.95); border-top: 2px solid var(--gold); padding: 30px 20px; text-align: center; margin-top: auto; }
+        .seo-footer { background: rgba(10,5,5,0.95); border-top: 2px solid var(--gold); padding: 30px 20px; text-align: center; margin-top: auto; width: 100%; }
         .seo-footer h4 { color: var(--gold); font-size: 18px; margin-bottom: 15px; text-transform: uppercase; }
         .streaming-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
         .streaming-links a { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 13px; transition: 0.3s; }
@@ -62,11 +91,17 @@
     </style>
 </head>
 <body style="display: flex; flex-direction: column; min-height: 100vh;">
-    <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M7J3NNBN" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <div id="real-time-clock" class="real-time-clock fade-in">Loading Time...</div>
     <div class="luxury-bg"><div class="floating-orb orb-1"></div><div class="floating-orb orb-2"></div></div>
+
+    <div class="stream-flags">
+        <span class="sf-item brand-netflix" style="top: 10%; animation: flyPath1 15s linear infinite;">NETFLIX</span>
+        <span class="sf-item brand-prime" style="top: 35%; animation: flyPath2 18s linear infinite 2s;">PRIME</span>
+        <span class="sf-item brand-max" style="top: 60%; animation: flyPath1 16s linear infinite 4s;">MAX</span>
+        <span class="sf-item brand-disney" style="top: 85%; animation: flyPath2 19s linear infinite 1s;">DISNEY+</span>
+    </div>
 
     <nav class="app-header fade-in">
         <a href="/index.html" class="header-brand-area">
@@ -101,7 +136,14 @@
 
                 <header class="ad-placement fade-in" style="margin-bottom: 25px;"><span class="ad-label">SPONSORED</span><div class="adsterra-top-wrapper"><script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script><script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script></div></header>
 
-                <div class="premium-card fade-in" style="margin-bottom: 25px;">
+                <div class="how-it-works-glow fade-in">
+                    <h3>💡 How MatchApp Works</h3>
+                    <p><strong>1. Curate:</strong> Tell the AI your exact vibe, pacing, and platform preferences.</p>
+                    <p><strong>2. Match:</strong> Gemini AI finds a duplicate-free match across the internet in seconds.</p>
+                    <p><strong>3. Save:</strong> Build your ultimate Watch Later Portfolio securely.</p>
+                </div>
+
+                <div id="search-box" class="premium-card fade-in" style="margin-bottom: 25px;">
                     <h2 style="color: var(--gold); margin: 0 0 10px 0; font-size: 26px; text-align: center;">Find Where to Watch</h2>
                     <p style="color: #ddd; font-size: 14px; margin-bottom: 15px; text-align: center;">Looking for a specific title? Let Gemini AI find where it's streaming.</p>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
@@ -122,14 +164,13 @@
                     <button onclick="triggerMatch(false)" class="gold-btn" style="margin-top: 20px; width: 100%; font-size: 18px; padding: 16px;">⚡ Consult AI Concierge</button>
                 </div>
 
-                <!-- LOADING BOX NATIVE HTML (FIXED FOR ADS) -->
+                <!-- LOADING BOX HTML (FIXED FOR ADS) -->
                 <div id="loading-box" class="premium-card fade-in" style="display: none; padding: 40px 20px; text-align: center;">
                     <div style="font-size: 50px; margin-bottom: 15px; animation: pulse 1s infinite alternate;">⏳</div>
                     <h3 class="magic-loading-text">✨ SEARCHING FOR YOUR MATCH ✨</h3>
                     <div class="progress-bar-container"><div id="ai-progress-bar" class="progress-bar-fill" style="width:0%;"></div></div>
                     <p style="color: #aaa; margin-top: 15px; font-size: 13px;">Analyzing databases... Match ready in <strong id="ad-timer-sim" style="color:#fff; font-size: 16px;">20</strong>s</p>
                     
-                    <!-- Pre-loaded Adsterra Placements (Hidden until loading starts) -->
                     <div id="free-loading-ads" style="display: none; flex-direction:column; gap:10px; margin-top:20px; align-items:center;">
                         <div class="ad-placement" style="background:transparent;"><script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script><script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script></div>
                         <div class="ad-placement" style="background:transparent;"><script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script><script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script></div>
@@ -137,6 +178,7 @@
                     <p id="vip-loading-msg" style="display: none; color: var(--gold); margin-top: 10px;">VIP Fast-Track Active</p>
                 </div>
 
+                <!-- RESULT BOX -->
                 <div id="result-box" class="premium-card fade-in" style="display: none; text-align: left;">
                     <div class="poster-preview-card"><img id="res-poster-img" src="https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=1000&q=80" alt="Poster" loading="lazy"></div>
                     <div class="badge-row">
@@ -164,7 +206,6 @@
                     <button onclick="location.reload()" class="secondary-btn" style="border: none; background: transparent; text-align: center; margin-top: 25px; width: 100%; font-size: 16px;">🏠 Match Again</button>
                 </div>
                 
-                <!-- Fixed Mobile Bottom Ads -->
                 <div class="mobile-ad-bottom"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block; min-height: 100px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
             </div>
 
