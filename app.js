@@ -1,4 +1,4 @@
-console.log("Mastercode 69.0: Google Gemini AI Integrated, Real-Time Search, Analytics Sync Active");
+console.log("Mastercode 70.0: Secure Environment Configuration Active");
 
 let globalMatchTitle = "MatchApp";
 let supabaseClient = null; // Ensure this is initialized with your Supabase credentials!
@@ -12,7 +12,9 @@ let userRatings = JSON.parse(localStorage.getItem('match_userRatings') || '{}');
 let isAdFree = localStorage.getItem('match_adFree') === 'true'; 
 let isVIP = localStorage.getItem('match_isVIP') === 'true';
 
-const GEMINI_API_KEY = "AQ.Ab8RN6LMWIL1BNnk6eq3OziRUm9qKnkhTXuazXI7AnNxKzFiOw";
+// SECURE API KEY HANDLING: The hardcoded key has been entirely removed from source control.
+// Configure your API key securely via environment variables or runtime injection.
+const GEMINI_API_KEY = window.ENV?.GEMINI_API_KEY || localStorage.getItem('match_gemini_key') || "YOUR_GEMINI_API_KEY_HERE";
 
 // SFX & VFX Engine
 window.playPremiumSound = function() {
@@ -42,7 +44,7 @@ function updateClock() { const clock = document.getElementById('real-time-clock'
 setInterval(updateClock, 1000);
 
 // ==========================================
-// MODAL & AUTHENTICATION LOGIC (WITH GTM & SUPABASE SYNC)
+// MODAL & AUTHENTICATION LOGIC
 // ==========================================
 window.openAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'flex'; };
 window.closeAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'none'; };
@@ -72,7 +74,6 @@ window.handleEmailSignup = async function() {
         else { 
             msgEl.style.display = 'block'; msgEl.style.color = '#25D366'; msgEl.innerText = "Registration successful!"; 
             
-            // Push to Google Analytics
             window.dataLayer = window.dataLayer || [];
             window.dataLayer.push({
                 'event': 'user_registration',
@@ -81,7 +82,6 @@ window.handleEmailSignup = async function() {
                 'user_email': email
             });
 
-            // Sync to custom Supabase profiles table
             if (data && data.user) {
                 await supabaseClient.from('profiles').upsert({ id: data.user.id, full_name: name, dob: dob, country: country });
             }
@@ -145,6 +145,9 @@ function checkDailyLimit() {
 }
 
 async function fetchGeminiData(promptText) {
+    if (!GEMINI_API_KEY || GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") {
+        throw new Error("API key not configured.");
+    }
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
     const response = await fetch(url, {
         method: 'POST',
@@ -166,7 +169,6 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     if (window.checkAdBlocker && window.adblockEnabled) return; 
     if (!checkDailyLimit()) return;
 
-    // Track Request
     window.dataLayer = window.dataLayer || [];
     
     let promptText = "";
@@ -195,7 +197,7 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     const loadBox = document.getElementById('loading-box');
     loadBox.style.display = 'block';
 
-    let totalTime = isVIP || isAdFree ? 4 : 15; // Wait min 15s for free to serve Adsterra, 4s for VIP
+    let totalTime = isVIP || isAdFree ? 4 : 15; 
     let startTime = Date.now();
     
     loadBox.innerHTML = `
@@ -209,7 +211,6 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         </div>` : `<p style="color: var(--gold); margin-top: 10px;">VIP Fast-Track Routing</p>`}
     `;
 
-    // 1. Start parallel timers
     let timerInterval = setInterval(() => {
         let elapsed = (Date.now() - startTime) / 1000;
         let pct = Math.min((elapsed / totalTime) * 100, 100);
@@ -219,17 +220,14 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         if (timeEl) timeEl.innerText = Math.max(Math.ceil(totalTime - elapsed), 0);
     }, 50);
 
-    // 2. Fetch from Gemini + enforce delay
     let matchResult = null;
     try {
         let fetchPromise = fetchGeminiData(promptText);
         let delayPromise = new Promise(resolve => setTimeout(resolve, totalTime * 1000));
-        
         let [apiResult] = await Promise.all([fetchPromise, delayPromise]);
         matchResult = apiResult;
     } catch (err) {
         console.error("Gemini Fallback Triggered: ", err);
-        // Fallback to static catalog if API fails
         matchResult = { title: "Dune: Part Two", synopsis: "Paul Atreides unites with Chani and the Fremen while on a warpath of revenge...", platform: "Max", imdb: "8.6", trailerId: "Way9Dexny3w" };
     }
 
@@ -242,7 +240,6 @@ function renderResult(selected) {
     const resultBox = document.getElementById('result-box');
     resultBox.style.display = 'block';
     
-    // SFX & VFX trigger
     window.playPremiumSound();
     window.fireConfetti();
     
@@ -267,7 +264,7 @@ function renderResult(selected) {
     if(imdbBadge) imdbBadge.innerText = `IMDb: ${selected.imdb || 'N/A'}`;
 
     const directBtn = document.getElementById('res-direct-link');
-    directBtn.href = "#"; // Replace with dynamic deep-link logic later if needed
+    directBtn.href = "#";
     directBtn.innerText = `▶ Search on ${selected.platform}`;
 
     const trailerBox = document.getElementById('res-trailer-container');
@@ -279,7 +276,6 @@ function renderResult(selected) {
     resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// Action Grid
 window.saveToList = function() { if (globalMatchTitle && !savedList.includes(globalMatchTitle)) { savedList.push(globalMatchTitle); syncListsToDatabase(); alert(`⭐ "${globalMatchTitle}" saved to your Watch Later Portfolio!`); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } document.getElementById('result-box').style.display = 'none'; triggerMatch(false); };
 window.markAsSeen = function() { if (globalMatchTitle && !seenList.includes(globalMatchTitle)) { seenList.push(globalMatchTitle); syncListsToDatabase(); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } document.getElementById('result-box').style.display = 'none'; triggerMatch(false); };
 window.markAsLiked = function() { if (globalMatchTitle) { userRatings[globalMatchTitle] = 5; if (!seenList.includes(globalMatchTitle)) seenList.push(globalMatchTitle); syncListsToDatabase(); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } document.getElementById('result-box').style.display = 'none'; triggerMatch(false); };
