@@ -45,17 +45,13 @@
             .mobile-ad-bottom { display: none; }
         }
 
-        /* Chrome Ad Banner */
         .chrome-banner { background: linear-gradient(90deg, #111, #333); border: 1px solid #FFD700; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
         .chrome-text { color: #fff; font-size: 13px; line-height: 1.5; text-align: left; flex: 1; margin-right: 15px; }
         .chrome-btn { background: var(--gold); color: #000; font-weight: bold; padding: 8px 16px; border-radius: 20px; text-decoration: none; white-space: nowrap; box-shadow: 0 2px 10px rgba(212,175,55,0.5); transition: transform 0.2s; }
-        .chrome-btn:hover { transform: scale(1.05); }
-
-        /* Other existing elements */
+        
         .how-it-works-glow { background: rgba(20, 5, 5, 0.85); border: 2px solid var(--gold); border-radius: 16px; padding: 25px; margin: 0 0 25px 0; text-align: center; box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
         .how-it-works-glow h3 { color: #fff; font-size: 26px; font-weight: 900; margin: 0 0 15px 0; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
         .how-it-works-glow p { color: #ddd; font-size: 16px; line-height: 1.6; margin: 0 0 10px 0; }
-        .how-it-works-glow strong { color: var(--gold-glow); }
         
         .stream-flags { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; opacity: 0.35; }
         .sf-item { position: absolute; font-size: 14vw; font-weight: 900; color: #fff; white-space: nowrap; opacity: 0.8; text-shadow: 0 0 20px currentColor, 0 0 40px currentColor; }
@@ -63,8 +59,10 @@
         @keyframes flyPath1 { 0% { transform: translateX(-100%) rotate(-5deg); } 100% { transform: translateX(100vw) rotate(5deg); } }
         @keyframes flyPath2 { 0% { transform: translateX(100vw) rotate(5deg); } 100% { transform: translateX(-100%) rotate(-5deg); } }
 
-        .progress-bar-container { width: 100%; height: 24px; background: rgba(0, 0, 0, 0.5); border: 2px solid var(--gold); border-radius: 12px; margin: 20px 0; overflow: hidden; position: relative; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); }
-        .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--gold), #fff, var(--gold)); background-size: 200% 100%; animation: goldShimmer 2s infinite linear; transition: width 1s linear; }
+        /* Magical Loading Bar CSS */
+        .magic-loading-text { font-size: 22px; font-weight: 900; background: linear-gradient(90deg, #FFD700, #FFF, #FFD700); background-size: 200% auto; -webkit-background-clip: text; color: transparent; animation: gradientShift 2s infinite linear; margin: 0; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 4px 10px rgba(212,175,55,0.4); }
+        .progress-bar-container { width: 100%; height: 28px; background: rgba(0, 0, 0, 0.7); border: 2px solid var(--gold); border-radius: 14px; margin: 20px 0; overflow: hidden; position: relative; box-shadow: 0 0 15px rgba(212,175,55,0.3), inset 0 0 10px rgba(0,0,0,0.8); }
+        .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #D4AF37, #FFF, #D4AF37, #FFA500); background-size: 300% 100%; animation: goldShimmer 1.5s infinite linear; transition: width 0.1s ease-out; }
         @keyframes goldShimmer { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
         
         .four-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
@@ -94,15 +92,12 @@
         
         <div id="header-auth-area" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
             <a href="/index.html" class="secondary-btn" style="padding: 8px 12px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">🏠 Home</a>
-            
             <label for="profile-pic-upload" id="profile-pic-container" class="profile-pic-container">
                 <img id="profile-pic-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 24 24' fill='%23D4AF37'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" alt="Avatar" loading="lazy">
             </label>
             <input type="file" id="profile-pic-upload" accept="image/*" style="display: none;" onchange="handleProfilePic(event)">
-            
             <a id="profile-link-tab" href="/profile/profile.html" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid var(--gold); color: var(--gold-glow); padding: 8px 12px; border-radius: 12px; font-weight: bold; text-decoration: none; font-size: 12px; align-items: center;">👤 Profile</a>
             <a id="nav-upgrade-btn" href="/pricing/pricing.html" class="gold-btn" style="display: none; padding: 8px 12px; font-size: 12px; text-decoration: none; align-items: center;">💎 VIP</a>
-            
             <button id="nav-reg-btn" onclick="openAuthModal()" class="gold-btn" style="padding: 8px 14px; font-size: 12px; box-shadow: none;">👤 Sign In</button>
             <button id="nav-logout-btn" onclick="doLogout()" style="display: none; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 8px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 11px;">Logout</button>
         </div>
@@ -132,10 +127,20 @@
                 <div class="how-it-works-glow fade-in">
                     <h3>💡 How MatchApp Works</h3>
                     <p><strong>1. Curate:</strong> Tell the AI your exact vibe, pacing, and platform preferences.</p>
-                    <p><strong>2. Match:</strong> Get tailored, duplicate-free matches with playable previews.</p>
+                    <p><strong>2. Match:</strong> Gemini AI finds a duplicate-free match across the internet in seconds.</p>
                     <p><strong>3. Save:</strong> Build your ultimate Watch Later Portfolio securely.</p>
                 </div>
                 
+                <!-- NEW: Specific Title Search Box -->
+                <div id="search-box" class="premium-card fade-in" style="margin-bottom: 25px;">
+                    <h2 style="color: var(--gold); margin: 0 0 10px 0; font-size: 26px; text-align: center;">Find Where to Watch</h2>
+                    <p style="color: #ddd; font-size: 14px; margin-bottom: 15px; text-align: center;">Looking for a specific title? Let Gemini AI find where it's streaming.</p>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <input type="text" id="specific-search-input" placeholder="e.g., Shogun, Inception, Breaking Bad..." style="flex: 1; padding: 14px; border-radius: 8px; border: 1px solid var(--gold); background: rgba(0,0,0,0.5); color: #fff; font-size: 16px; min-width: 200px;">
+                        <button onclick="triggerMatch(true)" class="gold-btn" style="padding: 14px 25px; font-size: 16px;">🔍 Find It</button>
+                    </div>
+                </div>
+
                 <div id="questionnaire-box" class="premium-card fade-in">
                     <h2 style="margin: 0 0 15px 0; font-size: 26px; color: var(--gold); text-align: center;">Curate Your Match</h2>
                     <div class="input-grid">
@@ -145,13 +150,15 @@
                         <div class="input-group"><label>Visual Aesthetic</label><select id="q-aesthetic"><option value="any">Any Vibe</option><option value="dark">Dark & Gritty</option><option value="colorful">Bright & Colorful</option><option value="epic">Epic & Grand</option><option value="retro">Retro & Nostalgic</option></select></div>
                         <div class="input-group" style="grid-column: 1 / -1;"><label>Content Pacing</label><select id="q-pacing"><option value="any">Any Pacing</option><option value="fast">Fast-Paced & Action-Packed</option><option value="steady">Steady & Story-Driven</option><option value="slow">Slow Burn & Thoughtful</option></select></div>
                     </div>
-                    <button onclick="triggerMatch()" class="gold-btn" style="margin-top: 20px; width: 100%; font-size: 18px; padding: 16px;">⚡ Consult AI Concierge</button>
+                    <button onclick="triggerMatch(false)" class="gold-btn" style="margin-top: 20px; width: 100%; font-size: 18px; padding: 16px;">⚡ Consult AI Concierge</button>
                 </div>
 
+                <!-- Upgraded Magical Loading Box -->
                 <div id="loading-box" class="premium-card fade-in" style="display: none; padding: 40px 20px; text-align: center;"></div>
 
+                <!-- Result Box -->
                 <div id="result-box" class="premium-card fade-in" style="display: none; text-align: left;">
-                    <div class="poster-preview-card"><img id="res-poster-img" src="" alt="Poster" loading="lazy"></div>
+                    <div class="poster-preview-card"><img id="res-poster-img" src="https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=1000&q=80" alt="Poster Backdrop" loading="lazy"></div>
                     <div class="badge-row">
                         <span id="res-platform-badge" class="platform-badge">Platform</span>
                         <span id="res-imdb-badge" style="background: #f5c518; color: #000; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 900; box-shadow: 0 2px 5px rgba(0,0,0,0.5);">IMDb: N/A</span>
@@ -196,9 +203,9 @@
         </div>
     </div>
 
-    <!-- MAIN AUTH MODAL WITH GOOGLE BUTTON (FIXED) -->
+    <!-- MAIN AUTH MODAL (EXPANDED DATA COLLECTION) -->
     <div id="main-auth-modal" class="modal-overlay" style="display:none;">
-        <div class="premium-card modal-content" style="border: 1px solid var(--gold); padding: 30px 20px;">
+        <div class="premium-card modal-content" style="border: 1px solid var(--gold); padding: 30px 20px; max-height: 90vh; overflow-y: auto;">
             <span class="close-x" onclick="closeAuthModal()">×</span>
             <h2 style="color: var(--gold); font-size: 24px; margin: 0 0 10px 0;">Welcome</h2>
             <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 25px;">Sign in or register to securely save your portfolio and demographic profile.</p>
@@ -206,12 +213,19 @@
             <button onclick="signInWithGoogle()" class="google-btn" style="width: 100%; padding: 14px; border-radius: 14px; margin-bottom: 20px; font-size: 15px;"><svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.95H1.23v3.15C3.21 21.32 7.27 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.25c-.25-.72-.38-1.49-.38-2.25s.13-1.53.38-2.25V6.6H1.23C.45 8.17 0 9.93 0 12s.45 3.83 1.23 5.4l4.05-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.27 0 3.21 2.68 1.23 6.6l4.05 3.15c.95-2.84 3.6-4.95 6.72-4.95z"/></svg> Continue with Google</button>
             <div style="display: flex; align-items: center; margin-bottom: 20px;"><div style="flex: 1; height: 1px; background: rgba(255,255,255,0.15);"></div><span style="padding: 0 12px; color: var(--text-muted); font-size: 11px;">OR EMAIL</span><div style="flex: 1; height: 1px; background: rgba(255,255,255,0.15);"></div></div>
             
+            <input type="text" id="auth-name" placeholder="Full Name (Required for Reg)" style="margin-bottom: 12px; padding: 14px;">
+            <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+                <input type="text" id="auth-dob" placeholder="DOB (DD/MM/YYYY)" style="flex: 1; padding: 14px;">
+                <input type="text" id="auth-country" placeholder="Country" style="flex: 1; padding: 14px;">
+            </div>
+            
             <input type="email" id="auth-email" placeholder="Email Address" style="margin-bottom: 12px; padding: 14px;">
             <input type="password" id="auth-password" placeholder="Password (Min 6 chars)" style="margin-bottom: 20px; padding: 14px;">
             <div style="display: flex; gap: 10px; margin-bottom: 10px;">
                 <button onclick="handleEmailLogin()" class="secondary-btn" style="flex: 1; border-color: var(--gold); color: var(--gold-glow);">Login</button>
                 <button onclick="handleEmailSignup()" class="gold-btn" style="flex: 1; padding: 14px;">Register</button>
             </div>
+            <p style="font-size: 11px; color: #888; margin-top: 10px; text-align: center;">*Name, DOB, and Country are only required when Registering.</p>
             <p id="auth-message" style="font-size: 12px; margin-top: 15px; display: none; font-weight: bold;"></p>
         </div>
     </div>
