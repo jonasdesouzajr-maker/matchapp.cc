@@ -1,7 +1,7 @@
-console.log("Mastercode 70.0: Secure Environment Configuration Active");
+console.log("Mastercode 71.0: Secure Supabase Edge Function Proxy Active");
 
 let globalMatchTitle = "MatchApp";
-let supabaseClient = null; // Ensure this is initialized with your Supabase credentials!
+let supabaseClient = null; 
 let isUserLoggedIn = false;
 
 let seenList = JSON.parse(localStorage.getItem('match_seenList') || '[]');
@@ -11,10 +11,6 @@ let userRatings = JSON.parse(localStorage.getItem('match_userRatings') || '{}');
 
 let isAdFree = localStorage.getItem('match_adFree') === 'true'; 
 let isVIP = localStorage.getItem('match_isVIP') === 'true';
-
-// SECURE API KEY HANDLING: The hardcoded key has been entirely removed from source control.
-// Configure your API key securely via environment variables or runtime injection.
-const GEMINI_API_KEY = window.ENV?.GEMINI_API_KEY || localStorage.getItem('match_gemini_key') || "YOUR_GEMINI_API_KEY_HERE";
 
 // SFX & VFX Engine
 window.playPremiumSound = function() {
@@ -131,7 +127,7 @@ if (supabaseClient) {
 }
 
 // ==========================================
-// GOOGLE GEMINI AI MATCHING ENGINE 
+// SECURE GEMINI AI MATCHING ENGINE (VIA PROXY)
 // ==========================================
 function checkDailyLimit() {
     if (isVIP || isAdFree) return true; 
@@ -145,21 +141,17 @@ function checkDailyLimit() {
 }
 
 async function fetchGeminiData(promptText) {
-    if (!GEMINI_API_KEY || GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") {
-        throw new Error("API key not configured.");
-    }
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            contents: [{ parts: [{ text: promptText }] }],
-            generationConfig: { temperature: 0.8, responseMimeType: "application/json" }
-        })
-    });
+    if (!supabaseClient) throw new Error("Supabase client not initialized.");
     
-    if (!response.ok) throw new Error("Gemini API Request Failed");
-    const data = await response.json();
+    // Call securely through Supabase Edge Function (Key stays hidden on server)
+    const { data, error } = await supabaseClient.functions.invoke('gemini-proxy', {
+        body: { prompt: promptText }
+    });
+
+    if (error || !data || !data.candidates) {
+        throw new Error(error?.message || "Gemini Proxy Request Failed");
+    }
+
     let rawText = data.candidates[0].content.parts[0].text;
     rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
     return JSON.parse(rawText);
