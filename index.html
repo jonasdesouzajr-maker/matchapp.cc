@@ -17,7 +17,7 @@
     <link rel="canonical" href="https://matchapp.cc/">
     <link rel="stylesheet" href="/style.css">
     
-    <!-- Supabase & Plugins -->
+    <!-- Supabase, Confetti, and AdSense -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
@@ -37,7 +37,7 @@
         .main-layout { display: flex; width: 100%; max-width: 1400px; margin: 0 auto; gap: 20px; align-items: flex-start; justify-content: center; min-height: 80vh; }
         .sidebar-ad-left, .sidebar-ad-right { display: none; width: 160px; flex-shrink: 0; position: sticky; top: 20px; }
         .container { flex: 1; max-width: 800px; width: 100%; padding-bottom: 50px; }
-        .mobile-ad-bottom { display: block; width: 100%; margin-top: 25px; text-align: center; }
+        .mobile-ad-bottom { display: block; width: 100%; margin-top: 25px; text-align: center; min-height: 100px; }
         @media (min-width: 1100px) { .sidebar-ad-left, .sidebar-ad-right { display: block; } .mobile-ad-bottom { display: none; } }
 
         /* Auth Tabs UI */
@@ -51,7 +51,7 @@
         /* Magical Loading Bar */
         .magic-loading-text { font-size: 22px; font-weight: 900; background: linear-gradient(90deg, #FFD700, #FFF, #FFD700); background-size: 200% auto; -webkit-background-clip: text; color: transparent; animation: gradientShift 2s infinite linear; margin: 0; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 4px 10px rgba(212,175,55,0.4); }
         .progress-bar-container { width: 100%; height: 28px; background: rgba(0, 0, 0, 0.7); border: 2px solid var(--gold); border-radius: 14px; margin: 20px 0; overflow: hidden; position: relative; box-shadow: 0 0 15px rgba(212,175,55,0.3), inset 0 0 10px rgba(0,0,0,0.8); }
-        .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #D4AF37, #FFF, #D4AF37, #FFA500); background-size: 300% 100%; animation: goldShimmer 1.5s infinite linear; transition: width 1s linear; }
+        .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #D4AF37, #FFF, #D4AF37, #FFA500); background-size: 300% 100%; animation: goldShimmer 1.5s infinite linear; transition: width 0.1s linear; }
         
         /* SEO Backlinks Footer */
         .seo-footer { background: rgba(10,5,5,0.95); border-top: 2px solid var(--gold); padding: 30px 20px; text-align: center; margin-top: auto; }
@@ -61,7 +61,8 @@
         .streaming-links a:hover { border-color: var(--gold); background: rgba(212,175,55,0.1); transform: scale(1.05); }
     </style>
 </head>
-<body>
+<body style="display: flex; flex-direction: column; min-height: 100vh;">
+    <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M7J3NNBN" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <div id="real-time-clock" class="real-time-clock fade-in">Loading Time...</div>
@@ -86,10 +87,10 @@
         </div>
     </nav>
 
-    <div class="page-wrapper">
+    <div class="page-wrapper" style="flex: 1;">
         <div class="main-layout fade-in">
             <!-- Left Desktop AdSense -->
-            <aside class="sidebar-ad-left"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
+            <aside class="sidebar-ad-left"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block; min-height: 600px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
 
             <!-- Main Content Container -->
             <div class="container">
@@ -121,8 +122,20 @@
                     <button onclick="triggerMatch(false)" class="gold-btn" style="margin-top: 20px; width: 100%; font-size: 18px; padding: 16px;">⚡ Consult AI Concierge</button>
                 </div>
 
-                <!-- LOADING BOX WITH 20s TIMER & ADS -->
-                <div id="loading-box" class="premium-card fade-in" style="display: none; padding: 40px 20px; text-align: center;"></div>
+                <!-- LOADING BOX NATIVE HTML (FIXED FOR ADS) -->
+                <div id="loading-box" class="premium-card fade-in" style="display: none; padding: 40px 20px; text-align: center;">
+                    <div style="font-size: 50px; margin-bottom: 15px; animation: pulse 1s infinite alternate;">⏳</div>
+                    <h3 class="magic-loading-text">✨ SEARCHING FOR YOUR MATCH ✨</h3>
+                    <div class="progress-bar-container"><div id="ai-progress-bar" class="progress-bar-fill" style="width:0%;"></div></div>
+                    <p style="color: #aaa; margin-top: 15px; font-size: 13px;">Analyzing databases... Match ready in <strong id="ad-timer-sim" style="color:#fff; font-size: 16px;">20</strong>s</p>
+                    
+                    <!-- Pre-loaded Adsterra Placements (Hidden until loading starts) -->
+                    <div id="free-loading-ads" style="display: none; flex-direction:column; gap:10px; margin-top:20px; align-items:center;">
+                        <div class="ad-placement" style="background:transparent;"><script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script><script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script></div>
+                        <div class="ad-placement" style="background:transparent;"><script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script><script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script></div>
+                    </div>
+                    <p id="vip-loading-msg" style="display: none; color: var(--gold); margin-top: 10px;">VIP Fast-Track Active</p>
+                </div>
 
                 <div id="result-box" class="premium-card fade-in" style="display: none; text-align: left;">
                     <div class="poster-preview-card"><img id="res-poster-img" src="https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=1000&q=80" alt="Poster" loading="lazy"></div>
@@ -151,11 +164,12 @@
                     <button onclick="location.reload()" class="secondary-btn" style="border: none; background: transparent; text-align: center; margin-top: 25px; width: 100%; font-size: 16px;">🏠 Match Again</button>
                 </div>
                 
-                <div class="mobile-ad-bottom"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
+                <!-- Fixed Mobile Bottom Ads -->
+                <div class="mobile-ad-bottom"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block; min-height: 100px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
             </div>
 
             <!-- Right Desktop AdSense -->
-            <aside class="sidebar-ad-right"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
+            <aside class="sidebar-ad-right"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block; min-height: 600px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
         </div>
     </div>
 
@@ -175,14 +189,14 @@
         <p style="color: #555; font-size: 11px; margin-top: 25px;">&copy; 2026 MatchApp.cc - Your Ultimate AI Streaming Concierge</p>
     </footer>
 
-    <!-- REDESIGNED TABBED AUTH MODAL -->
+    <!-- REDESIGNED TABBED AUTH MODAL (FIXED) -->
     <div id="main-auth-modal" class="modal-overlay" style="display:none;">
         <div class="premium-card modal-content" style="border: 1px solid var(--gold); padding: 30px 20px; max-height: 90vh; overflow-y: auto;">
             <span class="close-x" onclick="closeAuthModal()">×</span>
             
             <div class="auth-tabs">
                 <div id="tab-login" class="auth-tab active" onclick="switchAuthTab('login')">Log In</div>
-                <div id="tab-signup" class="auth-tab" onclick="switchAuthTab('signup')">Sign Up (Profile)</div>
+                <div id="tab-signup" class="auth-tab" onclick="switchAuthTab('signup')">Sign Up (New)</div>
             </div>
 
             <!-- LOGIN SECTION -->
@@ -194,33 +208,17 @@
                 <button onclick="handleEmailLogin()" class="gold-btn" style="width: 100%; padding: 14px;">Log In</button>
             </div>
 
-            <!-- SIGN UP SECTION -->
+            <!-- SIGN UP SECTION (SIMPLIFIED FOR SUCCESS) -->
             <div id="form-signup" class="auth-form-section">
                 <button onclick="signInWithGoogle()" class="google-btn" style="width: 100%; padding: 14px; border-radius: 14px; margin-bottom: 20px; font-size: 15px;"><svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.95H1.23v3.15C3.21 21.32 7.27 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.25c-.25-.72-.38-1.49-.38-2.25s.13-1.53.38-2.25V6.6H1.23C.45 8.17 0 9.93 0 12s.45 3.83 1.23 5.4l4.05-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.27 0 3.21 2.68 1.23 6.6l4.05 3.15c.95-2.84 3.6-4.95 6.72-4.95z"/></svg> Sign up with Google</button>
-                <div style="display: flex; align-items: center; margin-bottom: 20px;"><div style="flex: 1; height: 1px; background: rgba(255,255,255,0.15);"></div><span style="padding: 0 12px; color: var(--text-muted); font-size: 11px;">OR CREATE PROFILE</span><div style="flex: 1; height: 1px; background: rgba(255,255,255,0.15);"></div></div>
-                
-                <input type="text" id="reg-name" placeholder="Full Name" style="margin-bottom: 12px; padding: 14px; width: 100%;">
-                
-                <div style="display: flex; gap: 10px; margin-bottom: 12px;">
-                    <input type="text" id="reg-dob" placeholder="DOB (DD/MM/YYYY)" oninput="calculateAge(this.value)" style="flex: 2; padding: 14px;">
-                    <input type="text" id="reg-age" placeholder="Age" disabled style="flex: 1; padding: 14px; opacity: 0.7; background: #222;">
-                </div>
-                
-                <select id="reg-orientation" style="margin-bottom: 12px; padding: 14px; width: 100%; border-radius: 8px; border: 1px solid var(--gold); background: #111; color: #fff;">
-                    <option value="">Select Sexual Orientation...</option>
-                    <option value="Straight">Straight</option>
-                    <option value="Gay">Gay</option>
-                    <option value="Lesbian">Lesbian</option>
-                    <option value="Bisexual">Bisexual</option>
-                    <option value="Other">Other / Prefer not to say</option>
-                </select>
-
+                <div style="display: flex; align-items: center; margin-bottom: 20px;"><div style="flex: 1; height: 1px; background: rgba(255,255,255,0.15);"></div><span style="padding: 0 12px; color: var(--text-muted); font-size: 11px;">OR EMAIL</span><div style="flex: 1; height: 1px; background: rgba(255,255,255,0.15);"></div></div>
+                <p style="color: #bbb; font-size: 12px; margin-bottom: 15px; text-align: center;">Create your account now. You can fill in your personal details on your Profile page later.</p>
                 <input type="email" id="reg-email" placeholder="Email Address" style="margin-bottom: 12px; padding: 14px; width: 100%;">
                 <input type="password" id="reg-password" placeholder="Create Password (Min 6 chars)" style="margin-bottom: 20px; padding: 14px; width: 100%;">
-                <button onclick="handleEmailSignup()" class="gold-btn" style="width: 100%; padding: 14px;">Create Profile</button>
+                <button onclick="handleEmailSignup()" class="gold-btn" style="width: 100%; padding: 14px;">Create Account</button>
             </div>
 
-            <p id="auth-message" style="font-size: 12px; margin-top: 15px; display: none; font-weight: bold; text-align: center;"></p>
+            <p id="auth-message" style="font-size: 13px; margin-top: 15px; display: none; font-weight: bold; text-align: center;"></p>
         </div>
     </div>
     
