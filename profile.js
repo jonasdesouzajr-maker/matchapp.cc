@@ -1,4 +1,3 @@
-// At the top of your existing profile.js file, ensure you read the googleName
 document.addEventListener('DOMContentLoaded', () => {
     // Check if Google Name exists and auto-fill if empty
     const googleName = localStorage.getItem('match_googleName');
@@ -15,33 +14,65 @@ window.saveProfileData = async function() {
     if (typeof window.fireConfetti === 'function') window.fireConfetti();
     
     // 2. Extract Data
-    const name = document.getElementById('profile-name').value;
-    const country = document.getElementById('profile-country').value;
-    const dob = document.getElementById('profile-dob').value;
+    const name = document.getElementById('profile-name')?.value || '';
+    const country = document.getElementById('profile-country')?.value || '';
+    const dob = document.getElementById('profile-dob')?.value || '';
+    const starsign = document.getElementById('profile-starsign')?.value || '';
+    const orientation = document.getElementById('profile-orientation')?.value || '';
     
-    // (Rest of your existing save logic continues exactly as it was...)
+    const prefService = document.getElementById('pref-service')?.value || '';
+    const prefGenre = document.getElementById('pref-genre')?.value || '';
+    const prefDecade = document.getElementById('pref-decade')?.value || '';
+    
+    // 3. Save to Supabase (if available)
+    if (window.supabaseClient && window.isUserLoggedIn) {
+        try {
+            const { data: { user } } = await window.supabaseClient.auth.getUser();
+            if (user) {
+                await window.supabaseClient.from('profiles').upsert({
+                    id: user.id,
+                    full_name: name,
+                    country: country,
+                    dob: dob,
+                    starsign: starsign,
+                    sexual_orientation: orientation,
+                    pref_service: prefService,
+                    pref_genre: prefGenre,
+                    pref_decade: prefDecade
+                });
+            }
+        } catch (e) {
+            console.error("Profile save error:", e);
+        }
+    }
+    
     alert("Profile Successfully Locked & Tuned!");
 };
 
 // ==========================================
-// ACCOUNT DELETION LOGIC (PREVIOUSLY ADDED)
+// ACCOUNT DELETION LOGIC
 // ==========================================
-function openDeleteModal() { document.getElementById('delete-modal').style.display = 'flex'; document.getElementById('delete-confirm-check').checked = false; toggleDeleteBtn(); }
-function closeDeleteModal() { document.getElementById('delete-modal').style.display = 'none'; }
-function toggleDeleteBtn() {
+window.openDeleteModal = function() { 
+    document.getElementById('delete-modal').style.display = 'flex'; 
+    document.getElementById('delete-confirm-check').checked = false; 
+    toggleDeleteBtn(); 
+}
+window.closeDeleteModal = function() { document.getElementById('delete-modal').style.display = 'none'; }
+window.toggleDeleteBtn = function() {
     const isChecked = document.getElementById('delete-confirm-check').checked;
     const btn = document.getElementById('final-delete-btn');
     if (isChecked) { btn.disabled = false; btn.classList.remove('btn-disabled'); btn.classList.add('btn-danger-active'); } 
     else { btn.disabled = true; btn.classList.add('btn-disabled'); btn.classList.remove('btn-danger-active'); }
 }
 
-async function executeAccountDeletion() {
+window.executeAccountDeletion = async function() {
     try {
-        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (!window.supabaseClient) throw new Error("No database connection");
+        const { data: { user } } = await window.supabaseClient.auth.getUser();
         if (!user) return;
-        await supabaseClient.from('banned_emails').insert([{ email: user.email }]);
-        await supabaseClient.from('profiles').delete().eq('id', user.id);
-        await supabaseClient.auth.signOut();
+        await window.supabaseClient.from('banned_emails').insert([{ email: user.email }]);
+        await window.supabaseClient.from('profiles').delete().eq('id', user.id);
+        await window.supabaseClient.auth.signOut();
         localStorage.clear();
         alert("Account permanently deleted.");
         window.location.href = '/index.html';
