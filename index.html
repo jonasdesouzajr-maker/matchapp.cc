@@ -11,28 +11,19 @@
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-M7J3NNBN');</script>
-    <!-- End Google Tag Manager -->
     
-    <!-- Ultra SEO Tags -->
     <meta name="description" content="MatchApp is your AI streaming concierge. Discover the perfect movies, TV series, doramas, and Spotify podcasts tailored to your exact mood and pacing.">
-    <meta name="keywords" content="AI movie finder, streaming recommendation app, what to watch tonight, Netflix movie picker, Max series recommendation, Prime Video finder, Spotify podcast discovery, Doramas recommendation, best movie ai, MatchApp">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
     <link rel="canonical" href="https://matchapp.cc/">
-    
     <link rel="stylesheet" href="/style.css">
     
     <style>
         .how-it-works-glow { background: rgba(20, 5, 5, 0.75); border: 2px solid var(--gold); border-radius: 16px; padding: 25px; margin: 25px 0; text-align: center; box-shadow: 0 0 20px rgba(212, 175, 55, 0.4), inset 0 0 15px rgba(212, 175, 55, 0.2); animation: goldPulse 3s infinite alternate; }
         @keyframes goldPulse { 0% { box-shadow: 0 0 15px rgba(212, 175, 55, 0.3), inset 0 0 10px rgba(212, 175, 55, 0.1); border-color: rgba(212, 175, 55, 0.6); } 100% { box-shadow: 0 0 30px rgba(212, 175, 55, 0.7), inset 0 0 20px rgba(212, 175, 55, 0.4); border-color: rgba(212, 175, 55, 1); } }
-        .how-it-works-glow h3 { color: #fff; font-size: 26px; font-weight: 900; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        .how-it-works-glow h3 { color: #fff; font-size: 26px; font-weight: 900; margin: 0 0 15px 0; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
         .how-it-works-glow p { color: #ddd; font-size: 16px; line-height: 1.6; margin: 0 0 10px 0; font-weight: 500; }
         .how-it-works-glow strong { color: var(--gold-glow); }
         
-        .star-rating-container { display: inline-flex; flex-direction: row-reverse; cursor: pointer; font-size: 2.2rem; justify-content: center; width: 100%; }
-        .star-rating-container .star { color: rgba(255,255,255,0.15); transition: color 0.2s ease, transform 0.2s ease; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
-        .star-rating-container .star:hover { transform: scale(1.15); }
-        .star-rating-container .star:hover, .star-rating-container .star:hover ~ .star, .star-rating-container .star.selected, .star-rating-container .star.selected ~ .star { color: #f5c518; }
-
         /* BIG, GLOWING BACKGROUND ANIMATIONS */
         .stream-flags { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; opacity: 0.35; }
         .sf-item { position: absolute; font-size: 14vw; font-weight: 900; color: #fff; white-space: nowrap; opacity: 0.8; text-shadow: 0 0 20px currentColor, 0 0 40px currentColor, 0 0 60px currentColor; }
@@ -40,19 +31,19 @@
         @keyframes flyPath1 { 0% { transform: translateX(-100%) rotate(-5deg); } 100% { transform: translateX(100vw) rotate(5deg); } }
         @keyframes flyPath2 { 0% { transform: translateX(100vw) rotate(5deg); } 100% { transform: translateX(-100%) rotate(-5deg); } }
 
-        /* Updated Action Grid for 4 buttons */
+        /* Loading Bar CSS */
+        .progress-bar-container { width: 100%; height: 24px; background: rgba(0, 0, 0, 0.5); border: 2px solid var(--gold); border-radius: 12px; margin: 20px 0; overflow: hidden; position: relative; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); }
+        .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--gold), #fff, var(--gold)); background-size: 200% 100%; animation: goldShimmer 2s infinite linear; transition: width 1s linear; }
+        @keyframes goldShimmer { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+        
         .four-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
         .badge-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 10px; }
     </style>
 
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M7J3NNBN"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M7J3NNBN" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <div id="real-time-clock" class="real-time-clock fade-in">Loading Time...</div>
     <div class="luxury-bg"><div class="floating-orb orb-1"></div><div class="floating-orb orb-2"></div></div>
@@ -75,22 +66,35 @@
 
             <nav class="app-header fade-in">
                 <a href="/index.html" class="header-brand-area" style="text-decoration: none;">
-                    <picture><source srcset="/logo.jpeg" type="image/jpeg"><img src="/logo.jpeg" alt="Logo" class="brand-logo" loading="lazy" decoding="async"></picture>
+                    <picture><source srcset="/logo.jpeg" type="image/jpeg"><img src="/logo.jpeg" alt="Logo" class="brand-logo" loading="lazy"></picture>
                     <div class="brand-text-container"><span class="app-title-main">MatchApp</span><span class="app-title-sub">Streaming Concierge</span></div>
                 </a>
                 
-                <div id="header-auth-area" style="display: flex; gap: 8px; align-items: center;">
+                <div id="header-auth-area" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
+                    <a href="/index.html" class="secondary-btn" style="padding: 8px 12px; font-size: 11px; text-decoration: none; width: auto; align-items: center; display: inline-flex;">🏠 Home</a>
+                    
                     <label for="profile-pic-upload" id="profile-pic-container" class="profile-pic-container">
-                        <img id="profile-pic-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 24 24' fill='%23D4AF37'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" alt="Avatar" loading="lazy" decoding="async">
+                        <img id="profile-pic-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 24 24' fill='%23D4AF37'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" alt="Avatar" loading="lazy">
                     </label>
                     <input type="file" id="profile-pic-upload" accept="image/*" style="display: none;" onchange="handleProfilePic(event)">
+                    
                     <a id="profile-link-tab" href="/profile/profile.html" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid var(--gold); color: var(--gold-glow); padding: 8px 12px; border-radius: 12px; font-weight: bold; text-decoration: none; font-size: 12px; align-items: center;">👤 Profile</a>
-                    <a id="nav-upgrade-btn" href="/pricing/pricing.html" class="gold-btn" style="padding: 8px 12px; font-size: 11px; text-decoration: none; width: auto; align-items: center; display: inline-flex;">💎 VIP</a>
+                    
+                    <!-- VIP Badge defaults to hidden until user is logged in -->
+                    <a id="nav-upgrade-btn" href="/pricing/pricing.html" class="gold-btn" style="display: none; padding: 8px 12px; font-size: 11px; text-decoration: none; width: auto; align-items: center;">💎 VIP</a>
+                    
                     <button id="nav-reg-btn" onclick="openAuthModal()" class="gold-btn" style="padding: 8px 14px; width: auto; font-size: 12px; box-shadow: none;">👤 Sign In</button>
                     <button id="nav-logout-btn" onclick="doLogout()" style="display: none; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 8px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 11px;">Logout</button>
                 </div>
             </nav>
 
+            <div class="how-it-works-glow fade-in">
+                <h3>💡 How MatchApp Works</h3>
+                <p><strong>1. Curate:</strong> Tell the AI your exact vibe, pacing, and platform preferences.</p>
+                <p><strong>2. Match:</strong> Get tailored, duplicate-free matches with playable previews.</p>
+                <p><strong>3. Save:</strong> Build your ultimate Watch Later Portfolio securely.</p>
+            </div>
+            
             <div id="questionnaire-box" class="premium-card fade-in">
                 <h2 style="margin: 0 0 15px 0; font-size: 26px; color: var(--gold); text-align: center;">Curate Your Match</h2>
                 <div class="input-grid">
@@ -106,15 +110,16 @@
             <div id="loading-box" class="premium-card fade-in" style="display: none; padding: 40px 20px; text-align: center;"></div>
 
             <div id="result-box" class="premium-card fade-in" style="display: none; text-align: left;">
-                <div class="poster-preview-card"><img id="res-poster-img" src="" alt="Poster" loading="lazy" decoding="async"></div>
+                <div class="poster-preview-card"><img id="res-poster-img" src="" alt="Poster" loading="lazy"></div>
                 <div class="badge-row">
                     <span id="res-platform-badge" class="platform-badge">Platform</span>
                     <span id="res-imdb-badge" style="background: #f5c518; color: #000; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 900; box-shadow: 0 2px 5px rgba(0,0,0,0.5);">IMDb: N/A</span>
                 </div>
                 <h2 id="res-title" style="color: #fff; font-size: 28px; margin: 0 0 10px 0; font-weight: 900;">Title</h2>
                 <p id="res-synopsis" style="color: #ddd; font-size: 15px; line-height: 1.6; margin: 0 0 20px 0;"></p>
+                
                 <div id="res-trailer-container"><h4 style="color: var(--gold); font-size: 13px; text-transform: uppercase; margin: 0 0 10px 0;">🎬 Official Video / Trailer</h4><div class="video-container"><iframe id="res-trailer" src="" allowfullscreen loading="lazy"></iframe></div></div>
-                <div id="res-spotify-container" class="spotify-container" style="display: none;"></div>
+                
                 <a id="res-direct-link" href="#" target="_blank" class="gold-btn" style="margin-bottom: 25px; text-decoration: none; text-align: center; display: block;">▶ Stream Now</a>
                 
                 <div id="star-rating-ui" style="text-align: center; margin-bottom: 15px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 12px; border: 1px solid rgba(212,175,55,0.2);">
@@ -130,34 +135,24 @@
                     <button onclick="markAsLiked()" class="secondary-btn" style="border-color: #2196F3; color: #2196F3;">👍 Like</button>
                     <button onclick="markAsDisliked()" class="secondary-btn" style="border-color: #ff5252; color: #ff5252;">👎 Don't Like</button>
                 </div>
-                <button onclick="location.reload()" class="secondary-btn" style="border: none; background: transparent; text-align: center; margin-top: 25px; width: 100%;">🔙 Return to Concierge</button>
+                <button onclick="location.reload()" class="secondary-btn" style="border: none; background: transparent; text-align: center; margin-top: 25px; width: 100%; font-size: 16px;">🏠 Return to Home & Match Again</button>
             </div>
-            
-            <footer class="ad-placement fade-in" style="margin-top: 20px;">
-                <span class="ad-label">SPONSORED</span>
-                <div class="adsterra-bot-wrapper"><script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script><script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script></div>
-            </footer>
         </div>
-        <aside class="sidebar-ad fade-in"><span class="ad-label">SPONSORED</span><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
     </div>
 
-    <!-- MAIN AUTH MODAL & ADBLOCK MODALS REMAIN THE SAME -->
-    <div id="main-auth-modal" class="modal-overlay">
-        <!-- Exact same modal HTML as previous version... -->
+    <!-- MAIN AUTH MODAL (FIXED) -->
+    <div id="main-auth-modal" class="modal-overlay" style="display:none;">
         <div class="premium-card modal-content" style="border: 1px solid var(--gold); padding: 30px 20px;">
             <span class="close-x" onclick="closeAuthModal()">×</span>
             <h2 style="color: var(--gold); font-size: 24px; margin: 0 0 10px 0;">Welcome</h2>
             <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 25px;">Sign in or register to save your portfolio and lock in your profile details.</p>
             <input type="email" id="auth-email" placeholder="Email Address" style="margin-bottom: 12px; padding: 14px;">
             <input type="password" id="auth-password" placeholder="Password (Min 6 chars)" style="margin-bottom: 20px; padding: 14px;">
-            <div style="display: flex; gap: 10px; margin-bottom: 10px;"><button onclick="handleEmailLogin()" class="secondary-btn" style="flex: 1; border-color: var(--gold); color: var(--gold-glow);">Login</button><button onclick="handleEmailSignup()" class="gold-btn" style="flex: 1; padding: 14px;">Register</button></div>
+            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                <button onclick="handleEmailLogin()" class="secondary-btn" style="flex: 1; border-color: var(--gold); color: var(--gold-glow);">Login</button>
+                <button onclick="handleEmailSignup()" class="gold-btn" style="flex: 1; padding: 14px;">Register</button>
+            </div>
             <p id="auth-message" style="font-size: 12px; margin-top: 15px; display: none; font-weight: bold;"></p>
-        </div>
-    </div>
-    <div id="adblock-modal" class="modal-overlay">
-        <div class="premium-card modal-content" style="border: 2px solid #ff5252; background: rgba(20,5,5,0.95); padding: 25px 18px;">
-            <div style="font-size: 50px; margin-bottom: 10px;">🛑</div><h2 style="color: #ff5252; font-size: 24px; margin: 0 0 10px 0;">Ad-Blocker Detected</h2>
-            <button onclick="window.checkAdBlocker()" class="gold-btn" style="background: #ff5252; color: #fff; margin-bottom: 10px;">✔️ I Disabled It (Check Now)</button>
         </div>
     </div>
     
