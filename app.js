@@ -1,9 +1,9 @@
-console.log("Mastercode 72.0: Auth Fixed, Age Calculation, 20s Locked Ad Animations");
+console.log("Mastercode 73.0: Fixed Auth Redirects, 20s Loading Sync, and Supabase Init");
 
 // ==========================================
-// 1. SUPABASE INITIALIZATION (FIX FOR GOOGLE LOGIN)
+// 1. SUPABASE INITIALIZATION (CRITICAL FOR AUTH)
 // ==========================================
-// CRITICAL: Replace these with your actual Supabase Project URL and Anon Key!
+// YOU MUST REPLACE THESE WITH YOUR EXACT PROJECT KEYS
 const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
 const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
 
@@ -11,7 +11,7 @@ let supabaseClient = null;
 if (window.supabase) {
     supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 } else {
-    console.error("Supabase script failed to load. Authentication will not work.");
+    console.error("Supabase CDN failed to load. Authentication is offline.");
 }
 
 let globalMatchTitle = "MatchApp";
@@ -43,8 +43,11 @@ window.fireConfetti = function() {
     if (typeof confetti !== 'undefined') confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#D4AF37', '#FFF', '#8A2BE2', '#E50914'], zIndex: 9999 });
 };
 
+function updateClock() { const clock = document.getElementById('real-time-clock'); if (clock) { const now = new Date(); clock.innerHTML = `${now.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })} | ${now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`; } }
+setInterval(updateClock, 1000);
+
 // ==========================================
-// MODAL & AUTHENTICATION LOGIC (TABBED)
+// MODAL & AUTHENTICATION LOGIC (TABBED & REDIRECTING)
 // ==========================================
 window.openAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'flex'; };
 window.closeAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'none'; };
@@ -59,56 +62,31 @@ window.switchAuthTab = function(tab) {
     document.getElementById(`form-${tab}`).classList.add('active');
 };
 
-window.calculateAge = function(dobString) {
-    // Expects DD/MM/YYYY
-    const parts = dobString.split('/');
-    if (parts.length === 3 && parts[2].length === 4) {
-        const dob = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
-        const diff = Date.now() - dob.getTime();
-        const ageDate = new Date(diff); 
-        const age = Math.abs(ageDate.getUTCFullYear() - 1970);
-        document.getElementById('reg-age').value = isNaN(age) ? '' : age;
-    } else {
-        document.getElementById('reg-age').value = '';
-    }
-};
-
 window.signInWithGoogle = async function() { 
     if (!supabaseClient) { alert("Server connection failed. Please ensure Supabase keys are set in app.js."); return; } 
-    const { error } = await supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + '/index.html' } }); 
+    const { error } = await supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + '/profile/profile.html' } }); 
     if (error) alert("Google Login Error: " + error.message); 
 };
 
 window.handleEmailSignup = async function() {
-    const name = document.getElementById('reg-name').value.trim();
-    const dob = document.getElementById('reg-dob').value.trim();
-    const age = document.getElementById('reg-age').value;
-    const orientation = document.getElementById('reg-orientation').value;
     const email = document.getElementById('reg-email').value.trim();
     const password = document.getElementById('reg-password').value;
     const msgEl = document.getElementById('auth-message');
     
-    if(!email || !password || !name || !dob || !orientation) { 
-        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please fill all fields to build your profile."; return; 
+    if(!email || !password) { 
+        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please provide an email and password."; return; 
+    }
+    if (!supabaseClient) {
+        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Server configuration error. Keys missing."; return;
     }
 
-    if (supabaseClient) {
-        const { data, error } = await supabaseClient.auth.signUp({ 
-            email, password,
-            options: { data: { full_name: name, dob: dob, age: age, sexual_orientation: orientation } }
-        });
-        if(error) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; } 
-        else { 
-            msgEl.style.display = 'block'; msgEl.style.color = '#25D366'; msgEl.innerText = "Profile successfully created!"; 
-            
-            window.dataLayer = window.dataLayer || [];
-            window.dataLayer.push({ 'event': 'user_registration', 'user_name': name, 'user_orientation': orientation });
-
-            if (data && data.user) {
-                await supabaseClient.from('profiles').upsert({ id: data.user.id, full_name: name, dob: dob, age: age, sexual_orientation: orientation });
-            }
-            setTimeout(closeAuthModal, 1500); 
-        }
+    const { data, error } = await supabaseClient.auth.signUp({ email, password });
+    if(error) { 
+        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; 
+    } else { 
+        msgEl.style.display = 'block'; msgEl.style.color = '#25D366'; msgEl.innerText = "Account created successfully! Redirecting..."; 
+        window.dataLayer = window.dataLayer || []; window.dataLayer.push({ 'event': 'user_registration', 'user_email': email });
+        setTimeout(() => { window.location.href = '/profile/profile.html'; }, 1500); 
     }
 };
 
@@ -117,15 +95,17 @@ window.handleEmailLogin = async function() {
     const password = document.getElementById('login-password').value;
     const msgEl = document.getElementById('auth-message');
     if(!email || !password) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please enter email and password."; return; }
+    if (!supabaseClient) {
+        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Server configuration error. Keys missing."; return;
+    }
 
-    if (supabaseClient) {
-        const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-        if(error) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; } 
-        else { 
-            msgEl.style.display = 'block'; msgEl.style.color = '#25D366'; msgEl.innerText = "Login successful!"; 
-            window.dataLayer = window.dataLayer || []; window.dataLayer.push({'event': 'user_login'});
-            setTimeout(closeAuthModal, 1000); 
-        }
+    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if(error) { 
+        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; 
+    } else { 
+        msgEl.style.display = 'block'; msgEl.style.color = '#25D366'; msgEl.innerText = "Login successful! Redirecting to Profile..."; 
+        window.dataLayer = window.dataLayer || []; window.dataLayer.push({'event': 'user_login'});
+        setTimeout(() => { window.location.href = '/profile/profile.html'; }, 1000); 
     }
 };
 
@@ -149,7 +129,7 @@ if (supabaseClient) {
 }
 
 // ==========================================
-// SECURE GEMINI AI MATCHING ENGINE (20s Adsterra Wait)
+// SECURE GEMINI AI MATCHING ENGINE (20s Locked Native Ads)
 // ==========================================
 function checkDailyLimit() {
     if (isVIP || isAdFree) return true; 
@@ -185,12 +165,12 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     } else {
         const cat = document.getElementById('q-category').value; const plat = document.getElementById('q-platform').value;
         const mood = document.getElementById('q-mood').value; const aest = document.getElementById('q-aesthetic').value; const pac = document.getElementById('q-pacing').value;
-        
         window.dataLayer.push({ 'event': 'match_requested' });
         const excludeStr = [...seenList, ...dislikedList].join(', ');
         promptText = `You are a streaming concierge AI in late 2026. Find a highly-rated streaming title based on these preferences: Format: ${cat}, Platform: ${plat}, Mood: ${mood}, Aesthetic: ${aest}, Pacing: ${pac}. CRITICAL: Do NOT recommend any of the following titles: ${excludeStr}. Return exactly one match. Ensure it is a real title currently available. Output MUST be a valid JSON object matching this structure exactly: {"title": "Title of movie/series", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID of the official trailer"}`;
     }
 
+    // Hide UI, Show Native Loading HTML Box
     if (document.getElementById('questionnaire-box')) document.getElementById('questionnaire-box').style.display = 'none';
     if (document.getElementById('search-box')) document.getElementById('search-box').style.display = 'none';
     if (document.getElementById('result-box')) document.getElementById('result-box').style.display = 'none';
@@ -198,37 +178,34 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     const loadBox = document.getElementById('loading-box');
     loadBox.style.display = 'block';
 
-    // Strictly enforce 20 seconds for free users, 4 for VIP
     let totalTime = isVIP || isAdFree ? 4 : 20; 
     let startTime = Date.now();
     
-    loadBox.innerHTML = `
-        <div style="font-size: 50px; margin-bottom: 15px; animation: pulse 1s infinite alternate;">⏳</div>
-        <h3 class="magic-loading-text">✨ SEARCHING FOR YOUR MATCH ✨</h3>
-        <div class="progress-bar-container"><div id="ai-progress-bar" class="progress-bar-fill"></div></div>
-        <p style="color: #aaa; margin-top: 15px; font-size: 13px;">Analyzing databases... Match ready in <strong id="ad-timer-sim" style="color:#fff; font-size: 16px;">${totalTime}</strong>s</p>
-        ${!isVIP && !isAdFree ? `
-        <div style="display:flex; flex-direction:column; gap:10px; margin-top:20px; align-items:center;">
-            <div class="ad-placement" style="background:transparent;"><script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script><script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script></div>
-            <div class="ad-placement" style="background:transparent;"><script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script><script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script></div>
-        </div>` : `<p style="color: var(--gold); margin-top: 10px;">VIP Fast-Track Active</p>`}
-    `;
+    // Reset Bar & Enable Ads explicitly
+    document.getElementById('ai-progress-bar').style.width = '0%';
+    document.getElementById('ad-timer-sim').innerText = totalTime;
+    if (!isVIP && !isAdFree) {
+        document.getElementById('free-loading-ads').style.display = 'flex';
+        document.getElementById('vip-loading-msg').style.display = 'none';
+    } else {
+        document.getElementById('free-loading-ads').style.display = 'none';
+        document.getElementById('vip-loading-msg').style.display = 'block';
+    }
 
-    // Visual Meter Timer Sync
+    // Precise Smooth Progress Bar Logic
     let timerInterval = setInterval(() => {
         let elapsed = (Date.now() - startTime) / 1000;
         let pct = Math.min((elapsed / totalTime) * 100, 100);
-        const barEl = document.getElementById('ai-progress-bar');
-        const timeEl = document.getElementById('ad-timer-sim');
-        if (barEl) barEl.style.width = pct + '%';
-        if (timeEl) timeEl.innerText = Math.max(Math.ceil(totalTime - elapsed), 0);
-    }, 100);
+        document.getElementById('ai-progress-bar').style.width = pct + '%';
+        document.getElementById('ad-timer-sim').innerText = Math.max(Math.ceil(totalTime - elapsed), 0);
+    }, 50);
 
     let matchResult = null;
     try {
         let fetchPromise = fetchGeminiData(promptText);
+        // Force exactly the delay specified (e.g., 20 seconds for free users to see ads)
         let delayPromise = new Promise(resolve => setTimeout(resolve, totalTime * 1000));
-        let [apiResult] = await Promise.all([fetchPromise, delayPromise]); // Guarantees it waits exactly the specified time (20s)
+        let [apiResult] = await Promise.all([fetchPromise, delayPromise]); 
         matchResult = apiResult;
     } catch (err) {
         console.error("Gemini Fallback Triggered: ", err);
@@ -266,7 +243,6 @@ function renderResult(selected) {
     const imdbBadge = document.getElementById('res-imdb-badge');
     if(imdbBadge) imdbBadge.innerText = `IMDb: ${selected.imdb || 'N/A'}`;
 
-    // Universal platform search link (SEO fallback)
     const directBtn = document.getElementById('res-direct-link');
     directBtn.href = `https://www.google.com/search?q=Watch+${encodeURIComponent(selected.title)}+on+${encodeURIComponent(selected.platform)}`;
     directBtn.innerText = `▶ Search on ${selected.platform}`;
@@ -280,7 +256,7 @@ function renderResult(selected) {
     resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-window.saveToList = function() { if (globalMatchTitle && !savedList.includes(globalMatchTitle)) { savedList.push(globalMatchTitle); syncListsToDatabase(); alert(`⭐ "${globalMatchTitle}" saved to your Watch Later Portfolio!`); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } document.getElementById('result-box').style.display = 'none'; triggerMatch(false); };
+window.saveToList = function() { if (globalMatchTitle && !savedList.includes(globalMatchTitle)) { savedList.push(globalMatchTitle); syncListsToDatabase(); alert(`⭐ "${globalMatchTitle}" saved!`); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } document.getElementById('result-box').style.display = 'none'; triggerMatch(false); };
 window.markAsSeen = function() { if (globalMatchTitle && !seenList.includes(globalMatchTitle)) { seenList.push(globalMatchTitle); syncListsToDatabase(); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } document.getElementById('result-box').style.display = 'none'; triggerMatch(false); };
 window.markAsLiked = function() { if (globalMatchTitle) { userRatings[globalMatchTitle] = 5; if (!seenList.includes(globalMatchTitle)) seenList.push(globalMatchTitle); syncListsToDatabase(); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } document.getElementById('result-box').style.display = 'none'; triggerMatch(false); };
 window.markAsDisliked = function() { if (globalMatchTitle && !dislikedList.includes(globalMatchTitle)) { dislikedList.push(globalMatchTitle); userRatings[globalMatchTitle] = 1; syncListsToDatabase(); } document.getElementById('result-box').style.display = 'none'; triggerMatch(false); };
