@@ -1,19 +1,22 @@
-console.log("Mastercode 74.0: Safe Execution, Fixed Clock, Auth Routes, & Perfect 20s Ad Sync");
+console.log("Mastercode 76.0: Full Database Sync, Live Auth Routing & Protected Timer");
 
 // ==========================================
-// 1. SUPABASE SAFE INITIALIZATION
+// 1. SUPABASE LIVE INITIALIZATION
 // ==========================================
-// CRITICAL: Replace with your actual Supabase URL & Anon Key to fix the "Server Connection Error"
-const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+const SUPABASE_URL = 'https://zkymvqrmbabngsqblyye.supabase.co'; 
+// NOTE: If auth fails, ensure this is the long JWT token starting with "eyJ..." from Project Settings > API
+const SUPABASE_ANON_KEY = 'sb_publishable_j3kQUhd_9JHfWdfiV3iWog_RpEltrOU';
 
 let supabaseClient = null;
 try {
     if (window.supabase) {
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        console.log("Supabase Client Successfully Initialized.");
+    } else {
+        console.warn("Supabase CDN not found in HTML.");
     }
 } catch (e) {
-    console.error("Supabase Initialization Error (Auth disabled):", e);
+    console.error("Supabase Initialization Error:", e);
 }
 
 let globalMatchTitle = "MatchApp";
@@ -28,7 +31,7 @@ let isAdFree = localStorage.getItem('match_adFree') === 'true';
 let isVIP = localStorage.getItem('match_isVIP') === 'true';
 
 // ------------------------------------------
-// CLOCK FUNCTION - FIXED & PROTECTED
+// CLOCK FUNCTION
 // ------------------------------------------
 function updateClock() { 
     try {
@@ -39,10 +42,12 @@ function updateClock() {
         } 
     } catch(e) {}
 }
-updateClock(); // Initialize immediately
-setInterval(updateClock, 1000); // Run every second
+updateClock();
+setInterval(updateClock, 1000);
 
-// SFX & VFX Engine
+// ==========================================
+// SFX & VFX ENGINE
+// ==========================================
 window.playPremiumSound = function() {
     try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -52,15 +57,17 @@ window.playPremiumSound = function() {
         osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
         gain.gain.setValueAtTime(0.3, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
         osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.2);
-    } catch (e) { console.log('Audio blocked'); }
+    } catch (e) { console.log('Audio blocked by browser policy'); }
 };
 
 window.fireConfetti = function() {
-    if (typeof confetti !== 'undefined') confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#D4AF37', '#FFF', '#8A2BE2', '#E50914'], zIndex: 9999 });
+    if (typeof confetti !== 'undefined') {
+        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#D4AF37', '#FFF', '#8A2BE2', '#E50914'], zIndex: 9999 });
+    }
 };
 
 // ==========================================
-// MODAL & AUTHENTICATION LOGIC (TABBED & REDIRECTING)
+// MODAL & AUTHENTICATION LOGIC (FULLY ROUTED)
 // ==========================================
 window.openAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'flex'; };
 window.closeAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'none'; };
@@ -82,12 +89,17 @@ window.switchAuthTab = function(tab) {
     if(activeForm) activeForm.classList.add('active');
 };
 
+// 1. Google Auth (Redirects to Profile on Success)
 window.signInWithGoogle = async function() { 
-    if (!supabaseClient) { alert("Server connection failed. Please ensure Supabase keys are set in app.js."); return; } 
-    const { error } = await supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + '/profile/profile.html' } }); 
+    if (!supabaseClient) { alert("Server connection failed. Database client not initialized."); return; } 
+    const { error } = await supabaseClient.auth.signInWithOAuth({ 
+        provider: 'google', 
+        options: { redirectTo: window.location.origin + '/profile/profile.html' } 
+    }); 
     if (error) alert("Google Login Error: " + error.message); 
 };
 
+// 2. Email Sign Up (Creates Account & Redirects)
 window.handleEmailSignup = async function() {
     const email = document.getElementById('reg-email').value.trim();
     const password = document.getElementById('reg-password').value;
@@ -97,41 +109,55 @@ window.handleEmailSignup = async function() {
         msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please provide an email and password."; return; 
     }
     if (!supabaseClient) {
-        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Server configuration error. Keys missing in app.js."; return;
+        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Server error: Database not connected."; return;
     }
 
+    msgEl.style.display = 'block'; msgEl.style.color = '#fff'; msgEl.innerText = "Connecting...";
+
     const { data, error } = await supabaseClient.auth.signUp({ email, password });
+    
     if(error) { 
-        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; 
+        msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; 
     } else { 
-        msgEl.style.display = 'block'; msgEl.style.color = '#25D366'; msgEl.innerText = "Account created successfully! Redirecting..."; 
+        msgEl.style.color = '#25D366'; msgEl.innerText = "Account created successfully! Redirecting..."; 
         window.dataLayer = window.dataLayer || []; window.dataLayer.push({ 'event': 'user_registration', 'user_email': email });
         setTimeout(() => { window.location.href = '/profile/profile.html'; }, 1500); 
     }
 };
 
+// 3. Email Log In (Authenticates & Redirects)
 window.handleEmailLogin = async function() {
     const email = document.getElementById('login-email').value.trim();
     const password = document.getElementById('login-password').value;
     const msgEl = document.getElementById('auth-message');
     
-    if(!email || !password) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please enter email and password."; return; }
+    if(!email || !password) { 
+        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please enter email and password."; return; 
+    }
     if (!supabaseClient) {
-        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Server configuration error. Keys missing in app.js."; return;
+        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Server error: Database not connected."; return;
     }
 
+    msgEl.style.display = 'block'; msgEl.style.color = '#fff'; msgEl.innerText = "Authenticating...";
+
     const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    
     if(error) { 
-        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; 
+        msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; 
     } else { 
-        msgEl.style.display = 'block'; msgEl.style.color = '#25D366'; msgEl.innerText = "Login successful! Redirecting..."; 
+        msgEl.style.color = '#25D366'; msgEl.innerText = "Login successful! Routing to Hub..."; 
         window.dataLayer = window.dataLayer || []; window.dataLayer.push({'event': 'user_login'});
         setTimeout(() => { window.location.href = '/profile/profile.html'; }, 1000); 
     }
 };
 
-window.doLogout = async function() { if (supabaseClient) { await supabaseClient.auth.signOut(); } localStorage.clear(); window.location.href = '/index.html'; };
+window.doLogout = async function() { 
+    if (supabaseClient) { await supabaseClient.auth.signOut(); } 
+    localStorage.clear(); 
+    window.location.href = '/index.html'; 
+};
 
+// Auth State Listener (Updates UI headers instantly)
 if (supabaseClient) {
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
         if (session && session.user) {
@@ -145,26 +171,40 @@ if (supabaseClient) {
             if (profTab) profTab.style.display = 'inline-flex';
             if (logoutBtn) logoutBtn.style.display = 'inline-block';
             if (upgradeBtn) { upgradeBtn.style.display = 'inline-flex'; if (isVIP || isAdFree) upgradeBtn.innerText = '👑 VIP Active'; }
-        } else { isUserLoggedIn = false; }
+        } else { 
+            isUserLoggedIn = false; 
+        }
     });
 }
 
 // ==========================================
-// SECURE GEMINI AI MATCHING ENGINE (20s Adsterra Wait)
+// SECURE GEMINI AI ENGINE & 20s LOADING SEQUENCE
 // ==========================================
 function checkDailyLimit() {
     if (isVIP || isAdFree) return true; 
     const todayStr = new Date().toLocaleDateString(); 
     let lastDate = localStorage.getItem('match_lastDate'); 
     let dailyCount = parseInt(localStorage.getItem('match_dailyCount') || '0');
+    
     if (lastDate !== todayStr) { dailyCount = 0; localStorage.setItem('match_lastDate', todayStr); }
-    if (!isUserLoggedIn && dailyCount >= 5) { alert("🔒 You've used your 5 free matches today!\n\nPlease register to unlock your next daily allowance!"); window.openAuthModal(); return false; }
-    if (isUserLoggedIn && dailyCount >= 5) { window.location.href = '/pricing/pricing.html'; return false; }
-    dailyCount++; localStorage.setItem('match_dailyCount', dailyCount.toString()); return true;
+    
+    if (!isUserLoggedIn && dailyCount >= 5) { 
+        alert("🔒 You've used your 5 free matches today!\n\nPlease register to unlock your next daily allowance!"); 
+        window.openAuthModal(); 
+        return false; 
+    }
+    if (isUserLoggedIn && dailyCount >= 5) { 
+        window.location.href = '/pricing/pricing.html'; 
+        return false; 
+    }
+    
+    dailyCount++; 
+    localStorage.setItem('match_dailyCount', dailyCount.toString()); 
+    return true;
 }
 
 async function fetchGeminiData(promptText) {
-    if (!supabaseClient) throw new Error("Supabase client not initialized.");
+    if (!supabaseClient) throw new Error("Database client not initialized.");
     const { data, error } = await supabaseClient.functions.invoke('gemini-proxy', { body: { prompt: promptText } });
     if (error || !data || !data.candidates) throw new Error(error?.message || "Gemini Proxy Request Failed");
     let rawText = data.candidates[0].content.parts[0].text;
@@ -183,6 +223,7 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         if (!input) return;
         const query = input.value.trim();
         if(!query) { alert("Please enter a title to search."); return; }
+        
         window.dataLayer.push({ 'event': 'search_requested', 'search_term': query });
         promptText = `You are a streaming concierge AI in late 2026. The user is specifically searching for where to stream: "${query}". Find the exact streaming platform where it is currently available globally/US. Output MUST be a valid JSON object matching this structure exactly: {"title": "Correct Title", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The exact streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID of the official trailer"}`;
     } else {
@@ -197,7 +238,7 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         promptText = `You are a streaming concierge AI in late 2026. Find a highly-rated streaming title based on these preferences: Format: ${cat}, Platform: ${plat}, Mood: ${mood}, Aesthetic: ${aest}, Pacing: ${pac}. CRITICAL: Do NOT recommend any of the following titles: ${excludeStr}. Return exactly one match. Ensure it is a real title currently available. Output MUST be a valid JSON object matching this structure exactly: {"title": "Title of movie/series", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID of the official trailer"}`;
     }
 
-    // Hide UI, Show Loading Box
+    // Safely Hide UI Blocks
     const qBox = document.getElementById('questionnaire-box');
     const sBox = document.getElementById('search-box');
     const rBox = document.getElementById('result-box');
@@ -205,6 +246,7 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     if (sBox) sBox.style.display = 'none';
     if (rBox) rBox.style.display = 'none';
     
+    // Activate 20s Loading UI & Adsterra Placement
     const loadBox = document.getElementById('loading-box');
     if (!loadBox) return;
     loadBox.style.display = 'block';
@@ -212,7 +254,6 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     let totalTime = isVIP || isAdFree ? 4 : 20; 
     let startTime = Date.now();
     
-    // Reset Bar & Enable Ads explicitly
     const pBar = document.getElementById('ai-progress-bar');
     const tSim = document.getElementById('ad-timer-sim');
     const freeAds = document.getElementById('free-loading-ads');
@@ -229,7 +270,7 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         if(vipMsg) vipMsg.style.display = 'block';
     }
 
-    // Smooth Timer
+    // Precise Meter Animation
     let timerInterval = setInterval(() => {
         let elapsed = (Date.now() - startTime) / 1000;
         let pct = Math.min((elapsed / totalTime) * 100, 100);
@@ -240,12 +281,12 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     let matchResult = null;
     try {
         let fetchPromise = fetchGeminiData(promptText);
-        // Guarantee the 20 seconds wait even if API is faster
+        // Guarantee 20s display time (syncs ads exactly)
         let delayPromise = new Promise(resolve => setTimeout(resolve, totalTime * 1000));
         let [apiResult] = await Promise.all([fetchPromise, delayPromise]); 
         matchResult = apiResult;
     } catch (err) {
-        console.error("Gemini Proxy failed or Timeout. Using intelligent fallback.", err);
+        console.error("AI Generation timeout or Proxy error. Loading graceful fallback.", err);
         matchResult = { title: "Dune: Part Two", synopsis: "Paul Atreides unites with Chani and the Fremen while on a warpath of revenge...", platform: "Max", imdb: "8.6", trailerId: "Way9Dexny3w" };
     }
 
@@ -260,6 +301,7 @@ function renderResult(selected) {
     if (!resultBox) return;
     resultBox.style.display = 'block';
     
+    // Trigger Effects
     window.playPremiumSound();
     window.fireConfetti();
     window.dataLayer.push({ 'event': 'match_revealed', 'title': selected.title });
@@ -267,6 +309,7 @@ function renderResult(selected) {
     globalMatchTitle = selected.title;
     document.querySelectorAll('.star-rating-container .star').forEach(s => s.classList.remove('selected'));
 
+    // Inject Results
     const titleEl = document.getElementById('res-title');
     const synEl = document.getElementById('res-synopsis');
     if (titleEl) titleEl.innerText = selected.title;
@@ -299,10 +342,14 @@ function renderResult(selected) {
         trailerBox.style.display = 'block';
         iframe.src = `https://www.youtube-nocookie.com/embed/${selected.trailerId}?autoplay=0&rel=0`;
     }
+    
     resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-window.saveToList = function() { if (globalMatchTitle && !savedList.includes(globalMatchTitle)) { savedList.push(globalMatchTitle); syncListsToDatabase(); alert(`⭐ "${globalMatchTitle}" saved!`); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } const rBox = document.getElementById('result-box'); if(rBox) rBox.style.display = 'none'; triggerMatch(false); };
+// ==========================================
+// PORTFOLIO / LIST MANAGEMENT
+// ==========================================
+window.saveToList = function() { if (globalMatchTitle && !savedList.includes(globalMatchTitle)) { savedList.push(globalMatchTitle); syncListsToDatabase(); alert(`⭐ "${globalMatchTitle}" saved to your Portfolio!`); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } const rBox = document.getElementById('result-box'); if(rBox) rBox.style.display = 'none'; triggerMatch(false); };
 window.markAsSeen = function() { if (globalMatchTitle && !seenList.includes(globalMatchTitle)) { seenList.push(globalMatchTitle); syncListsToDatabase(); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } const rBox = document.getElementById('result-box'); if(rBox) rBox.style.display = 'none'; triggerMatch(false); };
 window.markAsLiked = function() { if (globalMatchTitle) { userRatings[globalMatchTitle] = 5; if (!seenList.includes(globalMatchTitle)) seenList.push(globalMatchTitle); syncListsToDatabase(); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } const rBox = document.getElementById('result-box'); if(rBox) rBox.style.display = 'none'; triggerMatch(false); };
 window.markAsDisliked = function() { if (globalMatchTitle && !dislikedList.includes(globalMatchTitle)) { dislikedList.push(globalMatchTitle); userRatings[globalMatchTitle] = 1; syncListsToDatabase(); } const rBox = document.getElementById('result-box'); if(rBox) rBox.style.display = 'none'; triggerMatch(false); };
@@ -316,6 +363,14 @@ document.addEventListener('click', function (event) {
 });
 
 async function syncListsToDatabase() { 
-    localStorage.setItem('match_seenList', JSON.stringify(seenList)); localStorage.setItem('match_savedList', JSON.stringify(savedList)); localStorage.setItem('match_dislikedList', JSON.stringify(dislikedList)); localStorage.setItem('match_userRatings', JSON.stringify(userRatings)); 
-    if (isUserLoggedIn && supabaseClient) { await supabaseClient.auth.updateUser({ data: { seen_list: seenList, saved_list: savedList, disliked_list: dislikedList, user_ratings: userRatings } }); } 
+    localStorage.setItem('match_seenList', JSON.stringify(seenList)); 
+    localStorage.setItem('match_savedList', JSON.stringify(savedList)); 
+    localStorage.setItem('match_dislikedList', JSON.stringify(dislikedList)); 
+    localStorage.setItem('match_userRatings', JSON.stringify(userRatings)); 
+    
+    if (isUserLoggedIn && supabaseClient) { 
+        await supabaseClient.auth.updateUser({ 
+            data: { seen_list: seenList, saved_list: savedList, disliked_list: dislikedList, user_ratings: userRatings } 
+        }); 
+    } 
 }
