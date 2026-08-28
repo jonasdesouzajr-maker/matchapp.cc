@@ -2,36 +2,116 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Match App | Authorization Consent</title>
-    <!-- Note the relative path '../' since this file is inside the oauth folder -->
-    <link rel="stylesheet" href="../style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>MatchApp | Privacy Policy & Terms of Service</title>
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2ECND229RR');
+    </script>
+    
+    <meta name="robots" content="index, follow">
+    <link rel="stylesheet" href="/style.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
+
+    <style>
+        .app-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 25px; background: rgba(10,5,5,0.95); border-bottom: 2px solid var(--gold); box-shadow: 0 4px 25px rgba(212,175,55,0.4); flex-wrap: wrap; gap: 15px; }
+        .header-brand-area { display: flex; align-items: center; gap: 15px; text-decoration: none; }
+        .brand-logo { width: 65px; height: 65px; border-radius: 50%; border: 2px solid var(--gold); box-shadow: 0 0 15px var(--gold); animation: pulseGlow 2s infinite alternate; }
+        .app-title-main { font-size: 34px; font-weight: 900; background: linear-gradient(90deg, #FFD700, #FFF, #FFA500, #FFD700); background-size: 200% auto; -webkit-background-clip: text; color: transparent; animation: gradientShift 3s infinite linear; text-transform: uppercase; letter-spacing: 1px; }
+        .app-title-sub { font-size: 13px; color: #ddd; letter-spacing: 2px; text-transform: uppercase; font-weight: bold; margin-top: -5px; display: block; text-shadow: 0 2px 4px #000; }
+        @keyframes gradientShift { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
+        @keyframes pulseGlow { from { box-shadow: 0 0 10px rgba(212,175,55,0.5); transform: scale(1); } to { box-shadow: 0 0 25px rgba(212,175,55,1), inset 0 0 10px rgba(255,255,255,0.5); transform: scale(1.05); } }
+
+        .main-layout { display: flex; width: 100%; max-width: 1400px; margin: 0 auto; gap: 20px; align-items: flex-start; justify-content: center; min-height: 80vh; }
+        .sidebar-ad-left, .sidebar-ad-right { display: none; width: 160px; flex-shrink: 0; position: sticky; top: 20px; }
+        .container { flex: 1; max-width: 800px; width: 100%; padding-bottom: 50px; }
+        .mobile-ad-bottom { display: block; width: 100%; margin-top: 25px; text-align: center; min-height: 100px; }
+        @media (min-width: 1100px) { .sidebar-ad-left, .sidebar-ad-right { display: block; } .mobile-ad-bottom { display: none; } }
+
+        .seo-footer { background: rgba(10,5,5,0.95); border-top: 2px solid var(--gold); padding: 30px 20px; text-align: center; margin-top: auto; width: 100%; }
+        .seo-footer h4 { color: var(--gold); font-size: 18px; margin-bottom: 15px; text-transform: uppercase; }
+        .streaming-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
+        .streaming-links a { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 13px; transition: 0.3s; }
+        .streaming-links a:hover { border-color: var(--gold); background: rgba(212,175,55,0.1); transform: scale(1.05); }
+
+        .consent-content h2 { color: var(--gold); margin-top: 20px; margin-bottom: 10px; font-size: 20px; }
+        .consent-content p, .consent-content li { color: #ddd; font-size: 14px; line-height: 1.6; margin-bottom: 15px; }
+        .consent-content ul { padding-left: 20px; margin-bottom: 20px; }
+    </style>
 </head>
-<body style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; background: var(--bg-dark);">
-    <!-- 🌍 ANIMATED BACKGROUND -->
+<body style="display: flex; flex-direction: column; min-height: 100vh;">
+    
     <div class="luxury-bg"><div class="floating-orb orb-1"></div><div class="floating-orb orb-2"></div></div>
+    
+    <nav class="app-header fade-in">
+        <a href="/index.html" class="header-brand-area">
+            <picture><source srcset="/logo.jpeg" type="image/jpeg"><img src="/logo.jpeg" alt="Logo" class="brand-logo" loading="lazy"></picture>
+            <div><span class="app-title-main">MatchApp</span><span class="app-title-sub">Legal & Consent</span></div>
+        </a>
+        <div id="header-auth-area" style="display: flex; gap: 10px; align-items: center; justify-content: flex-end;">
+            <a href="/index.html" class="secondary-btn" style="padding: 8px 12px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">🏠 Home</a>
+        </div>
+    </nav>
 
-    <div class="container" style="max-width: 480px; text-align: center;">
-        <div class="premium-card fade-in" style="padding: 40px 30px; border: 2px solid var(--gold); box-shadow: 0 0 50px rgba(212,175,55,0.2);">
-            <div style="font-size: 55px; margin-bottom: 15px; animation: pulseIcon 2s infinite;">🔐</div>
-            <h2 style="color: var(--gold); margin-top: 0; font-size: 26px;">MatchApp Authorization</h2>
-            <p style="color: #fff; font-size: 14px; line-height: 1.6; margin-bottom: 25px;">
-                MatchApp requests secure access to your Google account profile to personalize your streaming concierge experience:
-            </p>
+    <div class="page-wrapper" style="flex: 1;">
+        <div class="main-layout fade-in">
+            <!-- Left AdSense -->
+            <aside class="sidebar-ad-left"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block; min-height: 600px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
 
-            <div style="background: rgba(0,0,0,0.6); padding: 18px; border-radius: 12px; text-align: left; margin-bottom: 25px; border-left: 4px solid var(--gold);">
-                <ul style="color: #bbb; font-size: 13px; margin: 0; padding-left: 20px; line-height: 1.8;">
-                    <li><strong style="color: #fff;">Email Address:</strong> Used for secure authentication & profile syncing.</li>
-                    <li><strong style="color: #fff;">Name & Avatar:</strong> Used for your private dashboard profile card.</li>
-                </ul>
+            <div class="container">
+                <div class="premium-card consent-content fade-in" style="margin-top: 25px; text-align: left; padding: 30px;">
+                    <h1 style="color: var(--gold); font-size: 28px; margin-bottom: 25px; text-align: center;">Privacy Policy & Terms of Service</h1>
+                    
+                    <h2>1. Data Collection & Usage</h2>
+                    <p>By using MatchApp, you consent to the collection of your streaming preferences, saved lists, and basic profile data (if registered) to enhance the AI matchmaking algorithm.</p>
+                    <ul>
+                        <li><strong>Google Authentication:</strong> We use Google OAuth strictly for login purposes. We do not access your Google Drive, Contacts, or personal emails.</li>
+                        <li><strong>Cookies & Analytics:</strong> We use Google Analytics (gtag.js) to understand traffic patterns and improve our app.</li>
+                    </ul>
+
+                    <h2>2. Advertising & Monetization</h2>
+                    <p>Free accounts are supported by Google AdSense and Adsterra network ads. By continuing to use the free version, you agree to the display of these third-party advertisements.</p>
+
+                    <h2>3. Account Deletion</h2>
+                    <p>You maintain full control of your data. You may permanently delete your profile, saved portfolio, and all associated data instantly at any time via the "Delete Account" button on your Profile page.</p>
+                    
+                    <div style="text-align: center; margin-top: 30px;">
+                        <a href="/index.html" class="gold-btn" style="padding: 12px 24px; text-decoration: none; display: inline-block;">Return Home</a>
+                    </div>
+                </div>
+
+                <!-- Mobile AdSense -->
+                <div class="mobile-ad-bottom"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block; min-height: 100px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
             </div>
-
-            <div style="display: flex; gap: 12px; flex-direction: column;">
-                <button onclick="window.location.href='../callback.html'" class="gold-btn" style="padding: 16px; font-size: 16px;">Authorize & Continue</button>
-                <button onclick="window.location.href='../index.html'" class="secondary-btn" style="border: none; background: transparent; font-size: 13px; color: var(--text-muted);">Cancel & Return Home</button>
-            </div>
+            
+            <!-- Right AdSense -->
+            <aside class="sidebar-ad-right"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block; min-height: 600px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
         </div>
     </div>
+
+    <!-- SEO BACKLINKS FOOTER -->
+    <footer class="seo-footer">
+        <h4>Stream Directly on Your Favorite Platforms</h4>
+        <p style="color: #888; font-size: 12px; margin-bottom: 20px;">MatchApp searches the web and links you directly to the official apps and websites to watch legally.</p>
+        <div class="streaming-links">
+            <a href="https://www.netflix.com" target="_blank" rel="noopener noreferrer">Netflix</a>
+            <a href="https://www.max.com" target="_blank" rel="noopener noreferrer">Max</a>
+            <a href="https://www.primevideo.com" target="_blank" rel="noopener noreferrer">Prime Video</a>
+            <a href="https://www.disneyplus.com" target="_blank" rel="noopener noreferrer">Disney+</a>
+            <a href="https://www.hulu.com" target="_blank" rel="noopener noreferrer">Hulu</a>
+            <a href="https://tv.apple.com" target="_blank" rel="noopener noreferrer">Apple TV+</a>
+            <a href="https://www.spotify.com" target="_blank" rel="noopener noreferrer">Spotify</a>
+        </div>
+        <p style="color: #555; font-size: 11px; margin-top: 25px;">&copy; 2026 MatchApp.cc - Your Ultimate AI Streaming Concierge</p>
+    </footer>
+
+    <script src="/app.js"></script>
 </body>
 </html>
