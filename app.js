@@ -1,4 +1,4 @@
-console.log("Mastercode 67.0: Auth Fixed, Progress Bar Monetized, Trailers Active");
+console.log("Mastercode 68.0: 4K Premium Header, AdSense Layout, Audio/Confetti, and Auth Active");
 
 let globalMatchTitle = "MatchApp";
 let supabaseClient = null; // Ensure this is initialized with your Supabase credentials!
@@ -21,19 +21,38 @@ const masterCatalog = [
     { title: "Spider-Man: Into the Spider-Verse", category: "movie", platform: "Netflix", mood: "laugh", aesthetic: "colorful", pacing: "fast", imdb: "8.4", trailerId: "g4Hbz2jLxvQ", url: "https://www.netflix.com/title/81002747", synopsis: "Teen Miles Morales becomes the Spider-Man of his universe...", poster: "https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=1000&q=80" }
 ];
 
+// SFX & VFX Engine
+window.playPremiumSound = function() {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.2);
+    } catch (e) { console.log('Audio not supported or blocked'); }
+};
+
+window.fireConfetti = function() {
+    if (typeof confetti !== 'undefined') {
+        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#D4AF37', '#FFF', '#8A2BE2', '#E50914'], zIndex: 9999 });
+    }
+};
+
 function updateClock() { const clock = document.getElementById('real-time-clock'); if (clock) { const now = new Date(); clock.innerHTML = `${now.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })} | ${now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`; } }
 setInterval(updateClock, 1000);
 
 // ==========================================
-// MODAL & AUTHENTICATION LOGIC (RESTORED)
+// MODAL & AUTHENTICATION LOGIC
 // ==========================================
-window.openAuthModal = function() {
-    document.getElementById('main-auth-modal').style.display = 'flex';
-};
-
-window.closeAuthModal = function() {
-    document.getElementById('main-auth-modal').style.display = 'none';
-};
+window.openAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'flex'; };
+window.closeAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'none'; };
 
 async function checkIfBanned(email) {
     if (!email || !supabaseClient) return false;
@@ -41,18 +60,20 @@ async function checkIfBanned(email) {
     return !!data;
 }
 
+window.signInWithGoogle = async function() { 
+    if (!supabaseClient) { alert("Server connection failed. Please refresh."); return; } 
+    const { error } = await supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + '/index.html' } }); 
+    if (error) alert("Google Login Error: " + error.message); 
+};
+
 window.handleEmailSignup = async function() {
     const email = document.getElementById('auth-email').value.trim();
     const password = document.getElementById('auth-password').value;
     const msgEl = document.getElementById('auth-message');
-    
     if(!email || !password) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please fill both fields."; return; }
 
     const isBanned = await checkIfBanned(email);
-    if (isBanned) {
-        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "This email has been permanently deleted and cannot be used again."; 
-        return; 
-    }
+    if (isBanned) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "This email has been permanently deleted and cannot be used again."; return; }
 
     if (supabaseClient) {
         const { data, error } = await supabaseClient.auth.signUp({ email, password });
@@ -65,7 +86,6 @@ window.handleEmailLogin = async function() {
     const email = document.getElementById('auth-email').value.trim();
     const password = document.getElementById('auth-password').value;
     const msgEl = document.getElementById('auth-message');
-    
     if(!email || !password) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please fill both fields."; return; }
 
     if (supabaseClient) {
@@ -75,18 +95,18 @@ window.handleEmailLogin = async function() {
     }
 };
 
-window.doLogout = async function() { 
-    if (supabaseClient) { await supabaseClient.auth.signOut(); }
-    localStorage.clear(); 
-    window.location.href = '/index.html'; 
-};
+window.doLogout = async function() { if (supabaseClient) { await supabaseClient.auth.signOut(); } localStorage.clear(); window.location.href = '/index.html'; };
 
-// UI Listener to enforce VIP Button Logic
 if (supabaseClient) {
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
         if (session && session.user) {
             isUserLoggedIn = true;
             
+            // Extract Google Name if exists for Profile auto-fill
+            if (session.user.user_metadata && session.user.user_metadata.full_name) {
+                localStorage.setItem('match_googleName', session.user.user_metadata.full_name);
+            }
+
             const regBtn = document.getElementById('nav-reg-btn');
             const profTab = document.getElementById('profile-link-tab');
             const logoutBtn = document.getElementById('nav-logout-btn');
@@ -96,7 +116,6 @@ if (supabaseClient) {
             if (profTab) profTab.style.display = 'inline-flex';
             if (logoutBtn) logoutBtn.style.display = 'inline-block';
             
-            // Only show VIP badge if user is logged in
             if (upgradeBtn) {
                 upgradeBtn.style.display = 'inline-flex';
                 if (isVIP || isAdFree) upgradeBtn.innerText = '👑 VIP Active';
@@ -145,9 +164,7 @@ window.triggerMatch = async function() {
         <div style="font-size: 50px; margin-bottom: 15px; animation: pulse 1.5s infinite;">🔮</div>
         <h3 style="color: var(--gold-glow); font-size: 20px; margin: 0;">Consulting AI Concierge...</h3>
         ${!isVIP && !isAdFree ? `
-        <div class="progress-bar-container">
-            <div id="ai-progress-bar" class="progress-bar-fill"></div>
-        </div>
+        <div class="progress-bar-container"><div id="ai-progress-bar" class="progress-bar-fill"></div></div>
         <p style="color: #aaa; margin-top: 15px; font-size: 13px;">Sponsor break: Searching for the perfect match in <strong id="ad-timer-sim" style="color:#fff; font-size: 16px;">${timeLeft}</strong>s</p>
         <div class="ad-placement" style="margin-top:20px; background:transparent;">
             <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script><script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
@@ -160,10 +177,7 @@ window.triggerMatch = async function() {
         const barEl = document.getElementById('ai-progress-bar');
         
         if (timerEl) timerEl.innerText = timeLeft;
-        if (barEl) {
-            let pct = ((totalTime - timeLeft) / totalTime) * 100;
-            barEl.style.width = pct + '%';
-        }
+        if (barEl) { let pct = ((totalTime - timeLeft) / totalTime) * 100; barEl.style.width = pct + '%'; }
         
         if (timeLeft <= 0) {
             clearInterval(simInterval);
@@ -176,6 +190,10 @@ function renderResult(selected) {
     document.getElementById('loading-box').style.display = 'none';
     const resultBox = document.getElementById('result-box');
     resultBox.style.display = 'block';
+    
+    // SFX & VFX trigger
+    window.playPremiumSound();
+    window.fireConfetti();
 
     document.querySelectorAll('.star-rating-container .star').forEach(s => s.classList.remove('selected'));
 
