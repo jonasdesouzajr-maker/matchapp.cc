@@ -1,4 +1,4 @@
-console.log("Mastercode 79.0: G-tag Global, Prompt Post-Action Engine & Infinite Catalog");
+console.log("Mastercode 80.0: Edge Compatibility, Working Video Embeds, Interactive Ratings & Stripe Auto-Unlock");
 
 // ==========================================
 // 1. SUPABASE LIVE INITIALIZATION
@@ -26,6 +26,42 @@ let userRatings = JSON.parse(localStorage.getItem('match_userRatings') || '{}');
 
 let isAdFree = localStorage.getItem('match_adFree') === 'true'; 
 let isVIP = localStorage.getItem('match_isVIP') === 'true';
+
+// Check if returning from a successful Stripe Payment
+(function checkStripePaymentReturn() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('payment') === 'success') {
+        const plan = params.get('plan');
+        if (plan === 'vip_monthly') {
+            localStorage.setItem('match_isVIP', 'true');
+            isVIP = true;
+        } else if (plan === 'ad_free') {
+            localStorage.setItem('match_adFree', 'true');
+            isAdFree = true;
+        }
+        
+        // Sync VIP status to DB
+        if (supabaseClient) {
+            supabaseClient.auth.getUser().then(({ data: { user } }) => {
+                if (user) {
+                    supabaseClient.from('profiles').upsert({
+                        id: user.id,
+                        is_vip: isVIP,
+                        is_ad_free: isAdFree,
+                        updated_at: new Date().toISOString()
+                    });
+                }
+            });
+        }
+
+        setTimeout(() => {
+            if (typeof window.fireConfetti === 'function') window.fireConfetti();
+            if (typeof window.playPremiumSound === 'function') window.playPremiumSound();
+            alert("🎉 Payment Successful!\n\nYour account features have been permanently unlocked. Enjoy unlimited, ad-free AI matching!");
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }, 800);
+    }
+})();
 
 // ------------------------------------------
 // CLOCK FUNCTION
@@ -222,7 +258,6 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     if (!checkDailyLimit()) return;
 
     let promptText = "";
-    // FORCE RANDOMIZATION FOR ZERO DUPLICATES
     const randomSeed = Math.floor(Math.random() * 999999); 
     
     if (isSpecificSearch) {
@@ -246,7 +281,6 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         promptText = `You are a streaming concierge AI in late 2026. Find a highly-rated, hidden gem streaming title based on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}, Aesthetic: ${aest}, Pacing: ${pac}. CRITICAL: Do NOT recommend any of these titles ever again: ${excludeStr}. RANDOMIZATION SEED: ${randomSeed}. You MUST scour your catalog globally and provide a highly unique recommendation different from defaults. Output MUST be a valid JSON object matching exactly: {"title": "Title of movie/series", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID"}`;
     }
 
-    // Hide all UI
     const qBox = document.getElementById('questionnaire-box');
     const sBox = document.getElementById('search-box');
     const rBox = document.getElementById('result-box');
@@ -254,7 +288,6 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     if (sBox) sBox.style.display = 'none';
     if (rBox) rBox.style.display = 'none';
     
-    // ACTIVATE 20S LOADING SEQUENCE WITH METER BAR
     const loadBox = document.getElementById('loading-box');
     if (!loadBox) return;
     loadBox.style.display = 'block';
@@ -313,7 +346,6 @@ function renderResult(selected) {
     if (loadBox) loadBox.style.display = 'none';
     if (!resultBox) return;
     
-    // Restore the Action Buttons (in case they were changed in a previous match)
     const actionGrid = document.getElementById('action-btn-grid');
     if(actionGrid) {
         actionGrid.innerHTML = `
@@ -330,6 +362,8 @@ function renderResult(selected) {
     window.fireConfetti();
 
     globalMatchTitle = selected.title;
+    
+    // Clear star selections
     document.querySelectorAll('.star-rating-container .star').forEach(s => s.classList.remove('selected'));
 
     const titleEl = document.getElementById('res-title');
@@ -364,11 +398,19 @@ function renderResult(selected) {
         directBtn.innerText = `▶ Search on ${selected.platform}`;
     }
 
+    // EDGE COMPATIBLE VIDEO TRAILER EMBED
     const trailerBox = document.getElementById('res-trailer-container');
     const iframe = document.getElementById('res-trailer');
+    const fallbackBtn = document.getElementById('res-trailer-fallback');
+    
     if (trailerBox && iframe && selected.trailerId) {
         trailerBox.style.display = 'block';
-        iframe.src = `https://www.youtube-nocookie.com/embed/${selected.trailerId}?autoplay=0&rel=0`;
+        iframe.src = `https://www.youtube.com/embed/${selected.trailerId}?rel=0&enablejsapi=1`;
+        if (fallbackBtn) {
+            fallbackBtn.href = `https://www.youtube.com/watch?v=${selected.trailerId}`;
+        }
+    } else if (trailerBox) {
+        trailerBox.style.display = 'none';
     }
     
     resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -396,7 +438,6 @@ window.recordAction = function(type) {
     syncListsToDatabase();
     if(typeof renderProfileGrids === 'function') renderProfileGrids();
 
-    // Replaces the buttons with a beautiful DOM prompt asking what they want to do next
     const actionGrid = document.getElementById('action-btn-grid');
     if (actionGrid) {
         actionGrid.innerHTML = `
@@ -412,15 +453,47 @@ window.recordAction = function(type) {
     }
 };
 
+// RELIABLE CROSS-BROWSER STAR RATING
 document.addEventListener('click', function (event) {
-    if (!event.target.classList.contains('star')) return;
-    const star = event.target; const rating = parseInt(star.getAttribute('data-value'));
+    const star = event.target.closest('.star');
+    if (!star) return;
+
+    const rating = parseInt(star.getAttribute('data-value'));
     const container = star.closest('.star-rating-container');
-    container.querySelectorAll('.star').forEach(s => s.classList.remove('selected')); star.classList.add('selected');
-    if (globalMatchTitle) { userRatings[globalMatchTitle] = rating; if (!seenList.includes(globalMatchTitle)) seenList.push(globalMatchTitle); syncListsToDatabase(); if(typeof renderProfileGrids === 'function') renderProfileGrids(); }
+    if (!container) return;
+
+    // Highlight all stars <= rating
+    container.querySelectorAll('.star').forEach(s => {
+        const val = parseInt(s.getAttribute('data-value'));
+        if (val <= rating) {
+            s.classList.add('selected');
+        } else {
+            s.classList.remove('selected');
+        }
+    });
+
+    if (globalMatchTitle) { 
+        userRatings[globalMatchTitle] = rating; 
+        if (!seenList.includes(globalMatchTitle)) seenList.push(globalMatchTitle); 
+        syncListsToDatabase(); 
+        if(typeof renderProfileGrids === 'function') renderProfileGrids(); 
+    }
 });
 
 async function syncListsToDatabase() { 
-    localStorage.setItem('match_seenList', JSON.stringify(seenList)); localStorage.setItem('match_savedList', JSON.stringify(savedList)); localStorage.setItem('match_dislikedList', JSON.stringify(dislikedList)); localStorage.setItem('match_userRatings', JSON.stringify(userRatings)); 
-    if (isUserLoggedIn && supabaseClient) { await supabaseClient.auth.updateUser({ data: { seen_list: seenList, saved_list: savedList, disliked_list: dislikedList, user_ratings: userRatings } }); } 
+    localStorage.setItem('match_seenList', JSON.stringify(seenList)); 
+    localStorage.setItem('match_savedList', JSON.stringify(savedList)); 
+    localStorage.setItem('match_dislikedList', JSON.stringify(dislikedList)); 
+    localStorage.setItem('match_userRatings', JSON.stringify(userRatings)); 
+    
+    if (isUserLoggedIn && supabaseClient) { 
+        await supabaseClient.auth.updateUser({ 
+            data: { 
+                seen_list: seenList, 
+                saved_list: savedList, 
+                disliked_list: dislikedList, 
+                user_ratings: userRatings 
+            } 
+        }); 
+    } 
 }
