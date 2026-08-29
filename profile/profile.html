@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>MatchApp | My Private Profile & Portfolio</title>
     
+<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -36,14 +37,14 @@
         .mobile-ad-bottom { display: block; width: 100%; margin-top: 25px; text-align: center; min-height: 100px; }
         @media (min-width: 1100px) { .sidebar-ad-left, .sidebar-ad-right { display: block; } .mobile-ad-bottom { display: none; } .chrome-banner { display: none !important; } }
 
+        /* ADSTERRA BEAUTIFUL CONTAINER (Fix 3) */
+        .ad-banner-container { margin: 25px auto; text-align: center; max-width: 100%; overflow: hidden; background: rgba(0,0,0,0.4); border-radius: 12px; padding: 10px; border: 1px solid rgba(255,255,255,0.1); }
+        .ad-banner-container .ad-label { font-size: 10px; color: #888; display: block; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+
         .chrome-banner { background: linear-gradient(90deg, #111, #333); border: 1px solid #FFD700; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
         .chrome-text { color: #fff; font-size: 13px; line-height: 1.5; text-align: left; flex: 1; margin-right: 15px; }
         .chrome-btn { background: var(--gold); color: #000; font-weight: bold; padding: 8px 16px; border-radius: 20px; text-decoration: none; white-space: nowrap; box-shadow: 0 2px 10px rgba(212,175,55,0.5); transition: transform 0.2s; }
 
-        .how-it-works-glow { background: rgba(20, 5, 5, 0.85); border: 2px solid var(--gold); border-radius: 16px; padding: 25px; margin: 0 0 25px 0; text-align: center; box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
-        .how-it-works-glow h3 { color: #fff; font-size: 26px; font-weight: 900; margin: 0 0 15px 0; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-        .how-it-works-glow p { color: #ddd; font-size: 16px; line-height: 1.6; margin: 0 0 10px 0; }
-        
         .stream-flags { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; opacity: 0.35; }
         .sf-item { position: absolute; font-size: 14vw; font-weight: 900; color: #fff; white-space: nowrap; opacity: 0.8; text-shadow: 0 0 20px currentColor, 0 0 40px currentColor; }
         .brand-netflix { color: #E50914; } .brand-prime { color: #00A8E1; } .brand-max { color: #8A2BE2; } .brand-disney { color: #113CCF; }
@@ -101,11 +102,13 @@
                     <a href="intent://matchapp.cc/#Intent;scheme=https;package=com.android.chrome;end" class="chrome-btn">Open in Chrome</a>
                 </div>
 
-                <div class="how-it-works-glow fade-in">
-                    <h3>💡 How MatchApp Works</h3>
-                    <p><strong>1. Curate:</strong> Tell the AI your exact vibe, pacing, and platform preferences.</p>
-                    <p><strong>2. Match:</strong> Gemini AI finds a duplicate-free match across the internet in seconds.</p>
-                    <p><strong>3. Save:</strong> Build your ultimate Watch Later Portfolio securely.</p>
+                <!-- Adsterra Header Banner -->
+                <div class="ad-banner-container fade-in">
+                    <span class="ad-label">SPONSORED</span>
+                    <div style="display: flex; justify-content: center; align-items: center; min-height: 90px; width: 100%; overflow: hidden;">
+                        <script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script>
+                        <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
+                    </div>
                 </div>
 
                 <div class="premium-card fade-in" style="text-align: left; padding: 30px 20px;">
@@ -126,6 +129,15 @@
                             
                             <div class="input-group"><label>Star Sign</label><select id="profile-starsign"><option value="">Select...</option><option value="Aries">Aries</option><option value="Taurus">Taurus</option><option value="Gemini">Gemini</option><option value="Cancer">Cancer</option><option value="Leo">Leo</option><option value="Virgo">Virgo</option><option value="Libra">Libra</option><option value="Scorpio">Scorpio</option><option value="Sagittarius">Sagittarius</option><option value="Capricorn">Capricorn</option><option value="Aquarius">Aquarius</option><option value="Pisces">Pisces</option></select></div>
                             <div class="input-group"><label>Sexual Orientation</label><select id="profile-orientation"><option value="">Select...</option><option value="Straight">Straight</option><option value="Gay">Gay</option><option value="Lesbian">Lesbian</option><option value="Bisexual">Bisexual</option><option value="Other">Other</option></select></div>
+                        </div>
+                    </div>
+
+                    <!-- Adsterra Mid Banner -->
+                    <div class="ad-banner-container fade-in" style="margin-bottom: 25px;">
+                        <span class="ad-label">SPONSORED</span>
+                        <div style="display: flex; justify-content: center; align-items: center; min-height: 250px; width: 100%; overflow: hidden;">
+                            <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script>
+                            <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
                         </div>
                     </div>
 
@@ -194,6 +206,7 @@
         </div>
     </div>
 
+    <!-- SEO BACKLINKS FOOTER -->
     <footer class="seo-footer">
         <h4>Global Streaming Platforms & Apps</h4>
         <p style="color: #888; font-size: 12px; margin-bottom: 20px;">MatchApp securely routes you directly to the official platforms to watch globally.</p>
