@@ -1,41 +1,85 @@
-console.log("Profile & Portfolio Engine Loaded");
+console.log("Profile Engine Loaded: Google Auto-Fill Active");
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Wait briefly for Supabase session to init from app.js
     setTimeout(async () => {
-        if (!window.supabaseClient) return;
+        const client = window.supabaseClient || (window.supabase ? window.supabase.createClient('https://zkymvqrmbabngsqblyye.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpreW12cXJtYmFibmdzcWJseXllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY4MDUyNDIsImV4cCI6MjEwMjM4MTI0Mn0._yEVFMfwVU6GBqQ8m3ljfOgA0HSLEDiKMOfYae6ZD8Q') : null);
 
-        const { data: { user } } = await window.supabaseClient.auth.getUser();
+        if (!client) return;
+
+        const { data: { user } } = await client.auth.getUser();
         if (user) {
-            document.getElementById('user-email-display').innerText = `Logged in as: ${user.email}`;
+            const meta = user.user_metadata || {};
             
-            // 2. Fetch Profile Data from Supabase
-            const { data: profile } = await window.supabaseClient
+            // 1. Email Display
+            const emailDisp = document.getElementById('user-email-display');
+            if (emailDisp) emailDisp.innerText = `Logged in as: ${user.email}`;
+
+            // 2. Profile Avatar Image from Google
+            const avatarUrl = meta.avatar_url || meta.picture;
+            const profPic = document.getElementById('profile-pic-preview');
+            if (avatarUrl && profPic) profPic.src = avatarUrl;
+
+            // 3. Fetch Stored Profile from Supabase
+            const { data: profile } = await client
                 .from('profiles')
                 .select('*')
                 .eq('id', user.id)
                 .single();
 
-            if (profile) {
-                if (document.getElementById('profile-name')) document.getElementById('profile-name').value = profile.full_name || '';
-                if (document.getElementById('profile-country')) document.getElementById('profile-country').value = profile.country || '';
-                if (document.getElementById('profile-dob')) document.getElementById('profile-dob').value = profile.dob || '';
-                if (document.getElementById('profile-starsign')) document.getElementById('profile-starsign').value = profile.starsign || '';
-                if (document.getElementById('profile-orientation')) document.getElementById('profile-orientation').value = profile.sexual_orientation || '';
-                if (document.getElementById('pref-service')) document.getElementById('pref-service').value = profile.pref_service || 'Netflix';
-                if (document.getElementById('pref-genre')) document.getElementById('pref-genre').value = profile.pref_genre || 'Thriller';
-                if (document.getElementById('pref-decade')) document.getElementById('pref-decade').value = profile.pref_decade || 'New';
+            // Auto-Fill Form (Prefers saved profile, falls back to Google OAuth metadata)
+            const nameField = document.getElementById('profile-name');
+            if (nameField) nameField.value = profile?.full_name || meta.full_name || meta.name || '';
+
+            const countryField = document.getElementById('profile-country');
+            if (countryField) countryField.value = profile?.country || meta.locale || meta.country || '';
+
+            const dobField = document.getElementById('profile-dob');
+            const birthDateVal = profile?.dob || meta.birthday || meta.birthdate || '';
+            if (dobField) {
+                dobField.value = birthDateVal;
+                if (birthDateVal.length === 10) triggerAgeCalc(birthDateVal);
             }
+
+            const starSignSelect = document.getElementById('profile-starsign');
+            if (starSignSelect && profile?.starsign) starSignSelect.value = profile.starsign;
+
+            const orientSelect = document.getElementById('profile-orientation');
+            if (orientSelect) {
+                if (profile?.sexual_orientation) orientSelect.value = profile.sexual_orientation;
+                else if (meta.gender) {
+                    const g = meta.gender.toLowerCase();
+                    if (g.includes('male')) orientSelect.value = 'Straight';
+                }
+            }
+
+            // AI Preferences
+            if (document.getElementById('pref-service')) document.getElementById('pref-service').value = profile?.pref_service || 'Netflix';
+            if (document.getElementById('pref-genre')) document.getElementById('pref-genre').value = profile?.pref_genre || 'Thriller';
+            if (document.getElementById('pref-decade')) document.getElementById('pref-decade').value = profile?.pref_decade || 'New';
+
         } else {
-            document.getElementById('user-email-display').innerText = "Session expired. Please log in.";
+            const emailDisp = document.getElementById('user-email-display');
+            if (emailDisp) emailDisp.innerText = "Session expired. Please log in.";
         }
         
-        // Render Grids
         renderProfileGrids();
-    }, 800);
+    }, 600);
 });
 
-// Calculate Dynamic Age
+function triggerAgeCalc(dobStr) {
+    try {
+        const parts = dobStr.split('/');
+        if (parts.length === 3) {
+            const bDate = new Date(parts[2], parts[1] - 1, parts[0]);
+            const ageDifMs = Date.now() - bDate.getTime();
+            const ageDate = new Date(ageDifMs);
+            const age = Math.abs(ageDate.getUTCFullYear() - 1970);
+            const ageDisp = document.getElementById('profile-age-display');
+            if (ageDisp) ageDisp.value = `${age} years old`;
+        }
+    } catch(e) {}
+}
+
 const dobInput = document.getElementById('profile-dob');
 if(dobInput) {
     dobInput.addEventListener('input', function(e) {
@@ -43,24 +87,14 @@ if(dobInput) {
         if (val.length > 2) val = val.substring(0,2) + '/' + val.substring(2);
         if (val.length > 5) val = val.substring(0,5) + '/' + val.substring(5,9);
         e.target.value = val;
-        
-        if (val.length === 10) {
-            const parts = val.split('/');
-            const bDate = new Date(parts[2], parts[1] - 1, parts[0]);
-            const ageDifMs = Date.now() - bDate.getTime();
-            const ageDate = new Date(ageDifMs);
-            const age = Math.abs(ageDate.getUTCFullYear() - 1970);
-            document.getElementById('profile-age-display').value = `${age} years old`;
-        }
+        if (val.length === 10) triggerAgeCalc(val);
     });
 }
 
 window.saveProfileData = async function() {
-    // SFX
     if (typeof window.playPremiumSound === 'function') window.playPremiumSound();
     if (typeof window.fireConfetti === 'function') window.fireConfetti();
     
-    // Extract Data
     const name = document.getElementById('profile-name')?.value || '';
     const country = document.getElementById('profile-country')?.value || '';
     const dob = document.getElementById('profile-dob')?.value || '';
@@ -71,13 +105,14 @@ window.saveProfileData = async function() {
     const prefGenre = document.getElementById('pref-genre')?.value || '';
     const prefDecade = document.getElementById('pref-decade')?.value || '';
     
-    // Save to Supabase DB
-    if (window.supabaseClient) {
+    const client = window.supabaseClient;
+    if (client) {
         try {
-            const { data: { user } } = await window.supabaseClient.auth.getUser();
+            const { data: { user } } = await client.auth.getUser();
             if (user) {
-                await window.supabaseClient.from('profiles').upsert({
+                await client.from('profiles').upsert({
                     id: user.id,
+                    email: user.email,
                     full_name: name,
                     country: country,
                     dob: dob,
@@ -85,19 +120,17 @@ window.saveProfileData = async function() {
                     sexual_orientation: orientation,
                     pref_service: prefService,
                     pref_genre: prefGenre,
-                    pref_decade: prefDecade
+                    pref_decade: prefDecade,
+                    updated_at: new Date().toISOString()
                 });
             }
-        } catch (e) {
-            console.error("Profile save error:", e);
-        }
+        } catch (e) { console.error("Profile save error:", e); }
     }
     
     if(typeof gtag === 'function') gtag('event', 'profile_updated');
-    alert("Profile Successfully Locked & Tuned!");
+    alert("Profile Successfully Updated!");
 };
 
-// Render the grids dynamically from LocalStorage (synced via app.js)
 window.renderProfileGrids = function() {
     const savedList = JSON.parse(localStorage.getItem('match_savedList') || '[]');
     const seenList = JSON.parse(localStorage.getItem('match_seenList') || '[]');
@@ -139,7 +172,6 @@ window.removeItem = function(title, type) {
         list = list.filter(t => t !== title);
         localStorage.setItem('match_seenList', JSON.stringify(list));
     }
-    // Re-render
     renderProfileGrids();
 };
 
@@ -154,36 +186,32 @@ window.clearListEntirely = function(type) {
     }
 };
 
-// ==========================================
-// ACCOUNT DELETION LOGIC
-// ==========================================
 window.openDeleteModal = function() { 
     document.getElementById('delete-modal').style.display = 'flex'; 
     document.getElementById('delete-confirm-check').checked = false; 
     toggleDeleteBtn(); 
-}
-window.closeDeleteModal = function() { document.getElementById('delete-modal').style.display = 'none'; }
+};
+window.closeDeleteModal = function() { document.getElementById('delete-modal').style.display = 'none'; };
 window.toggleDeleteBtn = function() {
     const isChecked = document.getElementById('delete-confirm-check').checked;
     const btn = document.getElementById('final-delete-btn');
     if (isChecked) { btn.disabled = false; btn.classList.remove('btn-disabled'); btn.classList.add('btn-danger-active'); } 
     else { btn.disabled = true; btn.classList.add('btn-disabled'); btn.classList.remove('btn-danger-active'); }
-}
+};
 
 window.executeAccountDeletion = async function() {
     try {
-        if (!window.supabaseClient) throw new Error("No database connection");
-        const { data: { user } } = await window.supabaseClient.auth.getUser();
+        const client = window.supabaseClient;
+        if (!client) throw new Error("No database connection");
+        const { data: { user } } = await client.auth.getUser();
         if (!user) return;
         
-        // Log the deletion request
-        await window.supabaseClient.from('profiles').delete().eq('id', user.id);
-        
+        await client.from('profiles').delete().eq('id', user.id);
         if(typeof gtag === 'function') gtag('event', 'account_deleted');
         
-        await window.supabaseClient.auth.signOut();
+        await client.auth.signOut();
         localStorage.clear();
         alert("Account permanently deleted.");
         window.location.href = '/index.html';
-    } catch (err) { alert("Error deleting account. Contact support."); }
-}
+    } catch (err) { alert("Error deleting account. Contact support@matchapp.cc."); }
+};
