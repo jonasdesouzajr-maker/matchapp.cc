@@ -46,7 +46,6 @@
     }
     </script>
 
-    <!-- Ultra SEO Tags for 2026 Trends & Global Streaming -->
     <meta name="description" content="MatchApp is your AI streaming concierge. Discover perfect movies, TV series, doramas, and podcasts tailored to your exact mood across Netflix, Prime, Max, Disney+, Hulu, Crunchyroll, and more.">
     <meta name="keywords" content="AI movie recommendation, what to watch tonight, Netflix streaming guide, best series on Max, Prime Video finder, Disney+ hidden gems, Hulu recommendations, Paramount+ tracker, Crunchyroll anime AI, Apple TV+ top shows, Spotify podcast AI, Doramas AI recommendation, streaming concierge, free movie finder, top rated movies 2026, personalized streaming algorithm, where to watch movies online, AI tv show picker, MatchApp, global streaming guide, intelligent cinema picker, watch later portfolio">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
@@ -73,6 +72,10 @@
         .mobile-ad-bottom { display: block; width: 100%; margin-top: 25px; text-align: center; min-height: 100px; }
         @media (min-width: 1100px) { .sidebar-ad-left, .sidebar-ad-right { display: block; } .mobile-ad-bottom { display: none; } .chrome-banner { display: none !important; } }
 
+        /* ADSTERRA BEAUTIFUL CONTAINER (Fix 3) */
+        .ad-banner-container { margin: 25px auto; text-align: center; max-width: 100%; overflow: hidden; background: rgba(0,0,0,0.4); border-radius: 12px; padding: 10px; border: 1px solid rgba(255,255,255,0.1); }
+        .ad-banner-container .ad-label { font-size: 10px; color: #888; display: block; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+
         .chrome-banner { background: linear-gradient(90deg, #111, #333); border: 1px solid #FFD700; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
         .chrome-text { color: #fff; font-size: 13px; line-height: 1.5; text-align: left; flex: 1; margin-right: 15px; }
         .chrome-btn { background: var(--gold); color: #000; font-weight: bold; padding: 8px 16px; border-radius: 20px; text-decoration: none; white-space: nowrap; box-shadow: 0 2px 10px rgba(212,175,55,0.5); transition: transform 0.2s; }
@@ -88,16 +91,13 @@
         .auth-form-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* LOADING ANIMATION & PROGRESS BAR */
         .magic-loading-text { font-size: 22px; font-weight: 900; background: linear-gradient(90deg, #FFD700, #FFF, #FFD700); background-size: 200% auto; -webkit-background-clip: text; color: transparent; animation: gradientShift 2s infinite linear; margin: 0; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 4px 10px rgba(212,175,55,0.4); }
         .progress-bar-container { width: 100%; height: 28px; background: rgba(0, 0, 0, 0.7); border: 2px solid var(--gold); border-radius: 14px; margin: 20px 0; overflow: hidden; position: relative; box-shadow: 0 0 15px rgba(212,175,55,0.3), inset 0 0 10px rgba(0,0,0,0.8); }
         .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #D4AF37, #FFF, #D4AF37, #FFA500); background-size: 300% 100%; animation: goldShimmer 1.5s infinite linear; transition: width 0.1s linear; }
         
-        /* RESPONSIVE VIDEO EMBED CONTAINER FOR ALL BROWSERS */
         .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 12px; border: 1px solid var(--gold); background: #000; box-shadow: 0 4px 20px rgba(0,0,0,0.8); }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
 
-        /* STAR RATING VISUAL STYLING */
         .star-rating-container { display: flex; justify-content: center; gap: 8px; direction: ltr; }
         .star { font-size: 32px; cursor: pointer; color: #444; transition: color 0.2s, transform 0.2s; user-select: none; }
         .star.selected, .star:hover { color: #f5c518; text-shadow: 0 0 12px rgba(245, 197, 24, 0.9); transform: scale(1.2); }
@@ -150,6 +150,7 @@
 
     <div class="page-wrapper" style="flex: 1;">
         <div class="main-layout fade-in">
+            <!-- AdSense Left Sidebar (Waiting) -->
             <aside class="sidebar-ad-left"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block; min-height: 600px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
 
             <div class="container">
@@ -158,7 +159,14 @@
                     <a href="intent://matchapp.cc/#Intent;scheme=https;package=com.android.chrome;end" class="chrome-btn">Open in Chrome</a>
                 </div>
 
-                <header class="ad-placement fade-in" style="margin-bottom: 25px;"><span class="ad-label">SPONSORED</span><div class="adsterra-top-wrapper"><script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script><script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script></div></header>
+                <!-- Adsterra Header Banner -->
+                <div class="ad-banner-container fade-in">
+                    <span class="ad-label">SPONSORED</span>
+                    <div style="display: flex; justify-content: center; align-items: center; min-height: 90px; width: 100%; overflow: hidden;">
+                        <script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script>
+                        <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
+                    </div>
+                </div>
 
                 <div class="how-it-works-glow fade-in">
                     <h3>💡 How MatchApp Works</h3>
@@ -173,6 +181,15 @@
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <input type="text" id="specific-search-input" placeholder="e.g., Shogun, Inception..." style="flex: 1; padding: 14px; border-radius: 8px; border: 1px solid var(--gold); background: rgba(0,0,0,0.5); color: #fff; font-size: 16px;">
                         <button onclick="triggerMatch(true)" class="gold-btn" style="padding: 14px 25px; font-size: 16px;">🔍 Find It</button>
+                    </div>
+                </div>
+
+                <!-- Adsterra Mid Banner (Responsive Mobile/Desktop mix) -->
+                <div class="ad-banner-container fade-in">
+                    <span class="ad-label">SPONSORED</span>
+                    <div style="display: flex; justify-content: center; align-items: center; min-height: 250px; width: 100%; overflow: hidden;">
+                        <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script>
+                        <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
                     </div>
                 </div>
 
@@ -257,11 +274,22 @@
                         <button onclick="recordAction('like')" class="secondary-btn" style="border-color: #2196F3; color: #2196F3;">👍 Like</button>
                         <button onclick="recordAction('dislike')" class="secondary-btn" style="border-color: #ff5252; color: #ff5252;">👎 Don't Like</button>
                     </div>
+
+                    <!-- Adsterra Result Ad -->
+                    <div class="ad-banner-container fade-in" style="margin-top: 20px;">
+                        <span class="ad-label">SPONSORED</span>
+                        <div style="display: flex; justify-content: center; align-items: center; min-height: 90px; width: 100%; overflow: hidden;">
+                            <script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script>
+                            <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
+                        </div>
+                    </div>
                 </div>
                 
+                <!-- AdSense Mobile Bottom (Waiting) -->
                 <div class="mobile-ad-bottom"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block; min-height: 100px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
             </div>
 
+            <!-- AdSense Right Sidebar (Waiting) -->
             <aside class="sidebar-ad-right"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block; min-height: 600px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
         </div>
     </div>
