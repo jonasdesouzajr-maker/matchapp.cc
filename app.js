@@ -1,4 +1,4 @@
-console.log("Mastercode 83.0: Adsterra Loading Fix, Dynamic Posters, Marquee & Free Auth Gate");
+console.log("Mastercode 85.0: Google Consent Mode v2 & Analytics Hub Fully Integrated");
 
 // ==========================================
 // 1. SUPABASE LIVE INITIALIZATION
@@ -22,6 +22,58 @@ try {
 const API_KEY_ADSTERRA = '3ff95a977cddd2b1b865c9186acdd8de'; 
 const ADSTERRA_SMARTLINK = 'https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562f63b85c00cb649448';
 
+// ==========================================
+// GOOGLE CONSENT MODE V2 BANNER & LOGIC
+// ==========================================
+(function initConsentMode() {
+    const consentStatus = localStorage.getItem('matchapp_cookie_consent');
+    
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+
+    // If previously granted, update live tags immediately
+    if (consentStatus === 'granted') {
+        gtag('consent', 'update', {
+            'ad_storage': 'granted',
+            'ad_user_data': 'granted',
+            'ad_personalization': 'granted',
+            'analytics_storage': 'granted'
+        });
+        return; 
+    }
+
+    // If no consent is logged, inject the UI banner on DOM load
+    window.addEventListener('DOMContentLoaded', () => {
+        const banner = document.createElement('div');
+        banner.id = 'cookie-consent-banner';
+        banner.innerHTML = `
+            <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 600px; background: rgba(10,5,5,0.95); border: 1px solid var(--gold); border-radius: 12px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 10000; text-align: center; backdrop-filter: blur(10px); animation: fadeIn 0.5s ease;">
+                <h4 style="color: var(--gold); margin: 0 0 10px 0; font-size: 16px;">🍪 Privacy & Analytics (Consent Mode v2)</h4>
+                <p style="color: #ccc; font-size: 13px; line-height: 1.5; margin-bottom: 15px;">We use cookies and Google Analytics to personalize content, tailor ads, and improve your streaming concierge experience globally. Do you accept?</p>
+                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    <button id="btn-accept-cookies" class="gold-btn" style="padding: 8px 16px; font-size: 13px;">Accept All & Continue</button>
+                    <a href="/consent.html" class="secondary-btn" style="padding: 8px 16px; font-size: 13px; text-decoration: none; border-color: #555; color: #bbb;">Review Privacy Policy</a>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(banner);
+
+        document.getElementById('btn-accept-cookies').addEventListener('click', () => {
+            gtag('consent', 'update', {
+                'ad_storage': 'granted',
+                'ad_user_data': 'granted',
+                'ad_personalization': 'granted',
+                'analytics_storage': 'granted'
+            });
+            localStorage.setItem('matchapp_cookie_consent', 'granted');
+            banner.style.display = 'none';
+        });
+    });
+})();
+
+// ==========================================
+// MAIN APP VARIABLES
+// ==========================================
 let globalMatchTitle = "MatchApp";
 let isUserLoggedIn = false;
 
@@ -299,7 +351,6 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     if (tSim) tSim.innerText = totalTime;
     
     if (!isVIP && !isAdFree) {
-        // Fix for loading ads: Swap from off-screen position to visible
         if(freeAds) {
             freeAds.style.position = 'relative';
             freeAds.style.top = '0';
@@ -378,7 +429,6 @@ function renderResult(selected) {
     if (titleEl) titleEl.innerText = selected.title;
     if (synEl) synEl.innerText = selected.synopsis;
     
-    // Set actual dynamic poster image
     if (posterEl) {
         posterEl.src = selected.posterUrl || "https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=1000&q=80";
         posterEl.onerror = function() {
@@ -430,7 +480,6 @@ function renderResult(selected) {
     resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// FREE AUTHENTICATION GATE INTERCEPTION
 window.recordAction = function(type) {
     if (!globalMatchTitle) return;
 
