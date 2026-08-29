@@ -50,7 +50,6 @@
         @keyframes flyPath1 { 0% { transform: translateX(-100%) rotate(-5deg); } 100% { transform: translateX(100vw) rotate(5deg); } }
         @keyframes flyPath2 { 0% { transform: translateX(100vw) rotate(5deg); } 100% { transform: translateX(-100%) rotate(-5deg); } }
 
-        /* Danger Zone / Grid Specific Styles */
         .danger-checkbox-container { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: left; border: 1px solid rgba(255,255,255,0.1); }
         .danger-checkbox-container.checked-active { border-color: #2196F3; background: rgba(33, 150, 243, 0.1); }
         .danger-checkbox-container label { display: flex; align-items: center; cursor: pointer; gap: 10px; margin: 0; }
@@ -59,15 +58,9 @@
         .btn-danger-active { border-color: #ff5252 !important; color: #fff !important; background: #ff5252 !important; }
 
         .grid-item-card { position: relative; display: inline-block; width: 110px; margin: 5px; border-radius: 8px; overflow: hidden; background: #111; vertical-align: top; transition: transform 0.4s ease, opacity 0.4s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.5); border: 1px solid rgba(212,175,55,0.3); }
-        .grid-item-card img { width: 100%; height: 160px; object-fit: cover; display: block; cursor: pointer; }
         .delete-item-btn { position: absolute; top: 5px; right: 5px; background: rgba(255,82,82,0.9); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-weight: bold; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.5); font-size: 14px; transition: 0.2s; }
         .delete-item-btn:hover { transform: scale(1.15); background: #ff0000; }
         .item-rating-badge { position: absolute; bottom: 5px; left: 5px; background: rgba(0,0,0,0.85); color: #f5c518; padding: 4px 6px; border-radius: 6px; font-size: 11px; font-weight: 900; z-index: 10; border: 1px solid rgba(212,175,55,0.4); text-shadow: 0 1px 2px #000; }
-        .item-title-overlay { position: absolute; bottom: 0; left: 0; width: 100%; padding: 25px 5px 5px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); color: #fff; font-size: 10px; font-weight: bold; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; z-index: 5; pointer-events: none; }
-        .removing-anim { animation: shrinkFade 0.4s forwards; pointer-events: none; }
-        @keyframes shrinkFade { to { transform: scale(0.5); opacity: 0; } }
-        .clear-list-btn { width: 100%; margin-top: 15px; border-color: rgba(255,255,255,0.2) !important; color: #bbb !important; font-size: 12px; padding: 10px; background: transparent; }
-        .clear-list-btn:hover { border-color: #ff5252 !important; color: #ff5252 !important; background: rgba(255,82,82,0.1); }
 
         .seo-footer { background: rgba(10,5,5,0.95); border-top: 2px solid var(--gold); padding: 30px 20px; text-align: center; margin-top: auto; width: 100%; }
         .seo-footer h4 { color: var(--gold); font-size: 18px; margin-bottom: 15px; text-transform: uppercase; }
@@ -100,7 +93,6 @@
 
     <div class="page-wrapper" style="flex: 1;">
         <div class="main-layout fade-in">
-            <!-- Left AdSense -->
             <aside class="sidebar-ad-left"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block; min-height: 600px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
 
             <div class="container">
@@ -117,15 +109,17 @@
                 </div>
 
                 <div class="premium-card fade-in" style="text-align: left; padding: 30px 20px;">
-                    <h2 style="color: var(--gold); margin: 0 0 5px 0; font-size: 26px; text-align: center;">My Hub</h2>
-                    <p id="user-email-display" style="color: var(--text-muted); font-size: 13px; margin: 0 0 20px 0; text-align: center;">Loading session...</p>
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <img id="profile-pic-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 24 24' fill='%23D4AF37'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" alt="Avatar" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--gold); box-shadow: 0 0 15px var(--gold); object-fit: cover;">
+                        <h2 style="color: var(--gold); margin: 10px 0 5px 0; font-size: 26px;">My Hub</h2>
+                        <p id="user-email-display" style="color: var(--text-muted); font-size: 13px; margin: 0;">Loading session...</p>
+                    </div>
                     
-                    <!-- IDENTITY SECTION -->
                     <div style="background: rgba(0,0,0,0.5); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,82,82,0.3); margin-bottom: 25px;">
                         <h3 style="color: #ff5252; margin: 0 0 10px 0; font-size: 18px;">🔒 Core Identity</h3>
-                        <p style="color: #bbb; font-size: 12px; line-height: 1.5; margin-bottom: 18px;">After saving, <strong>these fields cannot be changed.</strong></p>
+                        <p style="color: #bbb; font-size: 12px; line-height: 1.5; margin-bottom: 18px;">Fields are automatically populated from your Google Account.</p>
                         <div class="input-grid">
-                            <div class="input-group"><label>Full Name</label><input type="text" id="profile-name" placeholder="Enter full name..."></div>
+                            <div class="input-group"><label>Full Name</label><input type="text" id="profile-name" placeholder="Full Name"></div>
                             <div class="input-group"><label>Country</label><input type="text" id="profile-country" placeholder="e.g. Brazil, USA, UK..."></div>
                             <div class="input-group"><label>Birthdate (DD/MM/YYYY)</label><input type="text" id="profile-dob" placeholder="e.g. 10/10/1986" maxlength="10"></div>
                             <div class="input-group"><label>Dynamic Age</label><input type="text" id="profile-age-display" disabled style="opacity: 0.7;" placeholder="Calculated automatically"></div>
@@ -135,7 +129,6 @@
                         </div>
                     </div>
 
-                    <!-- AI PREFERENCES SECTION -->
                     <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 25px;">
                         <h3 style="color: var(--gold-glow); margin: 0 0 15px 0; font-size: 18px;">⚙️ AI Tuning</h3>
                         <div class="input-grid">
@@ -165,16 +158,13 @@
                     </div>
                 </div>
 
-                <!-- Mobile AdSense -->
                 <div class="mobile-ad-bottom"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block; min-height: 100px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
             </div>
 
-            <!-- Right AdSense -->
             <aside class="sidebar-ad-right"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block; min-height: 600px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></aside>
         </div>
     </div>
     
-    <!-- Account Deletion Modal -->
     <div id="delete-modal" class="modal-overlay" style="display:none;">
         <div class="premium-card modal-content" style="border: 2px solid #ff5252; max-width: 400px; text-align: center; padding: 30px 20px;">
             <div style="font-size: 60px; margin-bottom: 15px; animation: pulse 2s infinite;">⚠️</div>
@@ -190,22 +180,9 @@
         </div>
     </div>
 
-    <!-- Portfolio Item Preview Modal -->
-    <div id="portfolio-modal" class="modal-overlay" style="display:none;">
-        <div class="premium-card modal-content" style="border: 2px solid var(--gold); padding: 0; overflow: hidden;">
-            <span class="close-x" onclick="document.getElementById('portfolio-modal').style.display='none'">×</span>
-            <div id="port-modal-bg" class="cinematic-header" style="height: 180px; margin-bottom:0;"><div class="cinematic-overlay"></div><div class="cinematic-title-box" style="bottom: 12px;"><h2 id="port-modal-title" class="cinematic-title" style="font-size:24px;">Title</h2></div></div>
-            <div style="padding: 20px; text-align: left; background: var(--bg-card);">
-                <p id="port-modal-synopsis" style="color: #ddd; font-size: 14px; margin: 0 0 18px 0; line-height: 1.5;"></p>
-                <a id="port-modal-link" href="#" target="_blank" class="gold-btn" style="margin-bottom:10px; width: 100%; display: block; text-align: center; text-decoration: none;">▶ Stream Now on <span id="port-modal-plat"></span></a>
-            </div>
-        </div>
-    </div>
-
-    <!-- SEO BACKLINKS FOOTER -->
     <footer class="seo-footer">
         <h4>Stream Directly on Your Favorite Platforms</h4>
-        <p style="color: #888; font-size: 12px; margin-bottom: 20px;">MatchApp searches the web and links you directly to the official apps and websites to watch legally.</p>
+        <p style="color: #888; font-size: 12px; margin-bottom: 20px;">MatchApp searches the web and links you directly to official apps. Questions? Contact support@matchapp.cc</p>
         <div class="streaming-links">
             <a href="https://www.netflix.com" target="_blank" rel="noopener noreferrer">Netflix</a>
             <a href="https://www.max.com" target="_blank" rel="noopener noreferrer">Max</a>
@@ -215,7 +192,7 @@
             <a href="https://tv.apple.com" target="_blank" rel="noopener noreferrer">Apple TV+</a>
             <a href="https://www.spotify.com" target="_blank" rel="noopener noreferrer">Spotify</a>
         </div>
-        <p style="color: #555; font-size: 11px; margin-top: 25px;">&copy; 2026 MatchApp.cc - Your Ultimate AI Streaming Concierge</p>
+        <p style="color: #555; font-size: 11px; margin-top: 25px;">&copy; 2026 MatchApp.cc - Support: support@matchapp.cc</p>
     </footer>
 
     <script src="/app.js"></script>
