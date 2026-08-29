@@ -1,8 +1,8 @@
-console.log("Profile Engine Loaded: Google Auto-Fill Active");
+console.log("Profile Engine Loaded: Google Auto-Fill & Regional Streaming Sync");
 
 document.addEventListener('DOMContentLoaded', async () => {
     setTimeout(async () => {
-        const client = window.supabaseClient || (window.supabase ? window.supabase.createClient('https://zkymvqrmbabngsqblyye.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpreW12cXJtYmFibmdzcWJseXllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY4MDUyNDIsImV4cCI6MjEwMjM4MTI0Mn0._yEVFMfwVU6GBqQ8m3ljfOgA0HSLEDiKMOfYae6ZD8Q') : null);
+        const client = window.supabaseClient;
 
         if (!client) return;
 
@@ -10,28 +10,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (user) {
             const meta = user.user_metadata || {};
             
-            // 1. Email Display
             const emailDisp = document.getElementById('user-email-display');
             if (emailDisp) emailDisp.innerText = `Logged in as: ${user.email}`;
 
-            // 2. Profile Avatar Image from Google
             const avatarUrl = meta.avatar_url || meta.picture;
             const profPic = document.getElementById('profile-pic-preview');
             if (avatarUrl && profPic) profPic.src = avatarUrl;
 
-            // 3. Fetch Stored Profile from Supabase
-            const { data: profile } = await client
-                .from('profiles')
-                .select('*')
-                .eq('id', user.id)
-                .single();
+            const { data: profile } = await client.from('profiles').select('*').eq('id', user.id).single();
 
-            // Auto-Fill Form (Prefers saved profile, falls back to Google OAuth metadata)
             const nameField = document.getElementById('profile-name');
             if (nameField) nameField.value = profile?.full_name || meta.full_name || meta.name || '';
 
             const countryField = document.getElementById('profile-country');
-            if (countryField) countryField.value = profile?.country || meta.locale || meta.country || '';
+            const countryVal = profile?.country || meta.locale || meta.country || '';
+            if (countryField) {
+                countryField.value = countryVal;
+                sortPlatformsByCountry(countryVal); // Prioritize regional streaming platforms!
+            }
 
             const dobField = document.getElementById('profile-dob');
             const birthDateVal = profile?.dob || meta.birthday || meta.birthdate || '';
@@ -52,7 +48,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             }
 
-            // AI Preferences
             if (document.getElementById('pref-service')) document.getElementById('pref-service').value = profile?.pref_service || 'Netflix';
             if (document.getElementById('pref-genre')) document.getElementById('pref-genre').value = profile?.pref_genre || 'Thriller';
             if (document.getElementById('pref-decade')) document.getElementById('pref-decade').value = profile?.pref_decade || 'New';
@@ -65,6 +60,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderProfileGrids();
     }, 600);
 });
+
+// Automatically rearranges dropdown based on user country input
+function sortPlatformsByCountry(countryStr) {
+    const platSelect = document.getElementById('pref-service');
+    if (!platSelect) return;
+    const cLow = countryStr.toLowerCase();
+    
+    // Check if Brazil, push Globoplay up
+    if (cLow.includes('br') || cLow.includes('brazil') || cLow.includes('brasil')) {
+        let globo = Array.from(platSelect.options).find(opt => opt.value === 'Globoplay');
+        if(globo) platSelect.insertBefore(globo, platSelect.options[1]);
+    }
+    // Check if UK, push BBC iPlayer up
+    else if (cLow.includes('uk') || cLow.includes('kingdom') || cLow.includes('britain')) {
+        let bbc = Array.from(platSelect.options).find(opt => opt.value === 'BBC iPlayer');
+        if(bbc) platSelect.insertBefore(bbc, platSelect.options[1]);
+    }
+}
 
 function triggerAgeCalc(dobStr) {
     try {
@@ -104,6 +117,8 @@ window.saveProfileData = async function() {
     const prefService = document.getElementById('pref-service')?.value || '';
     const prefGenre = document.getElementById('pref-genre')?.value || '';
     const prefDecade = document.getElementById('pref-decade')?.value || '';
+    
+    sortPlatformsByCountry(country);
     
     const client = window.supabaseClient;
     if (client) {
