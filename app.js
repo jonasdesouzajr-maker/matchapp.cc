@@ -1,4 +1,4 @@
-console.log("Mastercode 81.0: Locked 20s Ad-Timer, Fixed YouTube Embeds & Fallback Variety");
+console.log("Mastercode 82.0: Adsterra API Token & Smartlink Monetization Injected");
 
 // ==========================================
 // 1. SUPABASE LIVE INITIALIZATION
@@ -15,6 +15,12 @@ try {
 } catch (e) {
     console.error("Supabase Initialization Error:", e);
 }
+
+// ==========================================
+// ADSTERRA MONETIZATION CONFIGURATION
+// ==========================================
+const API_KEY_ADSTERRA = '3ff95a977cddd2b1b865c9186acdd8de'; 
+const ADSTERRA_SMARTLINK = 'https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562f63b85c00cb649448';
 
 let globalMatchTitle = "MatchApp";
 let isUserLoggedIn = false;
@@ -306,7 +312,6 @@ window.triggerMatch = async function(isSpecificSearch = false) {
 
     let matchResult = null;
     
-    // FETCH DATA
     try {
         matchResult = await fetchGeminiData(promptText);
     } catch (err) {
@@ -321,7 +326,6 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         matchResult = fallbacks[Math.floor(Math.random() * fallbacks.length)];
     }
 
-    // FORCE THE PROGRESS BAR TO FINISH EVEN IF AI FAILS FAST (FIX 1)
     let elapsedMs = Date.now() - startTimeMs;
     let remainingMs = (totalTime * 1000) - elapsedMs;
     if (remainingMs > 0) {
@@ -390,7 +394,6 @@ function renderResult(selected) {
         directBtn.innerText = `▶ Search on ${selected.platform}`;
     }
 
-    // EDGE COMPATIBLE VIDEO TRAILER EMBED (FIX 2)
     const trailerBox = document.getElementById('res-trailer-container');
     const iframe = document.getElementById('res-trailer');
     const fallbackBtn = document.getElementById('res-trailer-fallback');
