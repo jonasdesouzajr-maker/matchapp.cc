@@ -1,4 +1,4 @@
-console.log("Mastercode 82.0: Adsterra API Token & Smartlink Monetization Injected");
+console.log("Mastercode 83.0: Adsterra Loading Fix, Dynamic Posters, Marquee & Free Auth Gate");
 
 // ==========================================
 // 1. SUPABASE LIVE INITIALIZATION
@@ -228,7 +228,7 @@ function checkDailyLimit() {
     
     if (lastDate !== todayStr) { dailyCount = 0; localStorage.setItem('match_lastDate', todayStr); }
     if (!isUserLoggedIn && dailyCount >= 5) { 
-        alert("🔒 You've used your 5 free matches today!\n\nPlease register to unlock your next daily allowance!"); 
+        alert("🔒 You've used your 5 free matches today!\n\nPlease register for FREE to unlock your next daily allowance!"); 
         window.openAuthModal(); 
         return false; 
     }
@@ -259,7 +259,7 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         if(!query) { alert("Please enter a title to search."); return; }
         
         if(typeof gtag === 'function') gtag('event', 'search', { search_term: query });
-        promptText = `You are a streaming concierge AI in late 2026. The user is searching for where to stream: "${query}". Find the exact streaming platform where it is currently available. Random seed for processing variant: ${randomSeed}. Output MUST be exactly: {"title": "Correct Title", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The exact streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID of the official trailer"}`;
+        promptText = `You are a streaming concierge AI in late 2026. The user is searching for where to stream: "${query}". Find the exact streaming platform where it is currently available. Random seed for processing variant: ${randomSeed}. Output MUST be exactly: {"title": "Correct Title", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The exact streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID of the official trailer that is verified to be embeddable", "posterUrl": "A highly reliable, working direct image URL for the official poster cover art"}`;
     } else {
         const cat = document.getElementById('q-category')?.value || 'any'; 
         const plat = document.getElementById('q-platform')?.value || 'any';
@@ -270,15 +270,18 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         if(typeof gtag === 'function') gtag('event', 'ai_match_requested');
         const excludeStr = [...seenList, ...dislikedList].join(', ');
         
-        promptText = `You are a streaming concierge AI in late 2026. Find a highly-rated, hidden gem streaming title based on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}, Aesthetic: ${aest}, Pacing: ${pac}. CRITICAL: Do NOT recommend any of these titles ever again: ${excludeStr}. RANDOMIZATION SEED: ${randomSeed}. You MUST scour your catalog globally and provide a highly unique recommendation different from defaults. Output MUST be a valid JSON object matching exactly: {"title": "Title of movie/series", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID (must be working embeddable)"}`;
+        promptText = `You are a streaming concierge AI in late 2026. Find a highly-rated, hidden gem streaming title based on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}, Aesthetic: ${aest}, Pacing: ${pac}. CRITICAL: Do NOT recommend any of these titles ever again: ${excludeStr}. RANDOMIZATION SEED: ${randomSeed}. You MUST scour your catalog globally. Output MUST be a valid JSON object exactly matching this structure: {"title": "Title of movie/series", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID of the official trailer that is verified to be embeddable", "posterUrl": "A highly reliable, working direct image URL for the official poster cover art"}`;
     }
 
     const qBox = document.getElementById('questionnaire-box');
     const sBox = document.getElementById('search-box');
     const rBox = document.getElementById('result-box');
+    const marqueeBox = document.querySelector('.hero-marquee-container');
+    
     if (qBox) qBox.style.display = 'none';
     if (sBox) sBox.style.display = 'none';
     if (rBox) rBox.style.display = 'none';
+    if (marqueeBox) marqueeBox.style.display = 'none';
     
     const loadBox = document.getElementById('loading-box');
     if (!loadBox) return;
@@ -296,7 +299,13 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     if (tSim) tSim.innerText = totalTime;
     
     if (!isVIP && !isAdFree) {
-        if(freeAds) freeAds.style.display = 'flex';
+        // Fix for loading ads: Swap from off-screen position to visible
+        if(freeAds) {
+            freeAds.style.position = 'relative';
+            freeAds.style.top = '0';
+            freeAds.style.visibility = 'visible';
+            freeAds.style.display = 'flex';
+        }
         if(vipMsg) vipMsg.style.display = 'none';
     } else {
         if(freeAds) freeAds.style.display = 'none';
@@ -317,11 +326,11 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     } catch (err) {
         console.error("AI Fallback Invoked.");
         const fallbacks = [
-            { title: "Dune: Part Two", synopsis: "Paul Atreides unites with Chani and the Fremen on a warpath of revenge against the conspirators who destroyed his family.", platform: "Max", imdb: "8.6", trailerId: "U2Qp5pL3ovA" },
-            { title: "Severance", synopsis: "Mark leads a team of office workers whose memories have been surgically divided between their work and personal lives.", platform: "Apple TV+", imdb: "8.7", trailerId: "xEQP4VVukv8" },
-            { title: "Shōgun", synopsis: "When a mysterious European ship is found marooned in a nearby fishing village, Lord Yoshii Toranaga discovers secrets that could tip the scales of power.", platform: "Hulu", imdb: "8.7", trailerId: "yAN5uspO_hk" },
-            { title: "Fallout", synopsis: "In a future, post-apocalyptic Los Angeles brought about by nuclear decimation, citizens must live in underground bunkers to protect themselves.", platform: "Prime Video", imdb: "8.4", trailerId: "V-mugKDQRug" },
-            { title: "Dark Matter", synopsis: "A physicist is abducted into an alternate version of his life. To get back to his true family, he must embark on a harrowing journey to save them.", platform: "Apple TV+", imdb: "7.7", trailerId: "j6ucGbOkaG8" }
+            { title: "Dune: Part Two", synopsis: "Paul Atreides unites with Chani and the Fremen on a warpath of revenge against the conspirators who destroyed his family.", platform: "Max", imdb: "8.6", trailerId: "_YUzQa_1RCE", posterUrl: "https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2JGjjc91p.jpg" },
+            { title: "Severance", synopsis: "Mark leads a team of office workers whose memories have been surgically divided between their work and personal lives.", platform: "Apple TV+", imdb: "8.7", trailerId: "xEQP4VVukv8", posterUrl: "https://image.tmdb.org/t/p/w500/zQkxZLuq1M74n3xZJpGkS0yZ7q7.jpg" },
+            { title: "Shōgun", synopsis: "When a mysterious European ship is found marooned in a nearby fishing village, Lord Yoshii Toranaga discovers secrets that could tip the scales of power.", platform: "Hulu", imdb: "8.7", trailerId: "yAN5uspO_hk", posterUrl: "https://image.tmdb.org/t/p/w500/7O4iVfOMQmdCSxhOg1WJU1faaM.jpg" },
+            { title: "Fallout", synopsis: "In a future, post-apocalyptic Los Angeles brought about by nuclear decimation, citizens must live in underground bunkers to protect themselves.", platform: "Prime Video", imdb: "8.4", trailerId: "V-mugKDQRug", posterUrl: "https://image.tmdb.org/t/p/w500/A3eNswyFw9h2N7tF1yF63wKqfR9.jpg" },
+            { title: "Dark Matter", synopsis: "A physicist is abducted into an alternate version of his life. To get back to his true family, he must embark on a harrowing journey to save them.", platform: "Apple TV+", imdb: "7.7", trailerId: "j6ucGbOkaG8", posterUrl: "https://image.tmdb.org/t/p/w500/c6OxgKAdhX5F5E4E3O562U3L03i.jpg" }
         ];
         matchResult = fallbacks[Math.floor(Math.random() * fallbacks.length)];
     }
@@ -364,8 +373,18 @@ function renderResult(selected) {
 
     const titleEl = document.getElementById('res-title');
     const synEl = document.getElementById('res-synopsis');
+    const posterEl = document.getElementById('res-poster-img');
+
     if (titleEl) titleEl.innerText = selected.title;
     if (synEl) synEl.innerText = selected.synopsis;
+    
+    // Set actual dynamic poster image
+    if (posterEl) {
+        posterEl.src = selected.posterUrl || "https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=1000&q=80";
+        posterEl.onerror = function() {
+            this.src = "https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=1000&q=80";
+        };
+    }
 
     const badge = document.getElementById('res-platform-badge');
     if (badge) {
@@ -411,8 +430,15 @@ function renderResult(selected) {
     resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+// FREE AUTHENTICATION GATE INTERCEPTION
 window.recordAction = function(type) {
     if (!globalMatchTitle) return;
+
+    if (!isUserLoggedIn) {
+        alert("💎 Unlock Premium Features for FREE!\n\nTo save titles to your Portfolio, track your Watch History, and get more daily AI Matches, please create a free account.\n\nJoin the MatchApp community now and never lose a match!");
+        window.openAuthModal();
+        return;
+    }
 
     if (type === 'save') {
         if (!savedList.includes(globalMatchTitle)) savedList.push(globalMatchTitle);
@@ -448,6 +474,12 @@ window.recordAction = function(type) {
 document.addEventListener('click', function (event) {
     const star = event.target.closest('.star');
     if (!star) return;
+
+    if (!isUserLoggedIn) {
+        alert("💎 Unlock Premium Features for FREE!\n\nTo rate titles and build your Watch History, please create a free account first.");
+        window.openAuthModal();
+        return;
+    }
 
     const rating = parseInt(star.getAttribute('data-value'));
     const container = star.closest('.star-rating-container');
