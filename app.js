@@ -1,4 +1,4 @@
-console.log("Mastercode 78.0: Google Auto-Sync Profile Engine, DB Purchase Fix & Randomized AI");
+console.log("Mastercode 79.0: G-tag Global, Prompt Post-Action Engine & Infinite Catalog");
 
 // ==========================================
 // 1. SUPABASE LIVE INITIALIZATION
@@ -10,10 +10,7 @@ let supabaseClient = null;
 try {
     if (window.supabase) {
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        window.supabaseClient = supabaseClient; // Global reference for pricing.js & profile.js
-        console.log("Supabase Client Successfully Initialized.");
-    } else {
-        console.warn("Supabase CDN not found in HTML.");
+        window.supabaseClient = supabaseClient; 
     }
 } catch (e) {
     console.error("Supabase Initialization Error:", e);
@@ -57,7 +54,7 @@ window.playPremiumSound = function() {
         osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
         gain.gain.setValueAtTime(0.3, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
         osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.2);
-    } catch (e) { console.log('Audio blocked by browser policy'); }
+    } catch (e) { }
 };
 
 window.fireConfetti = function() {
@@ -67,7 +64,7 @@ window.fireConfetti = function() {
 };
 
 // ==========================================
-// MODAL & AUTHENTICATION LOGIC (WITH AUTO GOOGLE PROFILE DATA)
+// MODAL & AUTHENTICATION LOGIC 
 // ==========================================
 window.openAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'flex'; };
 window.closeAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'none'; };
@@ -89,7 +86,6 @@ window.switchAuthTab = function(tab) {
     if(activeForm) activeForm.classList.add('active');
 };
 
-// Google Auth with Scopes for Name, Email, Avatar, Birthday & Gender
 window.signInWithGoogle = async function() { 
     if (!supabaseClient) { alert("Server connection failed. Database client not initialized."); return; } 
     const { error } = await supabaseClient.auth.signInWithOAuth({ 
@@ -154,7 +150,6 @@ window.doLogout = async function() {
     window.location.href = '/index.html'; 
 };
 
-// Auto-Sync User Metadata to Supabase DB Profiles Table
 if (supabaseClient) {
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
         if (session && session.user) {
@@ -162,7 +157,6 @@ if (supabaseClient) {
             const user = session.user;
             const meta = user.user_metadata || {};
 
-            // Auto-populate profile table with Google data if available
             try {
                 const fullName = meta.full_name || meta.name || '';
                 const avatarUrl = meta.avatar_url || meta.picture || '';
@@ -175,11 +169,8 @@ if (supabaseClient) {
                     avatar_url: avatarUrl,
                     updated_at: new Date().toISOString()
                 }, { onConflict: 'id', ignoreDuplicates: true });
-            } catch(e) {
-                console.log("Profile auto-sync notification:", e);
-            }
+            } catch(e) {}
 
-            // Update UI elements
             const regBtn = document.getElementById('nav-reg-btn');
             const profTab = document.getElementById('profile-link-tab');
             const logoutBtn = document.getElementById('nav-logout-btn');
@@ -231,6 +222,7 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     if (!checkDailyLimit()) return;
 
     let promptText = "";
+    // FORCE RANDOMIZATION FOR ZERO DUPLICATES
     const randomSeed = Math.floor(Math.random() * 999999); 
     
     if (isSpecificSearch) {
@@ -251,9 +243,10 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         if(typeof gtag === 'function') gtag('event', 'ai_match_requested');
         const excludeStr = [...seenList, ...dislikedList].join(', ');
         
-        promptText = `You are a streaming concierge AI in late 2026. Find a highly-rated, hidden gem streaming title based on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}, Aesthetic: ${aest}, Pacing: ${pac}. CRITICAL: Do NOT recommend any of these: ${excludeStr}. RANDOMIZATION SEED: ${randomSeed}. You MUST scour your catalog and provide a highly unique, varied recommendation different from common defaults. Output MUST be a valid JSON object matching exactly: {"title": "Title of movie/series", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID"}`;
+        promptText = `You are a streaming concierge AI in late 2026. Find a highly-rated, hidden gem streaming title based on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}, Aesthetic: ${aest}, Pacing: ${pac}. CRITICAL: Do NOT recommend any of these titles ever again: ${excludeStr}. RANDOMIZATION SEED: ${randomSeed}. You MUST scour your catalog globally and provide a highly unique recommendation different from defaults. Output MUST be a valid JSON object matching exactly: {"title": "Title of movie/series", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID"}`;
     }
 
+    // Hide all UI
     const qBox = document.getElementById('questionnaire-box');
     const sBox = document.getElementById('search-box');
     const rBox = document.getElementById('result-box');
@@ -261,6 +254,7 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     if (sBox) sBox.style.display = 'none';
     if (rBox) rBox.style.display = 'none';
     
+    // ACTIVATE 20S LOADING SEQUENCE WITH METER BAR
     const loadBox = document.getElementById('loading-box');
     if (!loadBox) return;
     loadBox.style.display = 'block';
@@ -318,6 +312,18 @@ function renderResult(selected) {
     const resultBox = document.getElementById('result-box');
     if (loadBox) loadBox.style.display = 'none';
     if (!resultBox) return;
+    
+    // Restore the Action Buttons (in case they were changed in a previous match)
+    const actionGrid = document.getElementById('action-btn-grid');
+    if(actionGrid) {
+        actionGrid.innerHTML = `
+            <button onclick="recordAction('save')" class="secondary-btn" style="border-color: var(--gold); color: var(--gold-glow);">⭐ Watch Later</button>
+            <button onclick="recordAction('seen')" class="secondary-btn" style="border-color: #25D366; color: #25D366;">✔️ Seen It</button>
+            <button onclick="recordAction('like')" class="secondary-btn" style="border-color: #2196F3; color: #2196F3;">👍 Like</button>
+            <button onclick="recordAction('dislike')" class="secondary-btn" style="border-color: #ff5252; color: #ff5252;">👎 Don't Like</button>
+        `;
+    }
+
     resultBox.style.display = 'block';
     
     window.playPremiumSound();
@@ -339,9 +345,14 @@ function renderResult(selected) {
         else if (pLower.includes('max') || pLower.includes('hbo')) badge.style.background = '#8A2BE2';
         else if (pLower.includes('prime')) badge.style.background = '#00A8E1';
         else if (pLower.includes('disney')) badge.style.background = '#113CCF';
+        else if (pLower.includes('hulu')) badge.style.background = '#1ce783';
+        else if (pLower.includes('peacock')) badge.style.background = '#ffffff';
+        else if (pLower.includes('crunchyroll')) badge.style.background = '#f47521';
+        else if (pLower.includes('paramount')) badge.style.background = '#0064ff';
         else if (pLower.includes('apple')) badge.style.background = '#fff'; 
         else badge.style.background = 'var(--gold)';
-        badge.style.color = pLower.includes('apple') ? '#000' : '#fff';
+        
+        badge.style.color = (pLower.includes('apple') || pLower.includes('peacock')) ? '#000' : '#fff';
     }
 
     const imdbBadge = document.getElementById('res-imdb-badge');
@@ -363,10 +374,43 @@ function renderResult(selected) {
     resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-window.saveToList = function() { if (globalMatchTitle && !savedList.includes(globalMatchTitle)) { savedList.push(globalMatchTitle); syncListsToDatabase(); alert(`⭐ "${globalMatchTitle}" saved!`); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } const rBox = document.getElementById('result-box'); if(rBox) rBox.style.display = 'none'; triggerMatch(false); };
-window.markAsSeen = function() { if (globalMatchTitle && !seenList.includes(globalMatchTitle)) { seenList.push(globalMatchTitle); syncListsToDatabase(); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } const rBox = document.getElementById('result-box'); if(rBox) rBox.style.display = 'none'; triggerMatch(false); };
-window.markAsLiked = function() { if (globalMatchTitle) { userRatings[globalMatchTitle] = 5; if (!seenList.includes(globalMatchTitle)) seenList.push(globalMatchTitle); syncListsToDatabase(); if(typeof renderProfileGrids === 'function') renderProfileGrids(); } const rBox = document.getElementById('result-box'); if(rBox) rBox.style.display = 'none'; triggerMatch(false); };
-window.markAsDisliked = function() { if (globalMatchTitle && !dislikedList.includes(globalMatchTitle)) { dislikedList.push(globalMatchTitle); userRatings[globalMatchTitle] = 1; syncListsToDatabase(); } const rBox = document.getElementById('result-box'); if(rBox) rBox.style.display = 'none'; triggerMatch(false); };
+// ==========================================
+// USER CONTROL UX: NO AUTO-TRIGGERS
+// ==========================================
+window.recordAction = function(type) {
+    if (!globalMatchTitle) return;
+
+    if (type === 'save') {
+        if (!savedList.includes(globalMatchTitle)) savedList.push(globalMatchTitle);
+        alert(`⭐ "${globalMatchTitle}" saved to your Portfolio!`);
+    } else if (type === 'seen') {
+        if (!seenList.includes(globalMatchTitle)) seenList.push(globalMatchTitle);
+    } else if (type === 'like') {
+        userRatings[globalMatchTitle] = 5;
+        if (!seenList.includes(globalMatchTitle)) seenList.push(globalMatchTitle);
+    } else if (type === 'dislike') {
+        userRatings[globalMatchTitle] = 1;
+        if (!dislikedList.includes(globalMatchTitle)) dislikedList.push(globalMatchTitle);
+    }
+    
+    syncListsToDatabase();
+    if(typeof renderProfileGrids === 'function') renderProfileGrids();
+
+    // Replaces the buttons with a beautiful DOM prompt asking what they want to do next
+    const actionGrid = document.getElementById('action-btn-grid');
+    if (actionGrid) {
+        actionGrid.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 20px; background: rgba(37,211,102,0.1); border: 1px solid #25D366; border-radius: 12px; margin-bottom: 10px; animation: fadeIn 0.4s ease;">
+                <h4 style="color:#25D366; margin:0 0 10px 0; font-size: 18px;">✅ Action Recorded!</h4>
+                <p style="color:#ddd; font-size:14px; margin:0 0 15px 0;">Would you like to generate a new AI match?</p>
+                <div style="display:flex; gap:10px; justify-content:center; flex-wrap: wrap;">
+                    <button onclick="document.getElementById('result-box').style.display='none'; triggerMatch(false);" class="gold-btn" style="padding:10px 20px;">Yes, Match Again 🔄</button>
+                    <button onclick="window.location.href='/profile/profile.html'" class="secondary-btn" style="padding:10px 20px; border-color: #fff; color: #fff;">View My Hub 📂</button>
+                </div>
+            </div>
+        `;
+    }
+};
 
 document.addEventListener('click', function (event) {
     if (!event.target.classList.contains('star')) return;
