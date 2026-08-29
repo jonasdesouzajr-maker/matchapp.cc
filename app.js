@@ -1,7 +1,7 @@
-console.log("Mastercode 77.0: Live Auth, 20s Adsterra Progress Bar & Randomized Matching Engine");
+console.log("Mastercode 78.0: Google Auto-Sync Profile Engine, DB Purchase Fix & Randomized AI");
 
 // ==========================================
-// 1. SUPABASE LIVE INITIALIZATION (KEYS INSERTED)
+// 1. SUPABASE LIVE INITIALIZATION
 // ==========================================
 const SUPABASE_URL = 'https://zkymvqrmbabngsqblyye.supabase.co'; 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpreW12cXJtYmFibmdzcWJseXllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY4MDUyNDIsImV4cCI6MjEwMjM4MTI0Mn0._yEVFMfwVU6GBqQ8m3ljfOgA0HSLEDiKMOfYae6ZD8Q';
@@ -10,6 +10,7 @@ let supabaseClient = null;
 try {
     if (window.supabase) {
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        window.supabaseClient = supabaseClient; // Global reference for pricing.js & profile.js
         console.log("Supabase Client Successfully Initialized.");
     } else {
         console.warn("Supabase CDN not found in HTML.");
@@ -66,7 +67,7 @@ window.fireConfetti = function() {
 };
 
 // ==========================================
-// MODAL & AUTHENTICATION LOGIC
+// MODAL & AUTHENTICATION LOGIC (WITH AUTO GOOGLE PROFILE DATA)
 // ==========================================
 window.openAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'flex'; };
 window.closeAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'none'; };
@@ -88,11 +89,15 @@ window.switchAuthTab = function(tab) {
     if(activeForm) activeForm.classList.add('active');
 };
 
+// Google Auth with Scopes for Name, Email, Avatar, Birthday & Gender
 window.signInWithGoogle = async function() { 
     if (!supabaseClient) { alert("Server connection failed. Database client not initialized."); return; } 
     const { error } = await supabaseClient.auth.signInWithOAuth({ 
         provider: 'google', 
-        options: { redirectTo: window.location.origin + '/profile/profile.html' } 
+        options: { 
+            redirectTo: window.location.origin + '/profile/profile.html',
+            scopes: 'https://www.googleapis.com/auth/user.birthday.read https://www.googleapis.com/auth/user.gender.read'
+        } 
     }); 
     if (error) alert("Google Login Error: " + error.message); 
 };
@@ -149,14 +154,41 @@ window.doLogout = async function() {
     window.location.href = '/index.html'; 
 };
 
+// Auto-Sync User Metadata to Supabase DB Profiles Table
 if (supabaseClient) {
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
         if (session && session.user) {
             isUserLoggedIn = true;
+            const user = session.user;
+            const meta = user.user_metadata || {};
+
+            // Auto-populate profile table with Google data if available
+            try {
+                const fullName = meta.full_name || meta.name || '';
+                const avatarUrl = meta.avatar_url || meta.picture || '';
+                const email = user.email || '';
+
+                await supabaseClient.from('profiles').upsert({
+                    id: user.id,
+                    email: email,
+                    full_name: fullName,
+                    avatar_url: avatarUrl,
+                    updated_at: new Date().toISOString()
+                }, { onConflict: 'id', ignoreDuplicates: true });
+            } catch(e) {
+                console.log("Profile auto-sync notification:", e);
+            }
+
+            // Update UI elements
             const regBtn = document.getElementById('nav-reg-btn');
             const profTab = document.getElementById('profile-link-tab');
             const logoutBtn = document.getElementById('nav-logout-btn');
             const upgradeBtn = document.getElementById('nav-upgrade-btn');
+            const profPic = document.getElementById('profile-pic-preview');
+
+            if (meta.avatar_url || meta.picture) {
+                if (profPic) profPic.src = meta.avatar_url || meta.picture;
+            }
             
             if (regBtn) regBtn.style.display = 'none';
             if (profTab) profTab.style.display = 'inline-flex';
@@ -167,7 +199,7 @@ if (supabaseClient) {
 }
 
 // ==========================================
-// SECURE GEMINI AI ENGINE (RANDOMIZED) & 20s PROGRESS BAR
+// SECURE GEMINI AI ENGINE & 20s PROGRESS BAR
 // ==========================================
 function checkDailyLimit() {
     if (isVIP || isAdFree) return true; 
@@ -199,7 +231,6 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     if (!checkDailyLimit()) return;
 
     let promptText = "";
-    // FORCE RANDOMIZATION so they never get the same result twice
     const randomSeed = Math.floor(Math.random() * 999999); 
     
     if (isSpecificSearch) {
@@ -223,7 +254,6 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         promptText = `You are a streaming concierge AI in late 2026. Find a highly-rated, hidden gem streaming title based on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}, Aesthetic: ${aest}, Pacing: ${pac}. CRITICAL: Do NOT recommend any of these: ${excludeStr}. RANDOMIZATION SEED: ${randomSeed}. You MUST scour your catalog and provide a highly unique, varied recommendation different from common defaults. Output MUST be a valid JSON object matching exactly: {"title": "Title of movie/series", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID"}`;
     }
 
-    // Hide all UI
     const qBox = document.getElementById('questionnaire-box');
     const sBox = document.getElementById('search-box');
     const rBox = document.getElementById('result-box');
@@ -231,7 +261,6 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     if (sBox) sBox.style.display = 'none';
     if (rBox) rBox.style.display = 'none';
     
-    // ACTIVATE 20S LOADING SEQUENCE
     const loadBox = document.getElementById('loading-box');
     if (!loadBox) return;
     loadBox.style.display = 'block';
@@ -255,7 +284,6 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         if(vipMsg) vipMsg.style.display = 'block';
     }
 
-    // Beautiful Fill Meter Animation
     let timerInterval = setInterval(() => {
         let elapsed = (Date.now() - startTime) / 1000;
         let pct = Math.min((elapsed / totalTime) * 100, 100);
@@ -271,7 +299,6 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         matchResult = apiResult;
     } catch (err) {
         console.error("AI Fallback Invoked. Randomizing catalog selection...");
-        // Expanded Fallback Array so it never shows just Dune repeatedly if DB is offline
         const fallbacks = [
             { title: "Dune: Part Two", synopsis: "Paul Atreides unites with Chani and the Fremen on a warpath of revenge against the conspirators who destroyed his family.", platform: "Max", imdb: "8.6", trailerId: "Way9Dexny3w" },
             { title: "Severance", synopsis: "Mark leads a team of office workers whose memories have been surgically divided between their work and personal lives.", platform: "Apple TV+", imdb: "8.7", trailerId: "xEQP4VVukv8" },
