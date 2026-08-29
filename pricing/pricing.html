@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>MatchApp | VIP Pricing & Unlimited AI Concierge</title>
     
+<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -37,6 +38,9 @@
         .chrome-banner { background: linear-gradient(90deg, #111, #333); border: 1px solid #FFD700; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
         .chrome-text { color: #fff; font-size: 13px; line-height: 1.5; text-align: left; flex: 1; margin-right: 15px; }
         .chrome-btn { background: var(--gold); color: #000; font-weight: bold; padding: 8px 16px; border-radius: 20px; text-decoration: none; white-space: nowrap; box-shadow: 0 2px 10px rgba(212,175,55,0.5); transition: transform 0.2s; }
+
+        .price-badge { font-size: 32px; font-weight: 900; color: #fff; margin: 15px 0; }
+        .price-badge span { font-size: 14px; color: #aaa; font-weight: normal; }
 
         .how-it-works-glow { background: rgba(20, 5, 5, 0.85); border: 2px solid var(--gold); border-radius: 16px; padding: 25px; margin: 0 0 25px 0; text-align: center; box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
         .how-it-works-glow h3 { color: #fff; font-size: 26px; font-weight: 900; margin: 0 0 15px 0; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
@@ -95,19 +99,35 @@
                 </div>
 
                 <h1 style="color: var(--gold); font-size: 32px; margin-bottom: 10px;">Unlock Unlimited AI Concierge</h1>
-                <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 40px;">Choose your plan to remove ads and unlock infinite matches.</p>
+                <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 40px;">Choose your plan below to remove ads and unlock infinite matches.</p>
 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; text-align: left;">
+                    
+                    <!-- PLAN 1: AD-FREE -->
                     <div class="premium-card">
-                        <h3 style="color: var(--gold); font-size: 20px; margin-bottom: 10px;">Ad-Free Pass</h3>
-                        <p style="color: #bbb; font-size: 13px; margin-bottom: 20px;">Remove all banner ads and sponsored countdown breaks.</p>
-                        <button id="btn-ad_free" onclick="processCheckout('ad_free')" class="gold-btn" style="width: 100%;">Get Pass</button>
+                        <h3 style="color: var(--gold); font-size: 22px; margin-bottom: 5px;">Ad-Free Pass</h3>
+                        <div class="price-badge">$1.99 <span>/ one-time</span></div>
+                        <ul style="color: #bbb; font-size: 13px; line-height: 1.8; margin-bottom: 25px; padding-left: 18px;">
+                            <li>✔️ Remove all banner & sidebar ads</li>
+                            <li>✔️ Fast-track 4s matches</li>
+                            <li>✔️ Lifetime profile unlock</li>
+                        </ul>
+                        <button id="btn-ad_free" onclick="processCheckout('ad_free')" class="gold-btn" style="width: 100%; font-size: 16px; padding: 14px;">Get Ad-Free Pass ($1.99)</button>
                     </div>
-                    <div class="premium-card" style="border: 2px solid var(--gold);">
-                        <h3 style="color: var(--gold-glow); font-size: 20px; margin-bottom: 10px;">VIP Monthly</h3>
-                        <p style="color: #bbb; font-size: 13px; margin-bottom: 20px;">Unlimited matches, zero ads, and priority multi-platform AI routing.</p>
-                        <button id="btn-vip_monthly" onclick="processCheckout('vip_monthly')" class="gold-btn" style="width: 100%;">Go VIP</button>
+
+                    <!-- PLAN 2: VIP MONTHLY -->
+                    <div class="premium-card" style="border: 2px solid var(--gold); background: rgba(212,175,55,0.05);">
+                        <h3 style="color: var(--gold-glow); font-size: 22px; margin-bottom: 5px;">VIP Monthly</h3>
+                        <div class="price-badge">$4.99 <span>/ month</span></div>
+                        <ul style="color: #bbb; font-size: 13px; line-height: 1.8; margin-bottom: 25px; padding-left: 18px;">
+                            <li>✔️ <strong>Unlimited</strong> AI Matches Daily</li>
+                            <li>✔️ <strong>Zero Ads</strong> permanently</li>
+                            <li>✔️ Instant 4-second VIP Routing</li>
+                            <li>✔️ Prioritized Regional Content</li>
+                        </ul>
+                        <button id="btn-vip_monthly" onclick="processCheckout('vip_monthly')" class="gold-btn" style="width: 100%; font-size: 16px; padding: 14px; background: linear-gradient(90deg,#FFD700,#FFA500);">Go VIP ($4.99/mo)</button>
                     </div>
+
                 </div>
 
                 <div class="mobile-ad-bottom"><span class="ad-label" style="display:block; text-align:center;">SPONSORED</span><ins class="adsbygoogle" style="display:block; min-height: 100px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
@@ -117,6 +137,7 @@
         </div>
     </div>
 
+    <!-- SEO BACKLINKS FOOTER -->
     <footer class="seo-footer">
         <h4>Global Streaming Platforms & Apps</h4>
         <p style="color: #888; font-size: 12px; margin-bottom: 20px;">MatchApp securely routes you directly to the official platforms to watch globally.</p>
