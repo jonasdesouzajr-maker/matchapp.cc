@@ -1,4 +1,4 @@
-console.log("Mastercode 80.0: Edge Compatibility, Working Video Embeds, Interactive Ratings & Stripe Auto-Unlock");
+console.log("Mastercode 81.0: Locked 20s Ad-Timer, Fixed YouTube Embeds & Fallback Variety");
 
 // ==========================================
 // 1. SUPABASE LIVE INITIALIZATION
@@ -27,7 +27,6 @@ let userRatings = JSON.parse(localStorage.getItem('match_userRatings') || '{}');
 let isAdFree = localStorage.getItem('match_adFree') === 'true'; 
 let isVIP = localStorage.getItem('match_isVIP') === 'true';
 
-// Check if returning from a successful Stripe Payment
 (function checkStripePaymentReturn() {
     const params = new URLSearchParams(window.location.search);
     if (params.get('payment') === 'success') {
@@ -40,7 +39,6 @@ let isVIP = localStorage.getItem('match_isVIP') === 'true';
             isAdFree = true;
         }
         
-        // Sync VIP status to DB
         if (supabaseClient) {
             supabaseClient.auth.getUser().then(({ data: { user } }) => {
                 if (user) {
@@ -63,9 +61,6 @@ let isVIP = localStorage.getItem('match_isVIP') === 'true';
     }
 })();
 
-// ------------------------------------------
-// CLOCK FUNCTION
-// ------------------------------------------
 function updateClock() { 
     try {
         const clock = document.getElementById('real-time-clock'); 
@@ -78,9 +73,6 @@ function updateClock() {
 updateClock();
 setInterval(updateClock, 1000);
 
-// ==========================================
-// SFX & VFX ENGINE
-// ==========================================
 window.playPremiumSound = function() {
     try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -99,9 +91,6 @@ window.fireConfetti = function() {
     }
 };
 
-// ==========================================
-// MODAL & AUTHENTICATION LOGIC 
-// ==========================================
 window.openAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'flex'; };
 window.closeAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'none'; };
 
@@ -225,9 +214,6 @@ if (supabaseClient) {
     });
 }
 
-// ==========================================
-// SECURE GEMINI AI ENGINE & 20s PROGRESS BAR
-// ==========================================
 function checkDailyLimit() {
     if (isVIP || isAdFree) return true; 
     const todayStr = new Date().toLocaleDateString(); 
@@ -278,7 +264,7 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         if(typeof gtag === 'function') gtag('event', 'ai_match_requested');
         const excludeStr = [...seenList, ...dislikedList].join(', ');
         
-        promptText = `You are a streaming concierge AI in late 2026. Find a highly-rated, hidden gem streaming title based on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}, Aesthetic: ${aest}, Pacing: ${pac}. CRITICAL: Do NOT recommend any of these titles ever again: ${excludeStr}. RANDOMIZATION SEED: ${randomSeed}. You MUST scour your catalog globally and provide a highly unique recommendation different from defaults. Output MUST be a valid JSON object matching exactly: {"title": "Title of movie/series", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID"}`;
+        promptText = `You are a streaming concierge AI in late 2026. Find a highly-rated, hidden gem streaming title based on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}, Aesthetic: ${aest}, Pacing: ${pac}. CRITICAL: Do NOT recommend any of these titles ever again: ${excludeStr}. RANDOMIZATION SEED: ${randomSeed}. You MUST scour your catalog globally and provide a highly unique recommendation different from defaults. Output MUST be a valid JSON object matching exactly: {"title": "Title of movie/series", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID (must be working embeddable)"}`;
     }
 
     const qBox = document.getElementById('questionnaire-box');
@@ -293,7 +279,7 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     loadBox.style.display = 'block';
 
     let totalTime = isVIP || isAdFree ? 4 : 20; 
-    let startTime = Date.now();
+    let startTimeMs = Date.now();
     
     const pBar = document.getElementById('ai-progress-bar');
     const tSim = document.getElementById('ad-timer-sim');
@@ -312,31 +298,38 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     }
 
     let timerInterval = setInterval(() => {
-        let elapsed = (Date.now() - startTime) / 1000;
+        let elapsed = (Date.now() - startTimeMs) / 1000;
         let pct = Math.min((elapsed / totalTime) * 100, 100);
         if (pBar) pBar.style.width = pct + '%';
         if (tSim) tSim.innerText = Math.max(Math.ceil(totalTime - elapsed), 0);
     }, 50);
 
     let matchResult = null;
+    
+    // FETCH DATA
     try {
-        let fetchPromise = fetchGeminiData(promptText);
-        let delayPromise = new Promise(resolve => setTimeout(resolve, totalTime * 1000));
-        let [apiResult] = await Promise.all([fetchPromise, delayPromise]); 
-        matchResult = apiResult;
+        matchResult = await fetchGeminiData(promptText);
     } catch (err) {
-        console.error("AI Fallback Invoked. Randomizing catalog selection...");
+        console.error("AI Fallback Invoked.");
         const fallbacks = [
-            { title: "Dune: Part Two", synopsis: "Paul Atreides unites with Chani and the Fremen on a warpath of revenge against the conspirators who destroyed his family.", platform: "Max", imdb: "8.6", trailerId: "Way9Dexny3w" },
+            { title: "Dune: Part Two", synopsis: "Paul Atreides unites with Chani and the Fremen on a warpath of revenge against the conspirators who destroyed his family.", platform: "Max", imdb: "8.6", trailerId: "U2Qp5pL3ovA" },
             { title: "Severance", synopsis: "Mark leads a team of office workers whose memories have been surgically divided between their work and personal lives.", platform: "Apple TV+", imdb: "8.7", trailerId: "xEQP4VVukv8" },
-            { title: "Shogun", synopsis: "When a mysterious European ship is found marooned in a nearby fishing village, Lord Yoshii Toranaga discovers secrets that could tip the scales of power.", platform: "Hulu", imdb: "8.7", trailerId: "yAN5uspO_hk" },
+            { title: "Shōgun", synopsis: "When a mysterious European ship is found marooned in a nearby fishing village, Lord Yoshii Toranaga discovers secrets that could tip the scales of power.", platform: "Hulu", imdb: "8.7", trailerId: "yAN5uspO_hk" },
             { title: "Fallout", synopsis: "In a future, post-apocalyptic Los Angeles brought about by nuclear decimation, citizens must live in underground bunkers to protect themselves.", platform: "Prime Video", imdb: "8.4", trailerId: "V-mugKDQRug" },
             { title: "Dark Matter", synopsis: "A physicist is abducted into an alternate version of his life. To get back to his true family, he must embark on a harrowing journey to save them.", platform: "Apple TV+", imdb: "7.7", trailerId: "j6ucGbOkaG8" }
         ];
         matchResult = fallbacks[Math.floor(Math.random() * fallbacks.length)];
     }
 
+    // FORCE THE PROGRESS BAR TO FINISH EVEN IF AI FAILS FAST (FIX 1)
+    let elapsedMs = Date.now() - startTimeMs;
+    let remainingMs = (totalTime * 1000) - elapsedMs;
+    if (remainingMs > 0) {
+        await new Promise(resolve => setTimeout(resolve, remainingMs));
+    }
+
     clearInterval(timerInterval);
+    if (pBar) pBar.style.width = '100%';
     renderResult(matchResult);
 };
 
@@ -363,7 +356,6 @@ function renderResult(selected) {
 
     globalMatchTitle = selected.title;
     
-    // Clear star selections
     document.querySelectorAll('.star-rating-container .star').forEach(s => s.classList.remove('selected'));
 
     const titleEl = document.getElementById('res-title');
@@ -398,16 +390,16 @@ function renderResult(selected) {
         directBtn.innerText = `▶ Search on ${selected.platform}`;
     }
 
-    // EDGE COMPATIBLE VIDEO TRAILER EMBED
+    // EDGE COMPATIBLE VIDEO TRAILER EMBED (FIX 2)
     const trailerBox = document.getElementById('res-trailer-container');
     const iframe = document.getElementById('res-trailer');
     const fallbackBtn = document.getElementById('res-trailer-fallback');
     
     if (trailerBox && iframe && selected.trailerId) {
         trailerBox.style.display = 'block';
-        iframe.src = `https://www.youtube.com/embed/${selected.trailerId}?rel=0&enablejsapi=1`;
+        iframe.src = `https://www.youtube.com/embed/${selected.trailerId}?modestbranding=1&rel=0`;
         if (fallbackBtn) {
-            fallbackBtn.href = `https://www.youtube.com/watch?v=${selected.trailerId}`;
+            fallbackBtn.href = `https://youtu.be/${selected.trailerId}`;
         }
     } else if (trailerBox) {
         trailerBox.style.display = 'none';
@@ -416,9 +408,6 @@ function renderResult(selected) {
     resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// ==========================================
-// USER CONTROL UX: NO AUTO-TRIGGERS
-// ==========================================
 window.recordAction = function(type) {
     if (!globalMatchTitle) return;
 
@@ -453,7 +442,6 @@ window.recordAction = function(type) {
     }
 };
 
-// RELIABLE CROSS-BROWSER STAR RATING
 document.addEventListener('click', function (event) {
     const star = event.target.closest('.star');
     if (!star) return;
@@ -462,7 +450,6 @@ document.addEventListener('click', function (event) {
     const container = star.closest('.star-rating-container');
     if (!container) return;
 
-    // Highlight all stars <= rating
     container.querySelectorAll('.star').forEach(s => {
         const val = parseInt(s.getAttribute('data-value'));
         if (val <= rating) {
