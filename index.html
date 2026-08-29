@@ -5,29 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>MatchApp | Best AI Movie Finder & Global Streaming Concierge</title>
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-2ECND229RR');
-</script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+
+      gtag('consent', 'default', {
+        'ad_storage': 'denied',
+        'ad_user_data': 'denied',
+        'ad_personalization': 'denied',
+        'analytics_storage': 'denied',
+        'functionality_storage': 'granted',
+        'personalization_storage': 'granted',
+        'security_storage': 'granted',
+        'wait_for_update': 500
+      });
+
+      gtag('set', 'ads_data_redaction', true);
+      gtag('set', 'url_passthrough', true);
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
+    <script>
+      gtag('js', new Date());
+      gtag('config', 'G-2ECND229RR');
+    </script>
     
-    <!-- Open Graph & Social SEO for Google/Bing/Social Media -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://matchapp.cc/">
     <meta property="og:title" content="MatchApp | AI Movie & Series Streaming Concierge">
     <meta property="og:description" content="Discover movies, TV series, doramas, and podcasts tailored to your exact mood. Duplicate-free AI recommendations across Netflix, Prime, Max, Disney+, Hulu, and more.">
     <meta property="og:image" content="https://matchapp.cc/logo.jpeg">
 
-    <!-- Twitter Card SEO -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="MatchApp | AI Movie & Series Streaming Concierge">
     <meta name="twitter:description" content="Find what to watch tonight in seconds with AI. Search across all global streaming platforms.">
     <meta name="twitter:image" content="https://matchapp.cc/logo.jpeg">
 
-    <!-- Schema.org JSON-LD Structured Data for Google & Bing Indexing -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -46,7 +58,6 @@
     </script>
 
     <meta name="description" content="MatchApp is your AI streaming concierge. Discover perfect movies, TV series, doramas, and podcasts tailored to your exact mood across Netflix, Prime, Max, Disney+, Hulu, Crunchyroll, and more.">
-    <!-- SUPER SEO KEYWORDS INJECTED -->
     <meta name="keywords" content="Stranger Things season 5, The Last of Us HBO, Shogun, Dune Part Two, Squid Game season 2, House of the Dragon, White Lotus, best movies 2026, AI movie recommendation, what to watch tonight, Netflix streaming guide, best series on Max, Prime Video finder, Disney+ hidden gems, Hulu recommendations, Paramount+ tracker, Crunchyroll anime AI, Apple TV+ top shows, Spotify podcast AI, Doramas AI recommendation, streaming concierge, free movie finder, personalized streaming algorithm, where to watch movies online, AI tv show picker, MatchApp, watch later portfolio">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
     <link rel="canonical" href="https://matchapp.cc/">
@@ -165,11 +176,9 @@
         </div>
     </nav>
 
-    <!-- ANIMATED HERO MARQUEE PROPAGANDA -->
     <div class="hero-marquee-container fade-in" onclick="document.getElementById('questionnaire-box').scrollIntoView({behavior: 'smooth', block: 'center'})">
         <div class="hero-marquee-text">🚀 Find Your Perfect Match Across All Streaming Services! Click Here To Begin 🚀</div>
         <div class="marquee-track">
-            <!-- 10 top hits duplicated for seamless loop -->
             <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/8b8R8l88Qje9dn9OE18w56g8bV8.jpg" alt="Stranger Things" loading="lazy">
             <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/1pdfLvkbY9ohJlCjQH2JGjjc91p.jpg" alt="Dune Part Two" loading="lazy">
             <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/1XDDXPXGiI8id7MrTEKBDywIKm.jpg" alt="The Last of Us" loading="lazy">
@@ -196,7 +205,6 @@
 
     <div class="page-wrapper" style="flex: 1;">
         <div class="main-layout fade-in">
-            <!-- AdSense + Smartlink Left Sidebar -->
             <aside class="sidebar-ad-left">
                 <span class="ad-label" style="display:block; text-align:center;">SPONSORED</span>
                 <a href="https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562f63b85c00cb649448" target="_blank" rel="noopener" class="smartlink-card fade-in">
@@ -214,7 +222,6 @@
                     <a href="intent://matchapp.cc/#Intent;scheme=https;package=com.android.chrome;end" class="chrome-btn">Open in Chrome</a>
                 </div>
 
-                <!-- Adsterra Header Banner with Smartlink -->
                 <div class="ad-banner-container fade-in">
                     <span class="ad-label">SPONSORED</span>
                     <div style="display: flex; justify-content: center; align-items: center; min-height: 90px; width: 100%; overflow: hidden;">
@@ -240,7 +247,6 @@
                     </div>
                 </div>
 
-                <!-- Adsterra Mid Banner with Smartlink -->
                 <div class="ad-banner-container fade-in">
                     <span class="ad-label">SPONSORED</span>
                     <div style="display: flex; justify-content: center; align-items: center; min-height: 250px; width: 100%; overflow: hidden;">
@@ -283,7 +289,6 @@
                     <div class="progress-bar-container"><div id="ai-progress-bar" class="progress-bar-fill" style="width:0%;"></div></div>
                     <p style="color: #aaa; margin-top: 15px; font-size: 13px;">Analyzing databases globally... Match ready in <strong id="ad-timer-sim" style="color:#fff; font-size: 16px;">20</strong>s</p>
                     
-                    <!-- Adsterra Off-Screen Loader Fix to ensure ads render properly before sliding into view -->
                     <div id="free-loading-ads" style="position: absolute; top: -9999px; visibility: hidden; flex-direction:column; gap:10px; margin-top:20px; align-items:center; width: 100%;">
                         <div class="ad-placement" style="background:transparent;"><script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script><script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script></div>
                         <div class="ad-placement" style="background:transparent;"><script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script><script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script></div>
@@ -328,7 +333,6 @@
                         <button onclick="recordAction('dislike')" class="secondary-btn" style="border-color: #ff5252; color: #ff5252;">👎 Don't Like</button>
                     </div>
 
-                    <!-- Adsterra Result Ad with Smartlink -->
                     <div class="ad-banner-container fade-in" style="margin-top: 20px;">
                         <span class="ad-label">SPONSORED</span>
                         <div style="display: flex; justify-content: center; align-items: center; min-height: 90px; width: 100%; overflow: hidden;">
@@ -339,7 +343,6 @@
                     </div>
                 </div>
                 
-                <!-- AdSense + Smartlink Mobile Bottom -->
                 <div class="mobile-ad-bottom">
                     <span class="ad-label" style="display:block; text-align:center;">SPONSORED</span>
                     <a href="https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562f63b85c00cb649448" target="_blank" rel="noopener" class="smartlink-card fade-in" style="margin-bottom: 15px;">
@@ -352,7 +355,6 @@
                 </div>
             </div>
 
-            <!-- AdSense + Smartlink Right Sidebar -->
             <aside class="sidebar-ad-right">
                 <span class="ad-label" style="display:block; text-align:center;">SPONSORED</span>
                 <a href="https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562f63b85c00cb649448" target="_blank" rel="noopener" class="smartlink-card fade-in">
@@ -366,7 +368,6 @@
         </div>
     </div>
 
-    <!-- SEO BACKLINKS FOOTER -->
     <footer class="seo-footer">
         <h4>Global Streaming Platforms & Apps</h4>
         <p style="color: #888; font-size: 12px; margin-bottom: 20px;">MatchApp securely routes you directly to the official platforms to watch globally.</p>
@@ -385,7 +386,6 @@
         <p style="color: #555; font-size: 11px; margin-top: 25px;">© 2026 MatchApp.cc - Support: support@matchapp.cc</p>
     </footer>
 
-    <!-- TABBED AUTH MODAL -->
     <div id="main-auth-modal" class="modal-overlay" style="display:none;">
         <div class="premium-card modal-content" style="border: 1px solid var(--gold); padding: 30px 20px; max-height: 90vh; overflow-y: auto;">
             <span class="close-x" onclick="closeAuthModal()">×</span>
@@ -418,7 +418,6 @@
     
     <script src="/app.js"></script>
     
-    <!-- Adsterra Social Bar Engine -->
     <script src="https://brunettesir.com/55/fa/29/55fa29c96e27c09c7d64d33a39b6cf7a.js"></script>
 </body>
 </html>
