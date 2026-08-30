@@ -1,4 +1,4 @@
-console.log("Mastercode 87.0: Semantic SEO, Stripe Engine, & AdBlock Safe Core Active");
+console.log("Mastercode 87.0: Strict AI, Trailers, Posters, & Locked Profiles Active");
 
 // ==========================================
 // 1. SUPABASE LIVE INITIALIZATION
@@ -17,21 +17,15 @@ try {
 }
 
 // ==========================================
-// GOOGLE CONSENT MODE V2 BANNER & LOGIC
+// GOOGLE CONSENT MODE V2 BANNER
 // ==========================================
 (function initConsentMode() {
     const consentStatus = localStorage.getItem('matchapp_cookie_consent');
-    
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
 
     if (consentStatus === 'granted') {
-        gtag('consent', 'update', {
-            'ad_storage': 'granted',
-            'ad_user_data': 'granted',
-            'ad_personalization': 'granted',
-            'analytics_storage': 'granted'
-        });
+        gtag('consent', 'update', { 'ad_storage': 'granted', 'ad_user_data': 'granted', 'ad_personalization': 'granted', 'analytics_storage': 'granted' });
         return; 
     }
 
@@ -40,23 +34,17 @@ try {
         banner.id = 'cookie-consent-banner';
         banner.innerHTML = `
             <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 600px; background: rgba(10,5,5,0.95); border: 1px solid var(--gold); border-radius: 12px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 10000; text-align: center; backdrop-filter: blur(10px); animation: fadeIn 0.5s ease;">
-                <h4 style="color: var(--gold); margin: 0 0 10px 0; font-size: 16px;">🍪 Privacy & Analytics Consent</h4>
-                <p style="color: #ccc; font-size: 13px; line-height: 1.5; margin-bottom: 15px;">We use cookies and Google Analytics to personalize content, tailor ads, and improve your streaming concierge experience globally. Do you accept?</p>
+                <h4 style="color: var(--gold); margin: 0 0 10px 0; font-size: 16px;">🍪 Privacy & Analytics (Consent Mode v2)</h4>
+                <p style="color: #ccc; font-size: 13px; line-height: 1.5; margin-bottom: 15px;">We use cookies and Google Analytics to personalize content, tailor ads, and improve your streaming concierge experience globally.</p>
                 <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                    <button id="btn-accept-cookies" aria-label="Accept Cookies" class="gold-btn" style="padding: 8px 16px; font-size: 13px;">Accept All & Continue</button>
-                    <a href="/consent.html" aria-label="Review Privacy Policy" class="secondary-btn" style="padding: 8px 16px; font-size: 13px; text-decoration: none; border-color: #555; color: #bbb;">Review Policy</a>
+                    <button id="btn-accept-cookies" class="gold-btn" style="padding: 8px 16px; font-size: 13px;">Accept All & Continue</button>
+                    <a href="/consent.html" class="secondary-btn" style="padding: 8px 16px; font-size: 13px; text-decoration: none; border-color: #555; color: #bbb;">Review Privacy Policy</a>
                 </div>
             </div>
         `;
         document.body.appendChild(banner);
-
         document.getElementById('btn-accept-cookies').addEventListener('click', () => {
-            gtag('consent', 'update', {
-                'ad_storage': 'granted',
-                'ad_user_data': 'granted',
-                'ad_personalization': 'granted',
-                'analytics_storage': 'granted'
-            });
+            gtag('consent', 'update', { 'ad_storage': 'granted', 'ad_user_data': 'granted', 'ad_personalization': 'granted', 'analytics_storage': 'granted' });
             localStorage.setItem('matchapp_cookie_consent', 'granted');
             banner.style.display = 'none';
         });
@@ -64,11 +52,13 @@ try {
 })();
 
 // ==========================================
-// MAIN APP VARIABLES
+// MAIN APP VARIABLES & DATA STRUCTURE
 // ==========================================
-let globalMatchTitle = "MatchApp";
+let globalMatchTitle = "";
+let globalMatchPoster = "";
 let isUserLoggedIn = false;
 
+// Upgraded to handle Objects instead of Strings to store Covers
 let seenList = JSON.parse(localStorage.getItem('match_seenList') || '[]');
 let savedList = JSON.parse(localStorage.getItem('match_savedList') || '[]');
 let dislikedList = JSON.parse(localStorage.getItem('match_dislikedList') || '[]');
@@ -76,41 +66,6 @@ let userRatings = JSON.parse(localStorage.getItem('match_userRatings') || '{}');
 
 let isAdFree = localStorage.getItem('match_adFree') === 'true'; 
 let isVIP = localStorage.getItem('match_isVIP') === 'true';
-
-// STRIPE AUTOMATIC RETURN PROCESSOR
-(function checkStripePaymentReturn() {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('payment') === 'success') {
-        const plan = params.get('plan');
-        if (plan === 'vip_monthly') {
-            localStorage.setItem('match_isVIP', 'true');
-            isVIP = true;
-        } else if (plan === 'ad_free') {
-            localStorage.setItem('match_adFree', 'true');
-            isAdFree = true;
-        }
-        
-        if (supabaseClient) {
-            supabaseClient.auth.getUser().then(({ data: { user } }) => {
-                if (user) {
-                    supabaseClient.from('profiles').upsert({
-                        id: user.id,
-                        is_vip: isVIP,
-                        is_ad_free: isAdFree,
-                        updated_at: new Date().toISOString()
-                    });
-                }
-            });
-        }
-
-        setTimeout(() => {
-            if (typeof window.fireConfetti === 'function') window.fireConfetti();
-            if (typeof window.playPremiumSound === 'function') window.playPremiumSound();
-            alert("🎉 Payment Successful!\n\nYour account features have been permanently unlocked. Enjoy unlimited, ad-free AI matching!");
-            window.history.replaceState({}, document.title, window.location.pathname);
-        }, 800);
-    }
-})();
 
 function updateClock() { 
     try {
@@ -121,8 +76,7 @@ function updateClock() {
         } 
     } catch(e) {}
 }
-updateClock();
-setInterval(updateClock, 1000);
+updateClock(); setInterval(updateClock, 1000);
 
 window.playPremiumSound = function() {
     try {
@@ -137,9 +91,7 @@ window.playPremiumSound = function() {
 };
 
 window.fireConfetti = function() {
-    if (typeof confetti !== 'undefined') {
-        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#D4AF37', '#FFF', '#8A2BE2', '#E50914'], zIndex: 9999 });
-    }
+    if (typeof confetti !== 'undefined') { confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#D4AF37', '#FFF', '#8A2BE2', '#E50914'], zIndex: 9999 }); }
 };
 
 window.openAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'flex'; };
@@ -150,118 +102,49 @@ window.switchAuthTab = function(tab) {
     const tabSign = document.getElementById('tab-signup');
     const formLog = document.getElementById('form-login');
     const formSign = document.getElementById('form-signup');
-    
-    if(tabLog) tabLog.classList.remove('active');
-    if(tabSign) tabSign.classList.remove('active');
-    if(formLog) formLog.classList.remove('active');
-    if(formSign) formSign.classList.remove('active');
-    
+    if(tabLog) tabLog.classList.remove('active'); if(tabSign) tabSign.classList.remove('active');
+    if(formLog) formLog.classList.remove('active'); if(formSign) formSign.classList.remove('active');
     const activeTab = document.getElementById(`tab-${tab}`);
     const activeForm = document.getElementById(`form-${tab}`);
-    if(activeTab) activeTab.classList.add('active');
-    if(activeForm) activeForm.classList.add('active');
+    if(activeTab) activeTab.classList.add('active'); if(activeForm) activeForm.classList.add('active');
 };
 
-window.signInWithGoogle = async function() { 
-    if (!supabaseClient) { alert("Server connection failed. Database client not initialized."); return; } 
-    const { error } = await supabaseClient.auth.signInWithOAuth({ 
-        provider: 'google', 
-        options: { 
-            redirectTo: window.location.origin + '/profile/profile.html',
-            scopes: 'https://www.googleapis.com/auth/user.birthday.read https://www.googleapis.com/auth/user.gender.read'
-        } 
-    }); 
-    if (error) alert("Google Login Error: " + error.message); 
-};
-
-window.handleEmailSignup = async function() {
-    const email = document.getElementById('reg-email').value.trim();
-    const password = document.getElementById('reg-password').value;
-    const msgEl = document.getElementById('auth-message');
-    
-    if(!email || !password) { 
-        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please provide an email and password."; return; 
-    }
-    if (!supabaseClient) {
-        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Server error: Database not connected."; return;
-    }
-    msgEl.style.display = 'block'; msgEl.style.color = '#fff'; msgEl.innerText = "Connecting...";
-
-    const { data, error } = await supabaseClient.auth.signUp({ email, password });
-    if(error) { 
-        msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; 
-    } else { 
-        msgEl.style.color = '#25D366'; msgEl.innerText = "Account created successfully! Redirecting..."; 
-        if(typeof gtag === 'function') gtag('event', 'sign_up', { method: 'email' });
-        setTimeout(() => { window.location.href = '/profile/profile.html'; }, 1500); 
-    }
-};
-
-window.handleEmailLogin = async function() {
-    const email = document.getElementById('login-email').value.trim();
-    const password = document.getElementById('login-password').value;
-    const msgEl = document.getElementById('auth-message');
-    
-    if(!email || !password) { 
-        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please enter email and password."; return; 
-    }
-    if (!supabaseClient) {
-        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Server error: Database not connected."; return;
-    }
-    msgEl.style.display = 'block'; msgEl.style.color = '#fff'; msgEl.innerText = "Authenticating...";
-
-    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-    if(error) { 
-        msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; 
-    } else { 
-        msgEl.style.color = '#25D366'; msgEl.innerText = "Login successful! Routing to Hub..."; 
-        if(typeof gtag === 'function') gtag('event', 'login', { method: 'email' });
-        setTimeout(() => { window.location.href = '/profile/profile.html'; }, 1000); 
-    }
-};
-
-window.doLogout = async function() { 
-    if (supabaseClient) { await supabaseClient.auth.signOut(); } 
-    localStorage.clear(); 
-    window.location.href = '/index.html'; 
-};
-
+// ==========================================
+// AUTHENTICATION & AVATAR LOGIC
+// ==========================================
 if (supabaseClient) {
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
         if (session && session.user) {
             isUserLoggedIn = true;
             const user = session.user;
-            const meta = user.user_metadata || {};
-
-            try {
-                const fullName = meta.full_name || meta.name || '';
-                const avatarUrl = meta.avatar_url || meta.picture || '';
-                const email = user.email || '';
-
-                await supabaseClient.from('profiles').upsert({
-                    id: user.id,
-                    email: email,
-                    full_name: fullName,
-                    avatar_url: avatarUrl,
-                    updated_at: new Date().toISOString()
-                }, { onConflict: 'id', ignoreDuplicates: true });
-            } catch(e) {}
+            
+            // Check for VIP status from DB if it exists
+            const { data: profile } = await supabaseClient.from('profiles').select('is_vip, is_ad_free, avatar_url').eq('id', user.id).single();
+            if(profile) {
+                if(profile.is_vip) { isVIP = true; localStorage.setItem('match_isVIP', 'true'); }
+                if(profile.is_ad_free) { isAdFree = true; localStorage.setItem('match_adFree', 'true'); }
+            }
 
             const regBtn = document.getElementById('nav-reg-btn');
             const profTab = document.getElementById('profile-link-tab');
             const logoutBtn = document.getElementById('nav-logout-btn');
             const upgradeBtn = document.getElementById('nav-upgrade-btn');
-            const profPic = document.getElementById('profile-pic-preview');
-
-            if (meta.avatar_url || meta.picture) {
-                if (profPic) profPic.src = meta.avatar_url || meta.picture;
-            }
             
+            // Render Profile UI accurately
+            if (profTab) {
+                profTab.style.display = 'inline-flex';
+                let avatarSrc = localStorage.getItem('match_custom_avatar') || profile?.avatar_url || user.user_metadata?.avatar_url || `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%23FFF'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>`;
+                let badge = (isVIP || isAdFree) ? `<span style="font-size: 14px; margin-left: 5px;">💎</span>` : `<span style="font-size: 14px; margin-left: 5px;">✅</span>`;
+                
+                profTab.innerHTML = `<img src="${avatarSrc}" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--gold); object-fit: cover; margin-right: 8px;"> Profile ${badge}`;
+            }
+
             if (regBtn) regBtn.style.display = 'none';
-            if (profTab) profTab.style.display = 'inline-flex';
             if (logoutBtn) logoutBtn.style.display = 'inline-block';
-            if (upgradeBtn) { upgradeBtn.style.display = 'inline-flex'; if (isVIP || isAdFree) upgradeBtn.innerText = '👑 VIP Active'; }
-        } else { isUserLoggedIn = false; }
+            if (upgradeBtn && !isVIP && !isAdFree) { upgradeBtn.style.display = 'inline-flex'; }
+        } else { 
+            isUserLoggedIn = false; 
+        }
     });
 }
 
@@ -272,16 +155,21 @@ function checkDailyLimit() {
     let dailyCount = parseInt(localStorage.getItem('match_dailyCount') || '0');
     
     if (lastDate !== todayStr) { dailyCount = 0; localStorage.setItem('match_lastDate', todayStr); }
-    if (!isUserLoggedIn && dailyCount >= 5) { 
-        alert("🔒 You've used your 5 free matches today!\n\nPlease register for FREE to unlock your next daily allowance!"); 
-        window.openAuthModal(); 
-        return false; 
+    if (!isUserLoggedIn && dailyCount >= 3) { 
+        alert("🔒 You've used your 3 free anonymous matches today!\n\nPlease register for FREE to unlock your daily allowance and save titles!"); 
+        window.openAuthModal(); return false; 
     }
-    if (isUserLoggedIn && dailyCount >= 5) { window.location.href = '/pricing/pricing.html'; return false; }
+    if (isUserLoggedIn && dailyCount >= 7) { 
+        alert("💎 Daily limit reached!\n\nUpgrade to VIP for UNLIMITED matches and Ad-Free browsing!");
+        window.location.href = '/pricing/pricing.html'; return false; 
+    }
     
     dailyCount++; localStorage.setItem('match_dailyCount', dailyCount.toString()); return true;
 }
 
+// ==========================================
+// MATCHING ENGINE & STRICT AI
+// ==========================================
 async function fetchGeminiData(promptText) {
     if (!supabaseClient) throw new Error("Database client not initialized.");
     const { data, error } = await supabaseClient.functions.invoke('gemini-proxy', { body: { prompt: promptText } });
@@ -293,17 +181,22 @@ async function fetchGeminiData(promptText) {
 window.triggerMatch = async function(isSpecificSearch = false) {
     if (!checkDailyLimit()) return;
 
+    // Scroll to Loading State Animation
+    const loadBox = document.getElementById('loading-box');
+    if (loadBox) {
+        loadBox.style.display = 'block';
+        loadBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
     let promptText = "";
-    const randomSeed = Math.floor(Math.random() * 999999); 
+    // We only exclude titles user has specifically saved/seen.
+    let exclusionList = seenList.map(item => item.title || item).join(', ');
     
     if (isSpecificSearch) {
         const input = document.getElementById('specific-search-input');
-        if (!input) return;
+        if (!input || !input.value.trim()) { alert("Please enter a title to search."); loadBox.style.display = 'none'; return; }
         const query = input.value.trim();
-        if(!query) { alert("Please enter a title to search."); return; }
-        
-        if(typeof gtag === 'function') gtag('event', 'search', { search_term: query });
-        promptText = `You are a streaming concierge AI in late 2026. The user is searching for where to stream: "${query}". Find the exact streaming platform where it is currently available. Random seed for processing variant: ${randomSeed}. Output MUST be exactly: {"title": "Correct Title", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The exact streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID of the official trailer that is verified to be embeddable", "posterUrl": "A highly reliable, 100% working direct image URL for the official poster cover art from Wikipedia or TMDB."}`;
+        promptText = `You are an elite streaming concierge AI. The user is searching for: "${query}". Output a JSON object exactly matching this structure: {"title": "Correct Title", "synopsis": "A 3-sentence extended synopsis.", "platform": "Exact streaming service", "imdb": "IMDb rating", "trailerId": "Exact 11-character YouTube ID", "posterUrl": "A highly reliable direct image URL for the official poster cover art"}`;
     } else {
         const cat = document.getElementById('q-category')?.value || 'any'; 
         const plat = document.getElementById('q-platform')?.value || 'any';
@@ -311,50 +204,28 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         const aest = document.getElementById('q-aesthetic')?.value || 'any'; 
         const pac = document.getElementById('q-pacing')?.value || 'any';
         
-        if(typeof gtag === 'function') gtag('event', 'ai_match_requested');
-        const excludeStr = [...seenList, ...dislikedList].join(', ');
-        
-        promptText = `You are a streaming concierge AI in late 2026. Find a highly-rated, hidden gem streaming title based on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}, Aesthetic: ${aest}, Pacing: ${pac}. CRITICAL: Do NOT recommend any of these titles ever again: ${excludeStr}. RANDOMIZATION SEED: ${randomSeed}. You MUST scour your catalog globally. Output MUST be a valid JSON object exactly matching this structure: {"title": "Title of movie/series", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID of the official trailer that is verified to be embeddable", "posterUrl": "A highly reliable, 100% working direct image URL for the official poster cover art from Wikipedia or TMDB."}`;
+        promptText = `You are a streaming concierge AI. Find a highly-rated, hidden gem based STRICTLY on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}, Aesthetic: ${aest}, Pacing: ${pac}. 
+        CRITICAL RULES: 
+        1. DO NOT recommend any of these: ${exclusionList}.
+        2. DO NOT recommend obvious defaults like Dune, Severance, or Shogun unless it perfectly matches the criteria. FIND UNIQUE HIDDEN GEMS.
+        Output MUST be valid JSON: {"title": "Title", "synopsis": "A 3-sentence synopsis.", "platform": "Streaming service", "imdb": "Rating", "trailerId": "Exact 11-character YouTube video ID", "posterUrl": "Valid direct image URL for the poster cover"}`;
     }
 
     const qBox = document.getElementById('questionnaire-box');
     const sBox = document.getElementById('search-box');
-    const rBox = document.getElementById('result-box');
     const marqueeBox = document.querySelector('.hero-marquee-container');
     
     if (qBox) qBox.style.display = 'none';
     if (sBox) sBox.style.display = 'none';
-    if (rBox) rBox.style.display = 'none';
     if (marqueeBox) marqueeBox.style.display = 'none';
-    
-    const loadBox = document.getElementById('loading-box');
-    if (!loadBox) return;
-    loadBox.style.display = 'block';
 
-    let totalTime = isVIP || isAdFree ? 4 : 20; 
+    let totalTime = isVIP || isAdFree ? 4 : 12; 
     let startTimeMs = Date.now();
     
     const pBar = document.getElementById('ai-progress-bar');
     const tSim = document.getElementById('ad-timer-sim');
-    const freeAds = document.getElementById('free-loading-ads');
-    const vipMsg = document.getElementById('vip-loading-msg');
-    
     if (pBar) pBar.style.width = '0%';
-    if (tSim) tSim.innerText = totalTime;
     
-    if (!isVIP && !isAdFree) {
-        if(freeAds) {
-            freeAds.style.position = 'relative';
-            freeAds.style.top = '0';
-            freeAds.style.visibility = 'visible';
-            freeAds.style.display = 'flex';
-        }
-        if(vipMsg) vipMsg.style.display = 'none';
-    } else {
-        if(freeAds) freeAds.style.display = 'none';
-        if(vipMsg) vipMsg.style.display = 'block';
-    }
-
     let timerInterval = setInterval(() => {
         let elapsed = (Date.now() - startTimeMs) / 1000;
         let pct = Math.min((elapsed / totalTime) * 100, 100);
@@ -363,26 +234,17 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     }, 50);
 
     let matchResult = null;
-    
     try {
         matchResult = await fetchGeminiData(promptText);
     } catch (err) {
-        console.error("AI Fallback Invoked.");
-        const fallbacks = [
-            { title: "Dune: Part Two", synopsis: "Paul Atreides unites with Chani and the Fremen on a warpath of revenge against the conspirators who destroyed his family.", platform: "Max", imdb: "8.6", trailerId: "_YUzQa_1RCE", posterUrl: "https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2JGjjc91p.jpg" },
-            { title: "Severance", synopsis: "Mark leads a team of office workers whose memories have been surgically divided between their work and personal lives.", platform: "Apple TV+", imdb: "8.7", trailerId: "xEQP4VVukv8", posterUrl: "https://image.tmdb.org/t/p/w500/zQkxZLuq1M74n3xZJpGkS0yZ7q7.jpg" },
-            { title: "Shōgun", synopsis: "When a mysterious European ship is found marooned in a nearby fishing village, Lord Yoshii Toranaga discovers secrets that could tip the scales of power.", platform: "Hulu", imdb: "8.7", trailerId: "yAN5uspO_hk", posterUrl: "https://image.tmdb.org/t/p/w500/7O4iVfOMQmdCSxhOg1WJU1faaM.jpg" },
-            { title: "Fallout", synopsis: "In a future, post-apocalyptic Los Angeles brought about by nuclear decimation, citizens must live in underground bunkers to protect themselves.", platform: "Prime Video", imdb: "8.4", trailerId: "V-mugKDQRug", posterUrl: "https://image.tmdb.org/t/p/w500/A3eNswyFw9h2N7tF1yF63wKqfR9.jpg" },
-            { title: "Dark Matter", synopsis: "A physicist is abducted into an alternate version of his life. To get back to his true family, he must embark on a harrowing journey to save them.", platform: "Apple TV+", imdb: "7.7", trailerId: "j6ucGbOkaG8", posterUrl: "https://image.tmdb.org/t/p/w500/c6OxgKAdhX5F5E4E3O562U3L03i.jpg" }
-        ];
-        matchResult = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+        console.error("AI Fallback:", err);
+        // Fallback only used if API completely drops. Still better than nothing.
+        matchResult = { title: "The Bear", synopsis: "A young chef from the fine dining world comes home to Chicago to run his family sandwich shop.", platform: "Hulu", imdb: "8.6", trailerId: "y-caqB_P72E", posterUrl: "https://image.tmdb.org/t/p/w500/mXZVPptJ3xUIVe8z0D5E7Y9E2F1.jpg" };
     }
 
     let elapsedMs = Date.now() - startTimeMs;
     let remainingMs = (totalTime * 1000) - elapsedMs;
-    if (remainingMs > 0) {
-        await new Promise(resolve => setTimeout(resolve, remainingMs));
-    }
+    if (remainingMs > 0) await new Promise(resolve => setTimeout(resolve, remainingMs));
 
     clearInterval(timerInterval);
     if (pBar) pBar.style.width = '100%';
@@ -395,155 +257,79 @@ function renderResult(selected) {
     if (loadBox) loadBox.style.display = 'none';
     if (!resultBox) return;
     
-    const actionGrid = document.getElementById('action-btn-grid');
-    if(actionGrid) {
-        actionGrid.innerHTML = `
-            <button aria-label="Save to Watch Later" onclick="recordAction('save')" class="secondary-btn" style="border-color: var(--gold); color: var(--gold-glow);">⭐ Watch Later</button>
-            <button aria-label="Mark as Seen" onclick="recordAction('seen')" class="secondary-btn" style="border-color: #25D366; color: #25D366;">✔️ Seen It</button>
-            <button aria-label="Like" onclick="recordAction('like')" class="secondary-btn" style="border-color: #2196F3; color: #2196F3;">👍 Like</button>
-            <button aria-label="Dislike" onclick="recordAction('dislike')" class="secondary-btn" style="border-color: #ff5252; color: #ff5252;">👎 Don't Like</button>
-        `;
-    }
-
     resultBox.style.display = 'block';
-    
+    resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' }); // Auto-scroll to result
+
     window.playPremiumSound();
     window.fireConfetti();
 
     globalMatchTitle = selected.title;
+    globalMatchPoster = selected.posterUrl || "https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=1000&q=80";
     
-    document.querySelectorAll('.star-rating-container .star').forEach(s => s.classList.remove('selected'));
-
-    const titleEl = document.getElementById('res-title');
-    const synEl = document.getElementById('res-synopsis');
+    document.getElementById('res-title').innerText = selected.title;
+    document.getElementById('res-synopsis').innerText = selected.synopsis;
+    
     const posterEl = document.getElementById('res-poster-img');
-
-    if (titleEl) titleEl.innerText = selected.title;
-    if (synEl) synEl.innerText = selected.synopsis;
-    
-    // Hardened Image Fallback Mechanism
     if (posterEl) {
-        posterEl.src = selected.posterUrl || "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=500&q=80";
-        posterEl.onerror = function() {
-            this.onerror = null; // Prevent infinite loops
-            this.src = "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=500&q=80";
-        };
+        posterEl.src = globalMatchPoster;
+        posterEl.onerror = function() { this.src = "https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=1000&q=80"; };
     }
 
     const badge = document.getElementById('res-platform-badge');
-    if (badge) {
-        badge.innerText = selected.platform;
-        const pLower = selected.platform.toLowerCase();
-        if (pLower.includes('netflix')) badge.style.background = '#E50914';
-        else if (pLower.includes('max') || pLower.includes('hbo')) badge.style.background = '#8A2BE2';
-        else if (pLower.includes('prime')) badge.style.background = '#00A8E1';
-        else if (pLower.includes('disney')) badge.style.background = '#113CCF';
-        else if (pLower.includes('hulu')) badge.style.background = '#1ce783';
-        else if (pLower.includes('peacock')) badge.style.background = '#ffffff';
-        else if (pLower.includes('crunchyroll')) badge.style.background = '#f47521';
-        else if (pLower.includes('paramount')) badge.style.background = '#0064ff';
-        else if (pLower.includes('apple')) badge.style.background = '#fff'; 
-        else badge.style.background = 'var(--gold)';
-        
-        badge.style.color = (pLower.includes('apple') || pLower.includes('peacock')) ? '#000' : '#fff';
-    }
-
-    const imdbBadge = document.getElementById('res-imdb-badge');
-    if(imdbBadge) imdbBadge.innerText = `IMDb: ${selected.imdb || 'N/A'}`;
+    badge.innerText = selected.platform;
+    document.getElementById('res-imdb-badge').innerText = `IMDb: ${selected.imdb || 'N/A'}`;
 
     const directBtn = document.getElementById('res-direct-link');
-    if (directBtn) {
-        directBtn.href = `https://www.google.com/search?q=Watch+${encodeURIComponent(selected.title)}+on+${encodeURIComponent(selected.platform)}`;
-        directBtn.innerText = `▶ Search on ${selected.platform}`;
-    }
+    directBtn.href = `https://www.google.com/search?q=Watch+${encodeURIComponent(selected.title)}+on+${encodeURIComponent(selected.platform)}`;
+    directBtn.innerText = `▶ Search on ${selected.platform}`;
 
+    // GUARANTEED WORKING TRAILER FALLBACK HACK
     const trailerBox = document.getElementById('res-trailer-container');
     const iframe = document.getElementById('res-trailer');
-    const fallbackBtn = document.getElementById('res-trailer-fallback');
     
-    if (trailerBox && iframe && selected.trailerId) {
+    if (trailerBox && iframe) {
         trailerBox.style.display = 'block';
-        iframe.src = `https://www.youtube.com/embed/${selected.trailerId}?modestbranding=1&rel=0`;
-        if (fallbackBtn) {
-            fallbackBtn.href = `https://youtu.be/${selected.trailerId}`;
+        // If Gemini gives a clean 11 char ID, try it. Otherwise, force a YouTube search embed!
+        if (selected.trailerId && selected.trailerId.length === 11) {
+            iframe.src = `https://www.youtube.com/embed/${selected.trailerId}?modestbranding=1&rel=0`;
+        } else {
+            iframe.src = `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(selected.title + " trailer " + selected.platform)}`;
         }
-    } else if (trailerBox) {
-        trailerBox.style.display = 'none';
     }
-    
-    resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+// ==========================================
+// WATCH LATER & HISTORY (NOW SAVES POSTERS)
+// ==========================================
 window.recordAction = function(type) {
     if (!globalMatchTitle) return;
-
     if (!isUserLoggedIn) {
-        alert("💎 Unlock Premium Features for FREE!\n\nTo save titles to your Portfolio, track your Watch History, and get more daily AI Matches, please create a free account.\n\nJoin the MatchApp community now and never lose a match!");
-        window.openAuthModal();
-        return;
+        alert("💎 Join for FREE!\n\nTo save titles & covers to your Portfolio, please create a free account.");
+        window.openAuthModal(); return;
     }
 
+    const itemObj = { title: globalMatchTitle, posterUrl: globalMatchPoster };
+    const existsInList = (list) => list.some(i => (i.title || i) === globalMatchTitle);
+
     if (type === 'save') {
-        if (!savedList.includes(globalMatchTitle)) savedList.push(globalMatchTitle);
+        if (!existsInList(savedList)) savedList.push(itemObj);
         alert(`⭐ "${globalMatchTitle}" saved to your Portfolio!`);
     } else if (type === 'seen') {
-        if (!seenList.includes(globalMatchTitle)) seenList.push(globalMatchTitle);
+        if (!existsInList(seenList)) seenList.push(itemObj);
     } else if (type === 'like') {
         userRatings[globalMatchTitle] = 5;
-        if (!seenList.includes(globalMatchTitle)) seenList.push(globalMatchTitle);
+        if (!existsInList(seenList)) seenList.push(itemObj);
     } else if (type === 'dislike') {
         userRatings[globalMatchTitle] = 1;
-        if (!dislikedList.includes(globalMatchTitle)) dislikedList.push(globalMatchTitle);
+        if (!existsInList(dislikedList)) dislikedList.push(itemObj);
     }
     
     syncListsToDatabase();
-    if(typeof renderProfileGrids === 'function') renderProfileGrids();
-
-    const actionGrid = document.getElementById('action-btn-grid');
-    if (actionGrid) {
-        actionGrid.innerHTML = `
-            <div style="grid-column: 1 / -1; text-align: center; padding: 20px; background: rgba(37,211,102,0.1); border: 1px solid #25D366; border-radius: 12px; margin-bottom: 10px; animation: fadeIn 0.4s ease;">
-                <h4 style="color:#25D366; margin:0 0 10px 0; font-size: 18px;">✅ Action Recorded!</h4>
-                <p style="color:#ddd; font-size:14px; margin:0 0 15px 0;">Would you like to generate a new AI match?</p>
-                <div style="display:flex; gap:10px; justify-content:center; flex-wrap: wrap;">
-                    <button aria-label="Generate New Match" onclick="document.getElementById('result-box').style.display='none'; triggerMatch(false);" class="gold-btn" style="padding:10px 20px;">Yes, Match Again 🔄</button>
-                    <button aria-label="View Profile" onclick="window.location.href='/profile/profile.html'" class="secondary-btn" style="padding:10px 20px; border-color: #fff; color: #fff;">View My Hub 📂</button>
-                </div>
-            </div>
-        `;
-    }
+    alert("Action Recorded! Generate your next match now.");
+    document.getElementById('result-box').style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('questionnaire-box').style.display = 'block';
 };
-
-document.addEventListener('click', function (event) {
-    const star = event.target.closest('.star');
-    if (!star) return;
-
-    if (!isUserLoggedIn) {
-        alert("💎 Unlock Premium Features for FREE!\n\nTo rate titles and build your Watch History, please create a free account first.");
-        window.openAuthModal();
-        return;
-    }
-
-    const rating = parseInt(star.getAttribute('data-value'));
-    const container = star.closest('.star-rating-container');
-    if (!container) return;
-
-    container.querySelectorAll('.star').forEach(s => {
-        const val = parseInt(s.getAttribute('data-value'));
-        if (val <= rating) {
-            s.classList.add('selected');
-        } else {
-            s.classList.remove('selected');
-        }
-    });
-
-    if (globalMatchTitle) { 
-        userRatings[globalMatchTitle] = rating; 
-        if (!seenList.includes(globalMatchTitle)) seenList.push(globalMatchTitle); 
-        syncListsToDatabase(); 
-        if(typeof renderProfileGrids === 'function') renderProfileGrids(); 
-    }
-});
 
 async function syncListsToDatabase() { 
     localStorage.setItem('match_seenList', JSON.stringify(seenList)); 
@@ -553,12 +339,7 @@ async function syncListsToDatabase() {
     
     if (isUserLoggedIn && supabaseClient) { 
         await supabaseClient.auth.updateUser({ 
-            data: { 
-                seen_list: seenList, 
-                saved_list: savedList, 
-                disliked_list: dislikedList, 
-                user_ratings: userRatings 
-            } 
+            data: { seen_list: seenList, saved_list: savedList, disliked_list: dislikedList, user_ratings: userRatings } 
         }); 
     } 
 }
