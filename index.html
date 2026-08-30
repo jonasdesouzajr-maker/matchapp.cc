@@ -6,7 +6,6 @@
     <meta name="theme-color" content="#0a0505">
     <title>MatchApp | Best AI Movie Finder & Global Streaming Concierge</title>
 
-    <!-- Google Tag & Consent Mode v2 -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -20,20 +19,17 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
     <script>gtag('js', new Date()); gtag('config', 'G-2ECND229RR');</script>
     
-    <!-- Open Graph & Social SEO -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://matchapp.cc/">
     <meta property="og:title" content="MatchApp | AI Movie & Series Streaming Concierge">
     <meta property="og:description" content="Discover movies, TV series, doramas, and podcasts tailored to your exact mood. Duplicate-free AI recommendations across Netflix, Prime, Max, Disney+, Hulu, and more.">
     <meta property="og:image" content="https://matchapp.cc/logo.jpeg">
 
-    <!-- Twitter Card SEO -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="MatchApp | AI Movie & Series Streaming Concierge">
     <meta name="twitter:description" content="Find what to watch tonight in seconds with AI. Search across all global streaming platforms.">
     <meta name="twitter:image" content="https://matchapp.cc/logo.jpeg">
 
-    <!-- Schema.org JSON-LD -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -148,54 +144,54 @@
     </div>
 
     <header class="app-header fade-in">
-        <a href="/index.html" class="header-brand-area">
+        <a href="/index.html" class="header-brand-area" aria-label="MatchApp Home">
             <picture><source srcset="/logo.jpeg" type="image/jpeg"><img src="/logo.jpeg" alt="MatchApp Logo" class="brand-logo" loading="lazy"></picture>
             <div><span class="app-title-main">MatchApp</span><span class="app-title-sub">Streaming Concierge</span></div>
         </a>
         
-        <nav id="header-auth-area" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
-            <a href="/index.html" class="secondary-btn" style="padding: 8px 12px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">🏠 Home</a>
-            <label for="profile-pic-upload" id="profile-pic-container" class="profile-pic-container">
+        <nav id="header-auth-area" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end;" aria-label="Main Navigation">
+            <a href="/index.html" class="secondary-btn" aria-label="Home Page" style="padding: 8px 12px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">🏠 Home</a>
+            <label for="profile-pic-upload" id="profile-pic-container" class="profile-pic-container" aria-label="Upload Profile Picture">
                 <img id="profile-pic-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 24 24' fill='%23D4AF37'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" alt="Avatar" loading="lazy">
             </label>
             <input type="file" id="profile-pic-upload" accept="image/*" style="display: none;" onchange="handleProfilePic(event)">
-            <a id="profile-link-tab" href="/profile/profile.html" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid var(--gold); color: var(--gold-glow); padding: 8px 12px; border-radius: 12px; font-weight: bold; text-decoration: none; font-size: 12px; align-items: center;">👤 Profile</a>
-            <a id="nav-upgrade-btn" href="/pricing/pricing.html" class="gold-btn" style="display: none; padding: 8px 12px; font-size: 12px; text-decoration: none; align-items: center;">💎 VIP</a>
-            <button id="nav-reg-btn" onclick="openAuthModal()" class="gold-btn" style="padding: 8px 14px; font-size: 12px; box-shadow: none;">👤 Sign In / Join</button>
-            <button id="nav-logout-btn" onclick="doLogout()" style="display: none; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 8px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 11px;">Logout</button>
+            <a id="profile-link-tab" href="/profile/profile.html" aria-label="User Profile" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid var(--gold); color: var(--gold-glow); padding: 8px 12px; border-radius: 12px; font-weight: bold; text-decoration: none; font-size: 12px; align-items: center;">👤 Profile</a>
+            <a id="nav-upgrade-btn" href="/pricing/pricing.html" aria-label="Upgrade to VIP" class="gold-btn" style="display: none; padding: 8px 12px; font-size: 12px; text-decoration: none; align-items: center;">💎 VIP</a>
+            <button id="nav-reg-btn" onclick="openAuthModal()" aria-label="Sign In or Register" class="gold-btn" style="padding: 8px 14px; font-size: 12px; box-shadow: none;">👤 Sign In / Join</button>
+            <button id="nav-logout-btn" onclick="doLogout()" aria-label="Log Out" style="display: none; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 8px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 11px;">Logout</button>
         </nav>
     </header>
 
-    <div class="hero-marquee-container fade-in" onclick="document.getElementById('questionnaire-box').scrollIntoView({behavior: 'smooth', block: 'center'})">
+    <div class="hero-marquee-container fade-in" onclick="document.getElementById('questionnaire-box').scrollIntoView({behavior: 'smooth', block: 'center'})" title="Click to start finding a match">
         <div class="hero-marquee-text">🚀 Find Your Perfect Match Across All Streaming Services! Click Here To Begin 🚀</div>
         <div class="marquee-track">
-            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/8b8R8l88Qje9dn9OE18w56g8bV8.jpg" alt="Stranger Things" loading="lazy">
-            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/1pdfLvkbY9ohJlCjQH2JGjjc91p.jpg" alt="Dune Part Two" loading="lazy">
-            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/1XDDXPXGiI8id7MrTEKBDywIKm.jpg" alt="The Last of Us" loading="lazy">
-            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/7O4iVfOMQmdCSxhOg1WJU1faaM.jpg" alt="Shogun" loading="lazy">
-            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/u3bZgnGQ9T01sWNhyveQz0wH0Hl.jpg" alt="Game of Thrones" loading="lazy">
-            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/A3eNswyFw9h2N7tF1yF63wKqfR9.jpg" alt="Fallout" loading="lazy">
-            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/zQkxZLuq1M74n3xZJpGkS0yZ7q7.jpg" alt="Severance" loading="lazy">
-            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/t6HIqrNDIGGLFMB1e8NnJp27GEL.jpg" alt="The Boys" loading="lazy">
-            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/qJ2tW6WMUDux911r6m7haRef0WH.jpg" alt="Dark Knight" loading="lazy">
-            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/rSPw7tgCH9c6NqICZef4kZjFOQ5.jpg" alt="Godfather" loading="lazy">
-            
-            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/8b8R8l88Qje9dn9OE18w56g8bV8.jpg" alt="Stranger Things" loading="lazy">
-            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/1pdfLvkbY9ohJlCjQH2JGjjc91p.jpg" alt="Dune Part Two" loading="lazy">
-            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/1XDDXPXGiI8id7MrTEKBDywIKm.jpg" alt="The Last of Us" loading="lazy">
-            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/7O4iVfOMQmdCSxhOg1WJU1faaM.jpg" alt="Shogun" loading="lazy">
-            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/u3bZgnGQ9T01sWNhyveQz0wH0Hl.jpg" alt="Game of Thrones" loading="lazy">
-            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/A3eNswyFw9h2N7tF1yF63wKqfR9.jpg" alt="Fallout" loading="lazy">
-            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/zQkxZLuq1M74n3xZJpGkS0yZ7q7.jpg" alt="Severance" loading="lazy">
-            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/t6HIqrNDIGGLFMB1e8NnJp27GEL.jpg" alt="The Boys" loading="lazy">
-            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/qJ2tW6WMUDux911r6m7haRef0WH.jpg" alt="Dark Knight" loading="lazy">
-            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/rSPw7tgCH9c6NqICZef4kZjFOQ5.jpg" alt="Godfather" loading="lazy">
+            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/49WJfeN0moxb9IPfGn8xsnvx6m3.jpg" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=200&q=80'" alt="Stranger Things" loading="lazy">
+            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/1pdfLvkbY9ohJlCjQH2JGjjc91p.jpg" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=200&q=80'" alt="Dune Part Two" loading="lazy">
+            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/u3YQJctMzRV2Z1ZcOW0FhtA3h3w.jpg" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=200&q=80'" alt="The Last of Us" loading="lazy">
+            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/7O4iVfOMQmdCSxhOg1WJU1faaM.jpg" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=200&q=80'" alt="Shogun" loading="lazy">
+            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/1XS1oqL89opfnbLl8WnZY1O1uJx.jpg" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=200&q=80'" alt="Game of Thrones" loading="lazy">
+            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/A3eNswyFw9h2N7tF1yF63wKqfR9.jpg" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=200&q=80'" alt="Fallout" loading="lazy">
+            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/zQkxZLuq1M74n3xZJpGkS0yZ7q7.jpg" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=200&q=80'" alt="Severance" loading="lazy">
+            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/stTEyZv4OaW9F9K5sB8wB8BdbZg.jpg" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=200&q=80'" alt="The Boys" loading="lazy">
+            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/qJ2tW6WMUDux911r6m7haRef0WH.jpg" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=200&q=80'" alt="Dark Knight" loading="lazy">
+            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/rSPw7tgCH9c6NqICZef4kZjFOQ5.jpg" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=200&q=80'" alt="Godfather" loading="lazy">
+
+            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/49WJfeN0moxb9IPfGn8xsnvx6m3.jpg" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=200&q=80'" alt="Stranger Things" loading="lazy">
+            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/1pdfLvkbY9ohJlCjQH2JGjjc91p.jpg" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=200&q=80'" alt="Dune Part Two" loading="lazy">
+            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/u3YQJctMzRV2Z1ZcOW0FhtA3h3w.jpg" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=200&q=80'" alt="The Last of Us" loading="lazy">
+            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/7O4iVfOMQmdCSxhOg1WJU1faaM.jpg" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=200&q=80'" alt="Shogun" loading="lazy">
+            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/1XS1oqL89opfnbLl8WnZY1O1uJx.jpg" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=200&q=80'" alt="Game of Thrones" loading="lazy">
+            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/A3eNswyFw9h2N7tF1yF63wKqfR9.jpg" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=200&q=80'" alt="Fallout" loading="lazy">
+            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/zQkxZLuq1M74n3xZJpGkS0yZ7q7.jpg" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=200&q=80'" alt="Severance" loading="lazy">
+            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/stTEyZv4OaW9F9K5sB8wB8BdbZg.jpg" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=200&q=80'" alt="The Boys" loading="lazy">
+            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/qJ2tW6WMUDux911r6m7haRef0WH.jpg" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=200&q=80'" alt="Dark Knight" loading="lazy">
+            <img class="marquee-item" src="https://image.tmdb.org/t/p/w200/rSPw7tgCH9c6NqICZef4kZjFOQ5.jpg" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=200&q=80'" alt="Godfather" loading="lazy">
         </div>
     </div>
 
     <main class="page-wrapper" style="flex: 1;">
         <div class="main-layout fade-in">
-            <aside class="sidebar-ad-left">
+            <aside class="sidebar-ad-left" aria-label="Left Sidebar Advertisement">
                 <span class="ad-label" style="display:block; text-align:center;">SPONSORED</span>
                 <a href="https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562f63b85c00cb649448" target="_blank" rel="noopener" class="smartlink-card fade-in">
                     <span class="smartlink-icon">💎</span>
@@ -206,10 +202,10 @@
                 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </aside>
 
-            <section class="container">
+            <section class="container" aria-label="Main Content Area">
                 <div class="chrome-banner fade-in">
                     <div class="chrome-text"><strong>MatchApp relies on ads to stay free!</strong><br>For the absolute best performance, open us in Chrome.</div>
-                    <a href="intent://matchapp.cc/#Intent;scheme=https;package=com.android.chrome;end" class="chrome-btn">Open in Chrome</a>
+                    <a href="intent://matchapp.cc/#Intent;scheme=https;package=com.android.chrome;end" class="chrome-btn" aria-label="Open in Google Chrome">Open in Chrome</a>
                 </div>
 
                 <div class="ad-banner-container fade-in">
@@ -218,11 +214,11 @@
                         <script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script>
                         <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
                     </div>
-                    <a href="https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562f63b85c00cb649448" target="_blank" rel="noopener" style="display: inline-block; margin-top: 10px; color: var(--gold); font-size: 12px; text-decoration: none; border: 1px solid var(--gold); padding: 5px 15px; border-radius: 20px; transition: 0.3s;" onmouseover="this.style.background='rgba(212,175,55,0.2)'" onmouseout="this.style.background='transparent'">✨ View Premium Sponsor Offer</a>
+                    <a href="https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562f63b85c00cb649448" target="_blank" rel="noopener" aria-label="View Sponsor Offer" style="display: inline-block; margin-top: 10px; color: var(--gold); font-size: 12px; text-decoration: none; border: 1px solid var(--gold); padding: 5px 15px; border-radius: 20px; transition: 0.3s;" onmouseover="this.style.background='rgba(212,175,55,0.2)'" onmouseout="this.style.background='transparent'">✨ View Premium Sponsor Offer</a>
                 </div>
 
                 <div class="how-it-works-glow fade-in">
-                    <h3>💡 How MatchApp Works</h3>
+                    <h1 style="color: #fff; font-size: 26px; font-weight: 900; margin: 0 0 15px 0; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">💡 How MatchApp Works</h1>
                     <p><strong>1. Curate:</strong> Tell the AI your exact vibe, pacing, and platform preferences.</p>
                     <p><strong>2. Match:</strong> Gemini AI finds a duplicate-free match across the internet in seconds.</p>
                     <p><strong>3. Save:</strong> Build your ultimate Watch Later Portfolio securely.</p>
@@ -232,8 +228,8 @@
                     <h2 style="color: var(--gold); margin: 0 0 10px 0; font-size: 26px; text-align: center;">Find Where to Watch</h2>
                     <p style="color: #ddd; font-size: 14px; margin-bottom: 15px; text-align: center;">Looking for a specific title? Let Gemini AI find where it's streaming.</p>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <input type="text" id="specific-search-input" placeholder="e.g., Shogun, Inception..." style="flex: 1; padding: 14px; border-radius: 8px; border: 1px solid var(--gold); background: rgba(0,0,0,0.5); color: #fff; font-size: 16px;">
-                        <button onclick="triggerMatch(true)" class="gold-btn" style="padding: 14px 25px; font-size: 16px;">🔍 Find It</button>
+                        <input type="text" aria-label="Search specific title" id="specific-search-input" placeholder="e.g., Shogun, Inception..." style="flex: 1; padding: 14px; border-radius: 8px; border: 1px solid var(--gold); background: rgba(0,0,0,0.5); color: #fff; font-size: 16px;">
+                        <button aria-label="Search" onclick="triggerMatch(true)" class="gold-btn" style="padding: 14px 25px; font-size: 16px;">🔍 Find It</button>
                     </div>
                 </article>
 
@@ -243,14 +239,14 @@
                         <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script>
                         <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
                     </div>
-                    <a href="https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562f63b85c00cb649448" target="_blank" rel="noopener" style="display: inline-block; margin-top: 10px; color: var(--gold); font-size: 12px; text-decoration: none; border: 1px solid var(--gold); padding: 5px 15px; border-radius: 20px; transition: 0.3s;" onmouseover="this.style.background='rgba(212,175,55,0.2)'" onmouseout="this.style.background='transparent'">✨ View Premium Sponsor Offer</a>
+                    <a href="https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562f63b85c00cb649448" target="_blank" rel="noopener" aria-label="View Sponsor Offer" style="display: inline-block; margin-top: 10px; color: var(--gold); font-size: 12px; text-decoration: none; border: 1px solid var(--gold); padding: 5px 15px; border-radius: 20px; transition: 0.3s;" onmouseover="this.style.background='rgba(212,175,55,0.2)'" onmouseout="this.style.background='transparent'">✨ View Premium Sponsor Offer</a>
                 </div>
 
                 <article id="questionnaire-box" class="premium-card fade-in">
                     <h2 style="margin: 0 0 15px 0; font-size: 26px; color: var(--gold); text-align: center;">Curate Your Match</h2>
                     <div class="input-grid">
-                        <div class="input-group"><label>Content Format</label><select id="q-category"><option value="any">Surprise Me</option><option value="movie">Feature Films</option><option value="series">TV Series</option><option value="spotify_podcast">Spotify Podcasts</option></select></div>
-                        <div class="input-group"><label>Streaming Platform</label>
+                        <div class="input-group"><label for="q-category">Content Format</label><select id="q-category"><option value="any">Surprise Me</option><option value="movie">Feature Films</option><option value="series">TV Series</option><option value="spotify_podcast">Spotify Podcasts</option></select></div>
+                        <div class="input-group"><label for="q-platform">Streaming Platform</label>
                             <select id="q-platform">
                                 <option value="any">Any Platform</option>
                                 <option value="Netflix">Netflix</option>
@@ -266,11 +262,11 @@
                                 <option value="BBC iPlayer">BBC iPlayer (UK)</option>
                             </select>
                         </div>
-                        <div class="input-group"><label>Emotional Mood</label><select id="q-mood"><option value="any">Any Mood</option><option value="intense">Intense</option><option value="laugh">Humorous</option><option value="romantic">Romantic</option></select></div>
-                        <div class="input-group"><label>Visual Aesthetic</label><select id="q-aesthetic"><option value="any">Any Vibe</option><option value="dark">Dark</option><option value="colorful">Colorful</option><option value="epic">Epic</option></select></div>
-                        <div class="input-group" style="grid-column: 1 / -1;"><label>Content Pacing</label><select id="q-pacing"><option value="any">Any Pacing</option><option value="fast">Fast</option><option value="steady">Steady</option><option value="slow">Slow Burn</option></select></div>
+                        <div class="input-group"><label for="q-mood">Emotional Mood</label><select id="q-mood"><option value="any">Any Mood</option><option value="intense">Intense</option><option value="laugh">Humorous</option><option value="romantic">Romantic</option></select></div>
+                        <div class="input-group"><label for="q-aesthetic">Visual Aesthetic</label><select id="q-aesthetic"><option value="any">Any Vibe</option><option value="dark">Dark</option><option value="colorful">Colorful</option><option value="epic">Epic</option></select></div>
+                        <div class="input-group" style="grid-column: 1 / -1;"><label for="q-pacing">Content Pacing</label><select id="q-pacing"><option value="any">Any Pacing</option><option value="fast">Fast</option><option value="steady">Steady</option><option value="slow">Slow Burn</option></select></div>
                     </div>
-                    <button onclick="triggerMatch(false)" class="gold-btn" style="margin-top: 20px; width: 100%; font-size: 18px; padding: 16px;">⚡ Consult AI Concierge</button>
+                    <button aria-label="Consult AI Concierge" onclick="triggerMatch(false)" class="gold-btn" style="margin-top: 20px; width: 100%; font-size: 18px; padding: 16px;">⚡ Consult AI Concierge</button>
                 </article>
 
                 <article id="loading-box" class="premium-card fade-in" style="display: none; padding: 40px 20px; text-align: center;">
@@ -287,7 +283,7 @@
                 </article>
 
                 <article id="result-box" class="premium-card fade-in" style="display: none; text-align: left;">
-                    <div class="poster-preview-card"><img id="res-poster-img" src="" alt="Poster" loading="lazy"></div>
+                    <div class="poster-preview-card"><img id="res-poster-img" src="" alt="Official Match Poster" loading="lazy"></div>
                     <div class="badge-row">
                         <span id="res-platform-badge" class="platform-badge">Platform</span>
                         <span id="res-imdb-badge" style="background: #f5c518; color: #000; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 900;">IMDb: N/A</span>
@@ -298,29 +294,29 @@
                     <div id="res-trailer-container" style="margin-bottom: 20px;">
                         <h4 style="color: var(--gold); font-size: 13px; text-transform: uppercase; margin: 0 0 10px 0;">🎬 Official Video Preview</h4>
                         <div class="video-container">
-                            <iframe id="res-trailer" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
+                            <iframe id="res-trailer" src="" title="Official Trailer" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
                         </div>
                         <a id="res-trailer-fallback" href="#" target="_blank" rel="noopener" class="secondary-btn" style="margin-top: 10px; width: 100%; text-align: center; display: inline-block; font-size: 12px; border-color: rgba(255,255,255,0.3); color: #ccc;">📺 Watch Trailer directly on YouTube</a>
                     </div>
                     
-                    <a id="res-direct-link" href="#" target="_blank" class="gold-btn" style="margin-bottom: 25px; text-decoration: none; text-align: center; display: block;">▶ Stream Now</a>
+                    <a id="res-direct-link" href="#" aria-label="Stream Now on Platform" target="_blank" class="gold-btn" style="margin-bottom: 25px; text-decoration: none; text-align: center; display: block;">▶ Stream Now</a>
                     
                     <div style="text-align: center; margin-bottom: 15px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 12px; border: 1px solid rgba(212,175,55,0.2);">
                         <h4 style="color: var(--gold); font-size: 13px; margin: 0 0 10px 0; text-transform: uppercase;">Rate this Match</h4>
                         <div class="star-rating-container" id="current-star-rating">
-                            <span class="star" data-value="1">★</span>
-                            <span class="star" data-value="2">★</span>
-                            <span class="star" data-value="3">★</span>
-                            <span class="star" data-value="4">★</span>
-                            <span class="star" data-value="5">★</span>
+                            <span class="star" aria-label="Rate 1 Star" data-value="1">★</span>
+                            <span class="star" aria-label="Rate 2 Stars" data-value="2">★</span>
+                            <span class="star" aria-label="Rate 3 Stars" data-value="3">★</span>
+                            <span class="star" aria-label="Rate 4 Stars" data-value="4">★</span>
+                            <span class="star" aria-label="Rate 5 Stars" data-value="5">★</span>
                         </div>
                     </div>
 
                     <div class="four-btn-grid" id="action-btn-grid">
-                        <button onclick="recordAction('save')" class="secondary-btn" style="border-color: var(--gold); color: var(--gold-glow);">⭐ Watch Later</button>
-                        <button onclick="recordAction('seen')" class="secondary-btn" style="border-color: #25D366; color: #25D366;">✔️ Seen It</button>
-                        <button onclick="recordAction('like')" class="secondary-btn" style="border-color: #2196F3; color: #2196F3;">👍 Like</button>
-                        <button onclick="recordAction('dislike')" class="secondary-btn" style="border-color: #ff5252; color: #ff5252;">👎 Don't Like</button>
+                        <button aria-label="Save to Watch Later" onclick="recordAction('save')" class="secondary-btn" style="border-color: var(--gold); color: var(--gold-glow);">⭐ Watch Later</button>
+                        <button aria-label="Mark as Seen" onclick="recordAction('seen')" class="secondary-btn" style="border-color: #25D366; color: #25D366;">✔️ Seen It</button>
+                        <button aria-label="Like" onclick="recordAction('like')" class="secondary-btn" style="border-color: #2196F3; color: #2196F3;">👍 Like</button>
+                        <button aria-label="Dislike" onclick="recordAction('dislike')" class="secondary-btn" style="border-color: #ff5252; color: #ff5252;">👎 Don't Like</button>
                     </div>
 
                     <div class="ad-banner-container fade-in" style="margin-top: 20px;">
@@ -329,11 +325,11 @@
                             <script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script>
                             <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
                         </div>
-                        <a href="https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562f63b85c00cb649448" target="_blank" rel="noopener" style="display: inline-block; margin-top: 10px; color: var(--gold); font-size: 12px; text-decoration: none; border: 1px solid var(--gold); padding: 5px 15px; border-radius: 20px; transition: 0.3s;" onmouseover="this.style.background='rgba(212,175,55,0.2)'" onmouseout="this.style.background='transparent'">✨ View Premium Sponsor Offer</a>
+                        <a href="https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562f63b85c00cb649448" target="_blank" rel="noopener" aria-label="View Sponsor Offer" style="display: inline-block; margin-top: 10px; color: var(--gold); font-size: 12px; text-decoration: none; border: 1px solid var(--gold); padding: 5px 15px; border-radius: 20px; transition: 0.3s;" onmouseover="this.style.background='rgba(212,175,55,0.2)'" onmouseout="this.style.background='transparent'">✨ View Premium Sponsor Offer</a>
                     </div>
                 </article>
                 
-                <div class="mobile-ad-bottom">
+                <div class="mobile-ad-bottom" aria-label="Mobile Bottom Advertisement">
                     <span class="ad-label" style="display:block; text-align:center;">SPONSORED</span>
                     <a href="https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562f63b85c00cb649448" target="_blank" rel="noopener" class="smartlink-card fade-in" style="margin-bottom: 15px;">
                         <span class="smartlink-icon">💎</span>
@@ -345,7 +341,7 @@
                 </div>
             </section>
 
-            <aside class="sidebar-ad-right">
+            <aside class="sidebar-ad-right" aria-label="Right Sidebar Advertisement">
                 <span class="ad-label" style="display:block; text-align:center;">SPONSORED</span>
                 <a href="https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562f63b85c00cb649448" target="_blank" rel="noopener" class="smartlink-card fade-in">
                     <span class="smartlink-icon">💎</span>
@@ -359,50 +355,50 @@
     </main>
 
     <footer class="seo-footer">
-        <h4>Global Streaming Platforms & Apps</h4>
+        <h2>Global Streaming Platforms & Apps</h2>
         <p style="color: #888; font-size: 12px; margin-bottom: 20px;">MatchApp securely routes you directly to the official platforms to watch globally.</p>
-        <div class="streaming-links">
-            <a href="https://www.netflix.com" target="_blank" rel="noopener noreferrer">📺 Netflix</a>
-            <a href="https://www.primevideo.com" target="_blank" rel="noopener noreferrer">📦 Prime</a>
-            <a href="https://www.max.com" target="_blank" rel="noopener noreferrer">🍿 Max</a>
-            <a href="https://www.disneyplus.com" target="_blank" rel="noopener noreferrer">✨ Disney+</a>
-            <a href="https://www.hulu.com" target="_blank" rel="noopener noreferrer">💚 Hulu</a>
-            <a href="https://tv.apple.com" target="_blank" rel="noopener noreferrer">🍎 Apple TV+</a>
-            <a href="https://www.paramountplus.com" target="_blank" rel="noopener noreferrer">⛰️ Paramount+</a>
-            <a href="https://www.peacocktv.com" target="_blank" rel="noopener noreferrer">🦚 Peacock</a>
-            <a href="https://www.crunchyroll.com" target="_blank" rel="noopener noreferrer">⚔️ Crunchyroll</a>
-            <a href="https://www.spotify.com" target="_blank" rel="noopener noreferrer">🎵 Spotify</a>
-        </div>
+        <nav class="streaming-links" aria-label="Streaming Platform Links">
+            <a href="https://www.netflix.com" aria-label="Watch on Netflix" target="_blank" rel="noopener noreferrer">📺 Netflix</a>
+            <a href="https://www.primevideo.com" aria-label="Watch on Prime Video" target="_blank" rel="noopener noreferrer">📦 Prime</a>
+            <a href="https://www.max.com" aria-label="Watch on Max" target="_blank" rel="noopener noreferrer">🍿 Max</a>
+            <a href="https://www.disneyplus.com" aria-label="Watch on Disney Plus" target="_blank" rel="noopener noreferrer">✨ Disney+</a>
+            <a href="https://www.hulu.com" aria-label="Watch on Hulu" target="_blank" rel="noopener noreferrer">💚 Hulu</a>
+            <a href="https://tv.apple.com" aria-label="Watch on Apple TV" target="_blank" rel="noopener noreferrer">🍎 Apple TV+</a>
+            <a href="https://www.paramountplus.com" aria-label="Watch on Paramount Plus" target="_blank" rel="noopener noreferrer">⛰️ Paramount+</a>
+            <a href="https://www.peacocktv.com" aria-label="Watch on Peacock" target="_blank" rel="noopener noreferrer">🦚 Peacock</a>
+            <a href="https://www.crunchyroll.com" aria-label="Watch on Crunchyroll" target="_blank" rel="noopener noreferrer">⚔️ Crunchyroll</a>
+            <a href="https://www.spotify.com" aria-label="Listen on Spotify" target="_blank" rel="noopener noreferrer">🎵 Spotify</a>
+        </nav>
         <p style="color: #555; font-size: 11px; margin-top: 25px;">© 2026 MatchApp.cc - Support: support@matchapp.cc</p>
     </footer>
 
-    <div id="main-auth-modal" class="modal-overlay" style="display:none;">
+    <div id="main-auth-modal" class="modal-overlay" style="display:none;" aria-label="Authentication Modal">
         <div class="premium-card modal-content" style="border: 1px solid var(--gold); padding: 30px 20px; max-height: 90vh; overflow-y: auto;">
-            <span class="close-x" onclick="closeAuthModal()">×</span>
+            <span class="close-x" onclick="closeAuthModal()" aria-label="Close Modal">×</span>
             
-            <div class="auth-tabs">
-                <div id="tab-login" class="auth-tab active" onclick="switchAuthTab('login')">Log In</div>
-                <div id="tab-signup" class="auth-tab" onclick="switchAuthTab('signup')">Sign Up (Free!)</div>
+            <div class="auth-tabs" role="tablist">
+                <div id="tab-login" role="tab" class="auth-tab active" onclick="switchAuthTab('login')">Log In</div>
+                <div id="tab-signup" role="tab" class="auth-tab" onclick="switchAuthTab('signup')">Sign Up (Free!)</div>
             </div>
 
-            <div id="form-login" class="auth-form-section active">
-                <button onclick="signInWithGoogle()" class="google-btn" style="width: 100%; padding: 14px; border-radius: 14px; margin-bottom: 20px; font-size: 15px;"><svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.95H1.23v3.15C3.21 21.32 7.27 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.25c-.25-.72-.38-1.49-.38-2.25s.13-1.53.38-2.25V6.6H1.23C.45 8.17 0 9.93 0 12s.45 3.83 1.23 5.4l4.05-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.27 0 3.21 2.68 1.23 6.6l4.05 3.15c.95-2.84 3.6-4.95 6.72-4.95z"/></svg> Log in with Google</button>
+            <div id="form-login" class="auth-form-section active" role="tabpanel">
+                <button onclick="signInWithGoogle()" aria-label="Log in with Google" class="google-btn" style="width: 100%; padding: 14px; border-radius: 14px; margin-bottom: 20px; font-size: 15px;"><svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.95H1.23v3.15C3.21 21.32 7.27 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.25c-.25-.72-.38-1.49-.38-2.25s.13-1.53.38-2.25V6.6H1.23C.45 8.17 0 9.93 0 12s.45 3.83 1.23 5.4l4.05-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.27 0 3.21 2.68 1.23 6.6l4.05 3.15c.95-2.84 3.6-4.95 6.72-4.95z"/></svg> Log in with Google</button>
                 <div style="display: flex; align-items: center; margin-bottom: 20px;"><div style="flex: 1; height: 1px; background: rgba(255,255,255,0.15);"></div><span style="padding: 0 12px; color: var(--text-muted); font-size: 11px;">OR EMAIL</span><div style="flex: 1; height: 1px; background: rgba(255,255,255,0.15);"></div></div>
-                <input type="email" id="login-email" placeholder="Email Address" style="margin-bottom: 12px; padding: 14px; width: 100%;">
-                <input type="password" id="login-password" placeholder="Password" style="margin-bottom: 20px; padding: 14px; width: 100%;">
-                <button onclick="handleEmailLogin()" class="gold-btn" style="width: 100%; padding: 14px;">Log In</button>
+                <input type="email" id="login-email" aria-label="Email Address" placeholder="Email Address" style="margin-bottom: 12px; padding: 14px; width: 100%;">
+                <input type="password" id="login-password" aria-label="Password" placeholder="Password" style="margin-bottom: 20px; padding: 14px; width: 100%;">
+                <button aria-label="Log in with Email" onclick="handleEmailLogin()" class="gold-btn" style="width: 100%; padding: 14px;">Log In</button>
             </div>
 
-            <div id="form-signup" class="auth-form-section">
-                <button onclick="signInWithGoogle()" class="google-btn" style="width: 100%; padding: 14px; border-radius: 14px; margin-bottom: 20px; font-size: 15px;"><svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.95H1.23v3.15C3.21 21.32 7.27 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.25c-.25-.72-.38-1.49-.38-2.25s.13-1.53.38-2.25V6.6H1.23C.45 8.17 0 9.93 0 12s.45 3.83 1.23 5.4l4.05-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.27 0 3.21 2.68 1.23 6.6l4.05 3.15c.95-2.84 3.6-4.95 6.72-4.95z"/></svg> Sign up with Google</button>
+            <div id="form-signup" class="auth-form-section" role="tabpanel">
+                <button aria-label="Sign up with Google" onclick="signInWithGoogle()" class="google-btn" style="width: 100%; padding: 14px; border-radius: 14px; margin-bottom: 20px; font-size: 15px;"><svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.95H1.23v3.15C3.21 21.32 7.27 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.25c-.25-.72-.38-1.49-.38-2.25s.13-1.53.38-2.25V6.6H1.23C.45 8.17 0 9.93 0 12s.45 3.83 1.23 5.4l4.05-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.27 0 3.21 2.68 1.23 6.6l4.05 3.15c.95-2.84 3.6-4.95 6.72-4.95z"/></svg> Sign up with Google</button>
                 <div style="display: flex; align-items: center; margin-bottom: 20px;"><div style="flex: 1; height: 1px; background: rgba(255,255,255,0.15);"></div><span style="padding: 0 12px; color: var(--text-muted); font-size: 11px;">OR EMAIL</span><div style="flex: 1; height: 1px; background: rgba(255,255,255,0.15);"></div></div>
                 <p style="color: #bbb; font-size: 12px; margin-bottom: 15px; text-align: center;">Create your FREE account now to save unlimited matches to your Portfolio.</p>
-                <input type="email" id="reg-email" placeholder="Email Address" style="margin-bottom: 12px; padding: 14px; width: 100%;">
-                <input type="password" id="reg-password" placeholder="Create Password (Min 6 chars)" style="margin-bottom: 20px; padding: 14px; width: 100%;">
-                <button onclick="handleEmailSignup()" class="gold-btn" style="width: 100%; padding: 14px;">Create Free Account</button>
+                <input type="email" id="reg-email" aria-label="New Email Address" placeholder="Email Address" style="margin-bottom: 12px; padding: 14px; width: 100%;">
+                <input type="password" id="reg-password" aria-label="Create Password" placeholder="Create Password (Min 6 chars)" style="margin-bottom: 20px; padding: 14px; width: 100%;">
+                <button aria-label="Create Free Account" onclick="handleEmailSignup()" class="gold-btn" style="width: 100%; padding: 14px;">Create Free Account</button>
             </div>
 
-            <p id="auth-message" style="font-size: 13px; margin-top: 15px; display: none; font-weight: bold; text-align: center;"></p>
+            <p id="auth-message" aria-live="polite" style="font-size: 13px; margin-top: 15px; display: none; font-weight: bold; text-align: center;"></p>
         </div>
     </div>
     
