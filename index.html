@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0a0505">
-    <title>MatchApp | AI Movie & Series Streaming Concierge</title>
+    <title>MatchApp | AI Movie Finder & Streaming Concierge</title>
 
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -20,25 +20,37 @@
     <script>gtag('js', new Date()); gtag('config', 'G-2ECND229RR');</script>
     
     <meta name="description" content="MatchApp is your AI streaming concierge. Discover perfect movies, TV series, doramas, and podcasts tailored to your exact mood across Netflix, Prime, Max, Disney+, Hulu, Crunchyroll, and more.">
+    <!-- MASSIVE SEO KEYWORD INJECTION -->
+    <meta name="keywords" content="where to watch Fallout season 2, best doramas 2026, GTA 6 trailer, Deadpool Wolverine stream, Inside Out 2 where to watch, AI movie recommendation engine, AI streaming finder, find movie by mood, Netflix hidden gems, Spotify podcast AI, MatchApp free">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
     
     <link rel="canonical" href="https://matchapp.cc/">
     <link rel="stylesheet" href="/style.css">
     
+    <!-- SCHEMA.ORG SEARCH BOX SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "url": "https://matchapp.cc/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://matchapp.cc/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
 
-    <!-- Google Translate Script -->
     <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
-        }
+        function googleTranslateElementInit() { new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element'); }
     </script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
     <style>
-        /* Exact CSS mapping included directly for seamless deployment */
         body { margin: 0; background: #0a0505; color: #fff; font-family: 'Inter', sans-serif; }
         .app-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 25px; background: rgba(10,5,5,0.95); border-bottom: 2px solid var(--gold); box-shadow: 0 4px 25px rgba(212,175,55,0.4); flex-wrap: wrap; gap: 15px; }
         .header-brand-area { display: flex; align-items: center; gap: 15px; text-decoration: none; }
@@ -56,6 +68,18 @@
         .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 12px; border: 1px solid var(--gold); background: #000; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
         .ad-banner-container { text-align: center; margin-bottom: 25px; }
+
+        .seo-footer { background: rgba(10,5,5,0.95); border-top: 2px solid var(--gold); padding: 30px 20px; text-align: center; margin-top: auto; }
+        .streaming-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 15px; }
+        .streaming-links a { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 13px; transition: 0.3s; }
+        .streaming-links a:hover { border-color: var(--gold); background: rgba(212,175,55,0.1); transform: scale(1.05); }
+
+        /* Auth Tabs CSS */
+        .auth-tabs { display: flex; border-bottom: 1px solid rgba(212,175,55,0.3); margin-bottom: 20px; }
+        .auth-tab { flex: 1; text-align: center; padding: 12px; color: #bbb; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .auth-tab.active { color: var(--gold); border-bottom: 2px solid var(--gold); background: rgba(212,175,55,0.1); }
+        .auth-form-section { display: none; }
+        .auth-form-section.active { display: block; animation: fadeIn 0.3s ease; }
     </style>
 </head>
 <body style="display: flex; flex-direction: column; min-height: 100vh;">
@@ -67,13 +91,9 @@
         </a>
         
         <nav style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
-            <!-- Global Translation Element -->
             <div id="google_translate_element" style="margin-right: 10px;"></div>
-            
             <a href="/index.html" class="secondary-btn" style="padding: 8px 12px; font-size: 12px; text-decoration: none;">🏠 Home</a>
-            
             <a id="profile-link-tab" href="/profile/profile.html" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid var(--gold); color: var(--gold-glow); padding: 8px 12px; border-radius: 12px; font-weight: bold; text-decoration: none; font-size: 13px; align-items: center;">👤 Profile</a>
-            
             <button id="nav-reg-btn" onclick="openAuthModal()" class="gold-btn" style="padding: 8px 14px; font-size: 12px;">👤 Sign In / Join</button>
             <button id="nav-logout-btn" onclick="doLogout()" style="display: none; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 8px 12px; border-radius: 12px; cursor: pointer; font-size: 11px;">Logout</button>
         </nav>
@@ -82,31 +102,30 @@
     <main class="page-wrapper" style="flex: 1;">
         <div class="main-layout fade-in">
             <aside class="sidebar-ad-left">
-                <!-- Adsterra / Adsense Block -->
+                <!-- AdSense Locked Block -->
+                <span style="font-size: 10px; color: #888; display: block; text-align: center; margin-bottom: 5px;">SPONSORED</span>
                 <ins class="adsbygoogle" style="display:block; min-height: 600px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical"></ins>
                 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </aside>
 
             <section class="container">
-                <!-- 1. HIGH CONVERSION 'HOW IT WORKS' TOP BLOCK -->
+                
+                <!-- TOP HOW IT WORKS & REGISTRATION PROMO -->
                 <div class="how-it-works-glow fade-in">
                     <h3 style="color: #fff; font-size: 26px; font-weight: 900; margin: 0 0 15px 0;">💡 The Ultimate AI Concierge</h3>
                     <p style="color: #ddd; font-size: 15px; margin-bottom: 20px;">Stop scrolling. Tell the AI your vibe, and get a flawless, duplicate-free match instantly across all global platforms. Save titles to your portfolio.</p>
-                    
                     <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
                         <button onclick="openAuthModal()" class="gold-btn" style="font-size: 15px; padding: 12px 24px;">👤 Register for FREE</button>
-                        <a href="/pricing/pricing.html" class="secondary-btn" style="border-color: var(--gold); color: var(--gold-glow); font-size: 15px; padding: 12px 24px; text-decoration: none;">💎 Remove Ads & Go VIP</a>
                     </div>
                 </div>
 
-                <!-- 2. MONETIZATION AD BANNER -->
                 <div class="ad-banner-container fade-in">
                     <span style="font-size: 10px; color: #888; display: block; margin-bottom: 5px;">SPONSORED</span>
                     <script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script>
                     <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
                 </div>
 
-                <!-- 3. AI MATCHING ENGINE -->
+                <!-- AI SEARCH ENGINES -->
                 <article id="search-box" class="premium-card fade-in" style="margin-bottom: 25px;">
                     <h2 style="color: var(--gold); margin: 0 0 10px 0; font-size: 22px; text-align: center;">Find Where to Watch</h2>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
@@ -120,11 +139,17 @@
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                         <div><label style="color:#aaa;font-size:12px;">Format</label><select id="q-category" style="width:100%;padding:12px;"><option value="any">Surprise Me</option><option value="movie">Feature Films</option><option value="series">TV Series</option></select></div>
                         <div><label style="color:#aaa;font-size:12px;">Platform</label><select id="q-platform" style="width:100%;padding:12px;"><option value="any">Any Platform</option><option value="Netflix">Netflix</option><option value="Max">Max</option><option value="Prime Video">Prime</option><option value="Disney+">Disney+</option></select></div>
-                        <div><label style="color:#aaa;font-size:12px;">Mood</label><select id="q-mood" style="width:100%;padding:12px;"><option value="any">Any</option><option value="intense">Intense</option><option value="funny">Humorous</option></select></div>
-                        <div><label style="color:#aaa;font-size:12px;">Aesthetic</label><select id="q-aesthetic" style="width:100%;padding:12px;"><option value="any">Any</option><option value="dark">Dark</option><option value="colorful">Colorful</option></select></div>
+                        <div style="grid-column: 1 / -1;"><label style="color:#aaa;font-size:12px;">Mood</label><select id="q-mood" style="width:100%;padding:12px;"><option value="any">Any Mood</option><option value="intense">Intense</option><option value="funny">Humorous</option><option value="romantic">Romantic</option></select></div>
                     </div>
                     <button onclick="triggerMatch(false)" class="gold-btn" style="margin-top: 20px; width: 100%; font-size: 18px; padding: 16px;">⚡ Consult AI Concierge</button>
                 </article>
+
+                <!-- MORE ADS PLACEMENT LOCKED IN AFTER CURATE FIELD -->
+                <div class="ad-banner-container fade-in" style="margin-top: 25px;">
+                    <span style="font-size: 10px; color: #888; display: block; margin-bottom: 5px;">SPONSORED ADVERTISEMENT</span>
+                    <ins class="adsbygoogle" style="display:block;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                </div>
 
                 <article id="loading-box" class="premium-card fade-in" style="display: none; padding: 40px 20px; text-align: center;">
                     <div style="font-size: 60px; margin-bottom: 15px; animation: pulse 1s infinite alternate;">🕵️‍♂️</div>
@@ -133,7 +158,7 @@
                 </article>
 
                 <article id="result-box" class="premium-card fade-in" style="display: none; text-align: left;">
-                    <img id="res-poster-img" src="" alt="Poster" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 12px; margin-bottom: 15px; border: 2px solid var(--gold);">
+                    <img id="res-poster-img" src="" alt="Poster" style="width: 100%; max-height: 450px; object-fit: cover; border-radius: 12px; margin-bottom: 15px; border: 2px solid var(--gold);">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
                         <span id="res-platform-badge" style="background: var(--gold); color:#000; font-weight:bold; padding: 4px 10px; border-radius:6px; font-size:13px;">Platform</span>
                         <span id="res-imdb-badge" style="background: #f5c518; color: #000; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 900;">IMDb: N/A</span>
@@ -146,6 +171,7 @@
                         <div class="video-container">
                             <iframe id="res-trailer" src="" allowfullscreen loading="lazy"></iframe>
                         </div>
+                        <a id="res-trailer-fallback" href="#" target="_blank" rel="noopener" class="secondary-btn" style="margin-top: 10px; width: 100%; text-align: center; display: inline-block; font-size: 12px; border-color: rgba(255,255,255,0.3); color: #ccc;">▶️ Watch Official Trailer on YouTube</a>
                     </div>
                     
                     <a id="res-direct-link" href="#" target="_blank" class="gold-btn" style="margin-bottom: 25px; text-decoration: none; text-align: center; display: block;">▶ Stream Now</a>
@@ -155,23 +181,72 @@
                         <button onclick="recordAction('seen')" class="secondary-btn" style="border-color: #25D366; color: #25D366;">✔️ Seen It</button>
                     </div>
                 </article>
+
+                <!-- PROMO LINKS AT BOTTOM OF MAIN -->
+                <div style="background: rgba(212,175,55,0.05); border: 1px solid var(--gold); border-radius: 12px; padding: 20px; text-align: center; margin-top: 30px;">
+                    <h3 style="color: var(--gold-glow); font-size: 20px; margin: 0 0 10px 0;">💎 Unlock Unlimited Matches</h3>
+                    <p style="color: #bbb; font-size: 14px; margin-bottom: 15px;">Remove all ads and get infinite AI generations instantly.</p>
+                    <a href="/pricing/pricing.html" class="gold-btn" style="display: inline-block; text-decoration: none; padding: 10px 20px; font-size: 14px;">View VIP Plans</a>
+                </div>
+
             </section>
 
             <aside class="sidebar-ad-right">
+                <span style="font-size: 10px; color: #888; display: block; text-align: center; margin-bottom: 5px;">SPONSORED</span>
                 <ins class="adsbygoogle" style="display:block; min-height: 600px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical"></ins>
                 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </aside>
         </div>
     </main>
 
-    <!-- Modals omitted for brevity, logic remains identical to previous mastercode -->
+    <!-- FULL EMAIL + GOOGLE AUTH MODAL -->
     <div id="main-auth-modal" style="display:none; position:fixed; top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9); z-index:9999; justify-content:center; align-items:center;">
-        <div class="premium-card" style="width: 90%; max-width: 400px; text-align:center; position:relative;">
+        <div class="premium-card" style="width: 90%; max-width: 400px; position:relative;">
             <span onclick="closeAuthModal()" style="position:absolute; top:10px; right:15px; font-size:24px; cursor:pointer; color:#fff;">×</span>
-            <h3 style="color: var(--gold); margin-bottom: 15px;">Join MatchApp</h3>
-            <button onclick="signInWithGoogle()" style="width:100%; padding:12px; font-weight:bold; cursor:pointer;">Log in with Google</button>
+            
+            <div class="auth-tabs">
+                <div id="tab-login" class="auth-tab active" onclick="switchAuthTab('login')">Log In</div>
+                <div id="tab-signup" class="auth-tab" onclick="switchAuthTab('signup')">Sign Up (Free)</div>
+            </div>
+
+            <!-- Login Form -->
+            <div id="form-login" class="auth-form-section active">
+                <button onclick="signInWithGoogle()" class="gold-btn" style="width: 100%; padding: 12px; margin-bottom: 15px; background: #fff; color: #000;">🌐 Continue with Google</button>
+                <div style="text-align: center; color: #777; font-size: 12px; margin-bottom: 15px;">OR EMAIL</div>
+                <input type="email" id="login-email" placeholder="Email Address" style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid var(--gold); background: #000; color: #fff;">
+                <input type="password" id="login-password" placeholder="Password" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid var(--gold); background: #000; color: #fff;">
+                <button onclick="handleEmailLogin()" class="gold-btn" style="width: 100%; padding: 12px;">Log In</button>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="form-signup" class="auth-form-section">
+                <button onclick="signInWithGoogle()" class="gold-btn" style="width: 100%; padding: 12px; margin-bottom: 15px; background: #fff; color: #000;">🌐 Sign Up with Google</button>
+                <div style="text-align: center; color: #777; font-size: 12px; margin-bottom: 15px;">OR CREATE ACCOUNT WITH EMAIL</div>
+                <input type="email" id="reg-email" placeholder="Email Address" style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid var(--gold); background: #000; color: #fff;">
+                <input type="password" id="reg-password" placeholder="Create Password (Min 6 chars)" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid var(--gold); background: #000; color: #fff;">
+                <button onclick="handleEmailSignup()" class="gold-btn" style="width: 100%; padding: 12px;">Create Free Account</button>
+            </div>
+
+            <p id="auth-message" style="font-size: 13px; margin-top: 15px; display: none; font-weight: bold; text-align: center;"></p>
         </div>
     </div>
+
+    <!-- 100% RESTORED STREAMING FOOTER -->
+    <footer class="seo-footer">
+        <h4 style="color: var(--gold); font-size: 18px; margin: 0 0 10px 0; text-transform: uppercase;">Global Streaming Platforms</h4>
+        <p style="color: #888; font-size: 12px; margin-bottom: 20px;">MatchApp securely routes you directly to the official platforms below to watch globally.</p>
+        <div class="streaming-links">
+            <a href="https://www.netflix.com" target="_blank" rel="noopener">📺 Netflix</a>
+            <a href="https://www.primevideo.com" target="_blank" rel="noopener">📦 Prime Video</a>
+            <a href="https://www.max.com" target="_blank" rel="noopener">🍿 Max</a>
+            <a href="https://www.disneyplus.com" target="_blank" rel="noopener">✨ Disney+</a>
+            <a href="https://www.hulu.com" target="_blank" rel="noopener">💚 Hulu</a>
+            <a href="https://tv.apple.com" target="_blank" rel="noopener">🍎 Apple TV+</a>
+            <a href="https://www.paramountplus.com" target="_blank" rel="noopener">⛰️ Paramount+</a>
+            <a href="https://www.spotify.com" target="_blank" rel="noopener">🎵 Spotify</a>
+        </div>
+        <p style="color: #555; font-size: 11px; margin-top: 25px;">© 2026 MatchApp.cc - Support: support@matchapp.cc</p>
+    </footer>
 
     <script src="/app.js"></script>
 </body>
