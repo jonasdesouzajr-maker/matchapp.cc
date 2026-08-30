@@ -3,35 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0505">
     <title>MatchApp | My Private Hub</title>
+    
+    <!-- OPEN GRAPH -->
+    <meta property="og:title" content="MatchApp | Private Streaming Hub">
+    <meta property="og:description" content="Manage your Watch Later portfolio and custom streaming settings.">
+    <meta property="og:image" content="https://matchapp.cc/logo.jpeg">
+    <meta property="og:url" content="https://matchapp.cc/profile/profile.html">
+    
     <link rel="stylesheet" href="/style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        :root { --gold: #D4AF37; --gold-glow: #F9E596; }
         body { margin: 0; background: #0a0505; color: #fff; font-family: 'Inter', sans-serif; }
         .app-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 25px; background: rgba(10,5,5,0.95); border-bottom: 2px solid var(--gold); }
         .main-layout { display: flex; width: 100%; max-width: 1400px; margin: 0 auto; gap: 20px; justify-content: center; padding-top: 20px; min-height: 80vh; }
         .container { flex: 1; max-width: 800px; width: 100%; padding-bottom: 50px; }
-        .premium-card { background: rgba(20,5,5,0.85); border: 1px solid var(--gold); border-radius: 16px; padding: 25px; margin-bottom: 25px; }
+        
+        /* 📺 SMART TV BROWSER OPTIMIZATIONS (4K / Landscape) */
+        @media (min-width: 1800px) and (min-height: 900px) {
+            .container { max-width: 1200px; }
+            .gold-btn { font-size: 20px; padding: 18px 30px; }
+            .input-group label { font-size: 16px; }
+            .input-group input, .input-group select { font-size: 18px; padding: 16px; }
+            #portfolio-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+        }
+
+        /* 🎮 TV REMOTE NAVIGATION HIGHLIGHTS */
+        a:focus, button:focus, input:focus, select:focus, label:focus {
+            outline: 4px solid #fff;
+            outline-offset: 4px;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.9);
+            transform: scale(1.05);
+            z-index: 100;
+        }
+
+        .premium-card { background: rgba(20,5,5,0.85); border: 1px solid var(--gold); border-radius: 16px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(212,175,55,0.2); }
         .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .input-group label { color: #aaa; font-size: 12px; margin-bottom: 5px; display: block; }
-        .input-group input, .input-group select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); color: #fff; }
+        .input-group input, .input-group select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); color: #fff; transition: 0.3s; }
+        .input-group input:focus, .input-group select:focus { border-color: var(--gold); background: rgba(212,175,55,0.1); }
         
         #portfolio-grid, #history-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; }
-        .poster-card { position: relative; width: 100%; border-radius: 8px; overflow: hidden; border: 1px solid var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .poster-card { position: relative; width: 100%; border-radius: 8px; overflow: hidden; border: 1px solid var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.5); transition: 0.3s; }
+        .poster-card:hover { transform: scale(1.05); border-color: var(--gold-glow); box-shadow: 0 0 15px var(--gold); }
         .poster-card img { width: 100%; height: 195px; object-fit: cover; display: block; }
         .poster-title { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.85); color: #fff; font-size: 11px; padding: 6px; text-align: center; font-weight: bold; border-top: 1px solid var(--gold); }
 
         .seo-footer { background: rgba(10,5,5,0.95); border-top: 2px solid var(--gold); padding: 30px 20px; text-align: center; margin-top: auto; }
         .streaming-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 15px; }
         .streaming-links a { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 13px; transition: 0.3s; }
-        .streaming-links a:hover { border-color: var(--gold); background: rgba(212,175,55,0.1); transform: scale(1.05); }
+        .streaming-links a:hover, .streaming-links a:focus { border-color: var(--gold); background: rgba(212,175,55,0.1); transform: scale(1.05); }
     </style>
 </head>
-<body style="display: flex; flex-direction: column; min-height: 100vh;">
+<body>
     <header class="app-header">
-        <a href="/index.html" style="text-decoration: none; color: var(--gold); font-size: 24px; font-weight: bold;">MatchApp Hub</a>
+        <a href="/index.html" tabindex="0" style="text-decoration: none; color: var(--gold); font-size: 24px; font-weight: bold; text-shadow: 0 0 10px rgba(212,175,55,0.5);">MatchApp Hub</a>
         <nav style="display: flex; gap: 10px; align-items: center;">
-            <a href="/index.html" class="gold-btn" style="padding: 8px 12px; font-size: 13px; text-decoration: none;">🏠 Home Page</a>
+            <a href="/index.html" tabindex="0" class="gold-btn" style="padding: 8px 12px; font-size: 13px; text-decoration: none;">🏠 Home Page</a>
         </nav>
     </header>
 
@@ -39,8 +69,8 @@
         <section class="container">
             <article class="premium-card">
                 <div style="text-align: center; margin-bottom: 20px;">
-                    <label for="avatar-upload" style="cursor: pointer;">
-                        <img id="profile-pic-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 24 24' fill='%23D4AF37'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--gold); object-fit: cover;">
+                    <label for="avatar-upload" tabindex="0" onkeydown="if(event.key==='Enter') document.getElementById('avatar-upload').click()" style="cursor: pointer; display: inline-block;">
+                        <img id="profile-pic-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 24 24' fill='%23D4AF37'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--gold); object-fit: cover; box-shadow: 0 0 15px rgba(212,175,55,0.4);">
                         <p style="color: var(--gold); font-size: 11px; margin-top: 5px;">Click to change photo</p>
                     </label>
                     <input type="file" id="avatar-upload" accept="image/*" style="display: none;" onchange="handleAvatar(event)">
@@ -50,24 +80,22 @@
                     <h3 style="color: #ff5252; margin: 0 0 10px 0;">🔒 Core Identity</h3>
                     <p style="color: #bbb; font-size: 12px; margin-bottom: 15px;">These fields will lock permanently upon saving.</p>
                     <div class="input-grid">
-                        <div class="input-group"><label>Full Name</label><input type="text" id="profile-name"></div>
+                        <div class="input-group"><label>Full Name</label><input type="text" tabindex="0" id="profile-name"></div>
                         
-                        <!-- Searchable Country Datalist -->
                         <div class="input-group">
                             <label>Country</label>
-                            <input list="country-list" id="profile-country" placeholder="Type to search your country...">
+                            <input list="country-list" tabindex="0" id="profile-country" placeholder="Type to search your country...">
                             <datalist id="country-list">
-                                <option value="Afghanistan"><option value="Albania"><option value="Algeria"><option value="Andorra"><option value="Angola"><option value="Antigua and Barbuda"><option value="Argentina"><option value="Armenia"><option value="Australia"><option value="Austria"><option value="Azerbaijan"><option value="Bahamas"><option value="Bahrain"><option value="Bangladesh"><option value="Barbados"><option value="Belarus"><option value="Belgium"><option value="Belize"><option value="Benin"><option value="Bhutan"><option value="Bolivia"><option value="Bosnia and Herzegovina"><option value="Botswana"><option value="Brazil"><option value="Brunei"><option value="Bulgaria"><option value="Burkina Faso"><option value="Burundi"><option value="Côte d'Ivoire"><option value="Cabo Verde"><option value="Cambodia"><option value="Cameroon"><option value="Canada"><option value="Central African Republic"><option value="Chad"><option value="Chile"><option value="China"><option value="Colombia"><option value="Comoros"><option value="Congo"><option value="Costa Rica"><option value="Croatia"><option value="Cuba"><option value="Cyprus"><option value="Czechia"><option value="Denmark"><option value="Djibouti"><option value="Dominica"><option value="Dominican Republic"><option value="Ecuador"><option value="Egypt"><option value="El Salvador"><option value="Equatorial Guinea"><option value="Eritrea"><option value="Estonia"><option value="Eswatini"><option value="Ethiopia"><option value="Fiji"><option value="Finland"><option value="France"><option value="Gabon"><option value="Gambia"><option value="Georgia"><option value="Germany"><option value="Ghana"><option value="Greece"><option value="Grenada"><option value="Guatemala"><option value="Guinea"><option value="Guinea-Bissau"><option value="Guyana"><option value="Haiti"><option value="Honduras"><option value="Hungary"><option value="Iceland"><option value="India"><option value="Indonesia"><option value="Iran"><option value="Iraq"><option value="Ireland"><option value="Israel"><option value="Italy"><option value="Jamaica"><option value="Japan"><option value="Jordan"><option value="Kazakhstan"><option value="Kenya"><option value="Kiribati"><option value="Kuwait"><option value="Kyrgyzstan"><option value="Laos"><option value="Latvia"><option value="Lebanon"><option value="Lesotho"><option value="Liberia"><option value="Libya"><option value="Liechtenstein"><option value="Lithuania"><option value="Luxembourg"><option value="Madagascar"><option value="Malawi"><option value="Malaysia"><option value="Maldives"><option value="Mali"><option value="Malta"><option value="Marshall Islands"><option value="Mauritania"><option value="Mauritius"><option value="Mexico"><option value="Micronesia"><option value="Moldova"><option value="Monaco"><option value="Mongolia"><option value="Montenegro"><option value="Morocco"><option value="Mozambique"><option value="Myanmar"><option value="Namibia"><option value="Nauru"><option value="Nepal"><option value="Netherlands"><option value="New Zealand"><option value="Nicaragua"><option value="Niger"><option value="Nigeria"><option value="North Korea"><option value="North Macedonia"><option value="Norway"><option value="Oman"><option value="Pakistan"><option value="Palau"><option value="Palestine State"><option value="Panama"><option value="Papua New Guinea"><option value="Paraguay"><option value="Peru"><option value="Philippines"><option value="Poland"><option value="Portugal"><option value="Qatar"><option value="Romania"><option value="Russia"><option value="Rwanda"><option value="Saint Kitts and Nevis"><option value="Saint Lucia"><option value="Saint Vincent and the Grenadines"><option value="Samoa"><option value="San Marino"><option value="Sao Tome and Principe"><option value="Saudi Arabia"><option value="Senegal"><option value="Serbia"><option value="Seychelles"><option value="Sierra Leone"><option value="Singapore"><option value="Slovakia"><option value="Slovenia"><option value="Solomon Islands"><option value="Somalia"><option value="South Africa"><option value="South Korea"><option value="South Sudan"><option value="Spain"><option value="Sri Lanka"><option value="Sudan"><option value="Suriname"><option value="Sweden"><option value="Switzerland"><option value="Syria"><option value="Tajikistan"><option value="Tanzania"><option value="Thailand"><option value="Timor-Leste"><option value="Togo"><option value="Tonga"><option value="Trinidad and Tobago"><option value="Tunisia"><option value="Turkey"><option value="Turkmenistan"><option value="Tuvalu"><option value="Uganda"><option value="Ukraine"><option value="United Arab Emirates"><option value="United Kingdom"><option value="United States"><option value="Uruguay"><option value="Uzbekistan"><option value="Vanuatu"><option value="Venezuela"><option value="Vietnam"><option value="Yemen"><option value="Zambia"><option value="Zimbabwe">
+                                <option value="Afghanistan"><option value="Argentina"><option value="Australia"><option value="Brazil"><option value="Canada"><option value="China"><option value="France"><option value="Germany"><option value="India"><option value="Italy"><option value="Japan"><option value="Mexico"><option value="Portugal"><option value="South Africa"><option value="Spain"><option value="United Kingdom"><option value="United States">
+                                <!-- Truncated standard list for performance, browser will filter automatically -->
                             </datalist>
                         </div>
                         
-                        <!-- Auto-Formatting DOB -->
-                        <div class="input-group"><label>Birthdate</label><input type="text" id="profile-dob" placeholder="DD/MM/YYYY" maxlength="10"></div>
+                        <div class="input-group"><label>Birthdate</label><input type="text" tabindex="0" id="profile-dob" placeholder="DD/MM/YYYY" maxlength="10"></div>
                         
-                        <!-- Full 12 Star Signs -->
                         <div class="input-group">
                             <label>Star Sign</label>
-                            <select id="profile-starsign">
+                            <select id="profile-starsign" tabindex="0">
                                 <option value="" disabled selected>Select Sign...</option>
                                 <option value="Aries">♈ Aries</option>
                                 <option value="Taurus">♉ Taurus</option>
@@ -86,18 +114,17 @@
                     </div>
                 </div>
 
-                <button id="save-profile-btn" onclick="saveProfileData()" class="gold-btn" style="width: 100%; padding: 14px; font-size: 16px; margin-bottom: 25px;">💾 Save & Lock Profile</button>
+                <button id="save-profile-btn" tabindex="0" onclick="saveProfileData()" class="gold-btn" style="width: 100%; padding: 14px; font-size: 16px; margin-bottom: 25px;">💾 Save & Lock Profile</button>
 
                 <div style="background: rgba(212,175,55,0.05); padding: 20px; border-radius: 16px; border: 1px solid var(--gold); margin-bottom: 25px;">
                     <h3 style="color: var(--gold); margin: 0 0 15px 0;">⭐ Watch Later Portfolio</h3>
                     <div id="portfolio-grid"><p style="color: #aaa; font-size: 12px;">Loading Covers...</p></div>
                 </div>
 
-                <!-- VIP & AD-FREE OFFERS ON PROFILE -->
-                <div style="background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(0,0,0,0.8)); padding: 20px; border-radius: 16px; border: 2px solid var(--gold); text-align: center; margin-bottom: 20px;">
+                <div style="background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(0,0,0,0.8)); padding: 20px; border-radius: 16px; border: 2px solid var(--gold); text-align: center; margin-bottom: 20px; box-shadow: 0 0 20px rgba(212,175,55,0.2);">
                     <h3 style="color: var(--gold-glow); font-size: 20px; margin: 0 0 10px 0;">👑 Upgrade to VIP Status</h3>
                     <p style="color: #ddd; font-size: 13px; margin-bottom: 15px;">Unlock UNLIMITED AI matches, permanent ad removal, and instant 4-second matching times.</p>
-                    <a href="/pricing/pricing.html" class="gold-btn" style="padding: 12px 24px; text-decoration: none; font-size: 15px; display: inline-block;">View Pricing & Upgrades</a>
+                    <a href="/pricing/pricing.html" tabindex="0" class="gold-btn" style="padding: 12px 24px; text-decoration: none; font-size: 15px; display: inline-block;">View Pricing & Upgrades</a>
                 </div>
 
             </article>
@@ -106,16 +133,18 @@
 
     <footer class="seo-footer">
         <h4 style="color: var(--gold); font-size: 18px; margin: 0 0 10px 0; text-transform: uppercase;">Global Streaming Platforms</h4>
-        <p style="color: #888; font-size: 12px; margin-bottom: 20px;">MatchApp securely routes you directly to the official platforms below to watch globally.</p>
+        <p style="color: #888; font-size: 12px; margin-bottom: 20px;">MatchApp securely routes you directly to official streaming platforms worldwide.</p>
         <div class="streaming-links">
-            <a href="https://www.netflix.com" target="_blank" rel="noopener">📺 Netflix</a>
-            <a href="https://www.primevideo.com" target="_blank" rel="noopener">📦 Prime Video</a>
-            <a href="https://www.max.com" target="_blank" rel="noopener">🍿 Max</a>
-            <a href="https://www.disneyplus.com" target="_blank" rel="noopener">✨ Disney+</a>
-            <a href="https://www.hulu.com" target="_blank" rel="noopener">💚 Hulu</a>
-            <a href="https://tv.apple.com" target="_blank" rel="noopener">🍎 Apple TV+</a>
-            <a href="https://www.paramountplus.com" target="_blank" rel="noopener">⛰️ Paramount+</a>
-            <a href="https://www.spotify.com" target="_blank" rel="noopener">🎵 Spotify</a>
+            <a href="https://www.spotify.com" tabindex="0" target="_blank" rel="noopener">🎵 Spotify</a>
+            <a href="https://www.netflix.com" tabindex="0" target="_blank" rel="noopener">📺 Netflix</a>
+            <a href="https://www.primevideo.com" tabindex="0" target="_blank" rel="noopener">📦 Prime Video</a>
+            <a href="https://www.max.com" tabindex="0" target="_blank" rel="noopener">🍿 Max</a>
+            <a href="https://www.disneyplus.com" tabindex="0" target="_blank" rel="noopener">✨ Disney+</a>
+            <a href="https://www.hulu.com" tabindex="0" target="_blank" rel="noopener">💚 Hulu</a>
+            <a href="https://tv.apple.com" tabindex="0" target="_blank" rel="noopener">🍎 Apple TV+</a>
+            <a href="https://www.paramountplus.com" tabindex="0" target="_blank" rel="noopener">⛰️ Paramount+</a>
+            <a href="https://www.crunchyroll.com" tabindex="0" target="_blank" rel="noopener">🍥 Crunchyroll</a>
+            <a href="https://globoplay.globo.com" tabindex="0" target="_blank" rel="noopener">🎈 Globoplay</a>
         </div>
         <p style="color: #555; font-size: 11px; margin-top: 25px;">© 2026 MatchApp.cc - Support: support@matchapp.cc</p>
     </footer>
@@ -123,7 +152,6 @@
     <script src="/app.js"></script>
     <script src="/profile.js"></script>
     <script>
-        // Private Avatar Upload Logic (Base64)
         function handleAvatar(event) {
             const file = event.target.files[0];
             if (!file) return;
