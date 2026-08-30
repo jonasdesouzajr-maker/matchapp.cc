@@ -1,4 +1,4 @@
-console.log("Mastercode 86.0: Full Semantic SEO & Consent Mode Engine Active");
+console.log("Mastercode 87.0: Semantic SEO, Stripe Engine, & AdBlock Safe Core Active");
 
 // ==========================================
 // 1. SUPABASE LIVE INITIALIZATION
@@ -15,12 +15,6 @@ try {
 } catch (e) {
     console.error("Supabase Initialization Error:", e);
 }
-
-// ==========================================
-// ADSTERRA MONETIZATION CONFIGURATION
-// ==========================================
-const API_KEY_ADSTERRA = '3ff95a977cddd2b1b865c9186acdd8de'; 
-const ADSTERRA_SMARTLINK = 'https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562f63b85c00cb649448';
 
 // ==========================================
 // GOOGLE CONSENT MODE V2 BANNER & LOGIC
@@ -46,11 +40,11 @@ const ADSTERRA_SMARTLINK = 'https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562
         banner.id = 'cookie-consent-banner';
         banner.innerHTML = `
             <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 600px; background: rgba(10,5,5,0.95); border: 1px solid var(--gold); border-radius: 12px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 10000; text-align: center; backdrop-filter: blur(10px); animation: fadeIn 0.5s ease;">
-                <h4 style="color: var(--gold); margin: 0 0 10px 0; font-size: 16px;">🍪 Privacy & Analytics (Consent Mode v2)</h4>
+                <h4 style="color: var(--gold); margin: 0 0 10px 0; font-size: 16px;">🍪 Privacy & Analytics Consent</h4>
                 <p style="color: #ccc; font-size: 13px; line-height: 1.5; margin-bottom: 15px;">We use cookies and Google Analytics to personalize content, tailor ads, and improve your streaming concierge experience globally. Do you accept?</p>
                 <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                    <button id="btn-accept-cookies" class="gold-btn" style="padding: 8px 16px; font-size: 13px;">Accept All & Continue</button>
-                    <a href="/consent.html" class="secondary-btn" style="padding: 8px 16px; font-size: 13px; text-decoration: none; border-color: #555; color: #bbb;">Review Privacy Policy</a>
+                    <button id="btn-accept-cookies" aria-label="Accept Cookies" class="gold-btn" style="padding: 8px 16px; font-size: 13px;">Accept All & Continue</button>
+                    <a href="/consent.html" aria-label="Review Privacy Policy" class="secondary-btn" style="padding: 8px 16px; font-size: 13px; text-decoration: none; border-color: #555; color: #bbb;">Review Policy</a>
                 </div>
             </div>
         `;
@@ -83,6 +77,7 @@ let userRatings = JSON.parse(localStorage.getItem('match_userRatings') || '{}');
 let isAdFree = localStorage.getItem('match_adFree') === 'true'; 
 let isVIP = localStorage.getItem('match_isVIP') === 'true';
 
+// STRIPE AUTOMATIC RETURN PROCESSOR
 (function checkStripePaymentReturn() {
     const params = new URLSearchParams(window.location.search);
     if (params.get('payment') === 'success') {
@@ -296,7 +291,6 @@ async function fetchGeminiData(promptText) {
 }
 
 window.triggerMatch = async function(isSpecificSearch = false) {
-    if (window.checkAdBlocker && window.adblockEnabled) return; 
     if (!checkDailyLimit()) return;
 
     let promptText = "";
@@ -309,7 +303,7 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         if(!query) { alert("Please enter a title to search."); return; }
         
         if(typeof gtag === 'function') gtag('event', 'search', { search_term: query });
-        promptText = `You are a streaming concierge AI in late 2026. The user is searching for where to stream: "${query}". Find the exact streaming platform where it is currently available. Random seed for processing variant: ${randomSeed}. Output MUST be exactly: {"title": "Correct Title", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The exact streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID of the official trailer that is verified to be embeddable", "posterUrl": "A highly reliable, working direct image URL for the official poster cover art"}`;
+        promptText = `You are a streaming concierge AI in late 2026. The user is searching for where to stream: "${query}". Find the exact streaming platform where it is currently available. Random seed for processing variant: ${randomSeed}. Output MUST be exactly: {"title": "Correct Title", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The exact streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID of the official trailer that is verified to be embeddable", "posterUrl": "A highly reliable, 100% working direct image URL for the official poster cover art from Wikipedia or TMDB."}`;
     } else {
         const cat = document.getElementById('q-category')?.value || 'any'; 
         const plat = document.getElementById('q-platform')?.value || 'any';
@@ -320,7 +314,7 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         if(typeof gtag === 'function') gtag('event', 'ai_match_requested');
         const excludeStr = [...seenList, ...dislikedList].join(', ');
         
-        promptText = `You are a streaming concierge AI in late 2026. Find a highly-rated, hidden gem streaming title based on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}, Aesthetic: ${aest}, Pacing: ${pac}. CRITICAL: Do NOT recommend any of these titles ever again: ${excludeStr}. RANDOMIZATION SEED: ${randomSeed}. You MUST scour your catalog globally. Output MUST be a valid JSON object exactly matching this structure: {"title": "Title of movie/series", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID of the official trailer that is verified to be embeddable", "posterUrl": "A highly reliable, working direct image URL for the official poster cover art"}`;
+        promptText = `You are a streaming concierge AI in late 2026. Find a highly-rated, hidden gem streaming title based on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}, Aesthetic: ${aest}, Pacing: ${pac}. CRITICAL: Do NOT recommend any of these titles ever again: ${excludeStr}. RANDOMIZATION SEED: ${randomSeed}. You MUST scour your catalog globally. Output MUST be a valid JSON object exactly matching this structure: {"title": "Title of movie/series", "synopsis": "A compelling 3-4 sentence extended synopsis.", "platform": "The streaming service", "imdb": "IMDb rating as a string", "trailerId": "Exact 11-character YouTube video ID of the official trailer that is verified to be embeddable", "posterUrl": "A highly reliable, 100% working direct image URL for the official poster cover art from Wikipedia or TMDB."}`;
     }
 
     const qBox = document.getElementById('questionnaire-box');
@@ -404,10 +398,10 @@ function renderResult(selected) {
     const actionGrid = document.getElementById('action-btn-grid');
     if(actionGrid) {
         actionGrid.innerHTML = `
-            <button onclick="recordAction('save')" class="secondary-btn" style="border-color: var(--gold); color: var(--gold-glow);">⭐ Watch Later</button>
-            <button onclick="recordAction('seen')" class="secondary-btn" style="border-color: #25D366; color: #25D366;">✔️ Seen It</button>
-            <button onclick="recordAction('like')" class="secondary-btn" style="border-color: #2196F3; color: #2196F3;">👍 Like</button>
-            <button onclick="recordAction('dislike')" class="secondary-btn" style="border-color: #ff5252; color: #ff5252;">👎 Don't Like</button>
+            <button aria-label="Save to Watch Later" onclick="recordAction('save')" class="secondary-btn" style="border-color: var(--gold); color: var(--gold-glow);">⭐ Watch Later</button>
+            <button aria-label="Mark as Seen" onclick="recordAction('seen')" class="secondary-btn" style="border-color: #25D366; color: #25D366;">✔️ Seen It</button>
+            <button aria-label="Like" onclick="recordAction('like')" class="secondary-btn" style="border-color: #2196F3; color: #2196F3;">👍 Like</button>
+            <button aria-label="Dislike" onclick="recordAction('dislike')" class="secondary-btn" style="border-color: #ff5252; color: #ff5252;">👎 Don't Like</button>
         `;
     }
 
@@ -427,10 +421,12 @@ function renderResult(selected) {
     if (titleEl) titleEl.innerText = selected.title;
     if (synEl) synEl.innerText = selected.synopsis;
     
+    // Hardened Image Fallback Mechanism
     if (posterEl) {
-        posterEl.src = selected.posterUrl || "https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=1000&q=80";
+        posterEl.src = selected.posterUrl || "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=500&q=80";
         posterEl.onerror = function() {
-            this.src = "https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=1000&q=80";
+            this.onerror = null; // Prevent infinite loops
+            this.src = "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=500&q=80";
         };
     }
 
@@ -510,8 +506,8 @@ window.recordAction = function(type) {
                 <h4 style="color:#25D366; margin:0 0 10px 0; font-size: 18px;">✅ Action Recorded!</h4>
                 <p style="color:#ddd; font-size:14px; margin:0 0 15px 0;">Would you like to generate a new AI match?</p>
                 <div style="display:flex; gap:10px; justify-content:center; flex-wrap: wrap;">
-                    <button onclick="document.getElementById('result-box').style.display='none'; triggerMatch(false);" class="gold-btn" style="padding:10px 20px;">Yes, Match Again 🔄</button>
-                    <button onclick="window.location.href='/profile/profile.html'" class="secondary-btn" style="padding:10px 20px; border-color: #fff; color: #fff;">View My Hub 📂</button>
+                    <button aria-label="Generate New Match" onclick="document.getElementById('result-box').style.display='none'; triggerMatch(false);" class="gold-btn" style="padding:10px 20px;">Yes, Match Again 🔄</button>
+                    <button aria-label="View Profile" onclick="window.location.href='/profile/profile.html'" class="secondary-btn" style="padding:10px 20px; border-color: #fff; color: #fff;">View My Hub 📂</button>
                 </div>
             </div>
         `;
