@@ -3,33 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>MatchApp | VIP Pricing & Unlimited AI Concierge</title>
+    <meta name="theme-color" content="#0a0505">
+    <title>MatchApp VIP | Unlimited AI Streaming Concierge & Ad-Free Pass</title>
     
+    <!-- Google Tag & Consent Mode v2 -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-
       gtag('consent', 'default', {
-        'ad_storage': 'denied',
-        'ad_user_data': 'denied',
-        'ad_personalization': 'denied',
-        'analytics_storage': 'denied',
-        'functionality_storage': 'granted',
-        'personalization_storage': 'granted',
-        'security_storage': 'granted',
-        'wait_for_update': 500
+        'ad_storage': 'denied', 'ad_user_data': 'denied', 'ad_personalization': 'denied',
+        'analytics_storage': 'denied', 'functionality_storage': 'granted', 'personalization_storage': 'granted',
+        'security_storage': 'granted', 'wait_for_update': 500
       });
-
-      gtag('set', 'ads_data_redaction', true);
-      gtag('set', 'url_passthrough', true);
+      gtag('set', 'ads_data_redaction', true); gtag('set', 'url_passthrough', true);
     </script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
-    <script>
-      gtag('js', new Date());
-      gtag('config', 'G-2ECND229RR');
-    </script>
+    <script>gtag('js', new Date()); gtag('config', 'G-2ECND229RR');</script>
     
+    <!-- Open Graph & Social SEO (Tailored for Pricing) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://matchapp.cc/pricing/pricing.html">
+    <meta property="og:title" content="Upgrade to MatchApp VIP | Unlimited Ad-Free AI Matching">
+    <meta property="og:description" content="Unlock unlimited AI concierge matches, remove all ads forever, and get 4-second VIP routing. Choose the one-time Ad-Free pass or the VIP Monthly subscription.">
+    <meta property="og:image" content="https://matchapp.cc/logo.jpeg">
+
+    <meta name="description" content="Upgrade to MatchApp VIP or grab a lifetime Ad-Free pass. Enjoy unlimited AI streaming recommendations, zero ads, and fast-track routing.">
+    <meta name="keywords" content="MatchApp premium, MatchApp VIP, Ad-Free streaming concierge, premium AI movie finder, MatchApp pricing, subscribe to MatchApp">
     <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://matchapp.cc/pricing/pricing.html">
+    
+    <!-- Pricing Specific Rich Snippet JSON-LD for Google -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "MatchApp VIP",
+      "operatingSystem": "All",
+      "applicationCategory": "EntertainmentApplication",
+      "offers": [
+        {
+          "@type": "Offer",
+          "name": "Ad-Free Pass",
+          "price": "1.99",
+          "priceCurrency": "USD",
+          "description": "Lifetime ad-free experience with fast-track routing."
+        },
+        {
+          "@type": "Offer",
+          "name": "VIP Monthly",
+          "price": "4.99",
+          "priceCurrency": "USD",
+          "priceSpecification": {
+            "@type": "UnitPriceSpecification",
+            "referenceQuantity": {
+              "@type": "QuantitativeValue",
+              "value": "1",
+              "unitCode": "MON"
+            }
+          },
+          "description": "Unlimited AI Matches daily, zero ads permanently, instant 4-second VIP routing."
+        }
+      ]
+    }
+    </script>
+
     <link rel="stylesheet" href="/style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
@@ -49,11 +86,9 @@
         .mobile-ad-bottom { display: block; width: 100%; margin-top: 25px; text-align: center; min-height: 100px; }
         @media (min-width: 1100px) { .sidebar-ad-left, .sidebar-ad-right { display: block; } .mobile-ad-bottom { display: none; } .chrome-banner { display: none !important; } }
 
-        /* ADSTERRA BEAUTIFUL CONTAINERS */
         .ad-banner-container { margin: 25px auto; text-align: center; max-width: 100%; overflow: hidden; background: rgba(0,0,0,0.4); border-radius: 12px; padding: 10px; border: 1px solid rgba(255,255,255,0.1); }
         .ad-banner-container .ad-label { font-size: 10px; color: #888; display: block; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* LUXURY SMARTLINK CARD FOR SIDEBARS & BOTTOM */
         .smartlink-card { display: block; text-decoration: none; background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(10,5,5,0.9)); border: 1px solid rgba(212,175,55,0.4); border-radius: 12px; padding: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.6); margin-bottom: 20px; transition: all 0.3s ease; }
         .smartlink-card:hover { transform: translateY(-3px); border-color: var(--gold); box-shadow: 0 6px 20px rgba(212,175,55,0.3); background: linear-gradient(135deg, rgba(212,175,55,0.25), rgba(10,5,5,0.95)); }
         .smartlink-icon { font-size: 24px; margin-bottom: 8px; display: inline-block; animation: pulse 2s infinite; }
@@ -96,17 +131,17 @@
         <span class="sf-item brand-disney" style="top: 85%; animation: flyPath2 19s linear infinite 1s;">DISNEY+</span>
     </div>
     
-    <nav class="app-header fade-in">
+    <header class="app-header fade-in">
         <a href="/index.html" class="header-brand-area">
             <picture><source srcset="/logo.jpeg" type="image/jpeg"><img src="/logo.jpeg" alt="Logo" class="brand-logo" loading="lazy"></picture>
             <div><span class="app-title-main">MatchApp</span><span class="app-title-sub">Streaming Concierge</span></div>
         </a>
-        <div id="header-auth-area" style="display: flex; gap: 10px; align-items: center; justify-content: flex-end;">
+        <nav id="header-auth-area" style="display: flex; gap: 10px; align-items: center; justify-content: flex-end;">
             <a href="/index.html" class="secondary-btn" style="padding: 8px 12px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">🏠 Home</a>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
-    <div class="page-wrapper" style="flex: 1;">
+    <main class="page-wrapper" style="flex: 1;">
         <div class="main-layout fade-in">
             <aside class="sidebar-ad-left">
                 <span class="ad-label" style="display:block; text-align:center;">SPONSORED</span>
@@ -119,7 +154,7 @@
                 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </aside>
 
-            <div class="container" style="text-align: center;">
+            <section class="container" style="text-align: center;">
                 <div class="chrome-banner fade-in">
                     <div class="chrome-text"><strong>MatchApp relies on ads to stay free!</strong><br>For the absolute best performance, open us in Chrome.</div>
                     <a href="intent://matchapp.cc/#Intent;scheme=https;package=com.android.chrome;end" class="chrome-btn">Open in Chrome</a>
@@ -146,7 +181,7 @@
 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; text-align: left;">
                     
-                    <div class="premium-card">
+                    <article class="premium-card">
                         <h3 style="color: var(--gold); font-size: 22px; margin-bottom: 5px;">Ad-Free Pass</h3>
                         <div class="price-badge">$1.99 <span>/ one-time</span></div>
                         <ul style="color: #bbb; font-size: 13px; line-height: 1.8; margin-bottom: 25px; padding-left: 18px;">
@@ -155,9 +190,9 @@
                             <li>✔️ Lifetime profile unlock</li>
                         </ul>
                         <button id="btn-ad_free" onclick="processCheckout('ad_free')" class="gold-btn" style="width: 100%; font-size: 16px; padding: 14px;">Get Ad-Free Pass ($1.99)</button>
-                    </div>
+                    </article>
 
-                    <div class="premium-card" style="border: 2px solid var(--gold); background: rgba(212,175,55,0.05);">
+                    <article class="premium-card" style="border: 2px solid var(--gold); background: rgba(212,175,55,0.05);">
                         <h3 style="color: var(--gold-glow); font-size: 22px; margin-bottom: 5px;">VIP Monthly</h3>
                         <div class="price-badge">$4.99 <span>/ month</span></div>
                         <ul style="color: #bbb; font-size: 13px; line-height: 1.8; margin-bottom: 25px; padding-left: 18px;">
@@ -167,7 +202,7 @@
                             <li>✔️ Prioritized Regional Content</li>
                         </ul>
                         <button id="btn-vip_monthly" onclick="processCheckout('vip_monthly')" class="gold-btn" style="width: 100%; font-size: 16px; padding: 14px; background: linear-gradient(90deg,#FFD700,#FFA500);">Go VIP ($4.99/mo)</button>
-                    </div>
+                    </article>
 
                 </div>
 
@@ -181,7 +216,7 @@
                     <ins class="adsbygoogle" style="display:block; min-height: 100px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins>
                     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                 </div>
-            </div>
+            </section>
             
             <aside class="sidebar-ad-right">
                 <span class="ad-label" style="display:block; text-align:center;">SPONSORED</span>
@@ -194,7 +229,7 @@
                 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </aside>
         </div>
-    </div>
+    </main>
 
     <footer class="seo-footer">
         <h4>Global Streaming Platforms & Apps</h4>
@@ -216,7 +251,6 @@
     
     <script src="/app.js"></script>
     <script src="/pricing.js"></script>
-    
     <script src="https://brunettesir.com/55/fa/29/55fa29c96e27c09c7d64d33a39b6cf7a.js"></script>
 </body>
 </html>
