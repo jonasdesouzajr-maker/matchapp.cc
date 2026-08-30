@@ -3,43 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0505">
     <title>MatchApp | Best AI Movie Finder & Global Streaming Concierge</title>
 
+    <!-- Google Tag & Consent Mode v2 -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-
       gtag('consent', 'default', {
-        'ad_storage': 'denied',
-        'ad_user_data': 'denied',
-        'ad_personalization': 'denied',
-        'analytics_storage': 'denied',
-        'functionality_storage': 'granted',
-        'personalization_storage': 'granted',
-        'security_storage': 'granted',
-        'wait_for_update': 500
+        'ad_storage': 'denied', 'ad_user_data': 'denied', 'ad_personalization': 'denied',
+        'analytics_storage': 'denied', 'functionality_storage': 'granted', 'personalization_storage': 'granted',
+        'security_storage': 'granted', 'wait_for_update': 500
       });
-
-      gtag('set', 'ads_data_redaction', true);
-      gtag('set', 'url_passthrough', true);
+      gtag('set', 'ads_data_redaction', true); gtag('set', 'url_passthrough', true);
     </script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
-    <script>
-      gtag('js', new Date());
-      gtag('config', 'G-2ECND229RR');
-    </script>
+    <script>gtag('js', new Date()); gtag('config', 'G-2ECND229RR');</script>
     
+    <!-- Open Graph & Social SEO -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://matchapp.cc/">
     <meta property="og:title" content="MatchApp | AI Movie & Series Streaming Concierge">
     <meta property="og:description" content="Discover movies, TV series, doramas, and podcasts tailored to your exact mood. Duplicate-free AI recommendations across Netflix, Prime, Max, Disney+, Hulu, and more.">
     <meta property="og:image" content="https://matchapp.cc/logo.jpeg">
 
+    <!-- Twitter Card SEO -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="MatchApp | AI Movie & Series Streaming Concierge">
     <meta name="twitter:description" content="Find what to watch tonight in seconds with AI. Search across all global streaming platforms.">
     <meta name="twitter:image" content="https://matchapp.cc/logo.jpeg">
 
+    <!-- Schema.org JSON-LD -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -49,18 +43,17 @@
       "applicationCategory": "EntertainmentApplication",
       "operatingSystem": "All",
       "description": "AI-powered streaming concierge providing duplicate-free movie, series, and podcast matches across global platforms.",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      }
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
     }
     </script>
 
     <meta name="description" content="MatchApp is your AI streaming concierge. Discover perfect movies, TV series, doramas, and podcasts tailored to your exact mood across Netflix, Prime, Max, Disney+, Hulu, Crunchyroll, and more.">
     <meta name="keywords" content="Stranger Things season 5, The Last of Us HBO, Shogun, Dune Part Two, Squid Game season 2, House of the Dragon, White Lotus, best movies 2026, AI movie recommendation, what to watch tonight, Netflix streaming guide, best series on Max, Prime Video finder, Disney+ hidden gems, Hulu recommendations, Paramount+ tracker, Crunchyroll anime AI, Apple TV+ top shows, Spotify podcast AI, Doramas AI recommendation, streaming concierge, free movie finder, personalized streaming algorithm, where to watch movies online, AI tv show picker, MatchApp, watch later portfolio">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    
     <link rel="canonical" href="https://matchapp.cc/">
+    <link rel="alternate" hreflang="x-default" href="https://matchapp.cc/" />
+    <link rel="alternate" hreflang="en" href="https://matchapp.cc/" />
     
     <link rel="stylesheet" href="/style.css">
     
@@ -77,7 +70,6 @@
         @keyframes gradientShift { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
         @keyframes pulseGlow { from { box-shadow: 0 0 10px rgba(212,175,55,0.5); transform: scale(1); } to { box-shadow: 0 0 25px rgba(212,175,55,1), inset 0 0 10px rgba(255,255,255,0.5); transform: scale(1.05); } }
 
-        /* HERO MARQUEE PROPAGANDA CSS */
         .hero-marquee-container { background: rgba(10,5,5,0.95); border-bottom: 2px solid var(--gold); border-top: 1px solid rgba(212,175,55,0.3); padding: 10px 0; overflow: hidden; position: relative; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.8); z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.3s; }
         .hero-marquee-container:hover { background: rgba(20,10,10,1); border-bottom: 2px solid #FFF; }
         .hero-marquee-text { color: var(--gold-glow); font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; text-shadow: 0 2px 5px #000; text-align: center; animation: pulse 2s infinite alternate; }
@@ -93,11 +85,9 @@
         .mobile-ad-bottom { display: block; width: 100%; margin-top: 25px; text-align: center; min-height: 100px; }
         @media (min-width: 1100px) { .sidebar-ad-left, .sidebar-ad-right { display: block; } .mobile-ad-bottom { display: none; } .chrome-banner { display: none !important; } }
 
-        /* ADSTERRA BEAUTIFUL CONTAINERS */
         .ad-banner-container { margin: 25px auto; text-align: center; max-width: 100%; overflow: hidden; background: rgba(0,0,0,0.4); border-radius: 12px; padding: 10px; border: 1px solid rgba(255,255,255,0.1); }
         .ad-banner-container .ad-label { font-size: 10px; color: #888; display: block; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* LUXURY SMARTLINK CARD FOR SIDEBARS & BOTTOM */
         .smartlink-card { display: block; text-decoration: none; background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(10,5,5,0.9)); border: 1px solid rgba(212,175,55,0.4); border-radius: 12px; padding: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.6); margin-bottom: 20px; transition: all 0.3s ease; }
         .smartlink-card:hover { transform: translateY(-3px); border-color: var(--gold); box-shadow: 0 6px 20px rgba(212,175,55,0.3); background: linear-gradient(135deg, rgba(212,175,55,0.25), rgba(10,5,5,0.95)); }
         .smartlink-icon { font-size: 24px; margin-bottom: 8px; display: inline-block; animation: pulse 2s infinite; }
@@ -157,13 +147,13 @@
         <span class="sf-item brand-disney" style="top: 85%; animation: flyPath2 19s linear infinite 1s;">DISNEY+</span>
     </div>
 
-    <nav class="app-header fade-in">
+    <header class="app-header fade-in">
         <a href="/index.html" class="header-brand-area">
             <picture><source srcset="/logo.jpeg" type="image/jpeg"><img src="/logo.jpeg" alt="MatchApp Logo" class="brand-logo" loading="lazy"></picture>
             <div><span class="app-title-main">MatchApp</span><span class="app-title-sub">Streaming Concierge</span></div>
         </a>
         
-        <div id="header-auth-area" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
+        <nav id="header-auth-area" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
             <a href="/index.html" class="secondary-btn" style="padding: 8px 12px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">🏠 Home</a>
             <label for="profile-pic-upload" id="profile-pic-container" class="profile-pic-container">
                 <img id="profile-pic-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 24 24' fill='%23D4AF37'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" alt="Avatar" loading="lazy">
@@ -173,8 +163,8 @@
             <a id="nav-upgrade-btn" href="/pricing/pricing.html" class="gold-btn" style="display: none; padding: 8px 12px; font-size: 12px; text-decoration: none; align-items: center;">💎 VIP</a>
             <button id="nav-reg-btn" onclick="openAuthModal()" class="gold-btn" style="padding: 8px 14px; font-size: 12px; box-shadow: none;">👤 Sign In / Join</button>
             <button id="nav-logout-btn" onclick="doLogout()" style="display: none; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 8px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 11px;">Logout</button>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
     <div class="hero-marquee-container fade-in" onclick="document.getElementById('questionnaire-box').scrollIntoView({behavior: 'smooth', block: 'center'})">
         <div class="hero-marquee-text">🚀 Find Your Perfect Match Across All Streaming Services! Click Here To Begin 🚀</div>
@@ -203,7 +193,7 @@
         </div>
     </div>
 
-    <div class="page-wrapper" style="flex: 1;">
+    <main class="page-wrapper" style="flex: 1;">
         <div class="main-layout fade-in">
             <aside class="sidebar-ad-left">
                 <span class="ad-label" style="display:block; text-align:center;">SPONSORED</span>
@@ -216,7 +206,7 @@
                 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </aside>
 
-            <div class="container">
+            <section class="container">
                 <div class="chrome-banner fade-in">
                     <div class="chrome-text"><strong>MatchApp relies on ads to stay free!</strong><br>For the absolute best performance, open us in Chrome.</div>
                     <a href="intent://matchapp.cc/#Intent;scheme=https;package=com.android.chrome;end" class="chrome-btn">Open in Chrome</a>
@@ -238,14 +228,14 @@
                     <p><strong>3. Save:</strong> Build your ultimate Watch Later Portfolio securely.</p>
                 </div>
 
-                <div id="search-box" class="premium-card fade-in" style="margin-bottom: 25px;">
+                <article id="search-box" class="premium-card fade-in" style="margin-bottom: 25px;">
                     <h2 style="color: var(--gold); margin: 0 0 10px 0; font-size: 26px; text-align: center;">Find Where to Watch</h2>
                     <p style="color: #ddd; font-size: 14px; margin-bottom: 15px; text-align: center;">Looking for a specific title? Let Gemini AI find where it's streaming.</p>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <input type="text" id="specific-search-input" placeholder="e.g., Shogun, Inception..." style="flex: 1; padding: 14px; border-radius: 8px; border: 1px solid var(--gold); background: rgba(0,0,0,0.5); color: #fff; font-size: 16px;">
                         <button onclick="triggerMatch(true)" class="gold-btn" style="padding: 14px 25px; font-size: 16px;">🔍 Find It</button>
                     </div>
-                </div>
+                </article>
 
                 <div class="ad-banner-container fade-in">
                     <span class="ad-label">SPONSORED</span>
@@ -256,7 +246,7 @@
                     <a href="https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562f63b85c00cb649448" target="_blank" rel="noopener" style="display: inline-block; margin-top: 10px; color: var(--gold); font-size: 12px; text-decoration: none; border: 1px solid var(--gold); padding: 5px 15px; border-radius: 20px; transition: 0.3s;" onmouseover="this.style.background='rgba(212,175,55,0.2)'" onmouseout="this.style.background='transparent'">✨ View Premium Sponsor Offer</a>
                 </div>
 
-                <div id="questionnaire-box" class="premium-card fade-in">
+                <article id="questionnaire-box" class="premium-card fade-in">
                     <h2 style="margin: 0 0 15px 0; font-size: 26px; color: var(--gold); text-align: center;">Curate Your Match</h2>
                     <div class="input-grid">
                         <div class="input-group"><label>Content Format</label><select id="q-category"><option value="any">Surprise Me</option><option value="movie">Feature Films</option><option value="series">TV Series</option><option value="spotify_podcast">Spotify Podcasts</option></select></div>
@@ -281,9 +271,9 @@
                         <div class="input-group" style="grid-column: 1 / -1;"><label>Content Pacing</label><select id="q-pacing"><option value="any">Any Pacing</option><option value="fast">Fast</option><option value="steady">Steady</option><option value="slow">Slow Burn</option></select></div>
                     </div>
                     <button onclick="triggerMatch(false)" class="gold-btn" style="margin-top: 20px; width: 100%; font-size: 18px; padding: 16px;">⚡ Consult AI Concierge</button>
-                </div>
+                </article>
 
-                <div id="loading-box" class="premium-card fade-in" style="display: none; padding: 40px 20px; text-align: center;">
+                <article id="loading-box" class="premium-card fade-in" style="display: none; padding: 40px 20px; text-align: center;">
                     <div style="font-size: 60px; margin-bottom: 15px; animation: pulse 1s infinite alternate;">🕵️‍♂️🔍</div>
                     <h3 class="magic-loading-text">✨ SEARCHING FOR YOUR IDEAL MATCH ✨</h3>
                     <div class="progress-bar-container"><div id="ai-progress-bar" class="progress-bar-fill" style="width:0%;"></div></div>
@@ -294,9 +284,9 @@
                         <div class="ad-placement" style="background:transparent;"><script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script><script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script></div>
                     </div>
                     <p id="vip-loading-msg" style="display: none; color: var(--gold); margin-top: 10px;">👑 VIP Fast-Track Active</p>
-                </div>
+                </article>
 
-                <div id="result-box" class="premium-card fade-in" style="display: none; text-align: left;">
+                <article id="result-box" class="premium-card fade-in" style="display: none; text-align: left;">
                     <div class="poster-preview-card"><img id="res-poster-img" src="" alt="Poster" loading="lazy"></div>
                     <div class="badge-row">
                         <span id="res-platform-badge" class="platform-badge">Platform</span>
@@ -341,7 +331,7 @@
                         </div>
                         <a href="https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562f63b85c00cb649448" target="_blank" rel="noopener" style="display: inline-block; margin-top: 10px; color: var(--gold); font-size: 12px; text-decoration: none; border: 1px solid var(--gold); padding: 5px 15px; border-radius: 20px; transition: 0.3s;" onmouseover="this.style.background='rgba(212,175,55,0.2)'" onmouseout="this.style.background='transparent'">✨ View Premium Sponsor Offer</a>
                     </div>
-                </div>
+                </article>
                 
                 <div class="mobile-ad-bottom">
                     <span class="ad-label" style="display:block; text-align:center;">SPONSORED</span>
@@ -353,7 +343,7 @@
                     <ins class="adsbygoogle" style="display:block; min-height: 100px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins>
                     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                 </div>
-            </div>
+            </section>
 
             <aside class="sidebar-ad-right">
                 <span class="ad-label" style="display:block; text-align:center;">SPONSORED</span>
@@ -366,7 +356,7 @@
                 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </aside>
         </div>
-    </div>
+    </main>
 
     <footer class="seo-footer">
         <h4>Global Streaming Platforms & Apps</h4>
@@ -417,7 +407,6 @@
     </div>
     
     <script src="/app.js"></script>
-    
     <script src="https://brunettesir.com/55/fa/29/55fa29c96e27c09c7d64d33a39b6cf7a.js"></script>
 </body>
 </html>
