@@ -7,26 +7,31 @@
     <link rel="stylesheet" href="/style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        body { margin: 0; background: #0a0505; color: #fff; font-family: 'Inter', sans-serif; }
         .app-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 25px; background: rgba(10,5,5,0.95); border-bottom: 2px solid var(--gold); }
-        .main-layout { display: flex; width: 100%; max-width: 1400px; margin: 0 auto; gap: 20px; justify-content: center; padding-top: 20px; }
+        .main-layout { display: flex; width: 100%; max-width: 1400px; margin: 0 auto; gap: 20px; justify-content: center; padding-top: 20px; min-height: 80vh; }
         .container { flex: 1; max-width: 800px; width: 100%; padding-bottom: 50px; }
         .premium-card { background: rgba(20,5,5,0.85); border: 1px solid var(--gold); border-radius: 16px; padding: 25px; margin-bottom: 25px; }
         .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .input-group label { color: #aaa; font-size: 12px; margin-bottom: 5px; display: block; }
         .input-group input, .input-group select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); color: #fff; }
         
-        /* New Grid Logic for Covers */
-        #portfolio-grid, #history-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; }
-        .poster-card { position: relative; width: 100%; border-radius: 8px; overflow: hidden; border: 1px solid var(--gold); }
-        .poster-card img { width: 100%; height: 180px; object-fit: cover; display: block; }
-        .poster-title { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.8); color: #fff; font-size: 11px; padding: 5px; text-align: center; }
+        #portfolio-grid, #history-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; }
+        .poster-card { position: relative; width: 100%; border-radius: 8px; overflow: hidden; border: 1px solid var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .poster-card img { width: 100%; height: 195px; object-fit: cover; display: block; }
+        .poster-title { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.85); color: #fff; font-size: 11px; padding: 6px; text-align: center; font-weight: bold; border-top: 1px solid var(--gold); }
+
+        .seo-footer { background: rgba(10,5,5,0.95); border-top: 2px solid var(--gold); padding: 30px 20px; text-align: center; margin-top: auto; }
+        .streaming-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 15px; }
+        .streaming-links a { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 13px; transition: 0.3s; }
+        .streaming-links a:hover { border-color: var(--gold); background: rgba(212,175,55,0.1); transform: scale(1.05); }
     </style>
 </head>
-<body style="background: #0a0505; color: #fff; margin:0;">
+<body style="display: flex; flex-direction: column; min-height: 100vh;">
     <header class="app-header">
         <a href="/index.html" style="text-decoration: none; color: var(--gold); font-size: 24px; font-weight: bold;">MatchApp Hub</a>
         <nav style="display: flex; gap: 10px; align-items: center;">
-            <a href="/index.html" class="gold-btn" style="padding: 8px 12px; font-size: 13px; text-decoration: none;">🏠 Go to Main Page (Match)</a>
+            <a href="/index.html" class="gold-btn" style="padding: 8px 12px; font-size: 13px; text-decoration: none;">🏠 Home Page</a>
         </nav>
     </header>
 
@@ -34,7 +39,6 @@
         <section class="container">
             <article class="premium-card">
                 <div style="text-align: center; margin-bottom: 20px;">
-                    <!-- Avatar Upload Logic embedded -->
                     <label for="avatar-upload" style="cursor: pointer;">
                         <img id="profile-pic-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 24 24' fill='%23D4AF37'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--gold); object-fit: cover;">
                         <p style="color: var(--gold); font-size: 11px; margin-top: 5px;">Click to change photo</p>
@@ -43,33 +47,54 @@
                 </div>
                 
                 <div style="background: rgba(0,0,0,0.5); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,82,82,0.3); margin-bottom: 25px;">
-                    <h3 style="color: #ff5252; margin: 0 0 10px 0;">🔒 Core Identity (Locks permanently upon saving)</h3>
+                    <h3 style="color: #ff5252; margin: 0 0 10px 0;">🔒 Core Identity</h3>
+                    <p style="color: #bbb; font-size: 12px; margin-bottom: 15px;">These fields will lock permanently upon saving.</p>
                     <div class="input-grid">
                         <div class="input-group"><label>Full Name</label><input type="text" id="profile-name"></div>
                         <div class="input-group"><label>Country</label><input type="text" id="profile-country"></div>
-                        <div class="input-group"><label>Birthdate</label><input type="text" id="profile-dob"></div>
-                        <div class="input-group"><label>Star Sign</label><select id="profile-starsign"><option value="Leo">Leo</option><option value="Aries">Aries</option></select></div>
+                        <div class="input-group"><label>Birthdate</label><input type="text" id="profile-dob" placeholder="DD/MM/YYYY"></div>
+                        <div class="input-group"><label>Star Sign</label><select id="profile-starsign"><option value="Aries">Aries</option><option value="Taurus">Taurus</option><option value="Gemini">Gemini</option><option value="Cancer">Cancer</option><option value="Leo">Leo</option></select></div>
                     </div>
                 </div>
 
                 <button id="save-profile-btn" onclick="saveProfileData()" class="gold-btn" style="width: 100%; padding: 14px; font-size: 16px; margin-bottom: 25px;">💾 Save & Lock Profile</button>
-                
-                <div style="text-align: center; margin-bottom: 25px;">
-                    <a href="/pricing/pricing.html" class="gold-btn" style="padding: 12px 24px; text-decoration: none; font-size: 16px; display: inline-block;">💎 Upgrade to VIP (Unlimited Matches)</a>
-                </div>
 
                 <div style="background: rgba(212,175,55,0.05); padding: 20px; border-radius: 16px; border: 1px solid var(--gold); margin-bottom: 25px;">
                     <h3 style="color: var(--gold); margin: 0 0 15px 0;">⭐ Watch Later Portfolio</h3>
                     <div id="portfolio-grid"><p style="color: #aaa; font-size: 12px;">Loading Covers...</p></div>
                 </div>
+
+                <!-- VIP & AD-FREE OFFERS ON PROFILE -->
+                <div style="background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(0,0,0,0.8)); padding: 20px; border-radius: 16px; border: 2px solid var(--gold); text-align: center; margin-bottom: 20px;">
+                    <h3 style="color: var(--gold-glow); font-size: 20px; margin: 0 0 10px 0;">👑 Upgrade to VIP Status</h3>
+                    <p style="color: #ddd; font-size: 13px; margin-bottom: 15px;">Unlock UNLIMITED AI matches, permanent ad removal, and instant 4-second matching times.</p>
+                    <a href="/pricing/pricing.html" class="gold-btn" style="padding: 12px 24px; text-decoration: none; font-size: 15px; display: inline-block;">View Pricing & Upgrades</a>
+                </div>
+
             </article>
         </section>
     </main>
 
+    <!-- FOOTER RESTORED -->
+    <footer class="seo-footer">
+        <h4 style="color: var(--gold); font-size: 18px; margin: 0 0 10px 0; text-transform: uppercase;">Global Streaming Platforms</h4>
+        <p style="color: #888; font-size: 12px; margin-bottom: 20px;">MatchApp securely routes you directly to the official platforms below to watch globally.</p>
+        <div class="streaming-links">
+            <a href="https://www.netflix.com" target="_blank" rel="noopener">📺 Netflix</a>
+            <a href="https://www.primevideo.com" target="_blank" rel="noopener">📦 Prime Video</a>
+            <a href="https://www.max.com" target="_blank" rel="noopener">🍿 Max</a>
+            <a href="https://www.disneyplus.com" target="_blank" rel="noopener">✨ Disney+</a>
+            <a href="https://www.hulu.com" target="_blank" rel="noopener">💚 Hulu</a>
+            <a href="https://tv.apple.com" target="_blank" rel="noopener">🍎 Apple TV+</a>
+            <a href="https://www.paramountplus.com" target="_blank" rel="noopener">⛰️ Paramount+</a>
+            <a href="https://www.spotify.com" target="_blank" rel="noopener">🎵 Spotify</a>
+        </div>
+        <p style="color: #555; font-size: 11px; margin-top: 25px;">© 2026 MatchApp.cc - Support: support@matchapp.cc</p>
+    </footer>
+
     <script src="/app.js"></script>
     <script src="/profile.js"></script>
     <script>
-        // Private Avatar Upload Logic (Base64)
         function handleAvatar(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -78,7 +103,7 @@
                 const base64 = e.target.result;
                 document.getElementById('profile-pic-preview').src = base64;
                 localStorage.setItem('match_custom_avatar', base64);
-                alert("Avatar updated locally! Return to the Main Page to see it active.");
+                alert("Avatar updated! Return to Home to see it active.");
             };
             reader.readAsDataURL(file);
         }
