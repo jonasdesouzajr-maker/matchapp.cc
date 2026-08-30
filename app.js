@@ -1,7 +1,7 @@
-console.log("Mastercode 88.0: Full Auth, TMDB Covers, SEO & Ads Active");
+console.log("Mastercode 89.0: Spotify Restored, No-Repeat AI Engine & Full Poster Formatting Active");
 
 // ==========================================
-// 1. SUPABASE LIVE INITIALIZATION
+// 1. SUPABASE INITIALIZATION
 // ==========================================
 const SUPABASE_URL = 'https://zkymvqrmbabngsqblyye.supabase.co'; 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpreW12cXJtYmFibmdzcWJseXllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY4MDUyNDIsImV4cCI6MjEwMjM4MTI0Mn0._yEVFMfwVU6GBqQ8m3ljfOgA0HSLEDiKMOfYae6ZD8Q';
@@ -51,10 +51,11 @@ try {
 })();
 
 // ==========================================
-// APP VARIABLES
+// APP STATE & STORAGE
 // ==========================================
 let globalMatchTitle = "";
 let globalMatchPoster = "";
+let globalPlatform = "";
 let isUserLoggedIn = false;
 
 let seenList = JSON.parse(localStorage.getItem('match_seenList') || '[]');
@@ -66,17 +67,6 @@ let isAdFree = localStorage.getItem('match_adFree') === 'true';
 let isVIP = localStorage.getItem('match_isVIP') === 'true';
 
 // Utilities
-function updateClock() { 
-    try {
-        const clock = document.getElementById('real-time-clock'); 
-        if (clock) { 
-            const now = new Date(); 
-            clock.innerHTML = `${now.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })} | ${now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`; 
-        } 
-    } catch(e) {}
-}
-updateClock(); setInterval(updateClock, 1000);
-
 window.playPremiumSound = function() {
     try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -91,6 +81,19 @@ window.playPremiumSound = function() {
 
 window.fireConfetti = function() {
     if (typeof confetti !== 'undefined') { confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#D4AF37', '#FFF', '#8A2BE2', '#E50914'], zIndex: 9999 }); }
+};
+
+// ==========================================
+// MARQUEE INTERACTIVE CLICK
+// ==========================================
+window.selectMarqueeItem = function(titleName) {
+    const searchInput = document.getElementById('specific-search-input');
+    const searchBox = document.getElementById('search-box');
+    if (searchInput && searchBox) {
+        searchInput.value = titleName;
+        searchBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        searchInput.focus();
+    }
 };
 
 // ==========================================
@@ -211,7 +214,7 @@ function checkDailyLimit() {
 }
 
 // ==========================================
-// MATCHING ENGINE & STRICT AI
+// MATCHING ENGINE & ZERO-REPEAT AI PROMPT
 // ==========================================
 async function fetchGeminiData(promptText) {
     if (!supabaseClient) throw new Error("Database client not initialized.");
@@ -237,17 +240,19 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         const input = document.getElementById('specific-search-input');
         if (!input || !input.value.trim()) { alert("Please enter a title to search."); loadBox.style.display = 'none'; return; }
         const query = input.value.trim();
-        promptText = `You are an elite streaming concierge AI. Search for: "${query}". Output JSON EXACTLY matching: {"title": "Correct Title", "synopsis": "A 3-sentence synopsis.", "platform": "Streaming service", "imdb": "Rating", "trailerId": "Exact 11-character YouTube video ID", "posterPath": "Exact TMDB poster path starting with / (e.g. /1pdfLvkbY9ohJlCjQH2JGjjc91p.jpg)"}`;
+        promptText = `You are an elite streaming concierge AI. Search for: "${query}". Output JSON EXACTLY matching: {"title": "Correct Title", "synopsis": "A 3-sentence synopsis.", "platform": "Exact Streaming Service or Spotify", "imdb": "Rating or Spotify Popularity", "trailerId": "Clean 11-character YouTube video ID", "posterPath": "Exact TMDB poster path starting with / (e.g. /1pdfLvkbY9ohJlCjQH2JGjjc91p.jpg) or valid direct image URL"}`;
     } else {
         const cat = document.getElementById('q-category')?.value || 'any'; 
         const plat = document.getElementById('q-platform')?.value || 'any';
         const mood = document.getElementById('q-mood')?.value || 'any'; 
         
-        promptText = `You are a streaming concierge AI. Find a highly-rated, hidden gem based STRICTLY on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}. 
-        CRITICAL RULES: 
-        1. DO NOT recommend any of these: ${exclusionList}.
-        2. FIND UNIQUE HIDDEN GEMS. No obvious defaults.
-        Output MUST be valid JSON: {"title": "Title", "synopsis": "3-sentence synopsis.", "platform": "Streaming service", "imdb": "Rating", "trailerId": "Exact 11-character YouTube video ID", "posterPath": "Exact TMDB poster path starting with / (e.g. /mXZVPptJ3xUIVe8z0D5E7Y9E2F1.jpg)"}`;
+        promptText = `You are a streaming concierge AI. Find a highly-rated, unique match based STRICTLY on user selections: Format: ${cat}, Platform: ${plat}, Mood: ${mood}. 
+        CRITICAL ENGINE RULES: 
+        1. DO NOT recommend any title in this exclusion list: [${exclusionList}].
+        2. NEVER default to "Dune", "Dune: Part Two", "Severance", "The Bear", or "Shogun" unless explicitly typed by the user.
+        3. IF Platform is "Spotify" OR Format is "podcast", you MUST recommend a real Spotify Podcast, Audiobook, or Playlist available on Spotify.
+        4. IF Platform is specified (e.g. Netflix, Max, Disney+, Hulu, Prime Video), recommend a title strictly available on that exact platform.
+        Output MUST be valid JSON: {"title": "Title", "synopsis": "3-sentence synopsis.", "platform": "${plat === 'any' ? 'Streaming Service' : plat}", "imdb": "Rating", "trailerId": "Exact 11-character YouTube video ID", "posterPath": "TMDB poster path starting with / or direct HTTPS poster cover image URL"}`;
     }
 
     const qBox = document.getElementById('questionnaire-box');
@@ -255,7 +260,7 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     if (qBox) qBox.style.display = 'none';
     if (sBox) sBox.style.display = 'none';
 
-    let totalTime = isVIP || isAdFree ? 4 : 12; 
+    let totalTime = isVIP || isAdFree ? 4 : 10; 
     let startTimeMs = Date.now();
     
     const pBar = document.getElementById('ai-progress-bar');
@@ -271,8 +276,15 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     try {
         matchResult = await fetchGeminiData(promptText);
     } catch (err) {
-        console.error("AI Fallback:", err);
-        matchResult = { title: "The Bear", synopsis: "A young chef from the fine dining world comes home to Chicago to run his family sandwich shop.", platform: "Hulu", imdb: "8.6", trailerId: "y-caqB_P72E", posterPath: "/mXZVPptJ3xUIVe8z0D5E7Y9E2F1.jpg" };
+        console.error("AI Generation Engine:", err);
+        matchResult = { 
+            title: "Fallout", 
+            synopsis: "In a future, post-apocalyptic Los Angeles brought about by nuclear decimation, citizens must live in underground bunkers to protect themselves from radiation, mutants and bandits.", 
+            platform: "Prime Video", 
+            imdb: "8.4", 
+            trailerId: "V-mugKDQDlg", 
+            posterPath: "/27A8vXh92j7tJ6u6S455G44k39s.jpg" 
+        };
     }
 
     let elapsedMs = Date.now() - startTimeMs;
@@ -281,6 +293,13 @@ window.triggerMatch = async function(isSpecificSearch = false) {
 
     clearInterval(timerInterval);
     if (pBar) pBar.style.width = '100%';
+
+    // Auto add match to seen list so unregistered users never get repeating matches
+    if (!seenList.some(i => (i.title || i) === matchResult.title)) {
+        seenList.push({ title: matchResult.title, posterUrl: matchResult.posterPath, platform: matchResult.platform });
+        localStorage.setItem('match_seenList', JSON.stringify(seenList));
+    }
+
     renderResult(matchResult);
 };
 
@@ -297,10 +316,13 @@ function renderResult(selected) {
     window.fireConfetti();
 
     globalMatchTitle = selected.title;
+    globalPlatform = selected.platform || "Streaming";
     
-    // THE TMDB POSTER HACK + DYNAMIC TEXT FALLBACK
+    // FULL COVER POSTER FORMATTING
     if (selected.posterPath && selected.posterPath.startsWith('/')) {
         globalMatchPoster = `https://image.tmdb.org/t/p/w500${selected.posterPath}`;
+    } else if (selected.posterPath && selected.posterPath.startsWith('http')) {
+        globalMatchPoster = selected.posterPath;
     } else {
         globalMatchPoster = `https://via.placeholder.com/500x750/0a0505/D4AF37?text=${encodeURIComponent(selected.title)}`;
     }
@@ -311,18 +333,25 @@ function renderResult(selected) {
     const posterEl = document.getElementById('res-poster-img');
     if (posterEl) {
         posterEl.src = globalMatchPoster;
-        posterEl.onerror = function() { this.src = `https://via.placeholder.com/500x750/0a0505/D4AF37?text=${encodeURIComponent(selected.title)}`; };
+        posterEl.onerror = function() { 
+            this.src = `https://via.placeholder.com/500x750/0a0505/D4AF37?text=${encodeURIComponent(selected.title)}`; 
+        };
     }
 
     const badge = document.getElementById('res-platform-badge');
     badge.innerText = selected.platform;
-    document.getElementById('res-imdb-badge').innerText = `IMDb: ${selected.imdb || 'N/A'}`;
+    document.getElementById('res-imdb-badge').innerText = `IMDb/Rating: ${selected.imdb || 'N/A'}`;
 
     const directBtn = document.getElementById('res-direct-link');
-    directBtn.href = `https://www.google.com/search?q=Watch+${encodeURIComponent(selected.title)}+on+${encodeURIComponent(selected.platform)}`;
-    directBtn.innerText = `▶ Search on ${selected.platform}`;
+    if (selected.platform.toLowerCase().includes('spotify')) {
+        directBtn.href = `https://open.spotify.com/search/${encodeURIComponent(selected.title)}`;
+        directBtn.innerText = `🎧 Open on Spotify`;
+    } else {
+        directBtn.href = `https://www.google.com/search?q=Watch+${encodeURIComponent(selected.title)}+on+${encodeURIComponent(selected.platform)}`;
+        directBtn.innerText = `▶ Stream on ${selected.platform}`;
+    }
 
-    // GUARANTEED WORKING TRAILER HACK
+    // EMBEDDED TRAILER & VIDEO PREVIEW ENGINE
     const trailerBox = document.getElementById('res-trailer-container');
     const iframe = document.getElementById('res-trailer');
     const ytFallbackLink = document.getElementById('res-trailer-fallback');
@@ -330,19 +359,18 @@ function renderResult(selected) {
     if (trailerBox && iframe) {
         trailerBox.style.display = 'block';
         if (selected.trailerId && selected.trailerId.length === 11) {
-            iframe.src = `https://www.youtube.com/embed/${selected.trailerId}?modestbranding=1&rel=0`;
+            iframe.src = `https://www.youtube-nocookie.com/embed/${selected.trailerId}?rel=0&modestbranding=1`;
         } else {
-            // Unofficial search fallback if Gemini failed to get an ID
-            iframe.src = `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(selected.title + " official trailer")}`;
+            iframe.src = `https://www.youtube-nocookie.com/embed?listType=search&list=${encodeURIComponent(selected.title + " trailer")}`;
         }
         if (ytFallbackLink) {
-            ytFallbackLink.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(selected.title + " trailer")}`;
+            ytFallbackLink.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(selected.title + " official trailer")}`;
         }
     }
 }
 
 // ==========================================
-// WATCH LATER & HISTORY (SAVING POSTERS)
+// WATCH LATER & PORTFOLIO RECORDING
 // ==========================================
 window.recordAction = function(type) {
     if (!globalMatchTitle) return;
@@ -351,7 +379,7 @@ window.recordAction = function(type) {
         window.openAuthModal(); return;
     }
 
-    const itemObj = { title: globalMatchTitle, posterUrl: globalMatchPoster };
+    const itemObj = { title: globalMatchTitle, posterUrl: globalMatchPoster, platform: globalPlatform };
     const existsInList = (list) => list.some(i => (i.title || i) === globalMatchTitle);
 
     if (type === 'save') {
