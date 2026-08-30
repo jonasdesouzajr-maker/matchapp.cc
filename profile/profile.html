@@ -3,266 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#0a0505">
-    <title>MatchApp | My Private Profile & Portfolio</title>
-    
-    <!-- Google Tag & Consent Mode v2 -->
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('consent', 'default', {
-        'ad_storage': 'denied', 'ad_user_data': 'denied', 'ad_personalization': 'denied',
-        'analytics_storage': 'denied', 'functionality_storage': 'granted', 'personalization_storage': 'granted',
-        'security_storage': 'granted', 'wait_for_update': 500
-      });
-      gtag('set', 'ads_data_redaction', true); gtag('set', 'url_passthrough', true);
-    </script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
-    <script>gtag('js', new Date()); gtag('config', 'G-2ECND229RR');</script>
-    
-    <meta name="robots" content="noindex, follow">
+    <title>MatchApp | My Private Hub</title>
     <link rel="stylesheet" href="/style.css">
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
-
     <style>
-        .app-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 25px; background: rgba(10,5,5,0.95); border-bottom: 2px solid var(--gold); box-shadow: 0 4px 25px rgba(212,175,55,0.4); flex-wrap: wrap; gap: 15px; }
-        .header-brand-area { display: flex; align-items: center; gap: 15px; text-decoration: none; }
-        .brand-logo { width: 65px; height: 65px; border-radius: 50%; border: 2px solid var(--gold); box-shadow: 0 0 15px var(--gold); animation: pulseGlow 2s infinite alternate; }
-        .app-title-main { font-size: 34px; font-weight: 900; background: linear-gradient(90deg, #FFD700, #FFF, #FFA500, #FFD700); background-size: 200% auto; -webkit-background-clip: text; color: transparent; animation: gradientShift 3s infinite linear; text-transform: uppercase; letter-spacing: 1px; }
-        .app-title-sub { font-size: 13px; color: #ddd; letter-spacing: 2px; text-transform: uppercase; font-weight: bold; margin-top: -5px; display: block; text-shadow: 0 2px 4px #000; }
-        @keyframes gradientShift { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
-        @keyframes pulseGlow { from { box-shadow: 0 0 10px rgba(212,175,55,0.5); transform: scale(1); } to { box-shadow: 0 0 25px rgba(212,175,55,1), inset 0 0 10px rgba(255,255,255,0.5); transform: scale(1.05); } }
-
-        .main-layout { display: flex; width: 100%; max-width: 1400px; margin: 0 auto; gap: 20px; align-items: flex-start; justify-content: center; min-height: 80vh; padding-top: 20px; }
-        .sidebar-ad-left, .sidebar-ad-right { display: none; width: 160px; flex-shrink: 0; position: sticky; top: 20px; }
+        .app-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 25px; background: rgba(10,5,5,0.95); border-bottom: 2px solid var(--gold); }
+        .main-layout { display: flex; width: 100%; max-width: 1400px; margin: 0 auto; gap: 20px; justify-content: center; padding-top: 20px; }
         .container { flex: 1; max-width: 800px; width: 100%; padding-bottom: 50px; }
-        .mobile-ad-bottom { display: block; width: 100%; margin-top: 25px; text-align: center; min-height: 100px; }
-        @media (min-width: 1100px) { .sidebar-ad-left, .sidebar-ad-right { display: block; } .mobile-ad-bottom { display: none; } .chrome-banner { display: none !important; } }
-
-        .ad-banner-container { margin: 25px auto; text-align: center; max-width: 100%; overflow: hidden; background: rgba(0,0,0,0.4); border-radius: 12px; padding: 10px; border: 1px solid rgba(255,255,255,0.1); }
-        .ad-banner-container .ad-label { font-size: 10px; color: #888; display: block; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
-
-        .smartlink-card { display: block; text-decoration: none; background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(10,5,5,0.9)); border: 1px solid rgba(212,175,55,0.4); border-radius: 12px; padding: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.6); margin-bottom: 20px; transition: all 0.3s ease; }
-        .smartlink-card:hover { transform: translateY(-3px); border-color: var(--gold); box-shadow: 0 6px 20px rgba(212,175,55,0.3); background: linear-gradient(135deg, rgba(212,175,55,0.25), rgba(10,5,5,0.95)); }
-        .smartlink-icon { font-size: 24px; margin-bottom: 8px; display: inline-block; animation: pulse 2s infinite; }
-        .smartlink-title { color: var(--gold); font-size: 14px; font-weight: 900; text-transform: uppercase; margin-bottom: 5px; display: block; letter-spacing: 1px; }
-        .smartlink-desc { color: #ddd; font-size: 11px; display: block; }
-
-        .chrome-banner { background: linear-gradient(90deg, #111, #333); border: 1px solid #FFD700; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        .chrome-text { color: #fff; font-size: 13px; line-height: 1.5; text-align: left; flex: 1; margin-right: 15px; }
-        .chrome-btn { background: var(--gold); color: #000; font-weight: bold; padding: 8px 16px; border-radius: 20px; text-decoration: none; white-space: nowrap; box-shadow: 0 2px 10px rgba(212,175,55,0.5); transition: transform 0.2s; }
-
-        .stream-flags { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; opacity: 0.35; }
-        .sf-item { position: absolute; font-size: 14vw; font-weight: 900; color: #fff; white-space: nowrap; opacity: 0.8; text-shadow: 0 0 20px currentColor, 0 0 40px currentColor; }
-        .brand-netflix { color: #E50914; } .brand-prime { color: #00A8E1; } .brand-max { color: #8A2BE2; } .brand-disney { color: #113CCF; }
-        @keyframes flyPath1 { 0% { transform: translateX(-100%) rotate(-5deg); } 100% { transform: translateX(100vw) rotate(5deg); } }
-        @keyframes flyPath2 { 0% { transform: translateX(100vw) rotate(5deg); } 100% { transform: translateX(-100%) rotate(-5deg); } }
-
-        .danger-checkbox-container { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: left; border: 1px solid rgba(255,255,255,0.1); }
-        .danger-checkbox-container.checked-active { border-color: #2196F3; background: rgba(33, 150, 243, 0.1); }
-        .danger-checkbox-container label { display: flex; align-items: center; cursor: pointer; gap: 10px; margin: 0; }
-        input[type="checkbox"].blue-checkbox { width: 20px; height: 20px; accent-color: #2196F3; cursor: pointer; }
-        .btn-disabled { border-color: #555 !important; color: #555 !important; cursor: not-allowed !important; background: transparent !important; }
-        .btn-danger-active { border-color: #ff5252 !important; color: #fff !important; background: #ff5252 !important; }
-
-        .grid-item-card { position: relative; display: inline-block; width: 110px; margin: 5px; border-radius: 8px; overflow: hidden; background: #111; vertical-align: top; transition: transform 0.4s ease, opacity 0.4s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.5); border: 1px solid rgba(212,175,55,0.3); }
-        .delete-item-btn { position: absolute; top: 5px; right: 5px; background: rgba(255,82,82,0.9); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-weight: bold; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.5); font-size: 14px; transition: 0.2s; }
-        .delete-item-btn:hover { transform: scale(1.15); background: #ff0000; }
-        .item-rating-badge { position: absolute; bottom: 5px; left: 5px; background: rgba(0,0,0,0.85); color: #f5c518; padding: 4px 6px; border-radius: 6px; font-size: 11px; font-weight: 900; z-index: 10; border: 1px solid rgba(212,175,55,0.4); text-shadow: 0 1px 2px #000; }
-
-        .seo-footer { background: rgba(10,5,5,0.95); border-top: 2px solid var(--gold); padding: 30px 20px; text-align: center; margin-top: auto; width: 100%; }
-        .seo-footer h4 { color: var(--gold); font-size: 18px; margin-bottom: 15px; text-transform: uppercase; }
-        .streaming-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
-        .streaming-links a { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 13px; transition: 0.3s; display: flex; align-items: center; gap: 6px; }
-        .streaming-links a:hover { border-color: var(--gold); background: rgba(212,175,55,0.1); transform: scale(1.05); }
+        .premium-card { background: rgba(20,5,5,0.85); border: 1px solid var(--gold); border-radius: 16px; padding: 25px; margin-bottom: 25px; }
+        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .input-group label { color: #aaa; font-size: 12px; margin-bottom: 5px; display: block; }
+        .input-group input, .input-group select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); color: #fff; }
+        
+        /* New Grid Logic for Covers */
+        #portfolio-grid, #history-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; }
+        .poster-card { position: relative; width: 100%; border-radius: 8px; overflow: hidden; border: 1px solid var(--gold); }
+        .poster-card img { width: 100%; height: 180px; object-fit: cover; display: block; }
+        .poster-title { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.8); color: #fff; font-size: 11px; padding: 5px; text-align: center; }
     </style>
 </head>
-<body style="display: flex; flex-direction: column; min-height: 100vh;">
-    
-    <div id="real-time-clock" class="real-time-clock fade-in">Loading Time...</div>
-    <div class="luxury-bg"><div class="floating-orb orb-1"></div><div class="floating-orb orb-2"></div></div>
-
-    <div class="stream-flags">
-        <span class="sf-item brand-netflix" style="top: 10%; animation: flyPath1 15s linear infinite;">NETFLIX</span>
-        <span class="sf-item brand-prime" style="top: 35%; animation: flyPath2 18s linear infinite 2s;">PRIME</span>
-        <span class="sf-item brand-max" style="top: 60%; animation: flyPath1 16s linear infinite 4s;">MAX</span>
-        <span class="sf-item brand-disney" style="top: 85%; animation: flyPath2 19s linear infinite 1s;">DISNEY+</span>
-    </div>
-
-    <header class="app-header fade-in">
-        <a href="/index.html" class="header-brand-area">
-            <picture><source srcset="/logo.jpeg" type="image/jpeg"><img src="/logo.jpeg" alt="Logo" class="brand-logo" loading="lazy"></picture>
-            <div><span class="app-title-main">MatchApp</span><span class="app-title-sub">Dashboard</span></div>
-        </a>
-        <nav id="header-auth-area" style="display: flex; gap: 10px; align-items: center; justify-content: flex-end;">
-            <a href="/index.html" class="secondary-btn" style="padding: 8px 12px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">🏠 Home</a>
+<body style="background: #0a0505; color: #fff; margin:0;">
+    <header class="app-header">
+        <a href="/index.html" style="text-decoration: none; color: var(--gold); font-size: 24px; font-weight: bold;">MatchApp Hub</a>
+        <nav style="display: flex; gap: 10px; align-items: center;">
+            <a href="/index.html" class="gold-btn" style="padding: 8px 12px; font-size: 13px; text-decoration: none;">🏠 Go to Main Page (Match)</a>
         </nav>
     </header>
 
-    <main class="page-wrapper" style="flex: 1;">
-        <div class="main-layout fade-in">
-            <aside class="sidebar-ad-left">
-                <span class="ad-label" style="display:block; text-align:center;">SPONSORED</span>
-                <a href="https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562f63b85c00cb649448" target="_blank" rel="noopener" class="smartlink-card fade-in">
-                    <span class="smartlink-icon">💎</span>
-                    <span class="smartlink-title">Exclusive Offer</span>
-                    <span class="smartlink-desc">Click here to discover our premium sponsor</span>
-                </a>
-                <ins class="adsbygoogle" style="display:block; min-height: 600px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins>
-                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-            </aside>
-
-            <section class="container">
-                <div class="chrome-banner fade-in">
-                    <div class="chrome-text"><strong>MatchApp relies on ads to stay free!</strong><br>For the absolute best performance, open us in Chrome.</div>
-                    <a href="intent://matchapp.cc/#Intent;scheme=https;package=com.android.chrome;end" class="chrome-btn">Open in Chrome</a>
+    <main class="main-layout">
+        <section class="container">
+            <article class="premium-card">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <!-- Avatar Upload Logic embedded -->
+                    <label for="avatar-upload" style="cursor: pointer;">
+                        <img id="profile-pic-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 24 24' fill='%23D4AF37'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--gold); object-fit: cover;">
+                        <p style="color: var(--gold); font-size: 11px; margin-top: 5px;">Click to change photo</p>
+                    </label>
+                    <input type="file" id="avatar-upload" accept="image/*" style="display: none;" onchange="handleAvatar(event)">
+                </div>
+                
+                <div style="background: rgba(0,0,0,0.5); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,82,82,0.3); margin-bottom: 25px;">
+                    <h3 style="color: #ff5252; margin: 0 0 10px 0;">🔒 Core Identity (Locks permanently upon saving)</h3>
+                    <div class="input-grid">
+                        <div class="input-group"><label>Full Name</label><input type="text" id="profile-name"></div>
+                        <div class="input-group"><label>Country</label><input type="text" id="profile-country"></div>
+                        <div class="input-group"><label>Birthdate</label><input type="text" id="profile-dob"></div>
+                        <div class="input-group"><label>Star Sign</label><select id="profile-starsign"><option value="Leo">Leo</option><option value="Aries">Aries</option></select></div>
+                    </div>
                 </div>
 
-                <div class="ad-banner-container fade-in">
-                    <span class="ad-label">SPONSORED</span>
-                    <div style="display: flex; justify-content: center; align-items: center; min-height: 90px; width: 100%; overflow: hidden;">
-                        <script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script>
-                        <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
-                    </div>
-                    <a href="https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562f63b85c00cb649448" target="_blank" rel="noopener" style="display: inline-block; margin-top: 10px; color: var(--gold); font-size: 12px; text-decoration: none; border: 1px solid var(--gold); padding: 5px 15px; border-radius: 20px; transition: 0.3s;" onmouseover="this.style.background='rgba(212,175,55,0.2)'" onmouseout="this.style.background='transparent'">✨ View Premium Sponsor Offer</a>
+                <button id="save-profile-btn" onclick="saveProfileData()" class="gold-btn" style="width: 100%; padding: 14px; font-size: 16px; margin-bottom: 25px;">💾 Save & Lock Profile</button>
+                
+                <div style="text-align: center; margin-bottom: 25px;">
+                    <a href="/pricing/pricing.html" class="gold-btn" style="padding: 12px 24px; text-decoration: none; font-size: 16px; display: inline-block;">💎 Upgrade to VIP (Unlimited Matches)</a>
                 </div>
 
-                <article class="premium-card fade-in" style="text-align: left; padding: 30px 20px;">
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <img id="profile-pic-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 24 24' fill='%23D4AF37'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" alt="Avatar" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--gold); box-shadow: 0 0 15px var(--gold); object-fit: cover;">
-                        <h2 style="color: var(--gold); margin: 10px 0 5px 0; font-size: 26px;">My Hub</h2>
-                        <p id="user-email-display" style="color: var(--text-muted); font-size: 13px; margin: 0;">Loading session...</p>
-                    </div>
-                    
-                    <div style="background: rgba(0,0,0,0.5); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,82,82,0.3); margin-bottom: 25px;">
-                        <h3 style="color: #ff5252; margin: 0 0 10px 0; font-size: 18px;">🔒 Core Identity</h3>
-                        <p style="color: #bbb; font-size: 12px; line-height: 1.5; margin-bottom: 18px;">Fields are automatically populated from your Google Account.</p>
-                        <div class="input-grid">
-                            <div class="input-group"><label>Full Name</label><input type="text" id="profile-name" placeholder="Full Name"></div>
-                            <div class="input-group"><label>Country</label><input type="text" id="profile-country" placeholder="e.g. Brazil, USA, UK..."></div>
-                            <div class="input-group"><label>Birthdate (DD/MM/YYYY)</label><input type="text" id="profile-dob" placeholder="e.g. 10/10/1986" maxlength="10"></div>
-                            <div class="input-group"><label>Dynamic Age</label><input type="text" id="profile-age-display" disabled style="opacity: 0.7;" placeholder="Calculated automatically"></div>
-                            
-                            <div class="input-group"><label>Star Sign</label><select id="profile-starsign"><option value="">Select...</option><option value="Aries">Aries</option><option value="Taurus">Taurus</option><option value="Gemini">Gemini</option><option value="Cancer">Cancer</option><option value="Leo">Leo</option><option value="Virgo">Virgo</option><option value="Libra">Libra</option><option value="Scorpio">Scorpio</option><option value="Sagittarius">Sagittarius</option><option value="Capricorn">Capricorn</option><option value="Aquarius">Aquarius</option><option value="Pisces">Pisces</option></select></div>
-                            <div class="input-group"><label>Sexual Orientation</label><select id="profile-orientation"><option value="">Select...</option><option value="Straight">Straight</option><option value="Gay">Gay</option><option value="Lesbian">Lesbian</option><option value="Bisexual">Bisexual</option><option value="Other">Other</option></select></div>
-                        </div>
-                    </div>
-
-                    <div class="ad-banner-container fade-in" style="margin-bottom: 25px;">
-                        <span class="ad-label">SPONSORED</span>
-                        <div style="display: flex; justify-content: center; align-items: center; min-height: 250px; width: 100%; overflow: hidden;">
-                            <script>atOptions = { 'key' : 'a993f73724a261dce748b6f9319072d5', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };</script>
-                            <script src="https://www.highperformanceformat.com/a993f73724a261dce748b6f9319072d5/invoke.js"></script>
-                        </div>
-                        <a href="https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562f63b85c00cb649448" target="_blank" rel="noopener" style="display: inline-block; margin-top: 10px; color: var(--gold); font-size: 12px; text-decoration: none; border: 1px solid var(--gold); padding: 5px 15px; border-radius: 20px; transition: 0.3s;" onmouseover="this.style.background='rgba(212,175,55,0.2)'" onmouseout="this.style.background='transparent'">✨ View Premium Sponsor Offer</a>
-                    </div>
-
-                    <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 25px;">
-                        <h3 style="color: var(--gold-glow); margin: 0 0 15px 0; font-size: 18px;">⚙️ AI Tuning</h3>
-                        <div class="input-grid">
-                            <div class="input-group"><label>Primary Service</label>
-                                <select id="pref-service">
-                                    <option value="Netflix">Netflix</option>
-                                    <option value="Prime Video">Prime Video</option>
-                                    <option value="Max">Max</option>
-                                    <option value="Disney+">Disney+</option>
-                                    <option value="Hulu">Hulu</option>
-                                    <option value="Apple TV+">Apple TV+</option>
-                                    <option value="Paramount+">Paramount+</option>
-                                    <option value="Peacock">Peacock</option>
-                                    <option value="Crunchyroll">Crunchyroll</option>
-                                    <option value="Globoplay">Globoplay (BR)</option>
-                                    <option value="BBC iPlayer">BBC iPlayer (UK)</option>
-                                </select>
-                            </div>
-                            <div class="input-group"><label>Favorite Genre</label><select id="pref-genre"><option value="Thriller">Thriller & Suspense</option><option value="Comedy">Comedy</option><option value="Romance">Romance & Doramas</option><option value="Sci-Fi">Sci-Fi</option></select></div>
-                            <div class="input-group"><label>Preferred Decade</label><select id="pref-decade"><option value="New">Brand New (2024+)</option><option value="2010s">Modern (2010s)</option><option value="2000s">Y2K Era</option><option value="Classic">Classics</option></select></div>
-                        </div>
-                    </div>
-
-                    <button id="save-profile-btn" onclick="saveProfileData()" class="gold-btn" style="margin-bottom: 35px; width: 100%; font-size: 16px;">💾 Save & Update Profile</button>
-
-                    <div style="background: rgba(212,175,55,0.05); padding: 20px; border-radius: 16px; border: 1px solid rgba(212,175,55,0.3); margin-bottom: 25px;">
-                        <h3 style="color: var(--gold-glow); margin: 0 0 15px 0; font-size: 18px;">⭐ Watch Later Portfolio</h3>
-                        <div id="portfolio-grid"><p style="color: var(--text-muted); font-size: 13px;">Loading portfolio...</p></div>
-                        <button onclick="clearListEntirely('portfolio')" class="secondary-btn clear-list-btn">🗑️ Remove All Saved for Later</button>
-                    </div>
-
-                    <div style="background: rgba(37,211,102,0.05); padding: 20px; border-radius: 16px; border: 1px solid rgba(37,211,102,0.3); margin-bottom: 25px;">
-                        <h3 style="color: #25D366; margin: 0 0 15px 0; font-size: 18px;">✔️ Watch History & Ratings</h3>
-                        <div id="history-grid"><p style="color: var(--text-muted); font-size: 13px;">Loading history...</p></div>
-                        <button onclick="clearListEntirely('history')" class="secondary-btn clear-list-btn">🗑️ Remove All History & Ratings</button>
-                    </div>
-                    
-                    <div style="display: flex; gap: 10px; margin-top: 20px;">
-                        <button onclick="doLogout()" class="secondary-btn" style="flex: 1; border-color:#fff; color:#fff; background: rgba(255,255,255,0.1);">Log Out Securely</button>
-                        <button onclick="openDeleteModal()" class="secondary-btn" style="flex: 1; border-color:#ff5252; color:#ff5252; background: rgba(255,82,82,0.1);">🗑️ Delete Account</button>
-                    </div>
-                </article>
-
-                <div class="mobile-ad-bottom">
-                    <span class="ad-label" style="display:block; text-align:center;">SPONSORED</span>
-                    <a href="https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562f63b85c00cb649448" target="_blank" rel="noopener" class="smartlink-card fade-in" style="margin-bottom: 15px;">
-                        <span class="smartlink-icon">💎</span>
-                        <span class="smartlink-title">Exclusive Offer</span>
-                        <span class="smartlink-desc">Click here to discover our premium sponsor</span>
-                    </a>
-                    <ins class="adsbygoogle" style="display:block; min-height: 100px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins>
-                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                <div style="background: rgba(212,175,55,0.05); padding: 20px; border-radius: 16px; border: 1px solid var(--gold); margin-bottom: 25px;">
+                    <h3 style="color: var(--gold); margin: 0 0 15px 0;">⭐ Watch Later Portfolio</h3>
+                    <div id="portfolio-grid"><p style="color: #aaa; font-size: 12px;">Loading Covers...</p></div>
                 </div>
-            </section>
-
-            <aside class="sidebar-ad-right">
-                <span class="ad-label" style="display:block; text-align:center;">SPONSORED</span>
-                <a href="https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562f63b85c00cb649448" target="_blank" rel="noopener" class="smartlink-card fade-in">
-                    <span class="smartlink-icon">💎</span>
-                    <span class="smartlink-title">Exclusive Offer</span>
-                    <span class="smartlink-desc">Click here to discover our premium sponsor</span>
-                </a>
-                <ins class="adsbygoogle" style="display:block; min-height: 600px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical" data-full-width-responsive="true"></ins>
-                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-            </aside>
-        </div>
+            </article>
+        </section>
     </main>
-    
-    <div id="delete-modal" class="modal-overlay" style="display:none;">
-        <div class="premium-card modal-content" style="border: 2px solid #ff5252; max-width: 400px; text-align: center; padding: 30px 20px;">
-            <div style="font-size: 60px; margin-bottom: 15px; animation: pulse 2s infinite;">⚠️</div>
-            <h2 style="color: #ff5252; font-size: 24px; margin: 0 0 15px 0;">Are you absolutely sure?</h2>
-            <p style="color: #ddd; font-size: 14px; margin-bottom: 15px;">Your profile, portfolio, and all viewing data will be permanently erased.</p>
-            <div id="delete-checkbox-wrapper" class="danger-checkbox-container">
-                <label><input type="checkbox" id="delete-confirm-check" class="blue-checkbox" onchange="toggleDeleteBtn()"><span id="delete-checkbox-text" style="color: #bbb; font-size: 13px;">I understand and want to delete my account.</span></label>
-            </div>
-            <div style="display: flex; gap: 10px; flex-direction: column;">
-                <button onclick="closeDeleteModal()" class="gold-btn" style="width: 100%; font-weight: bold; padding: 14px;">Cancel</button>
-                <button id="final-delete-btn" onclick="executeAccountDeletion()" class="secondary-btn btn-disabled" style="width: 100%; padding: 14px;" disabled>Delete Completely</button>
-            </div>
-        </div>
-    </div>
-
-    <footer class="seo-footer">
-        <h4>Global Streaming Platforms & Apps</h4>
-        <p style="color: #888; font-size: 12px; margin-bottom: 20px;">MatchApp securely routes you directly to the official platforms to watch globally.</p>
-        <div class="streaming-links">
-            <a href="https://www.netflix.com" target="_blank" rel="noopener noreferrer">📺 Netflix</a>
-            <a href="https://www.primevideo.com" target="_blank" rel="noopener noreferrer">📦 Prime</a>
-            <a href="https://www.max.com" target="_blank" rel="noopener noreferrer">🍿 Max</a>
-            <a href="https://www.disneyplus.com" target="_blank" rel="noopener noreferrer">✨ Disney+</a>
-            <a href="https://www.hulu.com" target="_blank" rel="noopener noreferrer">💚 Hulu</a>
-            <a href="https://tv.apple.com" target="_blank" rel="noopener noreferrer">🍎 Apple TV+</a>
-            <a href="https://www.paramountplus.com" target="_blank" rel="noopener noreferrer">⛰️ Paramount+</a>
-            <a href="https://www.peacocktv.com" target="_blank" rel="noopener noreferrer">🦚 Peacock</a>
-            <a href="https://www.crunchyroll.com" target="_blank" rel="noopener noreferrer">⚔️ Crunchyroll</a>
-            <a href="https://www.spotify.com" target="_blank" rel="noopener noreferrer">🎵 Spotify</a>
-        </div>
-        <p style="color: #555; font-size: 11px; margin-top: 25px;">© 2026 MatchApp.cc - Support: support@matchapp.cc</p>
-    </footer>
 
     <script src="/app.js"></script>
     <script src="/profile.js"></script>
-    <script src="https://brunettesir.com/55/fa/29/55fa29c96e27c09c7d64d33a39b6cf7a.js"></script>
+    <script>
+        // Private Avatar Upload Logic (Base64)
+        function handleAvatar(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64 = e.target.result;
+                document.getElementById('profile-pic-preview').src = base64;
+                localStorage.setItem('match_custom_avatar', base64);
+                alert("Avatar updated locally! Return to the Main Page to see it active.");
+            };
+            reader.readAsDataURL(file);
+        }
+    </script>
 </body>
 </html>
