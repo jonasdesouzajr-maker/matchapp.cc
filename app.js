@@ -1,4 +1,4 @@
-console.log("Mastercode 87.0: Strict AI, Trailers, Posters, & Locked Profiles Active");
+console.log("Mastercode 88.0: Full Auth, TMDB Covers, SEO & Ads Active");
 
 // ==========================================
 // 1. SUPABASE LIVE INITIALIZATION
@@ -17,7 +17,7 @@ try {
 }
 
 // ==========================================
-// GOOGLE CONSENT MODE V2 BANNER
+// GOOGLE CONSENT MODE V2
 // ==========================================
 (function initConsentMode() {
     const consentStatus = localStorage.getItem('matchapp_cookie_consent');
@@ -28,13 +28,12 @@ try {
         gtag('consent', 'update', { 'ad_storage': 'granted', 'ad_user_data': 'granted', 'ad_personalization': 'granted', 'analytics_storage': 'granted' });
         return; 
     }
-
     window.addEventListener('DOMContentLoaded', () => {
         const banner = document.createElement('div');
         banner.id = 'cookie-consent-banner';
         banner.innerHTML = `
-            <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 600px; background: rgba(10,5,5,0.95); border: 1px solid var(--gold); border-radius: 12px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 10000; text-align: center; backdrop-filter: blur(10px); animation: fadeIn 0.5s ease;">
-                <h4 style="color: var(--gold); margin: 0 0 10px 0; font-size: 16px;">🍪 Privacy & Analytics (Consent Mode v2)</h4>
+            <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 600px; background: rgba(10,5,5,0.95); border: 1px solid var(--gold); border-radius: 12px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.9); z-index: 10000; text-align: center; backdrop-filter: blur(10px);">
+                <h4 style="color: var(--gold); margin: 0 0 10px 0; font-size: 16px;">🍪 Privacy & Analytics</h4>
                 <p style="color: #ccc; font-size: 13px; line-height: 1.5; margin-bottom: 15px;">We use cookies and Google Analytics to personalize content, tailor ads, and improve your streaming concierge experience globally.</p>
                 <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
                     <button id="btn-accept-cookies" class="gold-btn" style="padding: 8px 16px; font-size: 13px;">Accept All & Continue</button>
@@ -52,13 +51,12 @@ try {
 })();
 
 // ==========================================
-// MAIN APP VARIABLES & DATA STRUCTURE
+// APP VARIABLES
 // ==========================================
 let globalMatchTitle = "";
 let globalMatchPoster = "";
 let isUserLoggedIn = false;
 
-// Upgraded to handle Objects instead of Strings to store Covers
 let seenList = JSON.parse(localStorage.getItem('match_seenList') || '[]');
 let savedList = JSON.parse(localStorage.getItem('match_savedList') || '[]');
 let dislikedList = JSON.parse(localStorage.getItem('match_dislikedList') || '[]');
@@ -67,6 +65,7 @@ let userRatings = JSON.parse(localStorage.getItem('match_userRatings') || '{}');
 let isAdFree = localStorage.getItem('match_adFree') === 'true'; 
 let isVIP = localStorage.getItem('match_isVIP') === 'true';
 
+// Utilities
 function updateClock() { 
     try {
         const clock = document.getElementById('real-time-clock'); 
@@ -94,6 +93,9 @@ window.fireConfetti = function() {
     if (typeof confetti !== 'undefined') { confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#D4AF37', '#FFF', '#8A2BE2', '#E50914'], zIndex: 9999 }); }
 };
 
+// ==========================================
+// AUTHENTICATION & MODAL LOGIC
+// ==========================================
 window.openAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'flex'; };
 window.closeAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'none'; };
 
@@ -104,21 +106,66 @@ window.switchAuthTab = function(tab) {
     const formSign = document.getElementById('form-signup');
     if(tabLog) tabLog.classList.remove('active'); if(tabSign) tabSign.classList.remove('active');
     if(formLog) formLog.classList.remove('active'); if(formSign) formSign.classList.remove('active');
+    
     const activeTab = document.getElementById(`tab-${tab}`);
     const activeForm = document.getElementById(`form-${tab}`);
     if(activeTab) activeTab.classList.add('active'); if(activeForm) activeForm.classList.add('active');
 };
 
-// ==========================================
-// AUTHENTICATION & AVATAR LOGIC
-// ==========================================
+window.signInWithGoogle = async function() { 
+    if (!supabaseClient) return alert("Database client not initialized."); 
+    const { error } = await supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + '/profile/profile.html' } }); 
+    if (error) alert("Google Login Error: " + error.message); 
+};
+
+window.handleEmailSignup = async function() {
+    const email = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const msgEl = document.getElementById('auth-message');
+    
+    if(!email || !password) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please provide an email and password."; return; }
+    if (!supabaseClient) return;
+    
+    msgEl.style.display = 'block'; msgEl.style.color = '#fff'; msgEl.innerText = "Creating account...";
+
+    const { data, error } = await supabaseClient.auth.signUp({ email, password });
+    if(error) { 
+        msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; 
+    } else { 
+        msgEl.style.color = '#25D366'; msgEl.innerText = "Account created! Routing to Profile Hub to complete setup..."; 
+        setTimeout(() => { window.location.href = '/profile/profile.html'; }, 1500); 
+    }
+};
+
+window.handleEmailLogin = async function() {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const msgEl = document.getElementById('auth-message');
+    
+    if(!email || !password) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please enter email and password."; return; }
+    msgEl.style.display = 'block'; msgEl.style.color = '#fff'; msgEl.innerText = "Authenticating...";
+
+    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if(error) { 
+        msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; 
+    } else { 
+        msgEl.style.color = '#25D366'; msgEl.innerText = "Welcome back! Routing to Home..."; 
+        setTimeout(() => { window.location.reload(); }, 1000); 
+    }
+};
+
+window.doLogout = async function() { 
+    if (supabaseClient) { await supabaseClient.auth.signOut(); } 
+    localStorage.clear(); 
+    window.location.href = '/index.html'; 
+};
+
 if (supabaseClient) {
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
         if (session && session.user) {
             isUserLoggedIn = true;
             const user = session.user;
             
-            // Check for VIP status from DB if it exists
             const { data: profile } = await supabaseClient.from('profiles').select('is_vip, is_ad_free, avatar_url').eq('id', user.id).single();
             if(profile) {
                 if(profile.is_vip) { isVIP = true; localStorage.setItem('match_isVIP', 'true'); }
@@ -128,20 +175,16 @@ if (supabaseClient) {
             const regBtn = document.getElementById('nav-reg-btn');
             const profTab = document.getElementById('profile-link-tab');
             const logoutBtn = document.getElementById('nav-logout-btn');
-            const upgradeBtn = document.getElementById('nav-upgrade-btn');
             
-            // Render Profile UI accurately
             if (profTab) {
                 profTab.style.display = 'inline-flex';
                 let avatarSrc = localStorage.getItem('match_custom_avatar') || profile?.avatar_url || user.user_metadata?.avatar_url || `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%23FFF'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>`;
                 let badge = (isVIP || isAdFree) ? `<span style="font-size: 14px; margin-left: 5px;">💎</span>` : `<span style="font-size: 14px; margin-left: 5px;">✅</span>`;
-                
                 profTab.innerHTML = `<img src="${avatarSrc}" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--gold); object-fit: cover; margin-right: 8px;"> Profile ${badge}`;
             }
 
             if (regBtn) regBtn.style.display = 'none';
             if (logoutBtn) logoutBtn.style.display = 'inline-block';
-            if (upgradeBtn && !isVIP && !isAdFree) { upgradeBtn.style.display = 'inline-flex'; }
         } else { 
             isUserLoggedIn = false; 
         }
@@ -181,7 +224,6 @@ async function fetchGeminiData(promptText) {
 window.triggerMatch = async function(isSpecificSearch = false) {
     if (!checkDailyLimit()) return;
 
-    // Scroll to Loading State Animation
     const loadBox = document.getElementById('loading-box');
     if (loadBox) {
         loadBox.style.display = 'block';
@@ -189,48 +231,40 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     }
 
     let promptText = "";
-    // We only exclude titles user has specifically saved/seen.
     let exclusionList = seenList.map(item => item.title || item).join(', ');
     
     if (isSpecificSearch) {
         const input = document.getElementById('specific-search-input');
         if (!input || !input.value.trim()) { alert("Please enter a title to search."); loadBox.style.display = 'none'; return; }
         const query = input.value.trim();
-        promptText = `You are an elite streaming concierge AI. The user is searching for: "${query}". Output a JSON object exactly matching this structure: {"title": "Correct Title", "synopsis": "A 3-sentence extended synopsis.", "platform": "Exact streaming service", "imdb": "IMDb rating", "trailerId": "Exact 11-character YouTube ID", "posterUrl": "A highly reliable direct image URL for the official poster cover art"}`;
+        promptText = `You are an elite streaming concierge AI. Search for: "${query}". Output JSON EXACTLY matching: {"title": "Correct Title", "synopsis": "A 3-sentence synopsis.", "platform": "Streaming service", "imdb": "Rating", "trailerId": "Exact 11-character YouTube video ID", "posterPath": "Exact TMDB poster path starting with / (e.g. /1pdfLvkbY9ohJlCjQH2JGjjc91p.jpg)"}`;
     } else {
         const cat = document.getElementById('q-category')?.value || 'any'; 
         const plat = document.getElementById('q-platform')?.value || 'any';
         const mood = document.getElementById('q-mood')?.value || 'any'; 
-        const aest = document.getElementById('q-aesthetic')?.value || 'any'; 
-        const pac = document.getElementById('q-pacing')?.value || 'any';
         
-        promptText = `You are a streaming concierge AI. Find a highly-rated, hidden gem based STRICTLY on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}, Aesthetic: ${aest}, Pacing: ${pac}. 
+        promptText = `You are a streaming concierge AI. Find a highly-rated, hidden gem based STRICTLY on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}. 
         CRITICAL RULES: 
         1. DO NOT recommend any of these: ${exclusionList}.
-        2. DO NOT recommend obvious defaults like Dune, Severance, or Shogun unless it perfectly matches the criteria. FIND UNIQUE HIDDEN GEMS.
-        Output MUST be valid JSON: {"title": "Title", "synopsis": "A 3-sentence synopsis.", "platform": "Streaming service", "imdb": "Rating", "trailerId": "Exact 11-character YouTube video ID", "posterUrl": "Valid direct image URL for the poster cover"}`;
+        2. FIND UNIQUE HIDDEN GEMS. No obvious defaults.
+        Output MUST be valid JSON: {"title": "Title", "synopsis": "3-sentence synopsis.", "platform": "Streaming service", "imdb": "Rating", "trailerId": "Exact 11-character YouTube video ID", "posterPath": "Exact TMDB poster path starting with / (e.g. /mXZVPptJ3xUIVe8z0D5E7Y9E2F1.jpg)"}`;
     }
 
     const qBox = document.getElementById('questionnaire-box');
     const sBox = document.getElementById('search-box');
-    const marqueeBox = document.querySelector('.hero-marquee-container');
-    
     if (qBox) qBox.style.display = 'none';
     if (sBox) sBox.style.display = 'none';
-    if (marqueeBox) marqueeBox.style.display = 'none';
 
     let totalTime = isVIP || isAdFree ? 4 : 12; 
     let startTimeMs = Date.now();
     
     const pBar = document.getElementById('ai-progress-bar');
-    const tSim = document.getElementById('ad-timer-sim');
     if (pBar) pBar.style.width = '0%';
     
     let timerInterval = setInterval(() => {
         let elapsed = (Date.now() - startTimeMs) / 1000;
         let pct = Math.min((elapsed / totalTime) * 100, 100);
         if (pBar) pBar.style.width = pct + '%';
-        if (tSim) tSim.innerText = Math.max(Math.ceil(totalTime - elapsed), 0);
     }, 50);
 
     let matchResult = null;
@@ -238,8 +272,7 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         matchResult = await fetchGeminiData(promptText);
     } catch (err) {
         console.error("AI Fallback:", err);
-        // Fallback only used if API completely drops. Still better than nothing.
-        matchResult = { title: "The Bear", synopsis: "A young chef from the fine dining world comes home to Chicago to run his family sandwich shop.", platform: "Hulu", imdb: "8.6", trailerId: "y-caqB_P72E", posterUrl: "https://image.tmdb.org/t/p/w500/mXZVPptJ3xUIVe8z0D5E7Y9E2F1.jpg" };
+        matchResult = { title: "The Bear", synopsis: "A young chef from the fine dining world comes home to Chicago to run his family sandwich shop.", platform: "Hulu", imdb: "8.6", trailerId: "y-caqB_P72E", posterPath: "/mXZVPptJ3xUIVe8z0D5E7Y9E2F1.jpg" };
     }
 
     let elapsedMs = Date.now() - startTimeMs;
@@ -258,13 +291,19 @@ function renderResult(selected) {
     if (!resultBox) return;
     
     resultBox.style.display = 'block';
-    resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' }); // Auto-scroll to result
+    resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
     window.playPremiumSound();
     window.fireConfetti();
 
     globalMatchTitle = selected.title;
-    globalMatchPoster = selected.posterUrl || "https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=1000&q=80";
+    
+    // THE TMDB POSTER HACK + DYNAMIC TEXT FALLBACK
+    if (selected.posterPath && selected.posterPath.startsWith('/')) {
+        globalMatchPoster = `https://image.tmdb.org/t/p/w500${selected.posterPath}`;
+    } else {
+        globalMatchPoster = `https://via.placeholder.com/500x750/0a0505/D4AF37?text=${encodeURIComponent(selected.title)}`;
+    }
     
     document.getElementById('res-title').innerText = selected.title;
     document.getElementById('res-synopsis').innerText = selected.synopsis;
@@ -272,7 +311,7 @@ function renderResult(selected) {
     const posterEl = document.getElementById('res-poster-img');
     if (posterEl) {
         posterEl.src = globalMatchPoster;
-        posterEl.onerror = function() { this.src = "https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?auto=format&fit=crop&w=1000&q=80"; };
+        posterEl.onerror = function() { this.src = `https://via.placeholder.com/500x750/0a0505/D4AF37?text=${encodeURIComponent(selected.title)}`; };
     }
 
     const badge = document.getElementById('res-platform-badge');
@@ -283,23 +322,27 @@ function renderResult(selected) {
     directBtn.href = `https://www.google.com/search?q=Watch+${encodeURIComponent(selected.title)}+on+${encodeURIComponent(selected.platform)}`;
     directBtn.innerText = `▶ Search on ${selected.platform}`;
 
-    // GUARANTEED WORKING TRAILER FALLBACK HACK
+    // GUARANTEED WORKING TRAILER HACK
     const trailerBox = document.getElementById('res-trailer-container');
     const iframe = document.getElementById('res-trailer');
+    const ytFallbackLink = document.getElementById('res-trailer-fallback');
     
     if (trailerBox && iframe) {
         trailerBox.style.display = 'block';
-        // If Gemini gives a clean 11 char ID, try it. Otherwise, force a YouTube search embed!
         if (selected.trailerId && selected.trailerId.length === 11) {
             iframe.src = `https://www.youtube.com/embed/${selected.trailerId}?modestbranding=1&rel=0`;
         } else {
-            iframe.src = `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(selected.title + " trailer " + selected.platform)}`;
+            // Unofficial search fallback if Gemini failed to get an ID
+            iframe.src = `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(selected.title + " official trailer")}`;
+        }
+        if (ytFallbackLink) {
+            ytFallbackLink.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(selected.title + " trailer")}`;
         }
     }
 }
 
 // ==========================================
-// WATCH LATER & HISTORY (NOW SAVES POSTERS)
+// WATCH LATER & HISTORY (SAVING POSTERS)
 // ==========================================
 window.recordAction = function(type) {
     if (!globalMatchTitle) return;
@@ -327,8 +370,8 @@ window.recordAction = function(type) {
     syncListsToDatabase();
     alert("Action Recorded! Generate your next match now.");
     document.getElementById('result-box').style.display = 'none';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
     document.getElementById('questionnaire-box').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 async function syncListsToDatabase() { 
