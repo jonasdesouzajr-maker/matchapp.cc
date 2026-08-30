@@ -1,4 +1,4 @@
-console.log("Mastercode 85.0: Google Consent Mode v2 & Analytics Hub Fully Integrated");
+console.log("Mastercode 86.0: Full Semantic SEO & Consent Mode Engine Active");
 
 // ==========================================
 // 1. SUPABASE LIVE INITIALIZATION
@@ -31,7 +31,6 @@ const ADSTERRA_SMARTLINK = 'https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
 
-    // If previously granted, update live tags immediately
     if (consentStatus === 'granted') {
         gtag('consent', 'update', {
             'ad_storage': 'granted',
@@ -42,7 +41,6 @@ const ADSTERRA_SMARTLINK = 'https://brunettesir.com/z1sa7fhf?key=58a1ba12988b562
         return; 
     }
 
-    // If no consent is logged, inject the UI banner on DOM load
     window.addEventListener('DOMContentLoaded', () => {
         const banner = document.createElement('div');
         banner.id = 'cookie-consent-banner';
