@@ -1,46 +1,52 @@
-console.log("Pricing/Monetization Engine Active: Stripe Link Checkout Engine");
+console.log("Mastercode 87.0: Live Stripe Payments Engine Initialized");
 
 // ==========================================
-// CONFIGURABLE STRIPE PAYMENT LINKS
+// 💳 INSERT YOUR ACTUAL STRIPE PAYMENT LINKS HERE
 // ==========================================
-// Replace these URLs with your live Stripe Payment Links created in your Stripe Dashboard.
-const STRIPE_AD_FREE_LINK = "https://buy.stripe.com/YOUR_AD_FREE_LINK_HERE";
-const STRIPE_VIP_LINK     = "https://buy.stripe.com/YOUR_VIP_MONTHLY_LINK_HERE";
+const STRIPE_LINK_AD_FREE = "https://buy.stripe.com/test_123456789"; 
+const STRIPE_LINK_VIP_MONTHLY = "https://buy.stripe.com/test_987654321"; 
 
 window.processCheckout = async function(planType) {
-    const client = window.supabaseClient || (window.supabase ? window.supabase.createClient('https://zkymvqrmbabngsqblyye.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpreW12cXJtYmFibmdzcWJseXllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY4MDUyNDIsImV4cCI6MjEwMjM4MTI0Mn0._yEVFMfwVU6GBqQ8m3ljfOgA0HSLEDiKMOfYae6ZD8Q') : null);
-
-    if (!client) {
-        alert("Database connection error. Please refresh or contact support@matchapp.cc");
+    if (!isUserLoggedIn || !supabaseClient) {
+        alert("💎 Please create a free account or log in first so we can securely link this VIP pass to your profile!");
+        if (typeof window.openAuthModal === 'function') window.openAuthModal();
         return;
     }
 
-    const { data: { user }, error } = await client.auth.getUser();
+    const btnId = `btn-${planType}`;
+    const btn = document.getElementById(btnId);
+    const originalText = btn ? btn.innerText : 'Processing...';
     
-    if (error || !user) {
-        alert("You must be signed in to upgrade your account! Redirecting to login...");
-        window.location.href = '/index.html';
-        return;
+    if (btn) {
+        btn.innerText = "Securely redirecting to Stripe...";
+        btn.disabled = true;
+        btn.style.opacity = "0.7";
     }
 
-    if (typeof gtag === 'function') {
-        gtag('event', 'begin_checkout', {
-            item_list_name: planType,
-            currency: 'USD',
-            value: planType === 'vip_monthly' ? 4.99 : 1.99
-        });
-    }
+    try {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        
+        if (user) {
+            const userId = user.id;
+            
+            // Build the checkout URL and dynamically append the user ID so you can track it in Stripe webhooks
+            let checkoutUrl = "";
+            if (planType === 'ad_free') {
+                checkoutUrl = `${STRIPE_LINK_AD_FREE}?client_reference_id=${userId}`;
+            } else if (planType === 'vip_monthly') {
+                checkoutUrl = `${STRIPE_LINK_VIP_MONTHLY}?client_reference_id=${userId}`;
+            }
 
-    let targetLink = (planType === 'vip_monthly') ? STRIPE_VIP_LINK : STRIPE_AD_FREE_LINK;
-
-    // If active Stripe links are configured, redirect to Stripe
-    if (!targetLink.includes("YOUR_")) {
-        const returnUrl = encodeURIComponent(`${window.location.origin}/index.html?payment=success&plan=${planType}`);
-        window.location.href = `${targetLink}?prefilled_email=${encodeURIComponent(user.email)}&redirect_url=${returnUrl}`;
-    } else {
-        // Fallback test simulation mode
-        if (confirm(`[TEST CHECKOUT SIMULATION]\n\nAccount: ${user.email}\nSelected Plan: ${planType.toUpperCase()}\n\nWould you like to simulate a successful payment to unlock VIP features right now?`)) {
-            window.location.href = `/index.html?payment=success&plan=${planType}`;
+            // Route user directly to Stripe Checkout
+            window.location.href = checkoutUrl;
+            
+        } else {
+            alert("Session expired. Please log in again to purchase.");
+            if (btn) { btn.innerText = originalText; btn.disabled = false; btn.style.opacity = "1"; }
         }
+    } catch (error) {
+        console.error("Checkout routing error:", error);
+        alert("Payment routing failed. Please check your connection and try again.");
+        if (btn) { btn.innerText = originalText; btn.disabled = false; btn.style.opacity = "1"; }
     }
 };
