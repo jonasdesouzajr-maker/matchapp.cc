@@ -1,20 +1,4 @@
-console.log("Profile Engine 93.0: Canvas Repair & Grid Lock Active");
-
-// NATIVE CANVAS GENERATOR (For repairing broken profile grids)
-function generateFallbackImage(title) {
-    const canvas = document.createElement('canvas');
-    canvas.width = 500; canvas.height = 750;
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#0a0505'; ctx.fillRect(0, 0, 500, 750);
-    ctx.strokeStyle = '#D4AF37'; ctx.lineWidth = 15; ctx.strokeRect(0, 0, 500, 750);
-    ctx.fillStyle = '#D4AF37'; ctx.font = 'bold 36px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    let words = title.split(' '); let y = 375;
-    if(words.length > 3) {
-        ctx.fillText(words.slice(0, Math.ceil(words.length/2)).join(' '), 250, y - 25);
-        ctx.fillText(words.slice(Math.ceil(words.length/2)).join(' '), 250, y + 25);
-    } else { ctx.fillText(title, 250, y); }
-    return canvas.toDataURL(); 
-}
+console.log("Profile Engine 94.0: Bulletproof CSS Portfolio Grids Active");
 
 document.addEventListener('DOMContentLoaded', () => {
     const dobInput = document.getElementById('profile-dob');
@@ -73,20 +57,22 @@ window.renderProfileGrids = function() {
         } else {
             sList.forEach(item => {
                 let title = typeof item === 'string' ? item : item.title;
-                let rawPoster = typeof item === 'string' ? '' : item.posterUrl;
+                let poster = typeof item === 'string' ? '' : item.posterUrl;
                 
-                // REPAIR LOGIC: Overwrite old broken images dynamically with the Canvas generator
-                let poster = rawPoster;
-                if (!poster || poster.includes('placeholder.com') || poster.includes('placehold.co')) {
-                    poster = generateFallbackImage(title);
+                if (!poster || poster.includes('placeholder.com') || poster.includes('placehold.co') || poster === 'fallback') {
+                    poster = "invalid-image";
                 }
                 
-                const fallbackImage = generateFallbackImage(title);
-                
+                // Pure HTML/CSS injection so grids never break
                 portGrid.innerHTML += `
-                    <div class="poster-card">
-                        <img src="${poster}" alt="${title}" onerror="this.onerror=null; this.src='${fallbackImage}';">
-                        <div class="poster-title">${title}</div>
+                    <div class="poster-card" style="position: relative; width: 100%; height: 195px; border-radius: 8px; overflow: hidden; border: 1px solid var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                        <img src="${poster}" alt="${title}" style="width: 100%; height: 100%; object-fit: cover; display: block;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        
+                        <div class="css-poster-fallback" style="display:none; background: linear-gradient(135deg, #1a0f0f, #3a2200); width: 100%; height: 100%; align-items: center; justify-content: center; text-align: center; padding: 10px; box-sizing: border-box; color: var(--gold); font-weight: 900; font-size: 14px; text-shadow: 0 2px 5px rgba(0,0,0,0.8); box-shadow: inset 0 0 20px rgba(0,0,0,0.8);">
+                            ${title}
+                        </div>
+                        
+                        <div class="poster-title" style="position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.85); color: #fff; font-size: 11px; padding: 6px; text-align: center; font-weight: bold; border-top: 1px solid var(--gold);">${title}</div>
                     </div>
                 `;
             });
