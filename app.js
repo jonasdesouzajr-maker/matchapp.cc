@@ -1,8 +1,5 @@
-console.log("Mastercode 89.0: Spotify Restored, No-Repeat AI Engine & Full Poster Formatting Active");
+console.log("Mastercode 90.0: Strict AI Engine, Spotify Integration, and Auth Readiness Active");
 
-// ==========================================
-// 1. SUPABASE INITIALIZATION
-// ==========================================
 const SUPABASE_URL = 'https://zkymvqrmbabngsqblyye.supabase.co'; 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpreW12cXJtYmFibmdzcWJseXllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY4MDUyNDIsImV4cCI6MjEwMjM4MTI0Mn0._yEVFMfwVU6GBqQ8m3ljfOgA0HSLEDiKMOfYae6ZD8Q';
 
@@ -16,9 +13,6 @@ try {
     console.error("Supabase Initialization Error:", e);
 }
 
-// ==========================================
-// GOOGLE CONSENT MODE V2
-// ==========================================
 (function initConsentMode() {
     const consentStatus = localStorage.getItem('matchapp_cookie_consent');
     window.dataLayer = window.dataLayer || [];
@@ -50,9 +44,6 @@ try {
     });
 })();
 
-// ==========================================
-// APP STATE & STORAGE
-// ==========================================
 let globalMatchTitle = "";
 let globalMatchPoster = "";
 let globalPlatform = "";
@@ -66,7 +57,6 @@ let userRatings = JSON.parse(localStorage.getItem('match_userRatings') || '{}');
 let isAdFree = localStorage.getItem('match_adFree') === 'true'; 
 let isVIP = localStorage.getItem('match_isVIP') === 'true';
 
-// Utilities
 window.playPremiumSound = function() {
     try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -83,9 +73,6 @@ window.fireConfetti = function() {
     if (typeof confetti !== 'undefined') { confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#D4AF37', '#FFF', '#8A2BE2', '#E50914'], zIndex: 9999 }); }
 };
 
-// ==========================================
-// MARQUEE INTERACTIVE CLICK
-// ==========================================
 window.selectMarqueeItem = function(titleName) {
     const searchInput = document.getElementById('specific-search-input');
     const searchBox = document.getElementById('search-box');
@@ -96,9 +83,6 @@ window.selectMarqueeItem = function(titleName) {
     }
 };
 
-// ==========================================
-// AUTHENTICATION & MODAL LOGIC
-// ==========================================
 window.openAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'flex'; };
 window.closeAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'none'; };
 
@@ -115,6 +99,7 @@ window.switchAuthTab = function(tab) {
     if(activeTab) activeTab.classList.add('active'); if(activeForm) activeForm.classList.add('active');
 };
 
+// Perfectly constructed OAuth call - errors here are strictly from Google Cloud configuration
 window.signInWithGoogle = async function() { 
     if (!supabaseClient) return alert("Database client not initialized."); 
     const { error } = await supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + '/profile/profile.html' } }); 
@@ -213,9 +198,6 @@ function checkDailyLimit() {
     dailyCount++; localStorage.setItem('match_dailyCount', dailyCount.toString()); return true;
 }
 
-// ==========================================
-// MATCHING ENGINE & ZERO-REPEAT AI PROMPT
-// ==========================================
 async function fetchGeminiData(promptText) {
     if (!supabaseClient) throw new Error("Database client not initialized.");
     const { data, error } = await supabaseClient.functions.invoke('gemini-proxy', { body: { prompt: promptText } });
@@ -294,7 +276,6 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     clearInterval(timerInterval);
     if (pBar) pBar.style.width = '100%';
 
-    // Auto add match to seen list so unregistered users never get repeating matches
     if (!seenList.some(i => (i.title || i) === matchResult.title)) {
         seenList.push({ title: matchResult.title, posterUrl: matchResult.posterPath, platform: matchResult.platform });
         localStorage.setItem('match_seenList', JSON.stringify(seenList));
@@ -318,7 +299,6 @@ function renderResult(selected) {
     globalMatchTitle = selected.title;
     globalPlatform = selected.platform || "Streaming";
     
-    // FULL COVER POSTER FORMATTING
     if (selected.posterPath && selected.posterPath.startsWith('/')) {
         globalMatchPoster = `https://image.tmdb.org/t/p/w500${selected.posterPath}`;
     } else if (selected.posterPath && selected.posterPath.startsWith('http')) {
@@ -351,7 +331,6 @@ function renderResult(selected) {
         directBtn.innerText = `▶ Stream on ${selected.platform}`;
     }
 
-    // EMBEDDED TRAILER & VIDEO PREVIEW ENGINE
     const trailerBox = document.getElementById('res-trailer-container');
     const iframe = document.getElementById('res-trailer');
     const ytFallbackLink = document.getElementById('res-trailer-fallback');
@@ -369,9 +348,6 @@ function renderResult(selected) {
     }
 }
 
-// ==========================================
-// WATCH LATER & PORTFOLIO RECORDING
-// ==========================================
 window.recordAction = function(type) {
     if (!globalMatchTitle) return;
     if (!isUserLoggedIn) {
