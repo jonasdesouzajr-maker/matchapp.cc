@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#0a0505">
+    <meta name="theme-color" content="#050202">
     
     <title>MatchApp | AI Streaming & Vertical Drama Concierge</title>
     <meta name="description" content="MatchApp is your AI streaming concierge. Discover the best movies, TV series, vertical novelas, micro-dramas, and Spotify podcasts tailored to your exact mood.">
@@ -18,7 +18,7 @@
     
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="MatchApp | AI Movie, Podcast & Micro-Drama Finder">
-    <meta name="twitter:description" content="Find the perfect movie or vertical drama in 4 seconds using AI.">
+    <meta name="twitter:description" content="Find the perfect movie or vertical drama using AI.">
     <meta name="twitter:image" content="https://matchapp.cc/logo.jpeg">
 
     <script>
@@ -37,25 +37,6 @@
     <link rel="canonical" href="https://matchapp.cc/">
     <link rel="stylesheet" href="/style.css">
     
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "MatchApp AI",
-      "url": "https://matchapp.cc/",
-      "image": "https://matchapp.cc/logo.jpeg",
-      "description": "An AI streaming concierge that finds personalized movies, TV shows, micro-dramas, and Spotify podcasts.",
-      "applicationCategory": "EntertainmentApplication",
-      "operatingSystem": "All",
-      "offers": { "@type": "Offer", "price": "0.00", "priceCurrency": "USD" },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://matchapp.cc/?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-    </script>
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
@@ -66,89 +47,53 @@
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
     <style>
-        :root { --gold: #D4AF37; --gold-glow: #F9E596; }
-        body { margin: 0; background: #0a0505; color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
-        .app-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 25px; background: rgba(10,5,5,0.95); border-bottom: 2px solid var(--gold); box-shadow: 0 4px 25px rgba(212,175,55,0.4); flex-wrap: wrap; gap: 15px; }
-        .header-brand-area { display: flex; align-items: center; gap: 15px; text-decoration: none; }
-        .brand-logo { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--gold); box-shadow: 0 0 15px var(--gold); }
-        .app-title-main { font-size: 24px; font-weight: 900; color: var(--gold); }
+        :root { --gold: #D4AF37; --gold-glow: #F9E596; --bg-dark: #050202; --card-bg: rgba(15, 5, 5, 0.9); }
+        body { margin: 0; background: radial-gradient(circle at top, #1a0a0a 0%, var(--bg-dark) 100%); color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
         
-        .main-layout { display: flex; width: 100%; max-width: 1400px; margin: 0 auto; gap: 20px; align-items: flex-start; justify-content: center; min-height: 80vh; padding-top: 20px; }
+        .app-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 25px; background: rgba(5,2,2,0.95); border-bottom: 2px solid var(--gold); box-shadow: 0 4px 30px rgba(212,175,55,0.3); flex-wrap: wrap; gap: 15px; position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); }
+        .header-brand-area { display: flex; align-items: center; gap: 15px; text-decoration: none; }
+        .brand-logo { width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--gold); box-shadow: 0 0 20px var(--gold); transition: 0.3s; }
+        .brand-logo:hover { transform: scale(1.1); box-shadow: 0 0 30px var(--gold-glow); }
+        .app-title-main { font-size: 26px; font-weight: 900; color: var(--gold); letter-spacing: 1px; text-shadow: 0 2px 10px rgba(212,175,55,0.5); }
+        
+        .main-layout { display: flex; width: 100%; max-width: 1500px; margin: 0 auto; gap: 20px; align-items: flex-start; justify-content: center; min-height: 80vh; padding-top: 25px; }
         .sidebar-ad-left, .sidebar-ad-right { display: none; width: 160px; }
-        .container { flex: 1; max-width: 800px; width: 100%; padding-bottom: 50px; }
+        .container { flex: 1; max-width: 850px; width: 100%; padding-bottom: 50px; }
         @media (min-width: 1100px) { .sidebar-ad-left, .sidebar-ad-right { display: block; } }
 
-        @media (min-width: 1800px) and (min-height: 900px) {
-            .container { max-width: 1200px; }
-            .app-title-main { font-size: 32px; }
-            .gold-btn { font-size: 20px; padding: 18px 30px; }
-            #res-title { font-size: 40px; }
-            #res-poster-img, .css-poster-fallback { max-width: 450px; height: 650px; }
-            .sidebar-ad-left, .sidebar-ad-right { width: 300px; }
-            .marquee-item { width: 150px; height: 220px; }
-            .marquee-title { font-size: 14px; padding: 8px; }
-        }
+        .premium-card { background: var(--card-bg); border: 1px solid var(--gold); border-radius: 20px; padding: 30px; margin-bottom: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(212,175,55,0.05); position: relative; overflow: hidden; }
+        .premium-card::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(212,175,55,0.1), transparent); transform: skewX(-25deg); animation: shine 6s infinite; }
+        @keyframes shine { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
 
-        a:focus, button:focus, input:focus, select:focus, .marquee-item:focus {
-            outline: 4px solid #fff;
-            outline-offset: 4px;
-            box-shadow: 0 0 25px rgba(255, 255, 255, 0.9);
-            transform: scale(1.05);
-            z-index: 100;
-        }
-
-        .premium-card { background: rgba(20,5,5,0.85); border: 1px solid var(--gold); border-radius: 16px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(212,175,55,0.2); }
-        .how-it-works-glow { background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(10,5,5,0.95)); border: 2px solid var(--gold); border-radius: 16px; padding: 25px; margin: 0 0 25px 0; text-align: center; box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
+        .how-it-works-glow { background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(10,5,5,0.95)); border: 2px solid var(--gold); border-radius: 20px; padding: 30px; margin: 0 0 30px 0; text-align: center; box-shadow: 0 0 30px rgba(212, 175, 55, 0.3); }
         
-        .marquee-wrapper { width: 100%; overflow: hidden; background: rgba(0,0,0,0.6); border: 1px solid var(--gold); border-radius: 12px; padding: 15px 0; margin-bottom: 25px; position: relative; }
-        .marquee-track { display: flex; gap: 15px; width: max-content; animation: marqueeScroll 35s linear infinite; }
+        .marquee-wrapper { width: 100%; overflow: hidden; background: rgba(0,0,0,0.8); border: 1px solid var(--gold); border-radius: 15px; padding: 15px 0; margin-bottom: 30px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.9); }
+        .marquee-track { display: flex; gap: 15px; width: max-content; animation: marqueeScroll 40s linear infinite; }
         .marquee-track:hover { animation-play-state: paused; }
-        .marquee-item { position: relative; width: 110px; height: 160px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(212,175,55,0.5); cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.8); }
-        .marquee-item:hover { transform: scale(1.1); border-color: var(--gold-glow); box-shadow: 0 0 15px var(--gold); z-index: 10; }
+        .marquee-item { position: relative; width: 120px; height: 175px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(212,175,55,0.5); cursor: pointer; transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(0,0,0,0.9); }
+        .marquee-item:hover { transform: scale(1.1); border-color: var(--gold-glow); box-shadow: 0 0 25px var(--gold); z-index: 10; }
         .marquee-item img { width: 100%; height: 100%; object-fit: cover; }
-        .marquee-title { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.85); color: #fff; font-size: 10px; padding: 4px; text-align: center; font-weight: bold; border-top: 1px solid var(--gold); }
+        .marquee-title { position: absolute; bottom: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.95)); color: #fff; font-size: 11px; padding: 8px 4px 4px 4px; text-align: center; font-weight: bold; border-top: 1px solid var(--gold); }
         
-        @keyframes marqueeScroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
+        @keyframes marqueeScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 12px; border: 1px solid var(--gold); background: #000; box-shadow: 0 0 20px rgba(212,175,55,0.2); }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 15px; border: 2px solid var(--gold); background: #000; box-shadow: 0 10px 30px rgba(212,175,55,0.2); }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-        .ad-banner-container { text-align: center; margin-bottom: 25px; overflow: hidden; border-radius: 8px; }
+        
+        .ad-banner-container { text-align: center; margin-bottom: 30px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1); }
 
-        .seo-footer { background: rgba(10,5,5,0.95); border-top: 2px solid var(--gold); padding: 30px 20px; text-align: center; margin-top: auto; }
-        .streaming-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 15px; }
-        .streaming-links a { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 13px; transition: 0.3s; }
-        .streaming-links a:hover, .streaming-links a:focus { border-color: var(--gold); background: rgba(212,175,55,0.1); transform: scale(1.05); }
+        .seo-footer { background: rgba(5,2,2,0.98); border-top: 3px solid var(--gold); padding: 40px 20px; text-align: center; margin-top: auto; box-shadow: 0 -10px 30px rgba(0,0,0,0.8); }
+        .streaming-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 20px; }
+        .streaming-links a { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 14px; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
+        .streaming-links a:hover { border-color: var(--gold); background: rgba(212,175,55,0.15); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(212,175,55,0.3); }
 
+        .css-poster-fallback { background: linear-gradient(135deg, #1a0f0f, #3a2200); border-radius: 15px; border: 2px solid var(--gold); box-shadow: inset 0 0 50px rgba(0,0,0,0.9), 0 10px 30px rgba(212,175,55,0.4); display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px; color: var(--gold); font-weight: 900; font-size: 28px; text-shadow: 0 4px 15px rgba(0,0,0,0.9); width: 100%; max-width: 350px; height: 500px; margin: 0 auto; box-sizing: border-box; }
+        
         .auth-tabs { display: flex; border-bottom: 1px solid rgba(212,175,55,0.3); margin-bottom: 20px; }
         .auth-tab { flex: 1; text-align: center; padding: 12px; color: #bbb; cursor: pointer; font-weight: bold; transition: 0.3s; }
         .auth-tab.active { color: var(--gold); border-bottom: 2px solid var(--gold); background: rgba(212,175,55,0.1); }
         .auth-form-section { display: none; }
         .auth-form-section.active { display: block; animation: fadeIn 0.3s ease; }
-
-        /* THE INDESTRUCTIBLE CSS POSTER FALLBACK */
-        .css-poster-fallback {
-            background: linear-gradient(135deg, #1a0f0f, #3a2200);
-            border-radius: 12px;
-            border: 2px solid var(--gold);
-            box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 6px 25px rgba(212,175,55,0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 20px;
-            color: var(--gold);
-            font-weight: 900;
-            font-size: 26px;
-            text-shadow: 0 4px 10px rgba(0,0,0,0.9);
-            width: 100%;
-            max-width: 320px;
-            height: 460px;
-            margin: 0 auto;
-            box-sizing: border-box;
-        }
     </style>
 </head>
 <body>
@@ -161,10 +106,10 @@
         
         <nav style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
             <div id="google_translate_element" style="margin-right: 10px;"></div>
-            <a href="/index.html" class="secondary-btn" tabindex="0" style="padding: 8px 12px; font-size: 12px; text-decoration: none;">🏠 Home</a>
-            <a id="profile-link-tab" href="/profile/profile.html" tabindex="0" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid var(--gold); color: var(--gold-glow); padding: 8px 12px; border-radius: 12px; font-weight: bold; text-decoration: none; font-size: 13px; align-items: center;">👤 Profile</a>
-            <button id="nav-reg-btn" tabindex="0" onclick="openAuthModal()" class="gold-btn" style="padding: 8px 14px; font-size: 12px;">👤 Sign In / Join</button>
-            <button id="nav-logout-btn" tabindex="0" onclick="doLogout()" style="display: none; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 8px 12px; border-radius: 12px; cursor: pointer; font-size: 11px;">Logout</button>
+            <a href="/index.html" class="secondary-btn" tabindex="0" style="padding: 10px 15px; font-size: 13px; text-decoration: none;">🏠 Home</a>
+            <a id="profile-link-tab" href="/profile/profile.html" tabindex="0" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid var(--gold); color: var(--gold-glow); padding: 10px 15px; border-radius: 12px; font-weight: bold; text-decoration: none; font-size: 14px; align-items: center;">👤 Profile Hub</a>
+            <button id="nav-reg-btn" tabindex="0" onclick="openAuthModal()" class="gold-btn" style="padding: 10px 18px; font-size: 13px; text-transform: uppercase;">👤 Sign In / Join</button>
+            <button id="nav-logout-btn" tabindex="0" onclick="doLogout()" style="display: none; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 10px 15px; border-radius: 12px; cursor: pointer; font-size: 12px;">Logout</button>
         </nav>
     </header>
 
@@ -178,64 +123,60 @@
 
             <section class="container">
                 
-                <div class="how-it-works-glow fade-in">
-                    <h3 style="color: #fff; font-size: 26px; font-weight: 900; margin: 0 0 15px 0;">💡 The Ultimate AI Concierge</h3>
-                    <p style="color: #ddd; font-size: 15px; margin-bottom: 20px;">Tell the AI your vibe and get a flawless, duplicate-free match across movies, series, anime, vertical micro-dramas, and Spotify podcasts.</p>
-                    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                        <button onclick="openAuthModal()" tabindex="0" class="gold-btn" style="font-size: 15px; padding: 12px 24px;">👤 Register for FREE</button>
+                <div class="marquee-wrapper fade-in">
+                    <h4 style="color: var(--gold); font-size: 14px; text-transform: uppercase; text-align: center; margin: 0 0 15px 0; letter-spacing: 2px; text-shadow: 0 0 10px rgba(212,175,55,0.5);">🔥 Trending Worldwide Top Matches</h4>
+                    <div class="marquee-track">
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('The Pitt')"><img src="https://image.tmdb.org/t/p/w500/vQWk5YCZXGZm9iEXQY6L02Cq3B9.jpg" alt="The Pitt"><div class="marquee-title">The Pitt</div></div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('A Vida Secreta do Meu Marido Bilionário')"><img src="https://image.tmdb.org/t/p/w500/j9w5l2X4XhQx2J6p3N0V9a8S7g.jpg" alt="Marido Bilionário"><div class="marquee-title">Marido Bilionário (ReelShort)</div></div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('The Joe Rogan Experience')"><img src="https://image.tmdb.org/t/p/w500/7aPRJUKFtdh6Qy8n3JpEqqV5m3W.jpg" alt="Joe Rogan Experience"><div class="marquee-title">Joe Rogan (Spotify)</div></div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Nas Profundezas do Amor')"><img src="https://image.tmdb.org/t/p/w500/k2Wk5YCZXGZm9iEXQY6L02Cq3B9.jpg" alt="Nas Profundezas do Amor"><div class="marquee-title">Nas Profundezas (Globoplay)</div></div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Fallout')"><img src="https://image.tmdb.org/t/p/w500/27A8vXh92j7tJ6u6S455G44k39s.jpg" alt="Fallout"><div class="marquee-title">Fallout</div></div>
+                        
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('The Pitt')"><img src="https://image.tmdb.org/t/p/w500/vQWk5YCZXGZm9iEXQY6L02Cq3B9.jpg" alt="The Pitt"><div class="marquee-title">The Pitt</div></div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('A Vida Secreta do Meu Marido Bilionário')"><img src="https://image.tmdb.org/t/p/w500/j9w5l2X4XhQx2J6p3N0V9a8S7g.jpg" alt="Marido Bilionário"><div class="marquee-title">Marido Bilionário (ReelShort)</div></div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Nas Profundezas do Amor')"><img src="https://image.tmdb.org/t/p/w500/k2Wk5YCZXGZm9iEXQY6L02Cq3B9.jpg" alt="Nas Profundezas do Amor"><div class="marquee-title">Nas Profundezas (Globoplay)</div></div>
                     </div>
                 </div>
 
-                <div class="marquee-wrapper fade-in">
-                    <h4 style="color: var(--gold); font-size: 12px; text-transform: uppercase; text-align: center; margin: 0 0 10px 0; letter-spacing: 1px;">🔥 Trending Worldwide (Click to Search)</h4>
-                    <div class="marquee-track">
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('The Pitt')" onkeydown="if(event.key==='Enter') selectMarqueeItem('The Pitt')"><img src="https://image.tmdb.org/t/p/w500/vQWk5YCZXGZm9iEXQY6L02Cq3B9.jpg" alt="The Pitt"><div class="marquee-title">The Pitt</div></div>
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('A Vida Secreta do Meu Marido Bilionário')" onkeydown="if(event.key==='Enter') selectMarqueeItem('A Vida Secreta do Meu Marido Bilionário')"><img src="https://image.tmdb.org/t/p/w500/j9w5l2X4XhQx2J6p3N0V9a8S7g.jpg" alt="A Vida Secreta do Meu Marido"><div class="marquee-title">Marido Bilionário (ReelShort)</div></div>
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('The Joe Rogan Experience')" onkeydown="if(event.key==='Enter') selectMarqueeItem('The Joe Rogan Experience')"><img src="https://image.tmdb.org/t/p/w500/7aPRJUKFtdh6Qy8n3JpEqqV5m3W.jpg" alt="Joe Rogan Experience"><div class="marquee-title">Joe Rogan (Spotify)</div></div>
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Furious')" onkeydown="if(event.key==='Enter') selectMarqueeItem('Furious')"><img src="https://image.tmdb.org/t/p/w500/q32l0XJ4XhQx2J6p3N0V9a8S7g.jpg" alt="Furious"><div class="marquee-title">Furious</div></div>
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Nas Profundezas do Amor')" onkeydown="if(event.key==='Enter') selectMarqueeItem('Nas Profundezas do Amor')"><img src="https://image.tmdb.org/t/p/w500/k2Wk5YCZXGZm9iEXQY6L02Cq3B9.jpg" alt="Nas Profundezas do Amor"><div class="marquee-title">Nas Profundezas (Globoplay)</div></div>
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Fallout')" onkeydown="if(event.key==='Enter') selectMarqueeItem('Fallout')"><img src="https://image.tmdb.org/t/p/w500/27A8vXh92j7tJ6u6S455G44k39s.jpg" alt="Fallout"><div class="marquee-title">Fallout</div></div>
-                        
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('The Pitt')" onkeydown="if(event.key==='Enter') selectMarqueeItem('The Pitt')"><img src="https://image.tmdb.org/t/p/w500/vQWk5YCZXGZm9iEXQY6L02Cq3B9.jpg" alt="The Pitt"><div class="marquee-title">The Pitt</div></div>
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('A Vida Secreta do Meu Marido Bilionário')" onkeydown="if(event.key==='Enter') selectMarqueeItem('A Vida Secreta do Meu Marido Bilionário')"><img src="https://image.tmdb.org/t/p/w500/j9w5l2X4XhQx2J6p3N0V9a8S7g.jpg" alt="A Vida Secreta do Meu Marido"><div class="marquee-title">Marido Bilionário (ReelShort)</div></div>
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('The Joe Rogan Experience')" onkeydown="if(event.key==='Enter') selectMarqueeItem('The Joe Rogan Experience')"><img src="https://image.tmdb.org/t/p/w500/7aPRJUKFtdh6Qy8n3JpEqqV5m3W.jpg" alt="Joe Rogan Experience"><div class="marquee-title">Joe Rogan (Spotify)</div></div>
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Nas Profundezas do Amor')" onkeydown="if(event.key==='Enter') selectMarqueeItem('Nas Profundezas do Amor')"><img src="https://image.tmdb.org/t/p/w500/k2Wk5YCZXGZm9iEXQY6L02Cq3B9.jpg" alt="Nas Profundezas do Amor"><div class="marquee-title">Nas Profundezas (Globoplay)</div></div>
-                    </div>
+                <div class="how-it-works-glow fade-in">
+                    <h3 style="color: #fff; font-size: 28px; font-weight: 900; margin: 0 0 15px 0;">🎬 How MatchApp Works</h3>
+                    <p style="color: #ddd; font-size: 16px; margin-bottom: 25px; line-height: 1.6;"><strong>1.</strong> Select your Format, Platform, and Vibe below.<br><strong>2.</strong> Our AI Concierge scans the global catalog.<br><strong>3.</strong> You get a 100% personalized blockbuster match with a trailer and direct streaming link.<br><em>Register for FREE to unlock your personal Portfolio and advanced demographic AI matching!</em></p>
+                    <button onclick="openAuthModal()" tabindex="0" class="gold-btn" style="font-size: 16px; padding: 14px 28px; text-transform: uppercase;">👤 Create Free Account</button>
                 </div>
 
                 <div class="ad-banner-container fade-in">
-                    <span style="font-size: 10px; color: #888; display: block; margin-bottom: 5px;">SPONSORED</span>
+                    <span style="font-size: 10px; color: #888; display: block; margin-bottom: 5px;">SPONSORED CONTENT</span>
                     <script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script>
                     <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
                 </div>
 
-                <article id="search-box" class="premium-card fade-in" style="margin-bottom: 25px;">
-                    <h2 style="color: var(--gold); margin: 0 0 10px 0; font-size: 22px; text-align: center;">Find Where to Watch</h2>
+                <article id="search-box" class="premium-card fade-in" style="margin-bottom: 30px;">
+                    <h2 style="color: var(--gold); margin: 0 0 15px 0; font-size: 24px; text-align: center; text-transform: uppercase;">Direct Title Search</h2>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <input type="text" id="specific-search-input" tabindex="0" placeholder="e.g., Fallout, Fated to the Alpha..." style="flex: 1; padding: 14px; border-radius: 8px; border: 1px solid var(--gold); background: rgba(0,0,0,0.5); color: #fff; font-size: 16px;">
-                        <button onclick="triggerMatch(true)" tabindex="0" class="gold-btn" style="padding: 14px 25px; font-size: 16px;">🔍 Search</button>
+                        <input type="text" id="specific-search-input" tabindex="0" placeholder="e.g., Fallout, Fated to the Alpha..." style="flex: 1; padding: 16px; border-radius: 10px; border: 1px solid var(--gold); background: rgba(0,0,0,0.6); color: #fff; font-size: 18px;">
+                        <button onclick="triggerMatch(true)" tabindex="0" class="gold-btn" style="padding: 16px 30px; font-size: 18px;">🔍 Search</button>
                     </div>
                 </article>
 
                 <article id="questionnaire-box" class="premium-card fade-in">
-                    <h2 style="margin: 0 0 15px 0; font-size: 26px; color: var(--gold); text-align: center;">Curate Your Match</h2>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <h2 style="margin: 0 0 20px 0; font-size: 30px; color: var(--gold); text-align: center; font-weight: 900; text-transform: uppercase; text-shadow: 0 2px 10px rgba(212,175,55,0.4);">Curate Your Perfect Match</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                         <div>
-                            <label style="color:#aaa;font-size:12px;">Format</label>
-                            <select id="q-category" tabindex="0" style="width:100%;padding:12px;">
+                            <label style="color:#ccc; font-size:13px; font-weight:bold; margin-bottom:5px; display:block; text-transform:uppercase;">Category / Format</label>
+                            <select id="q-category" tabindex="0" style="width:100%; padding:15px; border-radius:10px; border: 1px solid rgba(255,255,255,0.2); background: #000; color:#fff; font-size:16px;">
                                 <option value="any">Surprise Me (All Formats)</option>
-                                <option value="movie">Feature Films</option>
-                                <option value="series">TV Series</option>
-                                <option value="microdrama">Vertical & Micro-Dramas (Short Novelas)</option>
-                                <option value="podcast">Spotify Podcasts & Playlists</option>
+                                <option value="movie">Blockbuster Movies</option>
+                                <option value="series">TV Series & Shows</option>
+                                <option value="microdrama">Vertical & Micro-Dramas (Shorts)</option>
+                                <option value="podcast">Spotify Podcasts</option>
                                 <option value="dorama">Doramas & K-Dramas</option>
                                 <option value="anime">Anime Series</option>
                             </select>
                         </div>
                         <div>
-                            <label style="color:#aaa;font-size:12px;">Platform</label>
-                            <select id="q-platform" tabindex="0" style="width:100%;padding:12px;">
-                                <option value="any">Any Platform</option>
+                            <label style="color:#ccc; font-size:13px; font-weight:bold; margin-bottom:5px; display:block; text-transform:uppercase;">Streaming Platform</label>
+                            <select id="q-platform" tabindex="0" style="width:100%; padding:15px; border-radius:10px; border: 1px solid rgba(255,255,255,0.2); background: #000; color:#fff; font-size:16px;">
+                                <option value="any">Any Platform Worldwide</option>
                                 <option value="Globoplay">Globoplay (Incl. Vertical Novelas)</option>
                                 <option value="ReelShort">ReelShort</option>
                                 <option value="DramaBox">DramaBox</option>
@@ -245,69 +186,71 @@
                                 <option value="Max">Max (HBO)</option>
                                 <option value="Prime Video">Amazon Prime Video</option>
                                 <option value="Spotify">Spotify (Audio)</option>
-                                <option value="Disney+">Disney+</option>
-                                <option value="Apple TV+">Apple TV+</option>
                             </select>
                         </div>
                         <div style="grid-column: 1 / -1;">
-                            <label style="color:#aaa;font-size:12px;">Mood & Vibe</label>
-                            <select id="q-mood" tabindex="0" style="width:100%;padding:12px;">
-                                <option value="any">Any Mood</option>
-                                <option value="intense">Intense, Thrilling & Mafia</option>
-                                <option value="funny">Humorous & Light</option>
-                                <option value="romantic">Romantic, Billionaires & Drama</option>
-                                <option value="mindbending">Mind-Bending & Sci-Fi</option>
+                            <label style="color:#ccc; font-size:13px; font-weight:bold; margin-bottom:5px; display:block; text-transform:uppercase;">Desired Vibe & Mood</label>
+                            <select id="q-mood" tabindex="0" style="width:100%; padding:15px; border-radius:10px; border: 1px solid rgba(255,255,255,0.2); background: #000; color:#fff; font-size:16px;">
+                                <option value="any">Any Mood (AI Choice)</option>
+                                <option value="intense">Intense, Thrilling, Action & Mafia</option>
+                                <option value="funny">Humorous, Light & Feel-Good</option>
+                                <option value="romantic">Romantic, Billionaires, Passion & Drama</option>
+                                <option value="mindbending">Mind-Bending, Sci-Fi & Psychological</option>
                             </select>
                         </div>
                     </div>
-                    <button onclick="triggerMatch(false)" tabindex="0" class="gold-btn" style="margin-top: 20px; width: 100%; font-size: 18px; padding: 16px;">⚡ Consult AI Concierge</button>
+                    <button onclick="triggerMatch(false)" tabindex="0" class="gold-btn" style="margin-top: 25px; width: 100%; font-size: 20px; padding: 20px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 10px 20px rgba(212,175,55,0.4);">⚡ Consult AI Concierge</button>
                 </article>
 
-                <div class="ad-banner-container fade-in" style="margin-top: 25px;">
+                <div class="ad-banner-container fade-in" style="margin-top: 30px;">
                     <span style="font-size: 10px; color: #888; display: block; margin-bottom: 5px;">SPONSORED ADVERTISEMENT</span>
                     <ins class="adsbygoogle" style="display:block;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins>
                     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                 </div>
 
-                <article id="loading-box" class="premium-card fade-in" style="display: none; padding: 40px 20px; text-align: center;">
-                    <div style="font-size: 60px; margin-bottom: 15px; animation: pulse 1s infinite alternate;">🕵️‍♂️</div>
-                    <h3 style="color: var(--gold); margin: 0; text-transform: uppercase;">✨ MATCHING YOUR EXACT VIBE ✨</h3>
-                    <div style="width: 100%; height: 28px; background: #000; border: 2px solid var(--gold); border-radius: 14px; margin: 20px 0; overflow: hidden;"><div id="ai-progress-bar" style="height: 100%; width: 0%; background: var(--gold); transition: width 0.1s linear;"></div></div>
+                <article id="loading-box" class="premium-card fade-in" style="display: none; padding: 60px 20px; text-align: center; border-color: var(--gold-glow); box-shadow: 0 0 50px rgba(212,175,55,0.2);">
+                    <div style="font-size: 70px; margin-bottom: 20px; animation: pulse 1s infinite alternate;">🕵️‍♂️</div>
+                    <h3 style="color: var(--gold); margin: 0; text-transform: uppercase; font-size: 24px; letter-spacing: 2px;">✨ Scanning Global Catalog ✨</h3>
+                    <p style="color: #aaa; font-size: 14px; margin-top: 10px;">Cross-referencing your vibe with millions of titles...</p>
+                    <div style="width: 100%; height: 35px; background: rgba(0,0,0,0.8); border: 2px solid var(--gold); border-radius: 20px; margin: 30px 0; overflow: hidden; box-shadow: inset 0 0 10px rgba(0,0,0,0.9);">
+                        <div id="ai-progress-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--gold), #fff, var(--gold)); transition: width 0.1s linear; background-size: 200% 100%; animation: shimmer 2s infinite linear;"></div>
+                    </div>
+                    <p style="color: #666; font-size: 12px; margin-top: 20px;"><em>Tip: Registered users get personalized matches based on age and sign.</em></p>
                 </article>
 
                 <article id="result-box" class="premium-card fade-in" style="display: none; text-align: left;">
                     
-                    <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="text-align: center; margin-bottom: 30px;">
                         <!-- The actual image tag -->
-                        <img id="res-poster-img" src="" alt="Poster" style="width: 100%; max-width: 320px; height: 460px; object-fit: cover; border-radius: 12px; border: 2px solid var(--gold); box-shadow: 0 6px 25px rgba(212,175,55,0.4); display: none;">
+                        <img id="res-poster-img" src="" alt="Poster" style="width: 100%; max-width: 350px; height: 500px; object-fit: cover; border-radius: 15px; border: 3px solid var(--gold); box-shadow: 0 15px 40px rgba(212,175,55,0.4); display: none;">
                         <!-- The unbreakable CSS fallback -->
                         <div id="res-css-poster" class="css-poster-fallback" style="display: none;"></div>
                     </div>
                     
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                        <span id="res-platform-badge" style="background: var(--gold); color:#000; font-weight:bold; padding: 4px 10px; border-radius:6px; font-size:13px;">Platform</span>
-                        <span id="res-imdb-badge" style="background: #f5c518; color: #000; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 900;">IMDb: N/A</span>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center;">
+                        <span id="res-platform-badge" style="background: var(--gold); color:#000; font-weight:900; padding: 6px 15px; border-radius:8px; font-size:15px; text-transform: uppercase;">Platform</span>
+                        <span id="res-imdb-badge" style="background: #f5c518; color: #000; padding: 6px 15px; border-radius: 8px; font-size: 15px; font-weight: 900; box-shadow: 0 4px 10px rgba(245, 197, 24, 0.4);">IMDb: N/A</span>
                     </div>
-                    <h2 id="res-title" style="color: #fff; font-size: 32px; margin: 0 0 10px 0; font-weight: 900; text-shadow: 0 2px 10px rgba(0,0,0,0.8);">Title</h2>
-                    <p id="res-synopsis" style="color: #ddd; font-size: 15px; line-height: 1.6; margin: 0 0 20px 0;"></p>
+                    <h2 id="res-title" style="color: #fff; font-size: 38px; margin: 0 0 15px 0; font-weight: 900; text-transform: uppercase; text-shadow: 0 4px 15px rgba(0,0,0,0.9); line-height: 1.1;">Title</h2>
+                    <p id="res-synopsis" style="color: #ddd; font-size: 16px; line-height: 1.7; margin: 0 0 25px 0;"></p>
                     
-                    <div id="res-trailer-container" style="margin-bottom: 20px;">
-                        <h4 style="color: var(--gold); font-size: 13px; text-transform: uppercase; margin: 0 0 10px 0;">🎬 Official Video Preview</h4>
+                    <div id="res-trailer-container" style="margin-bottom: 30px; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 15px; border: 1px solid rgba(212,175,55,0.3);">
+                        <h4 style="color: var(--gold); font-size: 14px; text-transform: uppercase; margin: 0 0 15px 0; letter-spacing: 1px;">🎬 Official Video Preview</h4>
                         <div class="video-container" style="display: none;">
                             <iframe id="res-trailer" src="" allowfullscreen loading="lazy"></iframe>
                         </div>
-                        <a id="res-trailer-fallback" tabindex="0" href="#" target="_blank" rel="noopener" class="secondary-btn" style="margin-top: 10px; width: 100%; text-align: center; display: inline-block; font-size: 12px; border-color: rgba(255,255,255,0.3); color: #ccc;">▶️ Watch Official Trailer on YouTube</a>
+                        <a id="res-trailer-fallback" tabindex="0" href="#" target="_blank" rel="noopener" class="secondary-btn" style="margin-top: 15px; width: 100%; text-align: center; display: inline-block; font-size: 14px; border-color: rgba(255,255,255,0.3); color: #fff; padding: 12px; border-radius: 10px;">▶️ Watch Official Trailer on YouTube</a>
                     </div>
                     
-                    <a id="res-direct-link" tabindex="0" href="#" target="_blank" class="gold-btn" style="margin-bottom: 25px; text-decoration: none; text-align: center; display: block;">▶ Stream Now</a>
+                    <a id="res-direct-link" tabindex="0" href="#" target="_blank" class="gold-btn" style="margin-bottom: 30px; text-decoration: none; text-align: center; display: block; font-size: 22px; padding: 20px; text-transform: uppercase; box-shadow: 0 10px 25px rgba(212,175,55,0.5);">▶ Stream Now</a>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
-                        <button onclick="recordAction('save')" tabindex="0" class="secondary-btn" style="border-color: var(--gold); color: var(--gold-glow);">⭐ Watch Later</button>
-                        <button onclick="recordAction('seen')" tabindex="0" class="secondary-btn" style="border-color: #25D366; color: #25D366;">✔️ Seen It</button>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                        <button onclick="recordAction('save')" tabindex="0" class="secondary-btn" style="border-color: var(--gold); color: var(--gold-glow); font-size: 16px; padding: 15px;">⭐ Watch Later</button>
+                        <button onclick="recordAction('seen')" tabindex="0" class="secondary-btn" style="border-color: #25D366; color: #25D366; font-size: 16px; padding: 15px;">✔️ Seen It</button>
                     </div>
                 </article>
 
-                <div class="ad-banner-container fade-in" style="margin-top: 25px;">
+                <div class="ad-banner-container fade-in" style="margin-top: 30px;">
                     <span style="font-size: 10px; color: #888; display: block; margin-bottom: 5px;">SPONSORED ADVERTISEMENT</span>
                     <ins class="adsbygoogle" style="display:block;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins>
                     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
@@ -322,38 +265,40 @@
         </div>
     </main>
 
-    <div id="main-auth-modal" style="display:none; position:fixed; top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95); z-index:9999; justify-content:center; align-items:center;">
-        <div class="premium-card" style="width: 90%; max-width: 400px; position:relative;">
-            <span onclick="closeAuthModal()" tabindex="0" onkeydown="if(event.key==='Enter') closeAuthModal()" style="position:absolute; top:10px; right:15px; font-size:28px; cursor:pointer; color:#fff;">×</span>
+    <div id="main-auth-modal" style="display:none; position:fixed; top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95); z-index:9999; justify-content:center; align-items:center; backdrop-filter: blur(10px);">
+        <div class="premium-card" style="width: 90%; max-width: 450px; position:relative; box-shadow: 0 0 50px rgba(212,175,55,0.4);">
+            <span onclick="closeAuthModal()" tabindex="0" onkeydown="if(event.key==='Enter') closeAuthModal()" style="position:absolute; top:15px; right:20px; font-size:32px; cursor:pointer; color:#fff; transition: 0.3s;">×</span>
             
-            <div class="auth-tabs">
-                <div id="tab-login" class="auth-tab active" tabindex="0" onclick="switchAuthTab('login')" onkeydown="if(event.key==='Enter') switchAuthTab('login')">Log In</div>
-                <div id="tab-signup" class="auth-tab" tabindex="0" onclick="switchAuthTab('signup')" onkeydown="if(event.key==='Enter') switchAuthTab('signup')">Sign Up (Free)</div>
+            <h3 style="text-align: center; color: var(--gold); font-size: 24px; margin-top: 0; text-transform: uppercase;">Unlock Full Concierge</h3>
+            
+            <div class="auth-tabs" style="margin-top: 20px;">
+                <div id="tab-login" class="auth-tab active" tabindex="0" onclick="switchAuthTab('login')">Log In</div>
+                <div id="tab-signup" class="auth-tab" tabindex="0" onclick="switchAuthTab('signup')">Sign Up (Free)</div>
             </div>
 
             <div id="form-login" class="auth-form-section active">
-                <button onclick="signInWithGoogle()" tabindex="0" class="gold-btn" style="width: 100%; padding: 12px; margin-bottom: 15px; background: #fff; color: #000;">🌐 Continue with Google</button>
+                <button onclick="signInWithGoogle()" tabindex="0" class="gold-btn" style="width: 100%; padding: 14px; margin-bottom: 15px; background: #fff; color: #000; font-size: 16px;">🌐 Continue with Google</button>
                 <div style="text-align: center; color: #777; font-size: 12px; margin-bottom: 15px;">OR EMAIL</div>
-                <input type="email" id="login-email" tabindex="0" placeholder="Email Address" style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid var(--gold); background: #000; color: #fff;">
-                <input type="password" id="login-password" tabindex="0" placeholder="Password" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid var(--gold); background: #000; color: #fff;">
-                <button onclick="handleEmailLogin()" tabindex="0" class="gold-btn" style="width: 100%; padding: 12px;">Log In</button>
+                <input type="email" id="login-email" tabindex="0" placeholder="Email Address" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 10px; border: 1px solid var(--gold); background: #000; color: #fff;">
+                <input type="password" id="login-password" tabindex="0" placeholder="Password" style="width: 100%; padding: 14px; margin-bottom: 20px; border-radius: 10px; border: 1px solid var(--gold); background: #000; color: #fff;">
+                <button onclick="handleEmailLogin()" tabindex="0" class="gold-btn" style="width: 100%; padding: 16px; font-size: 18px;">Log In</button>
             </div>
 
             <div id="form-signup" class="auth-form-section">
-                <button onclick="signInWithGoogle()" tabindex="0" class="gold-btn" style="width: 100%; padding: 12px; margin-bottom: 15px; background: #fff; color: #000;">🌐 Sign Up with Google</button>
+                <button onclick="signInWithGoogle()" tabindex="0" class="gold-btn" style="width: 100%; padding: 14px; margin-bottom: 15px; background: #fff; color: #000; font-size: 16px;">🌐 Sign Up with Google</button>
                 <div style="text-align: center; color: #777; font-size: 12px; margin-bottom: 15px;">OR CREATE ACCOUNT WITH EMAIL</div>
-                <input type="email" id="reg-email" tabindex="0" placeholder="Email Address" style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid var(--gold); background: #000; color: #fff;">
-                <input type="password" id="reg-password" tabindex="0" placeholder="Create Password (Min 6 chars)" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid var(--gold); background: #000; color: #fff;">
-                <button onclick="handleEmailSignup()" tabindex="0" class="gold-btn" style="width: 100%; padding: 12px;">Create Free Account</button>
+                <input type="email" id="reg-email" tabindex="0" placeholder="Email Address" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 10px; border: 1px solid var(--gold); background: #000; color: #fff;">
+                <input type="password" id="reg-password" tabindex="0" placeholder="Create Password (Min 6 chars)" style="width: 100%; padding: 14px; margin-bottom: 20px; border-radius: 10px; border: 1px solid var(--gold); background: #000; color: #fff;">
+                <button onclick="handleEmailSignup()" tabindex="0" class="gold-btn" style="width: 100%; padding: 16px; font-size: 18px;">Create Free Account</button>
             </div>
 
-            <p id="auth-message" style="font-size: 13px; margin-top: 15px; display: none; font-weight: bold; text-align: center;"></p>
+            <p id="auth-message" style="font-size: 14px; margin-top: 20px; display: none; font-weight: bold; text-align: center; padding: 10px; border-radius: 8px;"></p>
         </div>
     </div>
 
     <footer class="seo-footer">
-        <h4 style="color: var(--gold); font-size: 18px; margin: 0 0 10px 0; text-transform: uppercase;">Global Streaming Platforms</h4>
-        <p style="color: #888; font-size: 12px; margin-bottom: 20px;">MatchApp securely routes you directly to official streaming platforms worldwide.</p>
+        <h4 style="color: var(--gold); font-size: 20px; margin: 0 0 15px 0; text-transform: uppercase; font-weight: 900;">Global Streaming Platforms</h4>
+        <p style="color: #aaa; font-size: 14px; margin-bottom: 25px;">MatchApp securely routes you directly to official streaming platforms worldwide.</p>
         <div class="streaming-links">
             <a href="https://globoplay.globo.com" tabindex="0" target="_blank" rel="noopener">🎈 Globoplay</a>
             <a href="https://www.reelshort.com" tabindex="0" target="_blank" rel="noopener">📱 ReelShort</a>
@@ -366,10 +311,9 @@
             <a href="https://www.disneyplus.com" tabindex="0" target="_blank" rel="noopener">✨ Disney+</a>
             <a href="https://www.hulu.com" tabindex="0" target="_blank" rel="noopener">💚 Hulu</a>
         </div>
-        <p style="color: #555; font-size: 11px; margin-top: 25px;">© 2026 MatchApp.cc - Support: support@matchapp.cc</p>
+        <p style="color: #666; font-size: 12px; margin-top: 40px; letter-spacing: 1px;">© 2026 MatchApp.cc - Support: support@matchapp.cc</p>
     </footer>
 
-    <!-- Force browsers to clear cache with v94 -->
-    <script src="/app.js?v=94"></script>
+    <script src="/app.js?v=95"></script>
 </body>
 </html>
