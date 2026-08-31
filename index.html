@@ -5,20 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0a0505">
     
-    <!-- 🚀 ULTIMATE SEO & VERTICAL DRAMA KEYWORDS -->
     <title>MatchApp | AI Streaming & Vertical Drama Concierge</title>
     <meta name="description" content="MatchApp is your AI streaming concierge. Discover the best movies, TV series, vertical novelas, micro-dramas, and Spotify podcasts tailored to your exact mood.">
     <meta name="keywords" content="where to watch The Pitt season 2, vertical novelas Globoplay, ReelShort movies, DramaBox free episodes, ShortMax dramas online, micro-dramas finder, short novelas app, kwai mini novelas, TikTok vertical drama, Joe Rogan Experience Spotify, best doramas 2026, AI movie recommender, MatchApp free, AI streaming search engine">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
     
-    <!-- OPEN GRAPH -->
     <meta property="og:title" content="MatchApp | AI Streaming Concierge">
     <meta property="og:description" content="Stop scrolling. Find flawless matches across Netflix, Max, ReelShort, DramaBox, Globoplay, and Spotify instantly.">
     <meta property="og:image" content="https://matchapp.cc/logo.jpeg">
     <meta property="og:url" content="https://matchapp.cc/">
     <meta property="og:type" content="website">
     
-    <!-- TWITTER CARD -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="MatchApp | AI Movie, Podcast & Micro-Drama Finder">
     <meta name="twitter:description" content="Find the perfect movie or vertical drama in 4 seconds using AI.">
@@ -40,7 +37,6 @@
     <link rel="canonical" href="https://matchapp.cc/">
     <link rel="stylesheet" href="/style.css">
     
-    <!-- JSON-LD -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -82,19 +78,17 @@
         .container { flex: 1; max-width: 800px; width: 100%; padding-bottom: 50px; }
         @media (min-width: 1100px) { .sidebar-ad-left, .sidebar-ad-right { display: block; } }
 
-        /* 📺 SMART TV BROWSER OPTIMIZATIONS (4K / Landscape) */
         @media (min-width: 1800px) and (min-height: 900px) {
             .container { max-width: 1200px; }
             .app-title-main { font-size: 32px; }
             .gold-btn { font-size: 20px; padding: 18px 30px; }
             #res-title { font-size: 40px; }
-            #res-poster-img { max-width: 450px; height: 650px; }
+            #res-poster-img, .css-poster-fallback { max-width: 450px; height: 650px; }
             .sidebar-ad-left, .sidebar-ad-right { width: 300px; }
             .marquee-item { width: 150px; height: 220px; }
             .marquee-title { font-size: 14px; padding: 8px; }
         }
 
-        /* 🎮 TV REMOTE NAVIGATION HIGHLIGHTS */
         a:focus, button:focus, input:focus, select:focus, .marquee-item:focus {
             outline: 4px solid #fff;
             outline-offset: 4px;
@@ -133,6 +127,28 @@
         .auth-tab.active { color: var(--gold); border-bottom: 2px solid var(--gold); background: rgba(212,175,55,0.1); }
         .auth-form-section { display: none; }
         .auth-form-section.active { display: block; animation: fadeIn 0.3s ease; }
+
+        /* THE INDESTRUCTIBLE CSS POSTER FALLBACK */
+        .css-poster-fallback {
+            background: linear-gradient(135deg, #1a0f0f, #3a2200);
+            border-radius: 12px;
+            border: 2px solid var(--gold);
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 6px 25px rgba(212,175,55,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            color: var(--gold);
+            font-weight: 900;
+            font-size: 26px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.9);
+            width: 100%;
+            max-width: 320px;
+            height: 460px;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
     </style>
 </head>
 <body>
@@ -260,8 +276,12 @@
                 </article>
 
                 <article id="result-box" class="premium-card fade-in" style="display: none; text-align: left;">
+                    
                     <div style="text-align: center; margin-bottom: 20px;">
-                        <img id="res-poster-img" src="" alt="Poster" style="width: 100%; max-width: 320px; height: 460px; object-fit: cover; border-radius: 12px; border: 2px solid var(--gold); box-shadow: 0 6px 25px rgba(212,175,55,0.4);">
+                        <!-- The actual image tag -->
+                        <img id="res-poster-img" src="" alt="Poster" style="width: 100%; max-width: 320px; height: 460px; object-fit: cover; border-radius: 12px; border: 2px solid var(--gold); box-shadow: 0 6px 25px rgba(212,175,55,0.4); display: none;">
+                        <!-- The unbreakable CSS fallback -->
+                        <div id="res-css-poster" class="css-poster-fallback" style="display: none;"></div>
                     </div>
                     
                     <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
@@ -273,7 +293,7 @@
                     
                     <div id="res-trailer-container" style="margin-bottom: 20px;">
                         <h4 style="color: var(--gold); font-size: 13px; text-transform: uppercase; margin: 0 0 10px 0;">🎬 Official Video Preview</h4>
-                        <div class="video-container">
+                        <div class="video-container" style="display: none;">
                             <iframe id="res-trailer" src="" allowfullscreen loading="lazy"></iframe>
                         </div>
                         <a id="res-trailer-fallback" tabindex="0" href="#" target="_blank" rel="noopener" class="secondary-btn" style="margin-top: 10px; width: 100%; text-align: center; display: inline-block; font-size: 12px; border-color: rgba(255,255,255,0.3); color: #ccc;">▶️ Watch Official Trailer on YouTube</a>
@@ -302,7 +322,6 @@
         </div>
     </main>
 
-    <!-- EMAIL / GOOGLE AUTH MODAL -->
     <div id="main-auth-modal" style="display:none; position:fixed; top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95); z-index:9999; justify-content:center; align-items:center;">
         <div class="premium-card" style="width: 90%; max-width: 400px; position:relative;">
             <span onclick="closeAuthModal()" tabindex="0" onkeydown="if(event.key==='Enter') closeAuthModal()" style="position:absolute; top:10px; right:15px; font-size:28px; cursor:pointer; color:#fff;">×</span>
@@ -332,7 +351,6 @@
         </div>
     </div>
 
-    <!-- 🌐 GLOBAL STREAMING FOOTER -->
     <footer class="seo-footer">
         <h4 style="color: var(--gold); font-size: 18px; margin: 0 0 10px 0; text-transform: uppercase;">Global Streaming Platforms</h4>
         <p style="color: #888; font-size: 12px; margin-bottom: 20px;">MatchApp securely routes you directly to official streaming platforms worldwide.</p>
@@ -351,7 +369,7 @@
         <p style="color: #555; font-size: 11px; margin-top: 25px;">© 2026 MatchApp.cc - Support: support@matchapp.cc</p>
     </footer>
 
-    <!-- Add ?v=93 to force browsers to load the new fixes -->
-    <script src="/app.js?v=93"></script>
+    <!-- Force browsers to clear cache with v94 -->
+    <script src="/app.js?v=94"></script>
 </body>
 </html>
