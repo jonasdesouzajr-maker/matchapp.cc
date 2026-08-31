@@ -1,9 +1,11 @@
-console.log("Profile Engine 91.0: Locked Fields & Bulletproof Cover Grids Active");
+console.log("Profile Engine 91.1: Root Path Confirmed, Locked Fields & Bulletproof Cover Grids Active");
 
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. Auto-formatting for Date of Birth (DD/MM/YYYY)
     const dobInput = document.getElementById('profile-dob');
     if(dobInput) {
         dobInput.addEventListener('input', function(e) {
+            // Prevent interference if user is trying to delete characters
             if (e.inputType === 'deleteContentBackward') return;
             let v = this.value.replace(/\D/g, ''); 
             if (v.length >= 3 && v.length <= 4) {
@@ -14,18 +16,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // 2. Lock Core Identity if already saved
     const isLocked = localStorage.getItem('match_profile_locked') === 'true';
     if (isLocked) {
         document.getElementById('profile-name').disabled = true;
         document.getElementById('profile-country').disabled = true;
         document.getElementById('profile-dob').disabled = true;
         document.getElementById('profile-starsign').disabled = true;
-        document.getElementById('save-profile-btn').innerText = "🔒 Profile Locked";
-        document.getElementById('save-profile-btn').style.background = "#555";
-        document.getElementById('save-profile-btn').style.borderColor = "#555";
-        document.getElementById('save-profile-btn').onclick = () => alert("Core identity fields are permanently locked for security.");
+        
+        const saveBtn = document.getElementById('save-profile-btn');
+        if(saveBtn) {
+            saveBtn.innerText = "🔒 Profile Locked";
+            saveBtn.style.background = "#555";
+            saveBtn.style.borderColor = "#555";
+            saveBtn.onclick = () => alert("Core identity fields are permanently locked for security and AI consistency.");
+        }
     }
 
+    // 3. Render the Watch Later Portfolio
     renderProfileGrids();
 });
 
@@ -61,15 +69,17 @@ window.renderProfileGrids = function() {
             portGrid.innerHTML = '<p style="color:#aaa; font-size: 13px;">Your portfolio is empty. Go match!</p>';
         } else {
             sList.forEach(item => {
+                // Support legacy arrays where items were just strings
                 let title = typeof item === 'string' ? item : item.title;
                 let rawPoster = typeof item === 'string' ? '' : item.posterUrl;
                 
-                // DATA CLEANUP: Replace old broken via.placeholder.com links dynamically
+                // DATA CLEANUP & REPAIR: Replace old broken via.placeholder.com links dynamically
                 let poster = rawPoster;
                 if (!poster || poster.includes('via.placeholder.com')) {
                     poster = `https://placehold.co/500x750/0a0505/D4AF37/png?text=${encodeURIComponent(title)}`;
                 }
                 
+                // Indestructible HTML fallback if TMDB ever goes down
                 const fallbackImage = `https://placehold.co/500x750/0a0505/D4AF37/png?text=${encodeURIComponent(title)}`;
                 
                 portGrid.innerHTML += `
