@@ -1,4 +1,4 @@
-console.log("Mastercode 91.0: Bulletproof Posters & Guaranteed Trailers Active");
+console.log("Mastercode 92.0: Vertical Drama & Micro-Novela AI Engine Active");
 
 const SUPABASE_URL = 'https://zkymvqrmbabngsqblyye.supabase.co'; 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpreW12cXJtYmFibmdzcWJseXllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY4MDUyNDIsImV4cCI6MjEwMjM4MTI0Mn0._yEVFMfwVU6GBqQ8m3ljfOgA0HSLEDiKMOfYae6ZD8Q';
@@ -188,12 +188,13 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     let promptText = "";
     let exclusionList = seenList.map(item => item.title || item).join(', ');
     
-    // THE NEW AGGRESSIVE PROMPT - Forcing the AI to not invent dead YouTube links
+    // NEW VERTICAL DRAMA ENGINE PROMPT
     const strictRules = `CRITICAL ENGINE RULES: 
     1. DO NOT recommend any title in this list: [${exclusionList}].
     2. "trailerId": Provide a REAL, VERIFIED 11-character YouTube video ID. If you do not know the exact real ID, output EXACTLY the word "SEARCH". Do NOT invent an ID.
     3. IF Platform is "Spotify", recommend a real Spotify Podcast or Playlist.
-    Output MUST be valid JSON: {"title": "Title", "synopsis": "3-sentence synopsis.", "platform": "Platform Name", "imdb": "Rating", "trailerId": "11-char-id OR SEARCH", "posterPath": "TMDB poster path starting with /"}`;
+    4. IF Format is "microdrama", recommend an authentic vertical drama, short novela, or micro-drama from ReelShort, DramaBox, ShortMax, Kwai, TikTok, or Globoplay (e.g., "A Vida Secreta do Meu Marido Bilionário", "Nas Profundezas do Amor", "Fated to the Alpha").
+    Output MUST be valid JSON: {"title": "Title", "synopsis": "3-sentence synopsis.", "platform": "Platform Name", "imdb": "Rating", "trailerId": "11-char-id OR SEARCH", "posterPath": "TMDB poster path starting with / or direct HTTPS poster cover image URL"}`;
 
     if (isSpecificSearch) {
         const input = document.getElementById('specific-search-input');
@@ -228,9 +229,9 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     } catch (err) {
         console.error("AI Generation Engine Fallback:", err);
         matchResult = { 
-            title: "Fallout", 
-            synopsis: "In a future, post-apocalyptic Los Angeles brought about by nuclear decimation, citizens must live in underground bunkers to protect themselves from radiation, mutants and bandits.", 
-            platform: "Prime Video", imdb: "8.4", trailerId: "V-mugKDQDlg", posterPath: "/27A8vXh92j7tJ6u6S455G44k39s.jpg" 
+            title: "A Vida Secreta do Meu Marido Bilionário", 
+            synopsis: "A dramatic vertical micro-drama where a seemingly ordinary husband hides a massive billionaire empire from his wife, leading to intense reveals and romance.", 
+            platform: "ReelShort", imdb: "8.6", trailerId: "SEARCH", posterPath: "https://placehold.co/500x750/0a0505/D4AF37/png?text=Billionaire+Husband" 
         };
     }
 
@@ -242,10 +243,11 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     if (pBar) pBar.style.width = '100%';
 
     if (!seenList.some(i => (i.title || i) === matchResult.title)) {
-        // Build the guaranteed image URL for storage
         let storagePoster = `https://placehold.co/500x750/0a0505/D4AF37/png?text=${encodeURIComponent(matchResult.title)}`;
         if (matchResult.posterPath && matchResult.posterPath.startsWith('/')) {
             storagePoster = `https://image.tmdb.org/t/p/w500${matchResult.posterPath}`;
+        } else if (matchResult.posterPath && matchResult.posterPath.startsWith('http')) {
+            storagePoster = matchResult.posterPath;
         }
         seenList.push({ title: matchResult.title, posterUrl: storagePoster, platform: matchResult.platform });
         localStorage.setItem('match_seenList', JSON.stringify(seenList));
@@ -269,7 +271,6 @@ function renderResult(selected) {
     globalMatchTitle = selected.title;
     globalPlatform = selected.platform || "Streaming";
     
-    // BULLETPROOF COVER IMAGE RENDERING
     const fallbackImage = `https://placehold.co/500x750/0a0505/D4AF37/png?text=${encodeURIComponent(selected.title)}`;
     
     if (selected.posterPath && selected.posterPath.startsWith('/')) {
@@ -287,7 +288,7 @@ function renderResult(selected) {
     if (posterEl) {
         posterEl.src = globalMatchPoster;
         posterEl.onerror = function() { 
-            this.onerror = null; // Prevent infinite loops
+            this.onerror = null; 
             this.src = fallbackImage; 
         };
     }
@@ -300,28 +301,28 @@ function renderResult(selected) {
     if (selected.platform.toLowerCase().includes('spotify')) {
         directBtn.href = `https://open.spotify.com/search/${encodeURIComponent(selected.title)}`;
         directBtn.innerText = `🎧 Open on Spotify`;
+    } else if (selected.platform.toLowerCase().includes('reelshort')) {
+        directBtn.href = `https://www.reelshort.com/`;
+        directBtn.innerText = `📱 Open on ReelShort`;
+    } else if (selected.platform.toLowerCase().includes('dramabox')) {
+        directBtn.href = `https://www.dramabox.com/`;
+        directBtn.innerText = `📺 Open on DramaBox`;
     } else {
         directBtn.href = `https://www.google.com/search?q=Watch+${encodeURIComponent(selected.title)}+on+${encodeURIComponent(selected.platform)}`;
         directBtn.innerText = `▶ Stream on ${selected.platform}`;
     }
 
-    // BULLETPROOF TRAILER RENDERING
     const trailerBox = document.getElementById('res-trailer-container');
     const iframe = document.getElementById('res-trailer');
     const ytFallbackLink = document.getElementById('res-trailer-fallback');
     
     if (trailerBox && iframe) {
         trailerBox.style.display = 'block';
-        
-        // If AI gives a verified 11 char ID, play it. Otherwise, force a YouTube Search embed.
         if (selected.trailerId && selected.trailerId.length === 11 && selected.trailerId !== 'SEARCH') {
             iframe.src = `https://www.youtube-nocookie.com/embed/${selected.trailerId}?rel=0&modestbranding=1`;
         } else {
-            // This guarantees the iframe shows a working video result by searching YouTube internally
-            iframe.src = `https://www.youtube-nocookie.com/embed?listType=search&list=${encodeURIComponent(selected.title + " official trailer")}`;
+            iframe.src = `https://www.youtube-nocookie.com/embed?listType=search&list=${encodeURIComponent(selected.title + " trailer episode 1")}`;
         }
-        
-        // Always provide the direct outward link as a safety net
         if (ytFallbackLink) {
             ytFallbackLink.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(selected.title + " official trailer")}`;
         }
