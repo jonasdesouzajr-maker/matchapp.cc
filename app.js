@@ -1,4 +1,4 @@
-console.log("Mastercode 92.0: Vertical Drama & Micro-Novela AI Engine Active");
+console.log("Mastercode 93.0: Native Canvas Fallbacks & Dynamic Iframe Hiding Active");
 
 const SUPABASE_URL = 'https://zkymvqrmbabngsqblyye.supabase.co'; 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpreW12cXJtYmFibmdzcWJseXllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY4MDUyNDIsImV4cCI6MjEwMjM4MTI0Mn0._yEVFMfwVU6GBqQ8m3ljfOgA0HSLEDiKMOfYae6ZD8Q';
@@ -13,7 +13,6 @@ try {
     console.error("Supabase Initialization Error:", e);
 }
 
-// Global Variables
 let globalMatchTitle = "";
 let globalMatchPoster = "";
 let globalPlatform = "";
@@ -27,7 +26,39 @@ let userRatings = JSON.parse(localStorage.getItem('match_userRatings') || '{}');
 let isAdFree = localStorage.getItem('match_adFree') === 'true'; 
 let isVIP = localStorage.getItem('match_isVIP') === 'true';
 
-// Utilities
+// 🎨 NATIVE CANVAS GENERATOR (100% Offline, Unblockable Fallback Image)
+function generateFallbackImage(title) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 500; canvas.height = 750;
+    const ctx = canvas.getContext('2d');
+    
+    // Background
+    ctx.fillStyle = '#0a0505'; 
+    ctx.fillRect(0, 0, 500, 750);
+    
+    // Gold Border
+    ctx.strokeStyle = '#D4AF37'; 
+    ctx.lineWidth = 15; 
+    ctx.strokeRect(0, 0, 500, 750);
+    
+    // Text Styling
+    ctx.fillStyle = '#D4AF37'; 
+    ctx.font = 'bold 36px Arial'; 
+    ctx.textAlign = 'center'; 
+    ctx.textBaseline = 'middle';
+    
+    // Text Wrapping Logic
+    let words = title.split(' ');
+    let y = 375;
+    if(words.length > 3) {
+        ctx.fillText(words.slice(0, Math.ceil(words.length/2)).join(' '), 250, y - 25);
+        ctx.fillText(words.slice(Math.ceil(words.length/2)).join(' '), 250, y + 25);
+    } else {
+        ctx.fillText(title, 250, y);
+    }
+    return canvas.toDataURL(); // Returns a pure base64 image string
+}
+
 window.playPremiumSound = function() {
     try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -80,36 +111,21 @@ window.handleEmailSignup = async function() {
     const email = document.getElementById('reg-email').value.trim();
     const password = document.getElementById('reg-password').value;
     const msgEl = document.getElementById('auth-message');
-    
     if(!email || !password) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please provide an email and password."; return; }
     if (!supabaseClient) return;
-    
     msgEl.style.display = 'block'; msgEl.style.color = '#fff'; msgEl.innerText = "Creating account...";
-
     const { error } = await supabaseClient.auth.signUp({ email, password });
-    if(error) { 
-        msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; 
-    } else { 
-        msgEl.style.color = '#25D366'; msgEl.innerText = "Account created! Routing to Profile Hub to complete setup..."; 
-        setTimeout(() => { window.location.href = '/profile/profile.html'; }, 1500); 
-    }
+    if(error) { msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; } else { msgEl.style.color = '#25D366'; msgEl.innerText = "Account created! Routing to Profile Hub..."; setTimeout(() => { window.location.href = '/profile/profile.html'; }, 1500); }
 };
 
 window.handleEmailLogin = async function() {
     const email = document.getElementById('login-email').value.trim();
     const password = document.getElementById('login-password').value;
     const msgEl = document.getElementById('auth-message');
-    
     if(!email || !password) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please enter email and password."; return; }
     msgEl.style.display = 'block'; msgEl.style.color = '#fff'; msgEl.innerText = "Authenticating...";
-
     const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-    if(error) { 
-        msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; 
-    } else { 
-        msgEl.style.color = '#25D366'; msgEl.innerText = "Welcome back! Routing to Home..."; 
-        setTimeout(() => { window.location.reload(); }, 1000); 
-    }
+    if(error) { msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; } else { msgEl.style.color = '#25D366'; msgEl.innerText = "Welcome back! Routing to Home..."; setTimeout(() => { window.location.reload(); }, 1000); }
 };
 
 window.doLogout = async function() { 
@@ -123,13 +139,11 @@ if (supabaseClient) {
         if (session && session.user) {
             isUserLoggedIn = true;
             const user = session.user;
-            
             const { data: profile } = await supabaseClient.from('profiles').select('is_vip, is_ad_free, avatar_url').eq('id', user.id).single();
             if(profile) {
                 if(profile.is_vip) { isVIP = true; localStorage.setItem('match_isVIP', 'true'); }
                 if(profile.is_ad_free) { isAdFree = true; localStorage.setItem('match_adFree', 'true'); }
             }
-
             const regBtn = document.getElementById('nav-reg-btn');
             const profTab = document.getElementById('profile-link-tab');
             const logoutBtn = document.getElementById('nav-logout-btn');
@@ -140,7 +154,6 @@ if (supabaseClient) {
                 let badge = (isVIP || isAdFree) ? `<span style="font-size: 14px; margin-left: 5px;">💎</span>` : `<span style="font-size: 14px; margin-left: 5px;">✅</span>`;
                 profTab.innerHTML = `<img src="${avatarSrc}" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--gold); object-fit: cover; margin-right: 8px;"> Profile ${badge}`;
             }
-
             if (regBtn) regBtn.style.display = 'none';
             if (logoutBtn) logoutBtn.style.display = 'inline-block';
         } else { 
@@ -154,17 +167,9 @@ function checkDailyLimit() {
     const todayStr = new Date().toLocaleDateString(); 
     let lastDate = localStorage.getItem('match_lastDate'); 
     let dailyCount = parseInt(localStorage.getItem('match_dailyCount') || '0');
-    
     if (lastDate !== todayStr) { dailyCount = 0; localStorage.setItem('match_lastDate', todayStr); }
-    if (!isUserLoggedIn && dailyCount >= 3) { 
-        alert("🔒 You've used your 3 free anonymous matches today!\n\nPlease register for FREE to unlock your daily allowance and save titles!"); 
-        window.openAuthModal(); return false; 
-    }
-    if (isUserLoggedIn && dailyCount >= 7) { 
-        alert("💎 Daily limit reached!\n\nUpgrade to VIP for UNLIMITED matches and Ad-Free browsing!");
-        window.location.href = '/pricing/pricing.html'; return false; 
-    }
-    
+    if (!isUserLoggedIn && dailyCount >= 3) { alert("🔒 You've used your 3 free matches today! Register for FREE to unlock more."); window.openAuthModal(); return false; }
+    if (isUserLoggedIn && dailyCount >= 7) { alert("💎 Daily limit reached! Upgrade to VIP for UNLIMITED matches!"); window.location.href = '/pricing/pricing.html'; return false; }
     dailyCount++; localStorage.setItem('match_dailyCount', dailyCount.toString()); return true;
 }
 
@@ -173,38 +178,36 @@ async function fetchGeminiData(promptText) {
     const { data, error } = await supabaseClient.functions.invoke('gemini-proxy', { body: { prompt: promptText } });
     if (error || !data || !data.candidates) throw new Error(error?.message || "Gemini Proxy Request Failed");
     let rawText = data.candidates[0].content.parts[0].text;
-    return JSON.parse(rawText.replace(/```json/gi, '').replace(/```/g, '').trim());
+    
+    // Extract JSON safely even if AI adds conversational text
+    let jsonMatch = rawText.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error("AI returned invalid format");
+    return JSON.parse(jsonMatch[0].trim());
 }
 
 window.triggerMatch = async function(isSpecificSearch = false) {
     if (!checkDailyLimit()) return;
-
     const loadBox = document.getElementById('loading-box');
-    if (loadBox) {
-        loadBox.style.display = 'block';
-        loadBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
+    if (loadBox) { loadBox.style.display = 'block'; loadBox.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
 
     let promptText = "";
     let exclusionList = seenList.map(item => item.title || item).join(', ');
     
-    // NEW VERTICAL DRAMA ENGINE PROMPT
-    const strictRules = `CRITICAL ENGINE RULES: 
-    1. DO NOT recommend any title in this list: [${exclusionList}].
-    2. "trailerId": Provide a REAL, VERIFIED 11-character YouTube video ID. If you do not know the exact real ID, output EXACTLY the word "SEARCH". Do NOT invent an ID.
-    3. IF Platform is "Spotify", recommend a real Spotify Podcast or Playlist.
-    4. IF Format is "microdrama", recommend an authentic vertical drama, short novela, or micro-drama from ReelShort, DramaBox, ShortMax, Kwai, TikTok, or Globoplay (e.g., "A Vida Secreta do Meu Marido Bilionário", "Nas Profundezas do Amor", "Fated to the Alpha").
-    Output MUST be valid JSON: {"title": "Title", "synopsis": "3-sentence synopsis.", "platform": "Platform Name", "imdb": "Rating", "trailerId": "11-char-id OR SEARCH", "posterPath": "TMDB poster path starting with / or direct HTTPS poster cover image URL"}`;
+    const strictRules = `CRITICAL RULES: 
+    1. EXCLUDE these: [${exclusionList}].
+    2. "trailerId": Must be EXACTLY 11 characters for a real YouTube video. If unsure, output "null".
+    3. IF Platform is "Spotify", recommend a Spotify Podcast. IF "microdrama", recommend ReelShort/DramaBox/Globoplay.
+    Output valid JSON ONLY: {"title": "Title", "synopsis": "3-sentence synopsis.", "platform": "Platform Name", "imdb": "Rating", "trailerId": "11-char-id or null", "posterPath": "TMDB poster path starting with / or direct URL"}`;
 
     if (isSpecificSearch) {
         const input = document.getElementById('specific-search-input');
-        if (!input || !input.value.trim()) { alert("Please enter a title to search."); loadBox.style.display = 'none'; return; }
-        promptText = `You are an elite streaming concierge AI. Search for: "${input.value.trim()}". ${strictRules}`;
+        if (!input || !input.value.trim()) { alert("Please enter a title."); loadBox.style.display = 'none'; return; }
+        promptText = `Search for: "${input.value.trim()}". ${strictRules}`;
     } else {
         const cat = document.getElementById('q-category')?.value || 'any'; 
         const plat = document.getElementById('q-platform')?.value || 'any';
         const mood = document.getElementById('q-mood')?.value || 'any'; 
-        promptText = `You are a streaming concierge AI. Find a highly-rated match based on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}. ${strictRules}`;
+        promptText = `Find a match based on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}. ${strictRules}`;
     }
 
     const qBox = document.getElementById('questionnaire-box');
@@ -227,12 +230,8 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     try {
         matchResult = await fetchGeminiData(promptText);
     } catch (err) {
-        console.error("AI Generation Engine Fallback:", err);
-        matchResult = { 
-            title: "A Vida Secreta do Meu Marido Bilionário", 
-            synopsis: "A dramatic vertical micro-drama where a seemingly ordinary husband hides a massive billionaire empire from his wife, leading to intense reveals and romance.", 
-            platform: "ReelShort", imdb: "8.6", trailerId: "SEARCH", posterPath: "https://placehold.co/500x750/0a0505/D4AF37/png?text=Billionaire+Husband" 
-        };
+        console.error("AI Fallback:", err);
+        matchResult = { title: "A Vida Secreta do Meu Marido Bilionário", synopsis: "A dramatic vertical micro-drama where a seemingly ordinary husband hides a massive billionaire empire from his wife, leading to intense reveals and romance.", platform: "ReelShort", imdb: "8.6", trailerId: null, posterPath: null };
     }
 
     let elapsedMs = Date.now() - startTimeMs;
@@ -242,8 +241,9 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     clearInterval(timerInterval);
     if (pBar) pBar.style.width = '100%';
 
+    // Save fallback image directly to portfolio so it never breaks in profile view
     if (!seenList.some(i => (i.title || i) === matchResult.title)) {
-        let storagePoster = `https://placehold.co/500x750/0a0505/D4AF37/png?text=${encodeURIComponent(matchResult.title)}`;
+        let storagePoster = generateFallbackImage(matchResult.title);
         if (matchResult.posterPath && matchResult.posterPath.startsWith('/')) {
             storagePoster = `https://image.tmdb.org/t/p/w500${matchResult.posterPath}`;
         } else if (matchResult.posterPath && matchResult.posterPath.startsWith('http')) {
@@ -271,14 +271,15 @@ function renderResult(selected) {
     globalMatchTitle = selected.title;
     globalPlatform = selected.platform || "Streaming";
     
-    const fallbackImage = `https://placehold.co/500x750/0a0505/D4AF37/png?text=${encodeURIComponent(selected.title)}`;
+    // NATIVE CANVAS FALLBACK
+    const indestructibleImage = generateFallbackImage(selected.title);
     
     if (selected.posterPath && selected.posterPath.startsWith('/')) {
         globalMatchPoster = `https://image.tmdb.org/t/p/w500${selected.posterPath}`;
     } else if (selected.posterPath && selected.posterPath.startsWith('http')) {
         globalMatchPoster = selected.posterPath;
     } else {
-        globalMatchPoster = fallbackImage;
+        globalMatchPoster = indestructibleImage;
     }
     
     document.getElementById('res-title').innerText = selected.title;
@@ -289,7 +290,7 @@ function renderResult(selected) {
         posterEl.src = globalMatchPoster;
         posterEl.onerror = function() { 
             this.onerror = null; 
-            this.src = fallbackImage; 
+            this.src = indestructibleImage; // Will literally draw itself if TMDB fails
         };
     }
 
@@ -298,59 +299,39 @@ function renderResult(selected) {
     document.getElementById('res-imdb-badge').innerText = `IMDb/Rating: ${selected.imdb || 'N/A'}`;
 
     const directBtn = document.getElementById('res-direct-link');
-    if (selected.platform.toLowerCase().includes('spotify')) {
-        directBtn.href = `https://open.spotify.com/search/${encodeURIComponent(selected.title)}`;
-        directBtn.innerText = `🎧 Open on Spotify`;
-    } else if (selected.platform.toLowerCase().includes('reelshort')) {
-        directBtn.href = `https://www.reelshort.com/`;
-        directBtn.innerText = `📱 Open on ReelShort`;
-    } else if (selected.platform.toLowerCase().includes('dramabox')) {
-        directBtn.href = `https://www.dramabox.com/`;
-        directBtn.innerText = `📺 Open on DramaBox`;
-    } else {
-        directBtn.href = `https://www.google.com/search?q=Watch+${encodeURIComponent(selected.title)}+on+${encodeURIComponent(selected.platform)}`;
-        directBtn.innerText = `▶ Stream on ${selected.platform}`;
-    }
+    if (selected.platform.toLowerCase().includes('spotify')) { directBtn.href = `https://open.spotify.com/search/${encodeURIComponent(selected.title)}`; directBtn.innerText = `🎧 Open on Spotify`;
+    } else if (selected.platform.toLowerCase().includes('reelshort')) { directBtn.href = `https://www.reelshort.com/`; directBtn.innerText = `📱 Open on ReelShort`;
+    } else if (selected.platform.toLowerCase().includes('dramabox')) { directBtn.href = `https://www.dramabox.com/`; directBtn.innerText = `📺 Open on DramaBox`;
+    } else { directBtn.href = `https://www.google.com/search?q=Watch+${encodeURIComponent(selected.title)}+on+${encodeURIComponent(selected.platform)}`; directBtn.innerText = `▶ Stream on ${selected.platform}`; }
 
-    const trailerBox = document.getElementById('res-trailer-container');
+    // DYNAMIC IFRAME HIDING (Fixes the black box error forever)
     const iframe = document.getElementById('res-trailer');
+    const iframeWrapper = document.querySelector('.video-container'); // Need to hide the black wrapper
     const ytFallbackLink = document.getElementById('res-trailer-fallback');
     
-    if (trailerBox && iframe) {
-        trailerBox.style.display = 'block';
-        if (selected.trailerId && selected.trailerId.length === 11 && selected.trailerId !== 'SEARCH') {
-            iframe.src = `https://www.youtube-nocookie.com/embed/${selected.trailerId}?rel=0&modestbranding=1`;
-        } else {
-            iframe.src = `https://www.youtube-nocookie.com/embed?listType=search&list=${encodeURIComponent(selected.title + " trailer episode 1")}`;
-        }
-        if (ytFallbackLink) {
-            ytFallbackLink.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(selected.title + " official trailer")}`;
-        }
+    if (iframeWrapper) iframeWrapper.style.display = 'none'; // Hide by default
+    
+    if (selected.trailerId && selected.trailerId.length === 11 && selected.trailerId !== 'null' && !selected.trailerId.includes(' ')) {
+        if (iframe) iframe.src = `https://www.youtube.com/embed/${selected.trailerId}?rel=0`;
+        if (iframeWrapper) iframeWrapper.style.display = 'block'; // Show ONLY if valid ID
+    }
+    
+    if (ytFallbackLink) {
+        ytFallbackLink.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(selected.title + " official trailer")}`;
     }
 }
 
 window.recordAction = function(type) {
     if (!globalMatchTitle) return;
-    if (!isUserLoggedIn) {
-        alert("💎 Join for FREE!\n\nTo save titles & covers to your Portfolio, please create a free account.");
-        window.openAuthModal(); return;
-    }
+    if (!isUserLoggedIn) { alert("💎 Join for FREE!\n\nTo save titles & covers to your Portfolio, please create a free account."); window.openAuthModal(); return; }
 
     const itemObj = { title: globalMatchTitle, posterUrl: globalMatchPoster, platform: globalPlatform };
     const existsInList = (list) => list.some(i => (i.title || i) === globalMatchTitle);
 
-    if (type === 'save') {
-        if (!existsInList(savedList)) savedList.push(itemObj);
-        alert(`⭐ "${globalMatchTitle}" saved to your Portfolio!`);
-    } else if (type === 'seen') {
-        if (!existsInList(seenList)) seenList.push(itemObj);
-    } else if (type === 'like') {
-        userRatings[globalMatchTitle] = 5;
-        if (!existsInList(seenList)) seenList.push(itemObj);
-    } else if (type === 'dislike') {
-        userRatings[globalMatchTitle] = 1;
-        if (!existsInList(dislikedList)) dislikedList.push(itemObj);
-    }
+    if (type === 'save') { if (!existsInList(savedList)) savedList.push(itemObj); alert(`⭐ "${globalMatchTitle}" saved to your Portfolio!`); } 
+    else if (type === 'seen') { if (!existsInList(seenList)) seenList.push(itemObj); } 
+    else if (type === 'like') { userRatings[globalMatchTitle] = 5; if (!existsInList(seenList)) seenList.push(itemObj); } 
+    else if (type === 'dislike') { userRatings[globalMatchTitle] = 1; if (!existsInList(dislikedList)) dislikedList.push(itemObj); }
     
     syncListsToDatabase();
     alert("Action Recorded! Generate your next match now.");
@@ -360,14 +341,6 @@ window.recordAction = function(type) {
 };
 
 async function syncListsToDatabase() { 
-    localStorage.setItem('match_seenList', JSON.stringify(seenList)); 
-    localStorage.setItem('match_savedList', JSON.stringify(savedList)); 
-    localStorage.setItem('match_dislikedList', JSON.stringify(dislikedList)); 
-    localStorage.setItem('match_userRatings', JSON.stringify(userRatings)); 
-    
-    if (isUserLoggedIn && supabaseClient) { 
-        await supabaseClient.auth.updateUser({ 
-            data: { seen_list: seenList, saved_list: savedList, disliked_list: dislikedList, user_ratings: userRatings } 
-        }); 
-    } 
+    localStorage.setItem('match_seenList', JSON.stringify(seenList)); localStorage.setItem('match_savedList', JSON.stringify(savedList)); localStorage.setItem('match_dislikedList', JSON.stringify(dislikedList)); localStorage.setItem('match_userRatings', JSON.stringify(userRatings)); 
+    if (isUserLoggedIn && supabaseClient) { await supabaseClient.auth.updateUser({ data: { seen_list: seenList, saved_list: savedList, disliked_list: dislikedList, user_ratings: userRatings } }); } 
 }
