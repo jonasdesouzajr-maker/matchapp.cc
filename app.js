@@ -1,4 +1,4 @@
-console.log("Mastercode 94.0: Apple API Cover Engine & True Match Logic Active");
+console.log("Mastercode 95.0: Monetization Timer & Hyper-Personalized Profile AI Active");
 
 const SUPABASE_URL = 'https://zkymvqrmbabngsqblyye.supabase.co'; 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpreW12cXJtYmFibmdzcWJseXllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY4MDUyNDIsImV4cCI6MjEwMjM4MTI0Mn0._yEVFMfwVU6GBqQ8m3ljfOgA0HSLEDiKMOfYae6ZD8Q';
@@ -26,21 +26,17 @@ let userRatings = JSON.parse(localStorage.getItem('match_userRatings') || '{}');
 let isAdFree = localStorage.getItem('match_adFree') === 'true'; 
 let isVIP = localStorage.getItem('match_isVIP') === 'true';
 
-// 🎨 APPLE API COVER MATCHER (Guarantees Blockbuster Quality Covers)
 async function getRealCoverImage(title, aiFallbackPath) {
     try {
         const response = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(title)}&media=movie&limit=1`);
         const data = await response.json();
         if (data.results && data.results.length > 0) {
-            // Replaces tiny thumbnail with massive 600x900 high-res cover
             return data.results[0].artworkUrl100.replace('100x100bb', '600x900bb');
         }
     } catch (e) { console.log("Apple API failed, using AI fallback"); }
-
     if (aiFallbackPath && aiFallbackPath.startsWith('/')) return `https://image.tmdb.org/t/p/w500${aiFallbackPath}`;
     if (aiFallbackPath && aiFallbackPath.startsWith('http')) return aiFallbackPath;
-    
-    return 'fallback'; // Triggers beautiful CSS Gold card
+    return 'fallback';
 }
 
 window.playPremiumSound = function() {
@@ -56,17 +52,13 @@ window.playPremiumSound = function() {
 };
 
 window.fireConfetti = function() {
-    if (typeof confetti !== 'undefined') { confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#D4AF37', '#FFF', '#8A2BE2', '#E50914'], zIndex: 9999 }); }
+    if (typeof confetti !== 'undefined') { confetti({ particleCount: 200, spread: 90, origin: { y: 0.6 }, colors: ['#D4AF37', '#FFF', '#8A2BE2', '#E50914'], zIndex: 9999 }); }
 };
 
 window.selectMarqueeItem = function(titleName) {
     const searchInput = document.getElementById('specific-search-input');
     const searchBox = document.getElementById('search-box');
-    if (searchInput && searchBox) {
-        searchInput.value = titleName;
-        searchBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        searchInput.focus();
-    }
+    if (searchInput && searchBox) { searchInput.value = titleName; searchBox.scrollIntoView({ behavior: 'smooth', block: 'center' }); searchInput.focus(); }
 };
 
 window.openAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'flex'; };
@@ -74,12 +66,8 @@ window.closeAuthModal = function() { document.getElementById('main-auth-modal').
 
 window.switchAuthTab = function(tab) {
     const tabs = ['login', 'signup'];
-    tabs.forEach(t => {
-        document.getElementById(`tab-${t}`)?.classList.remove('active');
-        document.getElementById(`form-${t}`)?.classList.remove('active');
-    });
-    document.getElementById(`tab-${tab}`)?.classList.add('active');
-    document.getElementById(`form-${tab}`)?.classList.add('active');
+    tabs.forEach(t => { document.getElementById(`tab-${t}`)?.classList.remove('active'); document.getElementById(`form-${t}`)?.classList.remove('active'); });
+    document.getElementById(`tab-${tab}`)?.classList.add('active'); document.getElementById(`form-${tab}`)?.classList.add('active');
 };
 
 window.signInWithGoogle = async function() { 
@@ -92,28 +80,26 @@ window.handleEmailSignup = async function() {
     const email = document.getElementById('reg-email').value.trim();
     const password = document.getElementById('reg-password').value;
     const msgEl = document.getElementById('auth-message');
-    if(!email || !password) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please provide an email and password."; return; }
+    if(!email || !password) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.style.background = 'rgba(255,0,0,0.1)'; msgEl.innerText = "Please provide an email and password."; return; }
     if (!supabaseClient) return;
-    msgEl.style.display = 'block'; msgEl.style.color = '#fff'; msgEl.innerText = "Creating account...";
+    msgEl.style.display = 'block'; msgEl.style.color = '#fff'; msgEl.style.background = 'rgba(212,175,55,0.2)'; msgEl.innerText = "Creating account...";
     const { error } = await supabaseClient.auth.signUp({ email, password });
-    if(error) { msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; } else { msgEl.style.color = '#25D366'; msgEl.innerText = "Account created! Routing to Profile Hub..."; setTimeout(() => { window.location.href = '/profile/profile.html'; }, 1500); }
+    if(error) { msgEl.style.color = '#ff5252'; msgEl.style.background = 'rgba(255,0,0,0.1)'; msgEl.innerText = error.message; } 
+    else { msgEl.style.color = '#25D366'; msgEl.style.background = 'rgba(37,211,102,0.1)'; msgEl.innerText = "Account created! Routing to Profile Hub..."; setTimeout(() => { window.location.href = '/profile/profile.html'; }, 1500); }
 };
 
 window.handleEmailLogin = async function() {
     const email = document.getElementById('login-email').value.trim();
     const password = document.getElementById('login-password').value;
     const msgEl = document.getElementById('auth-message');
-    if(!email || !password) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please enter email and password."; return; }
-    msgEl.style.display = 'block'; msgEl.style.color = '#fff'; msgEl.innerText = "Authenticating...";
+    if(!email || !password) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.style.background = 'rgba(255,0,0,0.1)'; msgEl.innerText = "Please enter email and password."; return; }
+    msgEl.style.display = 'block'; msgEl.style.color = '#fff'; msgEl.style.background = 'rgba(212,175,55,0.2)'; msgEl.innerText = "Authenticating...";
     const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-    if(error) { msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; } else { msgEl.style.color = '#25D366'; msgEl.innerText = "Welcome back! Routing to Home..."; setTimeout(() => { window.location.reload(); }, 1000); }
+    if(error) { msgEl.style.color = '#ff5252'; msgEl.style.background = 'rgba(255,0,0,0.1)'; msgEl.innerText = error.message; } 
+    else { msgEl.style.color = '#25D366'; msgEl.style.background = 'rgba(37,211,102,0.1)'; msgEl.innerText = "Welcome back! Routing to Home..."; setTimeout(() => { window.location.reload(); }, 1000); }
 };
 
-window.doLogout = async function() { 
-    if (supabaseClient) { await supabaseClient.auth.signOut(); } 
-    localStorage.clear(); 
-    window.location.href = '/index.html'; 
-};
+window.doLogout = async function() { if (supabaseClient) { await supabaseClient.auth.signOut(); } localStorage.clear(); window.location.href = '/index.html'; };
 
 if (supabaseClient) {
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
@@ -137,9 +123,7 @@ if (supabaseClient) {
             }
             if (regBtn) regBtn.style.display = 'none';
             if (logoutBtn) logoutBtn.style.display = 'inline-block';
-        } else { 
-            isUserLoggedIn = false; 
-        }
+        } else { isUserLoggedIn = false; }
     });
 }
 
@@ -149,12 +133,11 @@ function checkDailyLimit() {
     let lastDate = localStorage.getItem('match_lastDate'); 
     let dailyCount = parseInt(localStorage.getItem('match_dailyCount') || '0');
     if (lastDate !== todayStr) { dailyCount = 0; localStorage.setItem('match_lastDate', todayStr); }
-    if (!isUserLoggedIn && dailyCount >= 3) { alert("🔒 You've used your 3 free matches today! Register for FREE to unlock more."); window.openAuthModal(); return false; }
-    if (isUserLoggedIn && dailyCount >= 7) { alert("💎 Daily limit reached! Upgrade to VIP for UNLIMITED matches!"); window.location.href = '/pricing/pricing.html'; return false; }
+    if (!isUserLoggedIn && dailyCount >= 3) { alert("🔒 You've used your 3 free matches today!\n\nRegister for FREE to unlock your personal profile and get more matches."); window.openAuthModal(); return false; }
+    if (isUserLoggedIn && dailyCount >= 7) { alert("💎 Daily limit reached!\n\nUpgrade to VIP for UNLIMITED matches and Ad-Free browsing!"); window.location.href = '/pricing/pricing.html'; return false; }
     dailyCount++; localStorage.setItem('match_dailyCount', dailyCount.toString()); return true;
 }
 
-// BULLETPROOF JSON PARSER
 async function fetchGeminiData(promptText) {
     if (!supabaseClient) throw new Error("Database not connected");
     const { data, error } = await supabaseClient.functions.invoke('gemini-proxy', { body: { prompt: promptText } });
@@ -183,9 +166,19 @@ window.triggerMatch = async function(isSpecificSearch = false) {
 
     let exclusionList = seenList.map(item => item.title || item).join(', ');
     
-    const strictRules = `CRITICAL RULES: 
-    1. EXCLUDE ALL of these previous matches: [${exclusionList}]. Do NOT repeat them.
-    2. "trailerId": Provide EXACTLY an 11-character YouTube ID if known, otherwise output "null". Do NOT invent one.
+    // 🧠 INJECTING HYPER-PERSONALIZED USER DATA
+    let savedAge = localStorage.getItem('match_user_age');
+    let savedCountry = localStorage.getItem('match_user_country');
+    let savedSign = localStorage.getItem('match_user_sign');
+    let personaContext = "";
+    
+    if (isUserLoggedIn && savedAge && savedCountry) {
+        personaContext = `CRITICAL AUDIENCE MATCH: The user is ${savedAge} years old, lives in ${savedCountry}, and is a ${savedSign || 'unknown'} star sign. You MUST select a title that strongly appeals to this specific demographic and cultural background. `;
+    }
+    
+    const strictRules = `RULES: 
+    1. EXCLUDE ALL previous matches: [${exclusionList}]. Do NOT repeat them.
+    2. "trailerId": Provide EXACTLY an 11-character YouTube ID if known, otherwise output "null".
     3. IF Platform is "Spotify", recommend a Spotify Podcast. IF "microdrama", recommend a short vertical novel from ReelShort/DramaBox/Globoplay.
     Output valid JSON ONLY: {"title": "Title", "synopsis": "3-sentence synopsis.", "platform": "Platform Name", "imdb": "Rating", "trailerId": "11-char-id or null", "posterPath": "/path.jpg"}`;
 
@@ -193,15 +186,16 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     if (isSpecificSearch) {
         const input = document.getElementById('specific-search-input');
         if (!input || !input.value.trim()) { alert("Please enter a title."); window.location.reload(); return; }
-        promptText = `Search exactly for: "${input.value.trim()}". ${strictRules}`;
+        promptText = `${personaContext} Search exactly for: "${input.value.trim()}". ${strictRules}`;
     } else {
         const cat = document.getElementById('q-category')?.value || 'any'; 
         const plat = document.getElementById('q-platform')?.value || 'any';
         const mood = document.getElementById('q-mood')?.value || 'any'; 
-        promptText = `Find a perfect match based on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}. ${strictRules}`;
+        promptText = `${personaContext} Find a perfect match based on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}. ${strictRules}`;
     }
 
-    let totalTime = isVIP || isAdFree ? 4 : 8; 
+    // 💰 MONETIZATION TIMERS: 20 seconds for Free Users to view Adsterra/AdSense. 5 seconds for VIPs.
+    let totalTime = isVIP || isAdFree ? 5 : 20; 
     let startTimeMs = Date.now();
     const pBar = document.getElementById('ai-progress-bar');
     if (pBar) pBar.style.width = '0%';
@@ -223,6 +217,13 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         if (qBox) qBox.style.display = 'block';
         if (sBox) sBox.style.display = 'block';
         return; 
+    }
+
+    // 🔥 FORCE THE WAIT: If the AI answers in 2 seconds, the user STILL waits 20 seconds to see the result.
+    let elapsedMs = Date.now() - startTimeMs;
+    let remainingMs = (totalTime * 1000) - elapsedMs;
+    if (remainingMs > 0) {
+        await new Promise(resolve => setTimeout(resolve, remainingMs));
     }
 
     clearInterval(timerInterval);
@@ -254,9 +255,8 @@ async function renderResult(selected) {
     document.getElementById('res-title').innerText = selected.title;
     document.getElementById('res-synopsis').innerText = selected.synopsis;
     document.getElementById('res-platform-badge').innerText = selected.platform;
-    document.getElementById('res-imdb-badge').innerText = `IMDb/Rating: ${selected.imdb || 'N/A'}`;
+    document.getElementById('res-imdb-badge').innerText = `IMDb: ${selected.imdb || 'N/A'}`;
 
-    // 🚀 INJECTING THE REAL COVER ART & FALLBACK
     const posterEl = document.getElementById('res-poster-img');
     const cssFallback = document.getElementById('res-css-poster');
     
@@ -287,13 +287,11 @@ async function renderResult(selected) {
     } else if (selected.platform.toLowerCase().includes('dramabox')) { directBtn.href = `https://www.dramabox.com/`; directBtn.innerText = `📺 Open on DramaBox`;
     } else { directBtn.href = `https://www.google.com/search?q=Watch+${encodeURIComponent(selected.title)}+on+${encodeURIComponent(selected.platform)}`; directBtn.innerText = `▶ Stream on ${selected.platform}`; }
 
-    // 🚀 BULLETPROOF TRAILER LOGIC
     const iframe = document.getElementById('res-trailer');
     const iframeWrapper = document.querySelector('.video-container'); 
     const ytFallbackLink = document.getElementById('res-trailer-fallback');
     
     if (iframeWrapper) iframeWrapper.style.display = 'none'; 
-    
     if (selected.trailerId && selected.trailerId.length === 11 && selected.trailerId !== 'null' && !selected.trailerId.includes(' ')) {
         if (iframe) iframe.src = `https://www.youtube-nocookie.com/embed/${selected.trailerId}?rel=0`;
         if (iframeWrapper) iframeWrapper.style.display = 'block'; 
