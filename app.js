@@ -88,6 +88,27 @@ window.signInWithGoogle = async function() {
     if (error) alert("Google Login Error: " + error.message); 
 };
 
+window.handleEmailSignup = async function() {
+    const email = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const msgEl = document.getElementById('auth-message');
+    if(!email || !password) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please provide an email and password."; return; }
+    if (!supabaseClient) return;
+    msgEl.style.display = 'block'; msgEl.style.color = '#fff'; msgEl.innerText = "Creating account...";
+    const { error } = await supabaseClient.auth.signUp({ email, password });
+    if(error) { msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; } else { msgEl.style.color = '#25D366'; msgEl.innerText = "Account created! Routing to Profile Hub..."; setTimeout(() => { window.location.href = '/profile/profile.html'; }, 1500); }
+};
+
+window.handleEmailLogin = async function() {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const msgEl = document.getElementById('auth-message');
+    if(!email || !password) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.innerText = "Please enter email and password."; return; }
+    msgEl.style.display = 'block'; msgEl.style.color = '#fff'; msgEl.innerText = "Authenticating...";
+    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if(error) { msgEl.style.color = '#ff5252'; msgEl.innerText = error.message; } else { msgEl.style.color = '#25D366'; msgEl.innerText = "Welcome back! Routing to Home..."; setTimeout(() => { window.location.reload(); }, 1000); }
+};
+
 window.doLogout = async function() { 
     if (supabaseClient) { await supabaseClient.auth.signOut(); } 
     localStorage.clear(); 
@@ -164,8 +185,9 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     
     const strictRules = `CRITICAL RULES: 
     1. EXCLUDE ALL of these previous matches: [${exclusionList}]. Do NOT repeat them.
-    2. "trailerId": Provide EXACTLY an 11-character YouTube ID if known, otherwise output "".
-    Output valid JSON ONLY: {"title": "Title", "synopsis": "3-sentence synopsis.", "platform": "Platform Name", "imdb": "Rating", "trailerId": "11-char-id or empty", "posterPath": "/path.jpg"}`;
+    2. "trailerId": Provide EXACTLY an 11-character YouTube ID if known, otherwise output "null". Do NOT invent one.
+    3. IF Platform is "Spotify", recommend a Spotify Podcast. IF "microdrama", recommend a short vertical novel from ReelShort/DramaBox/Globoplay.
+    Output valid JSON ONLY: {"title": "Title", "synopsis": "3-sentence synopsis.", "platform": "Platform Name", "imdb": "Rating", "trailerId": "11-char-id or null", "posterPath": "/path.jpg"}`;
 
     let promptText = "";
     if (isSpecificSearch) {
@@ -196,7 +218,6 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     } catch (err) {
         console.error("AI Match Error:", err);
         clearInterval(timerInterval);
-        // THE REPEATING TITLE IS GONE. It now gracefully fails and lets the user try again.
         alert("⚠️ The AI Concierge servers are experiencing high volume. Please try matching again in a few seconds.");
         if (loadBox) loadBox.style.display = 'none';
         if (qBox) qBox.style.display = 'block';
@@ -207,7 +228,6 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     clearInterval(timerInterval);
     if (pBar) pBar.style.width = '100%';
 
-    // Save logic
     if (!seenList.some(i => (i.title || i) === matchResult.title)) {
         seenList.push({ title: matchResult.title, posterUrl: matchResult.posterPath, platform: matchResult.platform });
         localStorage.setItem('match_seenList', JSON.stringify(seenList));
@@ -236,7 +256,7 @@ async function renderResult(selected) {
     document.getElementById('res-platform-badge').innerText = selected.platform;
     document.getElementById('res-imdb-badge').innerText = `IMDb/Rating: ${selected.imdb || 'N/A'}`;
 
-    // 🚀 INJECTING THE REAL COVER ART 
+    // 🚀 INJECTING THE REAL COVER ART & FALLBACK
     const posterEl = document.getElementById('res-poster-img');
     const cssFallback = document.getElementById('res-css-poster');
     
@@ -244,7 +264,6 @@ async function renderResult(selected) {
         posterEl.style.display = 'none';
         cssFallback.style.display = 'none';
         
-        // Ping Apple API for stunning high-res cover
         const realCover = await getRealCoverImage(selected.title, selected.posterPath);
         globalMatchPoster = realCover;
         
@@ -262,7 +281,6 @@ async function renderResult(selected) {
         }
     }
 
-    // DIRECT STREAMING BUTTON LOGIC
     const directBtn = document.getElementById('res-direct-link');
     if (selected.platform.toLowerCase().includes('spotify')) { directBtn.href = `https://open.spotify.com/search/${encodeURIComponent(selected.title)}`; directBtn.innerText = `🎧 Open on Spotify`;
     } else if (selected.platform.toLowerCase().includes('reelshort')) { directBtn.href = `https://www.reelshort.com/`; directBtn.innerText = `📱 Open on ReelShort`;
@@ -274,16 +292,13 @@ async function renderResult(selected) {
     const iframeWrapper = document.querySelector('.video-container'); 
     const ytFallbackLink = document.getElementById('res-trailer-fallback');
     
-    // Always hide the black box first so broken iframes NEVER show
     if (iframeWrapper) iframeWrapper.style.display = 'none'; 
     
-    // If AI gave a perfect 11-char ID, show the video
-    if (selected.trailerId && selected.trailerId.length === 11 && !selected.trailerId.includes(' ')) {
+    if (selected.trailerId && selected.trailerId.length === 11 && selected.trailerId !== 'null' && !selected.trailerId.includes(' ')) {
         if (iframe) iframe.src = `https://www.youtube-nocookie.com/embed/${selected.trailerId}?rel=0`;
         if (iframeWrapper) iframeWrapper.style.display = 'block'; 
     }
     
-    // Guaranteed fallback button to YouTube (Always works)
     if (ytFallbackLink) {
         ytFallbackLink.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(selected.title + " official trailer")}`;
         ytFallbackLink.innerText = `▶️ Watch Official Trailer on YouTube`;
