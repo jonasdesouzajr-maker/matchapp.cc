@@ -54,12 +54,12 @@
         .how-it-works-glow { background: linear-gradient(135deg, rgba(229,193,88,0.15), rgba(5,2,2,0.98)); border: 2px solid var(--gold); border-radius: 20px; padding: 35px; margin: 0 0 30px 0; text-align: center; box-shadow: 0 0 40px rgba(229, 193, 88, 0.3); }
         
         .marquee-wrapper { width: 100%; overflow: hidden; background: rgba(0,0,0,0.9); border: 2px solid var(--gold); border-radius: 15px; padding: 15px 0; margin-bottom: 30px; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,0.9); }
-        .marquee-track { display: flex; gap: 15px; width: max-content; animation: marqueeScroll 35s linear infinite; }
+        .marquee-track { display: flex; gap: 15px; width: max-content; animation: marqueeScroll 45s linear infinite; }
         .marquee-track:hover { animation-play-state: paused; }
         .marquee-item { position: relative; width: 130px; height: 190px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(229,193,88,0.5); cursor: pointer; transition: all 0.3s ease; box-shadow: 0 5px 20px rgba(0,0,0,0.9); }
         .marquee-item:hover { transform: scale(1.1); border-color: var(--gold-glow); box-shadow: 0 0 30px var(--gold); z-index: 10; }
         .marquee-item img { width: 100%; height: 100%; object-fit: cover; }
-        .marquee-title { position: absolute; bottom: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.95)); color: #fff; font-size: 11px; padding: 10px 4px 4px 4px; text-align: center; font-weight: bold; border-top: 1px solid var(--gold); }
+        .marquee-title { position: absolute; bottom: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.95)); color: #fff; font-size: 11px; padding: 15px 4px 6px 4px; text-align: center; font-weight: bold; border-top: 1px solid var(--gold); }
         
         @keyframes marqueeScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
@@ -112,15 +112,26 @@
                 <div class="marquee-wrapper fade-in">
                     <h4 style="color: var(--gold); font-size: 15px; text-transform: uppercase; text-align: center; margin: 0 0 15px 0; letter-spacing: 2px; text-shadow: 0 0 15px rgba(229,193,88,0.5);">🔥 Trending Blockbusters Worldwide</h4>
                     <div class="marquee-track">
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('The Pitt')"><img src="https://image.tmdb.org/t/p/w500/vQWk5YCZXGZm9iEXQY6L02Cq3B9.jpg" alt="The Pitt"><div class="marquee-title">The Pitt</div></div>
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('A Vida Secreta do Meu Marido Bilionário')"><img src="https://image.tmdb.org/t/p/w500/j9w5l2X4XhQx2J6p3N0V9a8S7g.jpg" alt="Marido Bilionário"><div class="marquee-title">Marido Bilionário (ReelShort)</div></div>
+                        <!-- Duplicated for seamless loop -->
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('The Bear')"><img src="https://image.tmdb.org/t/p/w500/q2gJGrH0aGZ1X1qP440xQzKqOee.jpg" alt="The Bear"><div class="marquee-title">The Bear</div></div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Shogun')"><img src="https://image.tmdb.org/t/p/w500/7O4iVfOMQmdCSxhOg1WwSCSOOOQ.jpg" alt="Shogun"><div class="marquee-title">Shogun</div></div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('A Vida Secreta do Meu Marido Bilionário')"><img src="https://image.tmdb.org/t/p/w500/j9w5l2X4XhQx2J6p3N0V9a8S7g.jpg" alt="Marido Bilionário"><div class="marquee-title">Marido Bilionário</div></div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Deadpool & Wolverine')"><img src="https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg" alt="Deadpool & Wolverine"><div class="marquee-title">Deadpool 3</div></div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Queen of Tears')"><img src="https://image.tmdb.org/t/p/w500/7O4iVfOMQmdCSxhOg1WwSCSOOOQ.jpg" alt="Queen of Tears"><div class="marquee-title">Queen of Tears</div></div>
                         <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('The Joe Rogan Experience')"><img src="https://image.tmdb.org/t/p/w500/7aPRJUKFtdh6Qy8n3JpEqqV5m3W.jpg" alt="Joe Rogan Experience"><div class="marquee-title">Joe Rogan (Spotify)</div></div>
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Nas Profundezas do Amor')"><img src="https://image.tmdb.org/t/p/w500/k2Wk5YCZXGZm9iEXQY6L02Cq3B9.jpg" alt="Nas Profundezas do Amor"><div class="marquee-title">Nas Profundezas (Globoplay)</div></div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Jujutsu Kaisen')"><img src="https://image.tmdb.org/t/p/w500/hFWP5HkbVEe40hrptlzSyDpFBqw.jpg" alt="Jujutsu Kaisen"><div class="marquee-title">Jujutsu Kaisen</div></div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('House of the Dragon')"><img src="https://image.tmdb.org/t/p/w500/t9XkeE7HzOsdQcOGaTOFdZCEYnF.jpg" alt="House of the Dragon"><div class="marquee-title">House of the Dragon</div></div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Nas Profundezas do Amor')"><img src="https://image.tmdb.org/t/p/w500/k2Wk5YCZXGZm9iEXQY6L02Cq3B9.jpg" alt="Nas Profundezas do Amor"><div class="marquee-title">Nas Profundezas</div></div>
                         <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Fallout')"><img src="https://image.tmdb.org/t/p/w500/27A8vXh92j7tJ6u6S455G44k39s.jpg" alt="Fallout"><div class="marquee-title">Fallout</div></div>
                         
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('The Pitt')"><img src="https://image.tmdb.org/t/p/w500/vQWk5YCZXGZm9iEXQY6L02Cq3B9.jpg" alt="The Pitt"><div class="marquee-title">The Pitt</div></div>
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('A Vida Secreta do Meu Marido Bilionário')"><img src="https://image.tmdb.org/t/p/w500/j9w5l2X4XhQx2J6p3N0V9a8S7g.jpg" alt="Marido Bilionário"><div class="marquee-title">Marido Bilionário (ReelShort)</div></div>
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Nas Profundezas do Amor')"><img src="https://image.tmdb.org/t/p/w500/k2Wk5YCZXGZm9iEXQY6L02Cq3B9.jpg" alt="Nas Profundezas do Amor"><div class="marquee-title">Nas Profundezas (Globoplay)</div></div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('The Bear')"><img src="https://image.tmdb.org/t/p/w500/q2gJGrH0aGZ1X1qP440xQzKqOee.jpg" alt="The Bear"><div class="marquee-title">The Bear</div></div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Shogun')"><img src="https://image.tmdb.org/t/p/w500/7O4iVfOMQmdCSxhOg1WwSCSOOOQ.jpg" alt="Shogun"><div class="marquee-title">Shogun</div></div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('A Vida Secreta do Meu Marido Bilionário')"><img src="https://image.tmdb.org/t/p/w500/j9w5l2X4XhQx2J6p3N0V9a8S7g.jpg" alt="Marido Bilionário"><div class="marquee-title">Marido Bilionário</div></div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Deadpool & Wolverine')"><img src="https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg" alt="Deadpool & Wolverine"><div class="marquee-title">Deadpool 3</div></div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Queen of Tears')"><img src="https://image.tmdb.org/t/p/w500/7O4iVfOMQmdCSxhOg1WwSCSOOOQ.jpg" alt="Queen of Tears"><div class="marquee-title">Queen of Tears</div></div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('The Joe Rogan Experience')"><img src="https://image.tmdb.org/t/p/w500/7aPRJUKFtdh6Qy8n3JpEqqV5m3W.jpg" alt="Joe Rogan Experience"><div class="marquee-title">Joe Rogan (Spotify)</div></div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Jujutsu Kaisen')"><img src="https://image.tmdb.org/t/p/w500/hFWP5HkbVEe40hrptlzSyDpFBqw.jpg" alt="Jujutsu Kaisen"><div class="marquee-title">Jujutsu Kaisen</div></div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('House of the Dragon')"><img src="https://image.tmdb.org/t/p/w500/t9XkeE7HzOsdQcOGaTOFdZCEYnF.jpg" alt="House of the Dragon"><div class="marquee-title">House of the Dragon</div></div>
                     </div>
                 </div>
 
@@ -199,7 +210,7 @@
                     <h3 style="color: var(--gold); margin: 0; text-transform: uppercase; font-size: 28px; letter-spacing: 2px;">✨ Scanning Global Catalog ✨</h3>
                     <p style="color: #aaa; font-size: 16px; margin-top: 15px;">Cross-referencing your exact vibe with millions of titles...</p>
                     <div style="width: 100%; height: 40px; background: rgba(0,0,0,0.8); border: 2px solid var(--gold); border-radius: 20px; margin: 35px 0; overflow: hidden; box-shadow: inset 0 0 15px rgba(0,0,0,0.9);">
-                        <div id="ai-progress-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--gold), #fff, var(--gold)); transition: width 0.1s linear; background-size: 200% 100%; animation: shimmer 2s infinite linear;"></div>
+                        <div id="ai-progress-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--gold), #fff, var(--gold)); transition: width 0.3s ease-out; background-size: 200% 100%; animation: shimmer 2s infinite linear;"></div>
                     </div>
                     <p style="color: #777; font-size: 14px; margin-top: 25px;"><em>Tip: Registered users get personalized matches based on age and sign.</em></p>
                 </article>
@@ -298,6 +309,6 @@
         <p style="color: #666; font-size: 13px; margin-top: 45px; letter-spacing: 1px;">© 2026 MatchApp.cc - Support: support@matchapp.cc</p>
     </footer>
 
-    <script src="/app.js?v=96"></script>
+    <script src="/app.js?v=97"></script>
 </body>
 </html>
