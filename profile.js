@@ -1,4 +1,4 @@
-console.log("Profile Engine 96.0: Cinematic Watch Later Portfolio Grid Active");
+console.log("Profile Engine 97.0: Cinematic Watch Later Portfolio Grid Active");
 
 function calculateAgeFromDOB(dobString) {
     let parts = dobString.split('/');
