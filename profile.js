@@ -1,4 +1,4 @@
-console.log("Profile Engine 98.0: Dual Auth Prefill & Locked View Active");
+console.log("Profile Engine 99.0: Google Sync & Identity Lock Active");
 
 function calculateAgeFromDOB(dobString) {
     let parts = dobString.split('/');
