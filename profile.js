@@ -1,7 +1,6 @@
-console.log("Profile Engine 95.0: Automatic Age Calculator & Demographic Sync Active");
+console.log("Profile Engine 96.0: Cinematic Watch Later Portfolio Grid Active");
 
 function calculateAgeFromDOB(dobString) {
-    // Format expected: DD/MM/YYYY
     let parts = dobString.split('/');
     if(parts.length !== 3) return null;
     let day = parseInt(parts[0], 10);
@@ -20,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const dobInput = document.getElementById('profile-dob');
     const ageDisplay = document.getElementById('profile-age-display');
     
-    // Check if we already have a saved age to display
     const savedAge = localStorage.getItem('match_user_age');
     if (savedAge && ageDisplay) {
         ageDisplay.style.display = 'inline-block';
@@ -34,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (v.length >= 3 && v.length <= 4) { this.value = v.slice(0,2) + '/' + v.slice(2); } 
             else if (v.length >= 5) { this.value = v.slice(0,2) + '/' + v.slice(2,4) + '/' + v.slice(4,8); }
             
-            // Auto Calculate Age when typing is complete
             if (this.value.length === 10) {
                 let calculatedAge = calculateAgeFromDOB(this.value);
                 if (calculatedAge && ageDisplay) {
@@ -52,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('profile-dob').disabled = true;
         document.getElementById('profile-starsign').disabled = true;
         
-        // Repopulate fields from localStorage just in case
         document.getElementById('profile-name').value = localStorage.getItem('match_user_name') || "";
         document.getElementById('profile-country').value = localStorage.getItem('match_user_country') || "";
         document.getElementById('profile-dob').value = localStorage.getItem('match_user_dob') || "";
@@ -86,7 +82,6 @@ window.saveProfileData = function() {
     const confirmLock = confirm(`⚠️ WARNING:\n\nYou are locking in your profile as a ${age}-year-old from ${country}.\n\nThis data will be permanently injected into the AI's brain to customize your matches. Are you sure you want to lock this in?`);
     if(!confirmLock) return;
 
-    // Save demographic data for app.js to use in prompt
     localStorage.setItem('match_user_name', name);
     localStorage.setItem('match_user_country', country);
     localStorage.setItem('match_user_dob', dob);
@@ -105,7 +100,7 @@ window.renderProfileGrids = function() {
     if(portGrid) {
         portGrid.innerHTML = '';
         if(sList.length === 0) {
-            portGrid.innerHTML = '<p style="color:#aaa; font-size: 14px; font-style: italic;">Your portfolio is empty. Go match!</p>';
+            portGrid.innerHTML = '<p style="color:#aaa; font-size: 15px; font-style: italic;">Your portfolio is empty. Go match!</p>';
         } else {
             sList.forEach(item => {
                 let title = typeof item === 'string' ? item : item.title;
@@ -116,14 +111,14 @@ window.renderProfileGrids = function() {
                 }
                 
                 portGrid.innerHTML += `
-                    <div class="poster-card" style="position: relative; width: 100%; height: 220px; border-radius: 12px; overflow: hidden; border: 1px solid var(--gold); box-shadow: 0 5px 15px rgba(0,0,0,0.8);">
+                    <div class="poster-card" style="position: relative; width: 100%; height: 230px; border-radius: 12px; overflow: hidden; border: 1px solid var(--gold); box-shadow: 0 5px 20px rgba(0,0,0,0.9);">
                         <img src="${poster}" alt="${title}" style="width: 100%; height: 100%; object-fit: cover; display: block;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                         
-                        <div class="css-poster-fallback" style="display:none; background: linear-gradient(135deg, #1a0f0f, #3a2200); width: 100%; height: 100%; align-items: center; justify-content: center; text-align: center; padding: 10px; box-sizing: border-box; color: var(--gold); font-weight: 900; font-size: 14px; text-shadow: 0 2px 5px rgba(0,0,0,0.8); box-shadow: inset 0 0 20px rgba(0,0,0,0.8);">
+                        <div class="css-poster-fallback" style="display:none; background: linear-gradient(135deg, #1a0505, #4a2b00); width: 100%; height: 100%; align-items: center; justify-content: center; text-align: center; padding: 10px; box-sizing: border-box; color: var(--gold); font-weight: 900; font-size: 16px; text-transform: uppercase; text-shadow: 0 2px 8px rgba(0,0,0,0.9); box-shadow: inset 0 0 30px rgba(0,0,0,0.9);">
                             ${title}
                         </div>
                         
-                        <div class="poster-title" style="position: absolute; bottom: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.95)); color: #fff; font-size: 12px; padding: 8px; text-align: center; font-weight: bold; border-top: 1px solid var(--gold);">${title}</div>
+                        <div class="poster-title" style="position: absolute; bottom: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.95)); color: #fff; font-size: 12px; padding: 10px 4px 4px 4px; text-align: center; font-weight: bold; border-top: 1px solid var(--gold);">${title}</div>
                     </div>
                 `;
             });
