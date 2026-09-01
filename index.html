@@ -9,6 +9,17 @@
     <meta name="description" content="MatchApp is your premier AI streaming concierge. Instantly find top blockbuster movies, TV series, vertical micro-dramas, and podcasts.">
     <meta name="robots" content="index, follow">
     
+    <!-- GOOGLE ANALYTICS (GTAG) RESTORED -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date()); gtag('config', 'G-2ECND229RR');
+    </script>
+    
+    <!-- GOOGLE ADSENSE SCRIPT ENGINE RESTORED -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
+
     <link rel="stylesheet" href="/style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -60,6 +71,8 @@
         .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 15px; border: 2px solid var(--gold); background: #000; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
         
+        .ad-banner-container { text-align: center; margin-bottom: 30px; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 15px; border: 1px dashed rgba(255,255,255,0.2); min-height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
         .css-poster-fallback { background: linear-gradient(135deg, #1a0505, #4a2b00); border-radius: 15px; border: 3px solid var(--gold); display: flex; align-items: center; justify-content: center; text-align: center; padding: 25px; color: var(--gold); font-weight: 900; font-size: 32px; text-transform: uppercase; width: 100%; max-width: 380px; height: 550px; margin: 0 auto; box-sizing: border-box; }
         
         .auth-tabs { display: flex; border-bottom: 2px solid rgba(229,193,88,0.3); margin-bottom: 25px; }
@@ -67,6 +80,10 @@
         .auth-tab.active { color: var(--gold); border-bottom: 3px solid var(--gold); background: rgba(229,193,88,0.1); }
         .auth-form-section { display: none; }
         .auth-form-section.active { display: block; }
+
+        /* Mobile Sticky Ad Banner */
+        .sticky-mobile-ad { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(3,1,1,0.95); border-top: 1px solid var(--gold); z-index: 900; text-align: center; padding: 5px 0; display: block; }
+        @media (min-width: 900px) { .sticky-mobile-ad { display: none; } }
     </style>
 </head>
 <body>
@@ -92,12 +109,18 @@
 
     <main class="page-wrapper" style="flex: 1; position: relative;">
         <div class="main-layout">
+            <!-- STICKY ADSENSE SIDEBAR AD LEFT -->
+            <aside class="sidebar-ad-left">
+                <span style="font-size: 10px; color: #888; display: block; text-align: center; margin-bottom: 5px;">SPONSORED</span>
+                <ins class="adsbygoogle" style="display:block; width:160px; height:600px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical"></ins>
+                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            </aside>
+
             <section class="container">
                 
                 <div class="marquee-wrapper">
                     <h4 style="color: var(--gold); font-size: 15px; text-transform: uppercase; text-align: center; margin: 0 0 15px 0; letter-spacing: 2px;">🔥 Trending Blockbusters Worldwide</h4>
                     <div class="marquee-track">
-                        <!-- WSRV.NL CDN PROXY ENSURES IMAGES ALWAYS LOAD AND BYPASS HOTLINKING -->
                         <div class="marquee-item" onclick="selectMarqueeItem('The Bear')">
                             <img src="https://wsrv.nl/?url=m.media-amazon.com/images/M/MV5BNTIwMzc5MTctNDAzNC00Yzk4LTg3ZTgtMTVlYWNmNWNmOWVmXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg&w=200" alt="The Bear">
                             <div class="marquee-title">The Bear</div>
@@ -123,7 +146,7 @@
                             <div class="marquee-title">Joe Rogan</div>
                         </div>
                         
-                        <!-- Duplicated Loop for Marquee -->
+                        <!-- Duplicated Loop -->
                         <div class="marquee-item" onclick="selectMarqueeItem('The Bear')">
                             <img src="https://wsrv.nl/?url=m.media-amazon.com/images/M/MV5BNTIwMzc5MTctNDAzNC00Yzk4LTg3ZTgtMTVlYWNmNWNmOWVmXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg&w=200" alt="The Bear">
                             <div class="marquee-title">The Bear</div>
@@ -137,6 +160,13 @@
                             <div class="marquee-title">Deadpool 3</div>
                         </div>
                     </div>
+                </div>
+
+                <!-- ADSTERRA BANNER 1 -->
+                <div class="ad-banner-container">
+                    <span style="font-size: 10px; color: #888; display: block; margin-bottom: 5px;">SPONSORED CONTENT</span>
+                    <script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script>
+                    <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
                 </div>
 
                 <article id="search-box" class="premium-card">
@@ -179,6 +209,13 @@
                     <button onclick="triggerMatch(false)" class="gold-btn" style="margin-top: 30px; width: 100%; font-size: 22px; padding: 22px; text-transform: uppercase; letter-spacing: 2px;">⚡ Consult AI Concierge</button>
                 </article>
 
+                <!-- ADSENSE RESPONSIVE BANNER 2 -->
+                <div class="ad-banner-container" style="margin-top: 30px;">
+                    <span style="font-size: 10px; color: #888; display: block; margin-bottom: 5px;">SPONSORED ADVERTISEMENT</span>
+                    <ins class="adsbygoogle" style="display:block; min-height: 90px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                </div>
+
                 <article id="loading-box" class="premium-card" style="display: none; padding: 70px 20px; text-align: center;">
                     <div style="font-size: 80px; margin-bottom: 25px;">🕵️‍♂️</div>
                     <h3 style="color: var(--gold); margin: 0; text-transform: uppercase; font-size: 28px;">✨ Scanning Catalog ✨</h3>
@@ -205,14 +242,35 @@
                             <iframe id="res-trailer" src="" allowfullscreen loading="lazy"></iframe>
                         </div>
                     </div>
+
+                    <!-- IN-RESULT HIGH VALUE ADSENSE BANNER -->
+                    <div class="ad-banner-container" style="margin-bottom: 30px;">
+                        <span style="font-size: 10px; color: #888; display: block; margin-bottom: 5px;">SPONSORED</span>
+                        <ins class="adsbygoogle" style="display:block; min-height: 90px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                    </div>
                     
                     <a id="res-direct-link" href="#" target="_blank" class="gold-btn" style="margin-bottom: 35px; text-decoration: none; text-align: center; display: block; font-size: 24px; padding: 22px; text-transform: uppercase;">▶ Stream Now</a>
                 </article>
             </section>
+
+            <!-- STICKY ADSENSE SIDEBAR AD RIGHT -->
+            <aside class="sidebar-ad-right">
+                <span style="font-size: 10px; color: #888; display: block; text-align: center; margin-bottom: 5px;">SPONSORED</span>
+                <ins class="adsbygoogle" style="display:block; width:160px; height:600px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical"></ins>
+                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            </aside>
         </div>
     </main>
 
-    <!-- Hidden Authentication Modals (Same as before) -->
+    <!-- STICKY MOBILE AD BAR -->
+    <div class="sticky-mobile-ad">
+        <span style="font-size: 9px; color: #888; display: block;">SPONSORED</span>
+        <script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };</script>
+        <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
+    </div>
+
+    <!-- Hidden Authentication Modals -->
     <div id="main-auth-modal" style="display:none; position:fixed; top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95); z-index:9999; justify-content:center; align-items:center; backdrop-filter: blur(15px);">
         <div class="premium-card" style="width: 90%; max-width: 450px; position:relative;">
             <span onclick="closeAuthModal()" style="position:absolute; top:15px; right:20px; font-size:36px; cursor:pointer; color:#fff;">×</span>
@@ -235,9 +293,8 @@
         </div>
     </div>
 
-    <script src="/app.js?v=100"></script>
+    <script src="/app.js?v=101"></script>
     <script>
-        // Start floating logos effect
         const logos = [
             "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg",
             "https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg",
@@ -246,6 +303,7 @@
         ];
         function createFloatingLogo() {
             const container = document.getElementById('floating-logos-container');
+            if(!container) return;
             const img = document.createElement('img');
             img.src = logos[Math.floor(Math.random() * logos.length)];
             img.className = 'floating-logo';
