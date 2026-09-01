@@ -1,4 +1,4 @@
-console.log("Mastercode 101: Invincible Cover Images & Login Fixes Active");
+console.log("Mastercode 102: OS-Level DeepLinks, Never-Fail Covers, & Premium FX Active");
 
 const SUPABASE_URL = 'https://zkymvqrmbabngsqblyye.supabase.co'; 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpreW12cXJtYmFibmdzcWJseXllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY4MDUyNDIsImV4cCI6MjEwMjM4MTI0Mn0._yEVFMfwVU6GBqQ8m3ljfOgA0HSLEDiKMOfYae6ZD8Q';
@@ -42,7 +42,25 @@ function checkDailyLimit() {
 }
 
 // ----------------------------------------------------
-// "GOD MODE" COVER DICTIONARY (100% Guaranteed Loads)
+// AUDIO & FX ENGINE
+// ----------------------------------------------------
+window.playPremiumSound = function() {
+    try { 
+        const ctx = new (window.AudioContext || window.webkitAudioContext)(); 
+        const osc = ctx.createOscillator(); 
+        const gain = ctx.createGain(); 
+        osc.connect(gain); gain.connect(ctx.destination); 
+        osc.type = 'sine'; 
+        osc.frequency.setValueAtTime(600, ctx.currentTime); 
+        osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1); 
+        gain.gain.setValueAtTime(0.3, ctx.currentTime); 
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2); 
+        osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.2); 
+    } catch (e) { console.log("Audio FX skipped"); }
+};
+
+// ----------------------------------------------------
+// "NEVER-FAIL" COVER DICTIONARY & GENERATOR
 // ----------------------------------------------------
 const OFFLINE_COVERS = {
     "The Bear": "https://image.tmdb.org/t/p/w500/q2gJGrH0aGZ1X1qP440xQzKqOee.jpg",
@@ -55,18 +73,24 @@ const OFFLINE_COVERS = {
     "Fated to the Alpha": "https://image.tmdb.org/t/p/w500/8A1H55bC2m3n9P5D5d7lH2eO0O2.jpg",
     "The Joe Rogan Experience": "https://image.tmdb.org/t/p/w500/7aPRJUKFtdh6Qy8n3JpEqqV5m3W.jpg",
     "Jujutsu Kaisen": "https://image.tmdb.org/t/p/w500/hFWP5HkbVEe40hrptlzSyDpFBqw.jpg",
-    "Queen of Tears": "https://image.tmdb.org/t/p/w500/8A1H55bC2m3n9P5D5d7lH2eO0O2.jpg",
-    "Squid Game": "https://image.tmdb.org/t/p/w500/dDlEmu3EZ0PggZ3qM16iUgVd0sL.jpg",
-    "The Boys": "https://image.tmdb.org/t/p/w500/mY7SeH4HFFxW1hiI6cWuwCRKptN.jpg",
-    "Fallout": "https://image.tmdb.org/t/p/w500/27A8vXh92j7tJ6u6S455G44k39s.jpg"
+    "Queen of Tears": "https://image.tmdb.org/t/p/w500/8A1H55bC2m3n9P5D5d7lH2eO0O2.jpg"
 };
 
 async function getRealCoverImage(title) {
-    // 1. Check Hardcoded Offline Dictionary First
+    // 1. Offline Dictionary
     const matchKey = Object.keys(OFFLINE_COVERS).find(k => title.toLowerCase().includes(k.toLowerCase()) || k.toLowerCase().includes(title.toLowerCase()));
     if (matchKey) return OFFLINE_COVERS[matchKey];
 
-    // 2. Direct TVMaze Fetch (Open CORS, highly reliable)
+    // 2. iTunes Search API (Ultra-Reliable CORS)
+    try {
+        const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(title)}&media=movie&limit=1`);
+        if (res.ok) {
+            const data = await res.json();
+            if (data.results && data.results.length > 0) return data.results[0].artworkUrl100.replace('100x100bb', '600x900bb');
+        }
+    } catch(e) {}
+    
+    // 3. TVMaze Fetch
     try {
         const tvRes = await fetch(`https://api.tvmaze.com/singlesearch/shows?q=${encodeURIComponent(title)}`);
         if (tvRes.ok) { 
@@ -75,7 +99,8 @@ async function getRealCoverImage(title) {
         }
     } catch(e) {}
     
-    return 'fallback';
+    // 4. ABSOLUTE FALLBACK: Dynamic Text Image Generator (Impossible to fail)
+    return `https://placehold.co/600x900/1a0505/E5C158?text=${encodeURIComponent(title.replace(/ /g, '+'))}`;
 }
 
 window.selectMarqueeItem = function(titleName) {
@@ -96,7 +121,7 @@ window.switchAuthTab = function(tab) {
 };
 
 // ----------------------------------------------------
-// BULLETPROOF LOGIN & AUTH LOGIC
+// AUTH LOGIC
 // ----------------------------------------------------
 window.handleEmailSignup = async function() {
     const email = document.getElementById('reg-email').value.trim(); 
@@ -192,12 +217,12 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     if (isSpecificSearch) {
         const input = document.getElementById('specific-search-input');
         if (!input || !input.value.trim()) { window.location.reload(); return; }
-        promptText = `Find streaming information strictly for "${input.value.trim()}". You MUST return metadata for this EXACT title, not a recommendation. Output valid JSON ONLY: {"title": "Exact Title Found", "synopsis": "A 2 sentence summary.", "platform": "Primary platform to watch it on", "trailerId": "11-char YouTube ID or null"}`;
+        promptText = `Find streaming information strictly for "${input.value.trim()}". Output valid JSON ONLY: {"title": "Exact Title Found", "synopsis": "A 2 sentence summary.", "platform": "Primary platform to watch it on"}`;
     } else {
         let cat = document.getElementById('q-category')?.value || 'any'; 
         let plat = document.getElementById('q-platform')?.value || 'any'; 
         let mood = document.getElementById('q-mood')?.value || 'any'; 
-        promptText = `Find a perfect title recommendation based on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}. Output valid JSON ONLY: {"title": "Title", "synopsis": "Summary.", "platform": "Platform", "trailerId": "11-char ID or null"}`;
+        promptText = `Find a perfect title recommendation based on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}. Output valid JSON ONLY: {"title": "Title", "synopsis": "Summary.", "platform": "Platform"}`;
     }
 
     const startTime = Date.now();
@@ -214,7 +239,7 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     try {
         matchResult = await fetchGeminiData(promptText);
     } catch (err) {
-        matchResult = { title: isSpecificSearch ? document.getElementById('specific-search-input').value : "The Bear", synopsis: "Stream this popular title now.", platform: "Web", trailerId: "null" };
+        matchResult = { title: isSpecificSearch ? document.getElementById('specific-search-input').value : "The Bear", synopsis: "Stream this popular title now.", platform: "Web" };
     }
 
     let timeSpent = Date.now() - startTime;
@@ -227,31 +252,32 @@ window.triggerMatch = async function(isSpecificSearch = false) {
 };
 
 // ----------------------------------------------------
-// THE RENDER ENGINE (Video & Image Guarantees)
+// THE RENDER ENGINE (Bulletproof Image Swap & YouTube Box)
 // ----------------------------------------------------
 async function renderResult(selected, isSpecificSearch) {
     const loadBox = document.getElementById('loading-box'); const resultBox = document.getElementById('result-box');
     if (loadBox) loadBox.style.display = 'none';
     resultBox.style.display = 'block'; resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
+    // TRIGGER PREMIUM FX
+    window.playPremiumSound();
+    if (typeof confetti !== 'undefined') confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#E5C158', '#FFF', '#8A2BE2', '#E50914'] });
+
     document.getElementById('res-title').innerText = selected.title; 
     document.getElementById('res-synopsis').innerText = selected.synopsis;
     document.getElementById('res-platform-badge').innerText = selected.platform;
 
-    // COVER IMAGE PULL (100% Reliable via Dictionary -> TVMaze -> Fallback)
+    // "NEVER FAIL" COVER PULL
     const posterEl = document.getElementById('res-poster-img'); 
-    const cssFallback = document.getElementById('res-css-poster');
-    
-    posterEl.style.display = 'none'; cssFallback.style.display = 'none';
     const realCover = await getRealCoverImage(selected.title);
+    posterEl.style.display = 'block';
     
-    if (realCover !== 'fallback') {
-        posterEl.src = realCover; 
-        posterEl.style.display = 'block';
-        posterEl.onerror = function() { this.style.display = 'none'; cssFallback.style.display = 'flex'; cssFallback.innerText = selected.title; };
-    } else {
-        cssFallback.style.display = 'flex'; cssFallback.innerText = selected.title;
-    }
+    // In case somehow the browser blocks the valid URL, it falls back to the dynamic generator directly inside the DOM
+    posterEl.onerror = function() { 
+        this.onerror = null; 
+        this.src = `https://placehold.co/600x900/1a0505/E5C158?text=${encodeURIComponent(selected.title.replace(/ /g, '+'))}`; 
+    };
+    posterEl.src = realCover; 
 
     // DIRECT LINK SETUP
     const directBtn = document.getElementById('res-direct-link');
@@ -265,18 +291,14 @@ async function renderResult(selected, isSpecificSearch) {
         directBtn.href = `https://www.google.com/search?q=Watch+${encodeURIComponent(selected.title)}+on+${encodeURIComponent(selected.platform)}`; 
     }
 
-    // VIDEO / TRAILER GUARANTEE
+    // YOUTUBE BOX SETUP (No more broken iframes)
     const trailerContainer = document.getElementById('res-trailer-container');
-    const iframe = document.getElementById('res-trailer');
+    const ytLink = document.getElementById('yt-trailer-link');
     
     if (isSpecificSearch) {
         trailerContainer.style.display = 'none';
     } else {
         trailerContainer.style.display = 'block';
-        if (selected.trailerId && selected.trailerId !== 'null' && selected.trailerId.length === 11) {
-            iframe.src = `https://www.youtube-nocookie.com/embed/${selected.trailerId}?rel=0`;
-        } else {
-            iframe.src = `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(selected.title + " trailer")}`;
-        }
+        ytLink.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(selected.title + " official trailer")}`;
     }
 }
