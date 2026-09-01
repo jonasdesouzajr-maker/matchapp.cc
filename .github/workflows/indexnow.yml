@@ -3,7 +3,7 @@ name: Automated IndexNow SEO Ping
 on:
   schedule:
     - cron: '0 8 * * *' # Runs automatically every day at 8:00 AM UTC
-  workflow_dispatch:     # Allows you to trigger manual test runs from GitHub dashboard
+  workflow_dispatch:     # Allows manual test runs from the GitHub Actions dashboard
 
 jobs:
   submit-indexnow:
@@ -12,9 +12,54 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Submit Sitemap URLs to IndexNow
-        uses: jakob-bagterp/index-now-submit-sitemap-urls-action@v1
-        with:
-          host: matchapp.cc
-          api_key: ${{ secrets.INDEX_NOW_KEY }}
-          sitemap_locations: https://matchapp.cc/sitemap.xml
+      - name: Broadcast URLs to IndexNow (Bing & Yandex)
+        env:
+          INDEX_KEY: ${{ secrets.INDEX_NOW_KEY }}
+        run: |
+          node -e '
+          const https = require("https");
+          
+          const urls = [
+            "https://matchapp.cc/",
+            "https://matchapp.cc/profile/profile.html",
+            "https://matchapp.cc/pricing/pricing.html"
+          ];
+
+          const payload = JSON.stringify({
+            host: "matchapp.cc",
+            key: process.env.INDEX_KEY,
+            keyLocation: "https://matchapp.cc/" + process.env.INDEX_KEY + ".txt",
+            urlList: urls
+          });
+
+          const options = {
+            hostname: "api.indexnow.org",
+            path: "/indexnow",
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Content-Length": Buffer.byteLength(payload)
+            }
+          };
+
+          const req = https.request(options, (res) => {
+            console.log(`IndexNow Response Status: ${res.statusCode}`);
+            res.on("data", (chunk) => {
+              process.stdout.write(chunk);
+            });
+            if (res.statusCode >= 200 && res.statusCode < 300) {
+              console.log("\nSuccessfully indexed by IndexNow network!");
+            } else {
+              console.error("\nIndexNow submission returned non-success status.");
+              process.exit(1);
+            }
+          });
+
+          req.on("error", (e) => {
+            console.error(`IndexNow Request Error: ${e.message}`);
+            process.exit(1);
+          });
+
+          req.write(payload);
+          req.end();
+          '
