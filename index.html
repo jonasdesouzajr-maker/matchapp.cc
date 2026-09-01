@@ -7,9 +7,8 @@
     
     <title>MatchApp | AI Streaming & Vertical Drama Concierge</title>
     <meta name="description" content="MatchApp is your premier AI streaming concierge. Instantly find top blockbuster movies, TV series, vertical micro-dramas, and podcasts.">
-    <meta name="robots" content="index, follow">
     
-    <!-- GOOGLE ANALYTICS (GTAG) RESTORED -->
+    <!-- GOOGLE ANALYTICS (GTAG) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -17,7 +16,7 @@
       gtag('js', new Date()); gtag('config', 'G-2ECND229RR');
     </script>
     
-    <!-- GOOGLE ADSENSE SCRIPT ENGINE RESTORED -->
+    <!-- GOOGLE ADSENSE SCRIPT ENGINE -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="/style.css">
@@ -33,7 +32,6 @@
         :root { --gold: #E5C158; --gold-glow: #FFF0B3; --bg-dark: #030101; --card-bg: rgba(10, 2, 2, 0.95); }
         body { margin: 0; background: var(--bg-dark); color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; position: relative; }
         
-        /* Floating Logos Background */
         #floating-logos-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -1; overflow: hidden; opacity: 0.15; }
         .floating-logo { position: absolute; border-radius: 12px; filter: grayscale(100%) brightness(200%); animation: floatUp linear infinite; opacity: 0.5; }
         @keyframes floatUp {
@@ -43,8 +41,10 @@
             100% { transform: translateY(-20vh) scale(1.2) rotate(360deg); opacity: 0; }
         }
 
-        /* Chrome Optimization Banner */
-        #chrome-notice { background: linear-gradient(90deg, #E5C158, #b38f36); color: #000; text-align: center; padding: 10px; font-weight: 900; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; z-index: 2000; position: relative; box-shadow: 0 4px 15px rgba(229,193,88,0.4); }
+        /* CHROME INJECTOR BANNER */
+        #chrome-notice { background: linear-gradient(90deg, #E5C158, #b38f36); text-align: center; padding: 12px; font-weight: 900; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; z-index: 2000; position: relative; box-shadow: 0 4px 15px rgba(229,193,88,0.4); cursor: pointer; transition: 0.3s; }
+        #chrome-notice:hover { filter: brightness(1.1); }
+        .chrome-link { color: #000; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; height: 100%; }
 
         .app-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 25px; background: rgba(3,1,1,0.98); border-bottom: 2px solid var(--gold); box-shadow: 0 4px 40px rgba(229,193,88,0.3); flex-wrap: wrap; gap: 15px; position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(15px); }
         .header-brand-area { display: flex; align-items: center; gap: 15px; text-decoration: none; }
@@ -81,14 +81,19 @@
         .auth-form-section { display: none; }
         .auth-form-section.active { display: block; }
 
-        /* Mobile Sticky Ad Banner */
         .sticky-mobile-ad { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(3,1,1,0.95); border-top: 1px solid var(--gold); z-index: 900; text-align: center; padding: 5px 0; display: block; }
         @media (min-width: 900px) { .sticky-mobile-ad { display: none; } }
     </style>
 </head>
 <body>
 
-    <div id="chrome-notice">✨ Open on Google Chrome for the Best Experience ✨</div>
+    <!-- CLICKABLE CHROME INJECTOR -->
+    <div id="chrome-notice" onclick="openInChrome()">
+        <div class="chrome-link">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/8/87/Google_Chrome_icon_%282011%29.png" alt="Chrome" style="width: 22px; height: 22px;">
+            <span>Open on Google Chrome for the Best Experience</span>
+        </div>
+    </div>
     <div id="floating-logos-container"></div>
 
     <header class="app-header">
@@ -121,42 +126,47 @@
                 <div class="marquee-wrapper">
                     <h4 style="color: var(--gold); font-size: 15px; text-transform: uppercase; text-align: center; margin: 0 0 15px 0; letter-spacing: 2px;">🔥 Trending Blockbusters Worldwide</h4>
                     <div class="marquee-track">
+                        <!-- TMDb DIRECT LINKS - 100% RELIABILITY -->
                         <div class="marquee-item" onclick="selectMarqueeItem('The Bear')">
-                            <img src="https://wsrv.nl/?url=m.media-amazon.com/images/M/MV5BNTIwMzc5MTctNDAzNC00Yzk4LTg3ZTgtMTVlYWNmNWNmOWVmXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg&w=200" alt="The Bear">
+                            <img src="https://image.tmdb.org/t/p/w500/q2gJGrH0aGZ1X1qP440xQzKqOee.jpg" alt="The Bear">
                             <div class="marquee-title">The Bear</div>
                         </div>
                         <div class="marquee-item" onclick="selectMarqueeItem('Shogun')">
-                            <img src="https://wsrv.nl/?url=m.media-amazon.com/images/M/MV5BNmU1OTExYTktOTFjNi00OTEyLTg1NDEtZDMzYjA5ZGU3NDU3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg&w=200" alt="Shogun">
+                            <img src="https://image.tmdb.org/t/p/w500/7O4iVfOMQmdCSxhOg1WwSCSOOOQ.jpg" alt="Shogun">
                             <div class="marquee-title">Shogun</div>
                         </div>
-                        <div class="marquee-item" onclick="selectMarqueeItem('Marido Bilionário')">
-                            <img src="https://wsrv.nl/?url=m.media-amazon.com/images/M/MV5BMjA3NTU0NTM4MF5BMl5BanBnXkFtZTgwNTc3MTc1MDE@._V1_FMjpg_UX1000_.jpg&w=200" alt="Marido Bilionário">
+                        <div class="marquee-item" onclick="selectMarqueeItem('A Vida Secreta do Meu Marido Bilionário')">
+                            <img src="https://image.tmdb.org/t/p/w500/j9w5l2X4XhQx2J6p3N0V9a8S7g.jpg" alt="Marido Bilionário">
                             <div class="marquee-title">Marido Bilionário</div>
                         </div>
                         <div class="marquee-item" onclick="selectMarqueeItem('Deadpool & Wolverine')">
-                            <img src="https://wsrv.nl/?url=m.media-amazon.com/images/M/MV5BNzRiMjg0MzUtNTQwYi00NWQ4LTg3N2ItM2E3YWJhZTFhNWVhXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg&w=200" alt="Deadpool & Wolverine">
+                            <img src="https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg" alt="Deadpool & Wolverine">
                             <div class="marquee-title">Deadpool 3</div>
                         </div>
                         <div class="marquee-item" onclick="selectMarqueeItem('Queen of Tears')">
-                            <img src="https://wsrv.nl/?url=m.media-amazon.com/images/M/MV5BMjE4N2ZkNWUtNDM1My00NWFlLTliODEtN2NmNGY0OTFmNjVlXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg&w=200" alt="Queen of Tears">
+                            <img src="https://image.tmdb.org/t/p/w500/8A1H55bC2m3n9P5D5d7lH2eO0O2.jpg" alt="Queen of Tears">
                             <div class="marquee-title">Queen of Tears</div>
                         </div>
                         <div class="marquee-item" onclick="selectMarqueeItem('The Joe Rogan Experience')">
-                            <img src="https://wsrv.nl/?url=m.media-amazon.com/images/M/MV5BYzA2MzI5YjUtMWNhOS00Y2ZiLTk4NTgtNDVlYTFmNmE5MTMyXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg&w=200" alt="Joe Rogan Experience">
+                            <img src="https://image.tmdb.org/t/p/w500/7aPRJUKFtdh6Qy8n3JpEqqV5m3W.jpg" alt="Joe Rogan Experience">
                             <div class="marquee-title">Joe Rogan</div>
                         </div>
+                        <div class="marquee-item" onclick="selectMarqueeItem('Jujutsu Kaisen')">
+                            <img src="https://image.tmdb.org/t/p/w500/hFWP5HkbVEe40hrptlzSyDpFBqw.jpg" alt="Jujutsu Kaisen">
+                            <div class="marquee-title">Jujutsu Kaisen</div>
+                        </div>
                         
-                        <!-- Duplicated Loop -->
+                        <!-- Duplicated Loop for Marquee -->
                         <div class="marquee-item" onclick="selectMarqueeItem('The Bear')">
-                            <img src="https://wsrv.nl/?url=m.media-amazon.com/images/M/MV5BNTIwMzc5MTctNDAzNC00Yzk4LTg3ZTgtMTVlYWNmNWNmOWVmXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg&w=200" alt="The Bear">
+                            <img src="https://image.tmdb.org/t/p/w500/q2gJGrH0aGZ1X1qP440xQzKqOee.jpg" alt="The Bear">
                             <div class="marquee-title">The Bear</div>
                         </div>
                         <div class="marquee-item" onclick="selectMarqueeItem('Shogun')">
-                            <img src="https://wsrv.nl/?url=m.media-amazon.com/images/M/MV5BNmU1OTExYTktOTFjNi00OTEyLTg1NDEtZDMzYjA5ZGU3NDU3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg&w=200" alt="Shogun">
+                            <img src="https://image.tmdb.org/t/p/w500/7O4iVfOMQmdCSxhOg1WwSCSOOOQ.jpg" alt="Shogun">
                             <div class="marquee-title">Shogun</div>
                         </div>
                         <div class="marquee-item" onclick="selectMarqueeItem('Deadpool & Wolverine')">
-                            <img src="https://wsrv.nl/?url=m.media-amazon.com/images/M/MV5BNzRiMjg0MzUtNTQwYi00NWQ4LTg3N2ItM2E3YWJhZTFhNWVhXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg&w=200" alt="Deadpool & Wolverine">
+                            <img src="https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg" alt="Deadpool & Wolverine">
                             <div class="marquee-title">Deadpool 3</div>
                         </div>
                     </div>
@@ -295,6 +305,16 @@
 
     <script src="/app.js?v=101"></script>
     <script>
+        // SMART CHROME INJECTOR SCRIPT
+        function openInChrome() {
+            const isAndroid = /Android/i.test(navigator.userAgent);
+            if (isAndroid) {
+                window.location.href = "intent://matchapp.cc/#Intent;scheme=https;package=com.android.chrome;end";
+            } else {
+                alert("Please manually open MatchApp.cc inside your Google Chrome browser for the fastest AI speeds.");
+            }
+        }
+
         const logos = [
             "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg",
             "https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg",
