@@ -6,51 +6,45 @@
     <meta name="theme-color" content="#030101">
     
     <title>MatchApp | My Private Streaming Hub</title>
-    <meta name="description" content="Manage your custom MatchApp streaming settings. Track your Watch Later portfolio across Netflix, Max, ReelShort, Spotify and more.">
-    <meta name="keywords" content="MatchApp profile, matchapp account, micro-dramas tracker, ReelShort watch later, AI streaming portfolio">
     <meta name="robots" content="index, follow">
+
+    <!-- GOOGLE ANALYTICS (GTAG) RESTORED -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date()); gtag('config', 'G-2ECND229RR');
+    </script>
     
-    <meta property="og:title" content="MatchApp | Private Streaming Hub">
-    <meta property="og:description" content="Manage your Watch Later portfolio and custom streaming settings on MatchApp.">
-    <meta property="og:image" content="https://matchapp.cc/logo.jpeg">
-    <meta property="og:url" content="https://matchapp.cc/profile/profile.html">
+    <!-- GOOGLE ADSENSE SCRIPT ENGINE RESTORED -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
     
     <link rel="stylesheet" href="/style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --gold: #E5C158; --gold-glow: #FFF0B3; --bg-dark: #030101; --card-bg: rgba(10, 2, 2, 0.95); }
-        body { margin: 0; background: radial-gradient(circle at top, #1a0505 0%, var(--bg-dark) 100%); color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
-        .app-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 25px; background: rgba(3,1,1,0.98); border-bottom: 2px solid var(--gold); box-shadow: 0 4px 40px rgba(229,193,88,0.3); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(15px); }
+        body { margin: 0; background: var(--bg-dark); color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .app-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 25px; background: rgba(3,1,1,0.98); border-bottom: 2px solid var(--gold); position: sticky; top: 0; z-index: 1000; }
         .main-layout { display: flex; width: 100%; max-width: 1500px; margin: 0 auto; gap: 20px; justify-content: center; padding-top: 30px; min-height: 80vh; }
         .container { flex: 1; max-width: 850px; width: 100%; padding-bottom: 50px; }
 
-        .premium-card { background: var(--card-bg); border: 1px solid var(--gold); border-radius: 20px; padding: 35px; margin-bottom: 30px; box-shadow: 0 15px 50px rgba(0,0,0,0.9), inset 0 0 25px rgba(229,193,88,0.05); }
+        .premium-card { background: var(--card-bg); border: 1px solid var(--gold); border-radius: 20px; padding: 35px; margin-bottom: 30px; }
         .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
         .input-group label { color: #ccc; font-size: 14px; font-weight: bold; margin-bottom: 8px; display: block; text-transform: uppercase; }
-        .input-group input, .input-group select { width: 100%; padding: 18px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: #000; color: #fff; transition: 0.3s; font-size: 16px; }
+        .input-group input, .input-group select { width: 100%; padding: 18px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: #000; color: #fff; font-size: 16px; }
         
         #portfolio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
-        .poster-card { position: relative; width: 100%; height: 230px; border-radius: 12px; overflow: hidden; border: 1px solid var(--gold); box-shadow: 0 5px 20px rgba(0,0,0,0.9); transition: 0.3s; }
-        .poster-card:hover { transform: scale(1.05); border-color: var(--gold-glow); box-shadow: 0 0 30px var(--gold); }
-        .poster-title { position: absolute; bottom: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.95)); color: #fff; font-size: 12px; padding: 10px 4px 4px 4px; text-align: center; font-weight: bold; border-top: 1px solid var(--gold); }
-
-        .seo-footer { background: rgba(3,1,1,0.98); border-top: 3px solid var(--gold); padding: 50px 20px; text-align: center; margin-top: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.9); }
-        .streaming-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 25px; }
-        .streaming-links a { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 14px 28px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 14px; transition: 0.3s; text-transform: uppercase; }
-
-        .age-badge { background: linear-gradient(90deg, #E5C158, #8A2BE2); padding: 10px 20px; border-radius: 20px; font-weight: 900; font-size: 15px; color: #fff; display: inline-block; margin-top: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.8); border: 2px solid #fff; letter-spacing: 1px; }
+        .poster-card { position: relative; width: 100%; height: 230px; border-radius: 12px; overflow: hidden; border: 1px solid var(--gold); }
+        .poster-title { position: absolute; bottom: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.95)); color: #fff; font-size: 12px; padding: 10px 4px 4px 4px; text-align: center; font-weight: bold; }
         
-        .locked-info-card { display: none; background: rgba(229,193,88,0.1); border: 2px solid var(--gold); border-radius: 15px; padding: 25px; margin-top: 20px; text-align: left; }
-        .locked-info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 16px; }
-        .locked-info-label { color: var(--gold); font-weight: bold; text-transform: uppercase; }
-        .locked-info-val { color: #fff; font-weight: 600; text-align: right; }
+        .ad-banner-container { text-align: center; margin-bottom: 30px; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 15px; border: 1px dashed rgba(255,255,255,0.2); min-height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
     <header class="app-header">
-        <a href="/index.html" tabindex="0" style="text-decoration: none; color: var(--gold); font-size: 28px; font-weight: 900; text-shadow: 0 2px 15px rgba(229,193,88,0.6); letter-spacing: 1px;">MatchApp Hub</a>
+        <a href="/index.html" style="text-decoration: none; color: var(--gold); font-size: 28px; font-weight: 900;">MatchApp Hub</a>
         <nav style="display: flex; gap: 12px; align-items: center;">
-            <a href="/index.html" tabindex="0" class="gold-btn" style="padding: 12px 20px; font-size: 14px; text-decoration: none; text-transform: uppercase;">🏠 Home Page</a>
+            <a href="/index.html" class="gold-btn" style="padding: 12px 20px; font-size: 14px; text-decoration: none; text-transform: uppercase;">🏠 Home Page</a>
         </nav>
     </header>
 
@@ -58,99 +52,50 @@
         <section class="container">
             <article class="premium-card">
                 <div style="text-align: center; margin-bottom: 40px;">
-                    <label for="avatar-upload" tabindex="0" onkeydown="if(event.key==='Enter') document.getElementById('avatar-upload').click()" style="cursor: pointer; display: inline-block; position: relative;">
-                        <img id="profile-pic-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23E5C158'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" style="width: 130px; height: 130px; border-radius: 50%; border: 3px solid var(--gold); object-fit: cover; box-shadow: 0 0 30px rgba(229,193,88,0.6); transition: 0.3s;">
+                    <label for="avatar-upload" style="cursor: pointer; display: inline-block; position: relative;">
+                        <img id="profile-pic-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23E5C158'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" style="width: 130px; height: 130px; border-radius: 50%; border: 3px solid var(--gold); object-fit: cover;">
                         <input type="file" id="avatar-upload" accept="image/*" style="display: none;" onchange="handleAvatar(event)">
                         <div id="avatar-change-badge" style="position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%); background: #000; padding: 6px 12px; border-radius: 12px; border: 1px solid var(--gold); font-size: 11px; color: var(--gold); white-space: nowrap; font-weight: bold;">Upload Photo</div>
                     </label>
-                    <br>
-                    <div id="profile-age-display" class="age-badge" style="display: none;">Age: Calculating...</div>
+                </div>
+
+                <!-- PROFILE TOP MONETIZATION BANNER -->
+                <div class="ad-banner-container">
+                    <span style="font-size: 10px; color: #888; display: block; margin-bottom: 5px;">SPONSORED ADVERTISEMENT</span>
+                    <ins class="adsbygoogle" style="display:block; min-height: 90px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                 </div>
                 
-                <div style="background: rgba(0,0,0,0.8); padding: 30px; border-radius: 20px; border: 2px solid rgba(255,82,82,0.4); margin-bottom: 40px; box-shadow: inset 0 0 30px rgba(255,82,82,0.1);">
-                    <h3 style="color: #ff5252; margin: 0 0 15px 0; font-size: 24px; text-transform: uppercase;"><span style="font-size:26px;">🔒</span> Core Identity (AI Match Brain)</h3>
-                    <p id="profile-instructions-text" style="color: #ccc; font-size: 14px; margin-bottom: 25px; line-height: 1.5;">The AI uses this data to perfectly tailor your matches. <strong>These fields permanently lock upon saving.</strong></p>
+                <div style="background: rgba(0,0,0,0.8); padding: 30px; border-radius: 20px; border: 2px solid rgba(255,82,82,0.4); margin-bottom: 40px;">
+                    <h3 style="color: #ff5252; margin: 0 0 15px 0; font-size: 24px; text-transform: uppercase;">🔒 Core Identity (AI Match Brain)</h3>
                     
                     <div id="editable-fields-section">
                         <div class="input-grid">
-                            <div class="input-group"><label>Full Name</label><input type="text" tabindex="0" id="profile-name"></div>
-                            
+                            <div class="input-group"><label>Full Name</label><input type="text" id="profile-name"></div>
+                            <div class="input-group"><label>Country of Residence</label><input type="text" id="profile-country"></div>
+                            <div class="input-group"><label>Birthdate</label><input type="text" id="profile-dob" placeholder="DD/MM/YYYY"></div>
                             <div class="input-group">
-                                <label>Country of Residence</label>
-                                <input list="country-list" tabindex="0" id="profile-country" placeholder="Type to search your country...">
-                                <datalist id="country-list">
-                                    <option value="Argentina"><option value="Australia"><option value="Brazil"><option value="Canada"><option value="France"><option value="Germany"><option value="India"><option value="Italy"><option value="Japan"><option value="Mexico"><option value="Portugal"><option value="Spain"><option value="United Kingdom"><option value="United States">
-                                </datalist>
-                            </div>
-                            
-                            <div class="input-group"><label>Birthdate (Calculates Age)</label><input type="text" tabindex="0" id="profile-dob" placeholder="DD/MM/YYYY" maxlength="10"></div>
-                            
-                            <div class="input-group">
-                                <label>Star Sign (Zodiac)</label>
-                                <select id="profile-starsign" tabindex="0">
-                                    <option value="" disabled selected>Select Sign...</option>
-                                    <option value="Aries">♈ Aries</option>
-                                    <option value="Taurus">♉ Taurus</option>
-                                    <option value="Gemini">♊ Gemini</option>
-                                    <option value="Cancer">♋ Cancer</option>
-                                    <option value="Leo">♌ Leo</option>
-                                    <option value="Virgo">♍ Virgo</option>
-                                    <option value="Libra">♎ Libra</option>
-                                    <option value="Scorpio">♏ Scorpio</option>
-                                    <option value="Sagittarius">♐ Sagittarius</option>
-                                    <option value="Capricorn">♑ Capricorn</option>
-                                    <option value="Aquarius">♒ Aquarius</option>
-                                    <option value="Pisces">♓ Pisces</option>
+                                <label>Star Sign</label>
+                                <select id="profile-starsign">
+                                    <option value="Aries">Aries</option>
+                                    <option value="Taurus">Taurus</option>
                                 </select>
                             </div>
                         </div>
                     </div>
-
-                    <div id="locked-info-card" class="locked-info-card">
-                        <div class="locked-info-row"><span class="locked-info-label">Full Name:</span><span id="lock-val-name" class="locked-info-val"></span></div>
-                        <div class="locked-info-row"><span class="locked-info-label">Country:</span><span id="lock-val-country" class="locked-info-val"></span></div>
-                        <div class="locked-info-row"><span class="locked-info-label">Birthdate:</span><span id="lock-val-dob" class="locked-info-val"></span></div>
-                        <div class="locked-info-row"><span class="locked-info-label">Zodiac Sign:</span><span id="lock-val-sign" class="locked-info-val"></span></div>
-                        <div class="locked-info-row" style="border-bottom:none;"><span class="locked-info-label">Status:</span><span class="locked-info-val" style="color: #25D366;">Verified AI Identity Locked ✅</span></div>
-                    </div>
                 </div>
 
-                <button id="save-profile-btn" tabindex="0" onclick="saveProfileData()" class="gold-btn" style="width: 100%; padding: 22px; font-size: 22px; margin-bottom: 40px; text-transform: uppercase; letter-spacing: 2px; box-shadow: 0 10px 30px rgba(229,193,88,0.5);">💾 Save & Lock Identity</button>
+                <button id="save-profile-btn" onclick="saveProfileData()" class="gold-btn" style="width: 100%; padding: 22px; font-size: 22px; margin-bottom: 40px;">💾 Save & Lock Identity</button>
 
                 <div style="background: rgba(229,193,88,0.05); padding: 30px; border-radius: 20px; border: 2px solid var(--gold); margin-bottom: 40px;">
                     <h3 style="color: var(--gold); margin: 0 0 25px 0; font-size: 26px; text-transform: uppercase; font-weight: 900;">⭐ Watch Later Portfolio</h3>
                     <div id="portfolio-grid"><p style="color: #aaa; font-size: 15px; font-style: italic;">Your portfolio is empty. Go match!</p></div>
                 </div>
-
-                <div style="background: linear-gradient(135deg, rgba(229,193,88,0.15), rgba(0,0,0,0.9)); padding: 40px; border-radius: 20px; border: 2px solid var(--gold); text-align: center; margin-bottom: 20px; box-shadow: 0 0 40px rgba(229,193,88,0.3);">
-                    <h3 style="color: var(--gold-glow); font-size: 28px; margin: 0 0 20px 0; font-weight: 900; text-transform: uppercase;">👑 Upgrade to VIP Status</h3>
-                    <p style="color: #ddd; font-size: 16px; margin-bottom: 25px; line-height: 1.6;">Skip waiting limits. Unlock UNLIMITED AI matches, permanent ad removal, and instant match times.</p>
-                    <a href="/pricing/pricing.html" tabindex="0" class="gold-btn" style="padding: 18px 35px; text-decoration: none; font-size: 18px; display: inline-block; text-transform: uppercase; letter-spacing: 1px;">View Pricing & Upgrades</a>
-                </div>
-
             </article>
         </section>
     </main>
 
-    <footer class="seo-footer">
-        <h4 style="color: var(--gold); font-size: 22px; margin: 0 0 15px 0; text-transform: uppercase; font-weight: 900;">Global Streaming Platforms</h4>
-        <p style="color: #aaa; font-size: 15px; margin-bottom: 30px;">MatchApp securely routes you directly to official streaming platforms worldwide.</p>
-        <div class="streaming-links">
-            <a href="https://globoplay.globo.com" tabindex="0" target="_blank" rel="noopener">🎈 Globoplay</a>
-            <a href="https://www.reelshort.com" tabindex="0" target="_blank" rel="noopener">📱 ReelShort</a>
-            <a href="https://www.dramabox.com" tabindex="0" target="_blank" rel="noopener">📺 DramaBox</a>
-            <a href="https://www.shortmax.com" tabindex="0" target="_blank" rel="noopener">🔥 ShortMax</a>
-            <a href="https://www.spotify.com" tabindex="0" target="_blank" rel="noopener">🎵 Spotify</a>
-            <a href="https://www.netflix.com" tabindex="0" target="_blank" rel="noopener">📺 Netflix</a>
-            <a href="https://www.primevideo.com" tabindex="0" target="_blank" rel="noopener">📦 Prime Video</a>
-            <a href="https://www.max.com" tabindex="0" target="_blank" rel="noopener">🍿 Max</a>
-            <a href="https://www.disneyplus.com" tabindex="0" target="_blank" rel="noopener">✨ Disney+</a>
-            <a href="https://www.hulu.com" tabindex="0" target="_blank" rel="noopener">💚 Hulu</a>
-        </div>
-        <p style="color: #666; font-size: 13px; margin-top: 45px; letter-spacing: 1px;">© 2026 MatchApp.cc - Support: support@matchapp.cc</p>
-    </footer>
-
-    <script src="/app.js?v=99"></script>
-    <script src="/profile.js?v=99"></script>
+    <script src="/app.js?v=101"></script>
+    <script src="/profile.js?v=101"></script>
 </body>
 </html>
