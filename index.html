@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#050202">
+    <meta name="theme-color" content="#030101">
     
     <title>MatchApp | AI Streaming & Vertical Drama Concierge</title>
     <meta name="description" content="MatchApp is your AI streaming concierge. Discover the best movies, TV series, vertical novelas, micro-dramas, and Spotify podcasts tailored to your exact mood.">
@@ -16,23 +16,12 @@
     <meta property="og:url" content="https://matchapp.cc/">
     <meta property="og:type" content="website">
     
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="MatchApp | AI Movie, Podcast & Micro-Drama Finder">
-    <meta name="twitter:description" content="Find the perfect movie or vertical drama using AI.">
-    <meta name="twitter:image" content="https://matchapp.cc/logo.jpeg">
-
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-      gtag('consent', 'default', {
-        'ad_storage': 'denied', 'ad_user_data': 'denied', 'ad_personalization': 'denied',
-        'analytics_storage': 'denied', 'functionality_storage': 'granted', 'personalization_storage': 'granted',
-        'security_storage': 'granted', 'wait_for_update': 500
-      });
-      gtag('set', 'ads_data_redaction', true); gtag('set', 'url_passthrough', true);
+      gtag('js', new Date()); gtag('config', 'G-2ECND229RR');
     </script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
-    <script>gtag('js', new Date()); gtag('config', 'G-2ECND229RR');</script>
     
     <link rel="canonical" href="https://matchapp.cc/">
     <link rel="stylesheet" href="/style.css">
@@ -47,53 +36,50 @@
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
     <style>
-        :root { --gold: #D4AF37; --gold-glow: #F9E596; --bg-dark: #050202; --card-bg: rgba(15, 5, 5, 0.9); }
-        body { margin: 0; background: radial-gradient(circle at top, #1a0a0a 0%, var(--bg-dark) 100%); color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        :root { --gold: #E5C158; --gold-glow: #FFF0B3; --bg-dark: #030101; --card-bg: rgba(10, 2, 2, 0.95); }
+        body { margin: 0; background: radial-gradient(circle at top, #1a0505 0%, var(--bg-dark) 100%); color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
         
-        .app-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 25px; background: rgba(5,2,2,0.95); border-bottom: 2px solid var(--gold); box-shadow: 0 4px 30px rgba(212,175,55,0.3); flex-wrap: wrap; gap: 15px; position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); }
+        .app-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 25px; background: rgba(3,1,1,0.98); border-bottom: 2px solid var(--gold); box-shadow: 0 4px 40px rgba(229,193,88,0.3); flex-wrap: wrap; gap: 15px; position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(15px); }
         .header-brand-area { display: flex; align-items: center; gap: 15px; text-decoration: none; }
-        .brand-logo { width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--gold); box-shadow: 0 0 20px var(--gold); transition: 0.3s; }
-        .brand-logo:hover { transform: scale(1.1); box-shadow: 0 0 30px var(--gold-glow); }
-        .app-title-main { font-size: 26px; font-weight: 900; color: var(--gold); letter-spacing: 1px; text-shadow: 0 2px 10px rgba(212,175,55,0.5); }
+        .brand-logo { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--gold); box-shadow: 0 0 25px var(--gold); transition: 0.3s; }
+        .brand-logo:hover { transform: scale(1.1); box-shadow: 0 0 40px var(--gold-glow); }
+        .app-title-main { font-size: 28px; font-weight: 900; color: var(--gold); letter-spacing: 1px; text-shadow: 0 2px 15px rgba(229,193,88,0.6); }
         
-        .main-layout { display: flex; width: 100%; max-width: 1500px; margin: 0 auto; gap: 20px; align-items: flex-start; justify-content: center; min-height: 80vh; padding-top: 25px; }
+        .main-layout { display: flex; width: 100%; max-width: 1500px; margin: 0 auto; gap: 20px; align-items: flex-start; justify-content: center; min-height: 80vh; padding-top: 30px; }
         .sidebar-ad-left, .sidebar-ad-right { display: none; width: 160px; }
         .container { flex: 1; max-width: 850px; width: 100%; padding-bottom: 50px; }
         @media (min-width: 1100px) { .sidebar-ad-left, .sidebar-ad-right { display: block; } }
 
-        .premium-card { background: var(--card-bg); border: 1px solid var(--gold); border-radius: 20px; padding: 30px; margin-bottom: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(212,175,55,0.05); position: relative; overflow: hidden; }
-        .premium-card::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(212,175,55,0.1), transparent); transform: skewX(-25deg); animation: shine 6s infinite; }
-        @keyframes shine { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
-
-        .how-it-works-glow { background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(10,5,5,0.95)); border: 2px solid var(--gold); border-radius: 20px; padding: 30px; margin: 0 0 30px 0; text-align: center; box-shadow: 0 0 30px rgba(212, 175, 55, 0.3); }
+        .premium-card { background: var(--card-bg); border: 1px solid var(--gold); border-radius: 20px; padding: 35px; margin-bottom: 30px; box-shadow: 0 15px 50px rgba(0,0,0,0.9), inset 0 0 25px rgba(229,193,88,0.05); position: relative; overflow: hidden; }
+        .how-it-works-glow { background: linear-gradient(135deg, rgba(229,193,88,0.15), rgba(5,2,2,0.98)); border: 2px solid var(--gold); border-radius: 20px; padding: 35px; margin: 0 0 30px 0; text-align: center; box-shadow: 0 0 40px rgba(229, 193, 88, 0.3); }
         
-        .marquee-wrapper { width: 100%; overflow: hidden; background: rgba(0,0,0,0.8); border: 1px solid var(--gold); border-radius: 15px; padding: 15px 0; margin-bottom: 30px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.9); }
-        .marquee-track { display: flex; gap: 15px; width: max-content; animation: marqueeScroll 40s linear infinite; }
+        .marquee-wrapper { width: 100%; overflow: hidden; background: rgba(0,0,0,0.9); border: 2px solid var(--gold); border-radius: 15px; padding: 15px 0; margin-bottom: 30px; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,0.9); }
+        .marquee-track { display: flex; gap: 15px; width: max-content; animation: marqueeScroll 35s linear infinite; }
         .marquee-track:hover { animation-play-state: paused; }
-        .marquee-item { position: relative; width: 120px; height: 175px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(212,175,55,0.5); cursor: pointer; transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(0,0,0,0.9); }
-        .marquee-item:hover { transform: scale(1.1); border-color: var(--gold-glow); box-shadow: 0 0 25px var(--gold); z-index: 10; }
+        .marquee-item { position: relative; width: 130px; height: 190px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(229,193,88,0.5); cursor: pointer; transition: all 0.3s ease; box-shadow: 0 5px 20px rgba(0,0,0,0.9); }
+        .marquee-item:hover { transform: scale(1.1); border-color: var(--gold-glow); box-shadow: 0 0 30px var(--gold); z-index: 10; }
         .marquee-item img { width: 100%; height: 100%; object-fit: cover; }
-        .marquee-title { position: absolute; bottom: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.95)); color: #fff; font-size: 11px; padding: 8px 4px 4px 4px; text-align: center; font-weight: bold; border-top: 1px solid var(--gold); }
+        .marquee-title { position: absolute; bottom: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.95)); color: #fff; font-size: 11px; padding: 10px 4px 4px 4px; text-align: center; font-weight: bold; border-top: 1px solid var(--gold); }
         
         @keyframes marqueeScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 15px; border: 2px solid var(--gold); background: #000; box-shadow: 0 10px 30px rgba(212,175,55,0.2); }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 15px; border: 2px solid var(--gold); background: #000; box-shadow: 0 10px 40px rgba(229,193,88,0.3); }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
         
-        .ad-banner-container { text-align: center; margin-bottom: 30px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1); }
+        .ad-banner-container { text-align: center; margin-bottom: 30px; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 15px; border: 1px dashed rgba(255,255,255,0.2); }
 
-        .seo-footer { background: rgba(5,2,2,0.98); border-top: 3px solid var(--gold); padding: 40px 20px; text-align: center; margin-top: auto; box-shadow: 0 -10px 30px rgba(0,0,0,0.8); }
-        .streaming-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 20px; }
-        .streaming-links a { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 14px; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
-        .streaming-links a:hover { border-color: var(--gold); background: rgba(212,175,55,0.15); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(212,175,55,0.3); }
+        .seo-footer { background: rgba(3,1,1,0.98); border-top: 3px solid var(--gold); padding: 50px 20px; text-align: center; margin-top: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.9); }
+        .streaming-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 25px; }
+        .streaming-links a { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 14px 28px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 14px; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
+        .streaming-links a:hover { border-color: var(--gold); background: rgba(229,193,88,0.2); transform: translateY(-4px); box-shadow: 0 8px 20px rgba(229,193,88,0.4); }
 
-        .css-poster-fallback { background: linear-gradient(135deg, #1a0f0f, #3a2200); border-radius: 15px; border: 2px solid var(--gold); box-shadow: inset 0 0 50px rgba(0,0,0,0.9), 0 10px 30px rgba(212,175,55,0.4); display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px; color: var(--gold); font-weight: 900; font-size: 28px; text-shadow: 0 4px 15px rgba(0,0,0,0.9); width: 100%; max-width: 350px; height: 500px; margin: 0 auto; box-sizing: border-box; }
+        .css-poster-fallback { background: linear-gradient(135deg, #1a0505, #4a2b00); border-radius: 15px; border: 3px solid var(--gold); box-shadow: inset 0 0 60px rgba(0,0,0,0.9), 0 15px 40px rgba(229,193,88,0.4); display: flex; align-items: center; justify-content: center; text-align: center; padding: 25px; color: var(--gold); font-weight: 900; font-size: 32px; text-transform: uppercase; line-height: 1.2; text-shadow: 0 5px 20px rgba(0,0,0,0.9); width: 100%; max-width: 380px; height: 550px; margin: 0 auto; box-sizing: border-box; }
         
-        .auth-tabs { display: flex; border-bottom: 1px solid rgba(212,175,55,0.3); margin-bottom: 20px; }
-        .auth-tab { flex: 1; text-align: center; padding: 12px; color: #bbb; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .auth-tab.active { color: var(--gold); border-bottom: 2px solid var(--gold); background: rgba(212,175,55,0.1); }
+        .auth-tabs { display: flex; border-bottom: 2px solid rgba(229,193,88,0.3); margin-bottom: 25px; }
+        .auth-tab { flex: 1; text-align: center; padding: 15px; color: #bbb; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 16px; }
+        .auth-tab.active { color: var(--gold); border-bottom: 3px solid var(--gold); background: rgba(229,193,88,0.1); }
         .auth-form-section { display: none; }
-        .auth-form-section.active { display: block; animation: fadeIn 0.3s ease; }
+        .auth-form-section.active { display: block; animation: fadeIn 0.4s ease; }
     </style>
 </head>
 <body>
@@ -104,12 +90,12 @@
             <div><span class="app-title-main">MatchApp</span></div>
         </a>
         
-        <nav style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
+        <nav style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
             <div id="google_translate_element" style="margin-right: 10px;"></div>
-            <a href="/index.html" class="secondary-btn" tabindex="0" style="padding: 10px 15px; font-size: 13px; text-decoration: none;">🏠 Home</a>
-            <a id="profile-link-tab" href="/profile/profile.html" tabindex="0" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid var(--gold); color: var(--gold-glow); padding: 10px 15px; border-radius: 12px; font-weight: bold; text-decoration: none; font-size: 14px; align-items: center;">👤 Profile Hub</a>
-            <button id="nav-reg-btn" tabindex="0" onclick="openAuthModal()" class="gold-btn" style="padding: 10px 18px; font-size: 13px; text-transform: uppercase;">👤 Sign In / Join</button>
-            <button id="nav-logout-btn" tabindex="0" onclick="doLogout()" style="display: none; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 10px 15px; border-radius: 12px; cursor: pointer; font-size: 12px;">Logout</button>
+            <a href="/index.html" class="secondary-btn" tabindex="0" style="padding: 12px 18px; font-size: 14px; text-decoration: none;">🏠 Home</a>
+            <a id="profile-link-tab" href="/profile/profile.html" tabindex="0" style="display: none; background: rgba(229,193,88,0.2); border: 1px solid var(--gold); color: var(--gold-glow); padding: 12px 18px; border-radius: 12px; font-weight: bold; text-decoration: none; font-size: 14px; align-items: center;">👤 Profile Hub</a>
+            <button id="nav-reg-btn" tabindex="0" onclick="openAuthModal()" class="gold-btn" style="padding: 12px 20px; font-size: 14px; text-transform: uppercase;">👤 Sign In / Join</button>
+            <button id="nav-logout-btn" tabindex="0" onclick="doLogout()" style="display: none; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 12px 18px; border-radius: 12px; cursor: pointer; font-size: 13px;">Logout</button>
         </nav>
     </header>
 
@@ -124,7 +110,7 @@
             <section class="container">
                 
                 <div class="marquee-wrapper fade-in">
-                    <h4 style="color: var(--gold); font-size: 14px; text-transform: uppercase; text-align: center; margin: 0 0 15px 0; letter-spacing: 2px; text-shadow: 0 0 10px rgba(212,175,55,0.5);">🔥 Trending Worldwide Top Matches</h4>
+                    <h4 style="color: var(--gold); font-size: 15px; text-transform: uppercase; text-align: center; margin: 0 0 15px 0; letter-spacing: 2px; text-shadow: 0 0 15px rgba(229,193,88,0.5);">🔥 Trending Blockbusters Worldwide</h4>
                     <div class="marquee-track">
                         <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('The Pitt')"><img src="https://image.tmdb.org/t/p/w500/vQWk5YCZXGZm9iEXQY6L02Cq3B9.jpg" alt="The Pitt"><div class="marquee-title">The Pitt</div></div>
                         <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('A Vida Secreta do Meu Marido Bilionário')"><img src="https://image.tmdb.org/t/p/w500/j9w5l2X4XhQx2J6p3N0V9a8S7g.jpg" alt="Marido Bilionário"><div class="marquee-title">Marido Bilionário (ReelShort)</div></div>
@@ -139,9 +125,9 @@
                 </div>
 
                 <div class="how-it-works-glow fade-in">
-                    <h3 style="color: #fff; font-size: 28px; font-weight: 900; margin: 0 0 15px 0;">🎬 How MatchApp Works</h3>
-                    <p style="color: #ddd; font-size: 16px; margin-bottom: 25px; line-height: 1.6;"><strong>1.</strong> Select your Format, Platform, and Vibe below.<br><strong>2.</strong> Our AI Concierge scans the global catalog.<br><strong>3.</strong> You get a 100% personalized blockbuster match with a trailer and direct streaming link.<br><em>Register for FREE to unlock your personal Portfolio and advanced demographic AI matching!</em></p>
-                    <button onclick="openAuthModal()" tabindex="0" class="gold-btn" style="font-size: 16px; padding: 14px 28px; text-transform: uppercase;">👤 Create Free Account</button>
+                    <h3 style="color: #fff; font-size: 30px; font-weight: 900; margin: 0 0 15px 0;">🎬 How MatchApp Works</h3>
+                    <p style="color: #ddd; font-size: 17px; margin-bottom: 25px; line-height: 1.7;"><strong>1.</strong> Select your Format, Platform, and Vibe below.<br><strong>2.</strong> Our AI Concierge scans the global streaming catalog.<br><strong>3.</strong> You get a 100% personalized blockbuster match with trailers and direct links.<br><br><span style="color: var(--gold-glow); font-weight: bold;">Register for FREE to unlock your personal Portfolio and advanced demographic AI matching!</span></p>
+                    <button onclick="openAuthModal()" tabindex="0" class="gold-btn" style="font-size: 18px; padding: 16px 32px; text-transform: uppercase;">👤 Create Free Account</button>
                 </div>
 
                 <div class="ad-banner-container fade-in">
@@ -151,19 +137,19 @@
                 </div>
 
                 <article id="search-box" class="premium-card fade-in" style="margin-bottom: 30px;">
-                    <h2 style="color: var(--gold); margin: 0 0 15px 0; font-size: 24px; text-align: center; text-transform: uppercase;">Direct Title Search</h2>
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <input type="text" id="specific-search-input" tabindex="0" placeholder="e.g., Fallout, Fated to the Alpha..." style="flex: 1; padding: 16px; border-radius: 10px; border: 1px solid var(--gold); background: rgba(0,0,0,0.6); color: #fff; font-size: 18px;">
-                        <button onclick="triggerMatch(true)" tabindex="0" class="gold-btn" style="padding: 16px 30px; font-size: 18px;">🔍 Search</button>
+                    <h2 style="color: var(--gold); margin: 0 0 20px 0; font-size: 26px; text-align: center; text-transform: uppercase; font-weight: 900;">Direct Title Search</h2>
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <input type="text" id="specific-search-input" tabindex="0" placeholder="e.g., Fallout, Fated to the Alpha..." style="flex: 1; padding: 18px; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.7); color: #fff; font-size: 18px;">
+                        <button onclick="triggerMatch(true)" tabindex="0" class="gold-btn" style="padding: 18px 35px; font-size: 18px;">🔍 Search</button>
                     </div>
                 </article>
 
                 <article id="questionnaire-box" class="premium-card fade-in">
-                    <h2 style="margin: 0 0 20px 0; font-size: 30px; color: var(--gold); text-align: center; font-weight: 900; text-transform: uppercase; text-shadow: 0 2px 10px rgba(212,175,55,0.4);">Curate Your Perfect Match</h2>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <h2 style="margin: 0 0 25px 0; font-size: 34px; color: var(--gold); text-align: center; font-weight: 900; text-transform: uppercase; text-shadow: 0 4px 15px rgba(229,193,88,0.5);">Curate Your Perfect Match</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
                         <div>
-                            <label style="color:#ccc; font-size:13px; font-weight:bold; margin-bottom:5px; display:block; text-transform:uppercase;">Category / Format</label>
-                            <select id="q-category" tabindex="0" style="width:100%; padding:15px; border-radius:10px; border: 1px solid rgba(255,255,255,0.2); background: #000; color:#fff; font-size:16px;">
+                            <label style="color:#ccc; font-size:14px; font-weight:bold; margin-bottom:8px; display:block; text-transform:uppercase;">Category / Format</label>
+                            <select id="q-category" tabindex="0" style="width:100%; padding:18px; border-radius:12px; border: 1px solid rgba(255,255,255,0.2); background: #000; color:#fff; font-size:16px;">
                                 <option value="any">Surprise Me (All Formats)</option>
                                 <option value="movie">Blockbuster Movies</option>
                                 <option value="series">TV Series & Shows</option>
@@ -174,8 +160,8 @@
                             </select>
                         </div>
                         <div>
-                            <label style="color:#ccc; font-size:13px; font-weight:bold; margin-bottom:5px; display:block; text-transform:uppercase;">Streaming Platform</label>
-                            <select id="q-platform" tabindex="0" style="width:100%; padding:15px; border-radius:10px; border: 1px solid rgba(255,255,255,0.2); background: #000; color:#fff; font-size:16px;">
+                            <label style="color:#ccc; font-size:14px; font-weight:bold; margin-bottom:8px; display:block; text-transform:uppercase;">Streaming Platform</label>
+                            <select id="q-platform" tabindex="0" style="width:100%; padding:18px; border-radius:12px; border: 1px solid rgba(255,255,255,0.2); background: #000; color:#fff; font-size:16px;">
                                 <option value="any">Any Platform Worldwide</option>
                                 <option value="Globoplay">Globoplay (Incl. Vertical Novelas)</option>
                                 <option value="ReelShort">ReelShort</option>
@@ -189,8 +175,8 @@
                             </select>
                         </div>
                         <div style="grid-column: 1 / -1;">
-                            <label style="color:#ccc; font-size:13px; font-weight:bold; margin-bottom:5px; display:block; text-transform:uppercase;">Desired Vibe & Mood</label>
-                            <select id="q-mood" tabindex="0" style="width:100%; padding:15px; border-radius:10px; border: 1px solid rgba(255,255,255,0.2); background: #000; color:#fff; font-size:16px;">
+                            <label style="color:#ccc; font-size:14px; font-weight:bold; margin-bottom:8px; display:block; text-transform:uppercase;">Desired Vibe & Mood</label>
+                            <select id="q-mood" tabindex="0" style="width:100%; padding:18px; border-radius:12px; border: 1px solid rgba(255,255,255,0.2); background: #000; color:#fff; font-size:16px;">
                                 <option value="any">Any Mood (AI Choice)</option>
                                 <option value="intense">Intense, Thrilling, Action & Mafia</option>
                                 <option value="funny">Humorous, Light & Feel-Good</option>
@@ -199,7 +185,7 @@
                             </select>
                         </div>
                     </div>
-                    <button onclick="triggerMatch(false)" tabindex="0" class="gold-btn" style="margin-top: 25px; width: 100%; font-size: 20px; padding: 20px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 10px 20px rgba(212,175,55,0.4);">⚡ Consult AI Concierge</button>
+                    <button onclick="triggerMatch(false)" tabindex="0" class="gold-btn" style="margin-top: 30px; width: 100%; font-size: 22px; padding: 22px; text-transform: uppercase; letter-spacing: 2px; box-shadow: 0 10px 30px rgba(229,193,88,0.4);">⚡ Consult AI Concierge</button>
                 </article>
 
                 <div class="ad-banner-container fade-in" style="margin-top: 30px;">
@@ -208,45 +194,43 @@
                     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                 </div>
 
-                <article id="loading-box" class="premium-card fade-in" style="display: none; padding: 60px 20px; text-align: center; border-color: var(--gold-glow); box-shadow: 0 0 50px rgba(212,175,55,0.2);">
-                    <div style="font-size: 70px; margin-bottom: 20px; animation: pulse 1s infinite alternate;">🕵️‍♂️</div>
-                    <h3 style="color: var(--gold); margin: 0; text-transform: uppercase; font-size: 24px; letter-spacing: 2px;">✨ Scanning Global Catalog ✨</h3>
-                    <p style="color: #aaa; font-size: 14px; margin-top: 10px;">Cross-referencing your vibe with millions of titles...</p>
-                    <div style="width: 100%; height: 35px; background: rgba(0,0,0,0.8); border: 2px solid var(--gold); border-radius: 20px; margin: 30px 0; overflow: hidden; box-shadow: inset 0 0 10px rgba(0,0,0,0.9);">
+                <article id="loading-box" class="premium-card fade-in" style="display: none; padding: 70px 20px; text-align: center; border-color: var(--gold-glow); box-shadow: 0 0 60px rgba(229,193,88,0.2);">
+                    <div style="font-size: 80px; margin-bottom: 25px; animation: pulse 1s infinite alternate;">🕵️‍♂️</div>
+                    <h3 style="color: var(--gold); margin: 0; text-transform: uppercase; font-size: 28px; letter-spacing: 2px;">✨ Scanning Global Catalog ✨</h3>
+                    <p style="color: #aaa; font-size: 16px; margin-top: 15px;">Cross-referencing your exact vibe with millions of titles...</p>
+                    <div style="width: 100%; height: 40px; background: rgba(0,0,0,0.8); border: 2px solid var(--gold); border-radius: 20px; margin: 35px 0; overflow: hidden; box-shadow: inset 0 0 15px rgba(0,0,0,0.9);">
                         <div id="ai-progress-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--gold), #fff, var(--gold)); transition: width 0.1s linear; background-size: 200% 100%; animation: shimmer 2s infinite linear;"></div>
                     </div>
-                    <p style="color: #666; font-size: 12px; margin-top: 20px;"><em>Tip: Registered users get personalized matches based on age and sign.</em></p>
+                    <p style="color: #777; font-size: 14px; margin-top: 25px;"><em>Tip: Registered users get personalized matches based on age and sign.</em></p>
                 </article>
 
                 <article id="result-box" class="premium-card fade-in" style="display: none; text-align: left;">
                     
-                    <div style="text-align: center; margin-bottom: 30px;">
-                        <!-- The actual image tag -->
-                        <img id="res-poster-img" src="" alt="Poster" style="width: 100%; max-width: 350px; height: 500px; object-fit: cover; border-radius: 15px; border: 3px solid var(--gold); box-shadow: 0 15px 40px rgba(212,175,55,0.4); display: none;">
-                        <!-- The unbreakable CSS fallback -->
+                    <div style="text-align: center; margin-bottom: 35px;">
+                        <img id="res-poster-img" src="" alt="Poster" style="width: 100%; max-width: 380px; height: 550px; object-fit: cover; border-radius: 15px; border: 3px solid var(--gold); box-shadow: 0 15px 50px rgba(229,193,88,0.5); display: none;">
                         <div id="res-css-poster" class="css-poster-fallback" style="display: none;"></div>
                     </div>
                     
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center;">
-                        <span id="res-platform-badge" style="background: var(--gold); color:#000; font-weight:900; padding: 6px 15px; border-radius:8px; font-size:15px; text-transform: uppercase;">Platform</span>
-                        <span id="res-imdb-badge" style="background: #f5c518; color: #000; padding: 6px 15px; border-radius: 8px; font-size: 15px; font-weight: 900; box-shadow: 0 4px 10px rgba(245, 197, 24, 0.4);">IMDb: N/A</span>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 20px; align-items: center;">
+                        <span id="res-platform-badge" style="background: var(--gold); color:#000; font-weight:900; padding: 8px 18px; border-radius:10px; font-size:16px; text-transform: uppercase;">Platform</span>
+                        <span id="res-imdb-badge" style="background: #f5c518; color: #000; padding: 8px 18px; border-radius: 10px; font-size: 16px; font-weight: 900; box-shadow: 0 5px 15px rgba(245, 197, 24, 0.4);">IMDb: N/A</span>
                     </div>
-                    <h2 id="res-title" style="color: #fff; font-size: 38px; margin: 0 0 15px 0; font-weight: 900; text-transform: uppercase; text-shadow: 0 4px 15px rgba(0,0,0,0.9); line-height: 1.1;">Title</h2>
-                    <p id="res-synopsis" style="color: #ddd; font-size: 16px; line-height: 1.7; margin: 0 0 25px 0;"></p>
+                    <h2 id="res-title" style="color: #fff; font-size: 42px; margin: 0 0 15px 0; font-weight: 900; text-transform: uppercase; text-shadow: 0 5px 20px rgba(0,0,0,0.9); line-height: 1.1;">Title</h2>
+                    <p id="res-synopsis" style="color: #ddd; font-size: 18px; line-height: 1.7; margin: 0 0 30px 0;"></p>
                     
-                    <div id="res-trailer-container" style="margin-bottom: 30px; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 15px; border: 1px solid rgba(212,175,55,0.3);">
-                        <h4 style="color: var(--gold); font-size: 14px; text-transform: uppercase; margin: 0 0 15px 0; letter-spacing: 1px;">🎬 Official Video Preview</h4>
-                        <div class="video-container" style="display: none;">
+                    <div id="res-trailer-container" style="margin-bottom: 35px; background: rgba(0,0,0,0.6); padding: 20px; border-radius: 15px; border: 1px solid rgba(229,193,88,0.4);">
+                        <h4 style="color: var(--gold); font-size: 15px; text-transform: uppercase; margin: 0 0 15px 0; letter-spacing: 1px;">🎬 Official Video Preview</h4>
+                        <div class="video-container" style="display: none;" id="res-iframe-wrapper">
                             <iframe id="res-trailer" src="" allowfullscreen loading="lazy"></iframe>
                         </div>
-                        <a id="res-trailer-fallback" tabindex="0" href="#" target="_blank" rel="noopener" class="secondary-btn" style="margin-top: 15px; width: 100%; text-align: center; display: inline-block; font-size: 14px; border-color: rgba(255,255,255,0.3); color: #fff; padding: 12px; border-radius: 10px;">▶️ Watch Official Trailer on YouTube</a>
+                        <a id="res-trailer-fallback" tabindex="0" href="#" target="_blank" rel="noopener" class="secondary-btn" style="margin-top: 15px; width: 100%; text-align: center; display: inline-block; font-size: 16px; border-color: rgba(255,255,255,0.4); color: #fff; padding: 14px; border-radius: 12px; background: rgba(255,255,255,0.05);">▶️ Search Official Trailer on YouTube</a>
                     </div>
                     
-                    <a id="res-direct-link" tabindex="0" href="#" target="_blank" class="gold-btn" style="margin-bottom: 30px; text-decoration: none; text-align: center; display: block; font-size: 22px; padding: 20px; text-transform: uppercase; box-shadow: 0 10px 25px rgba(212,175,55,0.5);">▶ Stream Now</a>
+                    <a id="res-direct-link" tabindex="0" href="#" target="_blank" class="gold-btn" style="margin-bottom: 35px; text-decoration: none; text-align: center; display: block; font-size: 24px; padding: 22px; text-transform: uppercase; box-shadow: 0 12px 30px rgba(229,193,88,0.5);">▶ Stream Now</a>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
-                        <button onclick="recordAction('save')" tabindex="0" class="secondary-btn" style="border-color: var(--gold); color: var(--gold-glow); font-size: 16px; padding: 15px;">⭐ Watch Later</button>
-                        <button onclick="recordAction('seen')" tabindex="0" class="secondary-btn" style="border-color: #25D366; color: #25D366; font-size: 16px; padding: 15px;">✔️ Seen It</button>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                        <button onclick="recordAction('save')" tabindex="0" class="secondary-btn" style="border-color: var(--gold); color: var(--gold-glow); font-size: 18px; padding: 18px;">⭐ Watch Later</button>
+                        <button onclick="recordAction('seen')" tabindex="0" class="secondary-btn" style="border-color: #25D366; color: #25D366; font-size: 18px; padding: 18px;">✔️ Seen It</button>
                     </div>
                 </article>
 
@@ -265,40 +249,40 @@
         </div>
     </main>
 
-    <div id="main-auth-modal" style="display:none; position:fixed; top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95); z-index:9999; justify-content:center; align-items:center; backdrop-filter: blur(10px);">
-        <div class="premium-card" style="width: 90%; max-width: 450px; position:relative; box-shadow: 0 0 50px rgba(212,175,55,0.4);">
-            <span onclick="closeAuthModal()" tabindex="0" onkeydown="if(event.key==='Enter') closeAuthModal()" style="position:absolute; top:15px; right:20px; font-size:32px; cursor:pointer; color:#fff; transition: 0.3s;">×</span>
+    <div id="main-auth-modal" style="display:none; position:fixed; top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95); z-index:9999; justify-content:center; align-items:center; backdrop-filter: blur(15px);">
+        <div class="premium-card" style="width: 90%; max-width: 450px; position:relative; box-shadow: 0 0 60px rgba(229,193,88,0.5);">
+            <span onclick="closeAuthModal()" tabindex="0" onkeydown="if(event.key==='Enter') closeAuthModal()" style="position:absolute; top:15px; right:20px; font-size:36px; cursor:pointer; color:#fff; transition: 0.3s;">×</span>
             
-            <h3 style="text-align: center; color: var(--gold); font-size: 24px; margin-top: 0; text-transform: uppercase;">Unlock Full Concierge</h3>
+            <h3 style="text-align: center; color: var(--gold); font-size: 26px; margin-top: 0; text-transform: uppercase;">Unlock Full Concierge</h3>
             
-            <div class="auth-tabs" style="margin-top: 20px;">
+            <div class="auth-tabs" style="margin-top: 25px;">
                 <div id="tab-login" class="auth-tab active" tabindex="0" onclick="switchAuthTab('login')">Log In</div>
                 <div id="tab-signup" class="auth-tab" tabindex="0" onclick="switchAuthTab('signup')">Sign Up (Free)</div>
             </div>
 
             <div id="form-login" class="auth-form-section active">
-                <button onclick="signInWithGoogle()" tabindex="0" class="gold-btn" style="width: 100%; padding: 14px; margin-bottom: 15px; background: #fff; color: #000; font-size: 16px;">🌐 Continue with Google</button>
-                <div style="text-align: center; color: #777; font-size: 12px; margin-bottom: 15px;">OR EMAIL</div>
-                <input type="email" id="login-email" tabindex="0" placeholder="Email Address" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 10px; border: 1px solid var(--gold); background: #000; color: #fff;">
-                <input type="password" id="login-password" tabindex="0" placeholder="Password" style="width: 100%; padding: 14px; margin-bottom: 20px; border-radius: 10px; border: 1px solid var(--gold); background: #000; color: #fff;">
-                <button onclick="handleEmailLogin()" tabindex="0" class="gold-btn" style="width: 100%; padding: 16px; font-size: 18px;">Log In</button>
+                <button onclick="signInWithGoogle()" tabindex="0" class="gold-btn" style="width: 100%; padding: 16px; margin-bottom: 20px; background: #fff; color: #000; font-size: 16px;">🌐 Continue with Google</button>
+                <div style="text-align: center; color: #777; font-size: 13px; margin-bottom: 20px;">OR EMAIL</div>
+                <input type="email" id="login-email" tabindex="0" placeholder="Email Address" style="width: 100%; padding: 16px; margin-bottom: 15px; border-radius: 12px; border: 1px solid var(--gold); background: #000; color: #fff;">
+                <input type="password" id="login-password" tabindex="0" placeholder="Password" style="width: 100%; padding: 16px; margin-bottom: 25px; border-radius: 12px; border: 1px solid var(--gold); background: #000; color: #fff;">
+                <button onclick="handleEmailLogin()" tabindex="0" class="gold-btn" style="width: 100%; padding: 18px; font-size: 20px;">Log In</button>
             </div>
 
             <div id="form-signup" class="auth-form-section">
-                <button onclick="signInWithGoogle()" tabindex="0" class="gold-btn" style="width: 100%; padding: 14px; margin-bottom: 15px; background: #fff; color: #000; font-size: 16px;">🌐 Sign Up with Google</button>
-                <div style="text-align: center; color: #777; font-size: 12px; margin-bottom: 15px;">OR CREATE ACCOUNT WITH EMAIL</div>
-                <input type="email" id="reg-email" tabindex="0" placeholder="Email Address" style="width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 10px; border: 1px solid var(--gold); background: #000; color: #fff;">
-                <input type="password" id="reg-password" tabindex="0" placeholder="Create Password (Min 6 chars)" style="width: 100%; padding: 14px; margin-bottom: 20px; border-radius: 10px; border: 1px solid var(--gold); background: #000; color: #fff;">
-                <button onclick="handleEmailSignup()" tabindex="0" class="gold-btn" style="width: 100%; padding: 16px; font-size: 18px;">Create Free Account</button>
+                <button onclick="signInWithGoogle()" tabindex="0" class="gold-btn" style="width: 100%; padding: 16px; margin-bottom: 20px; background: #fff; color: #000; font-size: 16px;">🌐 Sign Up with Google</button>
+                <div style="text-align: center; color: #777; font-size: 13px; margin-bottom: 20px;">OR CREATE ACCOUNT WITH EMAIL</div>
+                <input type="email" id="reg-email" tabindex="0" placeholder="Email Address" style="width: 100%; padding: 16px; margin-bottom: 15px; border-radius: 12px; border: 1px solid var(--gold); background: #000; color: #fff;">
+                <input type="password" id="reg-password" tabindex="0" placeholder="Create Password (Min 6 chars)" style="width: 100%; padding: 16px; margin-bottom: 25px; border-radius: 12px; border: 1px solid var(--gold); background: #000; color: #fff;">
+                <button onclick="handleEmailSignup()" tabindex="0" class="gold-btn" style="width: 100%; padding: 18px; font-size: 20px;">Create Free Account</button>
             </div>
 
-            <p id="auth-message" style="font-size: 14px; margin-top: 20px; display: none; font-weight: bold; text-align: center; padding: 10px; border-radius: 8px;"></p>
+            <p id="auth-message" style="font-size: 15px; margin-top: 25px; display: none; font-weight: bold; text-align: center; padding: 12px; border-radius: 10px;"></p>
         </div>
     </div>
 
     <footer class="seo-footer">
-        <h4 style="color: var(--gold); font-size: 20px; margin: 0 0 15px 0; text-transform: uppercase; font-weight: 900;">Global Streaming Platforms</h4>
-        <p style="color: #aaa; font-size: 14px; margin-bottom: 25px;">MatchApp securely routes you directly to official streaming platforms worldwide.</p>
+        <h4 style="color: var(--gold); font-size: 22px; margin: 0 0 15px 0; text-transform: uppercase; font-weight: 900;">Global Streaming Platforms</h4>
+        <p style="color: #aaa; font-size: 15px; margin-bottom: 30px;">MatchApp securely routes you directly to official streaming platforms worldwide.</p>
         <div class="streaming-links">
             <a href="https://globoplay.globo.com" tabindex="0" target="_blank" rel="noopener">🎈 Globoplay</a>
             <a href="https://www.reelshort.com" tabindex="0" target="_blank" rel="noopener">📱 ReelShort</a>
@@ -311,9 +295,9 @@
             <a href="https://www.disneyplus.com" tabindex="0" target="_blank" rel="noopener">✨ Disney+</a>
             <a href="https://www.hulu.com" tabindex="0" target="_blank" rel="noopener">💚 Hulu</a>
         </div>
-        <p style="color: #666; font-size: 12px; margin-top: 40px; letter-spacing: 1px;">© 2026 MatchApp.cc - Support: support@matchapp.cc</p>
+        <p style="color: #666; font-size: 13px; margin-top: 45px; letter-spacing: 1px;">© 2026 MatchApp.cc - Support: support@matchapp.cc</p>
     </footer>
 
-    <script src="/app.js?v=95"></script>
+    <script src="/app.js?v=96"></script>
 </body>
 </html>
