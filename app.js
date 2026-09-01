@@ -1,4 +1,4 @@
-console.log("Mastercode 97.0: Smart Loading Meter & Mega Fallback Catalog Active");
+console.log("Mastercode 98.0: Instant Scroll & Header Avatar Sync Active");
 
 const SUPABASE_URL = 'https://zkymvqrmbabngsqblyye.supabase.co'; 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpreW12cXJtYmFibmdzcWJseXllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY4MDUyNDIsImV4cCI6MjEwMjM4MTI0Mn0._yEVFMfwVU6GBqQ8m3ljfOgA0HSLEDiKMOfYae6ZD8Q';
@@ -19,31 +19,21 @@ let userRatings = JSON.parse(localStorage.getItem('match_userRatings') || '{}');
 let isAdFree = localStorage.getItem('match_adFree') === 'true'; 
 let isVIP = localStorage.getItem('match_isVIP') === 'true';
 
-// 🔥 MEGA FALLBACK CATALOG: 25+ Guaranteed Blockbusters (Zero Errors Ever)
 const FALLBACK_CATALOG = [
     { title: "Shogun", synopsis: "When a mysterious European ship is found marooned in a nearby fishing village, Lord Yoshii Toranaga discovers secrets that could tip the scales of power.", platform: "Disney+", imdb: "8.7", trailerId: "yAN5uspO_hk", format: "series", mood: "intense" },
     { title: "The Bear", synopsis: "A young, brilliant chef from the fine dining world returns to Chicago to run his family's sandwich shop.", platform: "Hulu", imdb: "8.6", trailerId: "y-caqB943yU", format: "series", mood: "intense" },
     { title: "House of the Dragon", synopsis: "An internal succession war within House Targaryen at the height of its power.", platform: "Max", imdb: "8.4", trailerId: "DotnJ7tTA34", format: "series", mood: "intense" },
     { title: "Squid Game", synopsis: "Hundreds of cash-strapped players accept a strange invitation to compete in children's games with deadly stakes.", platform: "Netflix", imdb: "8.0", trailerId: "oqxAJKy0ii4", format: "series", mood: "mindbending" },
-    { title: "Stranger Things", synopsis: "When a young boy vanishes, a small town uncovers a mystery involving secret experiments and terrifying supernatural forces.", platform: "Netflix", imdb: "8.7", trailerId: "b9EkMc79ZSU", format: "series", mood: "mindbending" },
     { title: "The Boys", synopsis: "A group of vigilantes set out to take down corrupt superheroes who abuse their superpowers.", platform: "Prime Video", imdb: "8.7", trailerId: "M1bhOaLV4FU", format: "series", mood: "funny" },
     { title: "Deadpool & Wolverine", synopsis: "A listless Wade Wilson toils away in civilian life until his home world is threatened, forcing him to team up with Wolverine.", platform: "Disney+", imdb: "8.1", trailerId: "73_1biulkYk", format: "movie", mood: "funny" },
     { title: "Dune: Part Two", synopsis: "Paul Atreides unites with Chani and the Fremen while on a warpath of revenge against the conspirators who destroyed his family.", platform: "Max", imdb: "8.6", trailerId: "Way9Dexny3w", format: "movie", mood: "mindbending" },
-    { title: "Oppenheimer", synopsis: "The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb.", platform: "Peacock", imdb: "8.4", trailerId: "uYPbbksJxIg", format: "movie", mood: "intense" },
-    { title: "Barbie", synopsis: "Barbie suffers a crisis that leads her to question her world and her existence.", platform: "Max", imdb: "6.9", trailerId: "pBk4NYhWNMM", format: "movie", mood: "funny" },
     { title: "A Vida Secreta do Meu Marido Bilionário", synopsis: "A heart-pounding vertical drama where a hidden identity shakes the foundation of a marriage.", platform: "ReelShort", imdb: "7.9", trailerId: "null", format: "microdrama", mood: "romantic" },
     { title: "Fated to the Alpha", synopsis: "A gripping tale of werewolf packs, soulmates, and a forbidden love.", platform: "DramaBox", imdb: "8.0", trailerId: "null", format: "microdrama", mood: "romantic" },
     { title: "Nas Profundezas do Amor", synopsis: "A captivating novela about forbidden passions and deep secrets in high society.", platform: "Globoplay", imdb: "8.1", trailerId: "null", format: "microdrama", mood: "romantic" },
     { title: "The Joe Rogan Experience", synopsis: "Long-form conversations with comedians, scientists, athletes, and artists.", platform: "Spotify", imdb: "8.8", trailerId: "null", format: "podcast", mood: "funny" },
     { title: "Huberman Lab", synopsis: "Neuroscience and science-based tools for everyday life.", platform: "Spotify", imdb: "9.0", trailerId: "null", format: "podcast", mood: "mindbending" },
-    { title: "Anything Goes with Emma Chamberlain", synopsis: "Thoughts, conversations, and advice from Emma Chamberlain.", platform: "Spotify", imdb: "8.2", trailerId: "null", format: "podcast", mood: "funny" },
     { title: "Jujutsu Kaisen", synopsis: "A boy swallows a cursed talisman and becomes cursed himself to protect his friends.", platform: "Crunchyroll", imdb: "8.5", trailerId: "pkKQAjeBscE", format: "anime", mood: "intense" },
-    { title: "Demon Slayer", synopsis: "A family is attacked by demons and only two members survive.", platform: "Netflix", imdb: "8.6", trailerId: "VQGCKyvzIG4", format: "anime", mood: "intense" },
-    { title: "Attack on Titan", synopsis: "Humanity lives inside cities surrounded by enormous walls that protect them from gigantic man-eating humanoids.", platform: "Crunchyroll", imdb: "9.1", trailerId: "MGRm4IzK1SQ", format: "anime", mood: "mindbending" },
-    { title: "Queen of Tears", synopsis: "The queen of department stores and her small-town husband weather a marital crisis.", platform: "Netflix", imdb: "8.3", trailerId: "vB43D5-3VfA", format: "dorama", mood: "romantic" },
-    { title: "Crash Landing on You", synopsis: "A South Korean heiress paraglides into North Korea and into the life of an army officer.", platform: "Netflix", imdb: "8.7", trailerId: "GVQGWgeVc4k", format: "dorama", mood: "romantic" },
-    { title: "The Pitt", synopsis: "A gripping medical drama following frontline workers navigating daily chaos in a modern hospital.", platform: "Max", imdb: "8.5", trailerId: "null", format: "series", mood: "intense" },
-    { title: "Anyone But You", synopsis: "After a first date, Bea and Ben's fiery attraction turns ice cold until they reunite in Australia.", platform: "Netflix", imdb: "6.2", trailerId: "V5eE1zO1Qc0", format: "movie", mood: "funny" }
+    { title: "Queen of Tears", synopsis: "The queen of department stores and her small-town husband weather a marital crisis.", platform: "Netflix", imdb: "8.3", trailerId: "vB43D5-3VfA", format: "dorama", mood: "romantic" }
 ];
 
 function getFallbackMatch(format, platform, mood) {
@@ -55,7 +45,6 @@ function getFallbackMatch(format, platform, mood) {
     return { title: pick.title, synopsis: pick.synopsis, platform: pick.platform, imdb: pick.imdb, trailerId: pick.trailerId, posterPath: "/fallback" };
 }
 
-// 🔥 3-TIER BULLETPROOF COVER FETCHER (Bypasses CORS & Adblockers)
 async function getRealCoverImage(title, aiFallbackPath) {
     try {
         const tvRes = await fetch(`https://api.tvmaze.com/singlesearch/shows?q=${encodeURIComponent(title)}`);
@@ -118,27 +107,67 @@ window.handleEmailLogin = async function() {
 
 window.doLogout = async function() { if (supabaseClient) { await supabaseClient.auth.signOut(); } localStorage.clear(); window.location.href = '/index.html'; };
 
+function syncHeaderUserUI(user, profile) {
+    const regBtn = document.getElementById('nav-reg-btn'); 
+    const profTab = document.getElementById('profile-link-tab'); 
+    const logoutBtn = document.getElementById('nav-logout-btn');
+    const avatarImg = document.getElementById('nav-avatar-img');
+    const profileText = document.getElementById('nav-profile-text');
+
+    if (profTab) {
+        profTab.style.display = 'inline-flex';
+        let avatarSrc = localStorage.getItem('match_custom_avatar') || profile?.avatar_url || user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
+        
+        if (avatarSrc && avatarImg) {
+            avatarImg.src = avatarSrc;
+            avatarImg.style.display = 'inline-block';
+        }
+        
+        if (profileText) {
+            let badge = (isVIP || isAdFree) ? `💎` : `✅`;
+            profileText.innerHTML = `Profile ${badge}`;
+        }
+    }
+    if (regBtn) regBtn.style.display = 'none'; 
+    if (logoutBtn) logoutBtn.style.display = 'inline-block';
+}
+
 if (supabaseClient) {
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
         if (session && session.user) {
             isUserLoggedIn = true;
             const user = session.user;
+
+            if (user.user_metadata) {
+                if (user.user_metadata.full_name && !localStorage.getItem('match_user_name')) {
+                    localStorage.setItem('match_user_name', user.user_metadata.full_name);
+                }
+                if (user.user_metadata.avatar_url && !localStorage.getItem('match_custom_avatar')) {
+                    localStorage.setItem('match_custom_avatar', user.user_metadata.avatar_url);
+                }
+            }
+
             const { data: profile } = await supabaseClient.from('profiles').select('is_vip, is_ad_free, avatar_url').eq('id', user.id).single();
             if(profile) {
                 if(profile.is_vip) { isVIP = true; localStorage.setItem('match_isVIP', 'true'); }
                 if(profile.is_ad_free) { isAdFree = true; localStorage.setItem('match_adFree', 'true'); }
             }
-            const regBtn = document.getElementById('nav-reg-btn'); const profTab = document.getElementById('profile-link-tab'); const logoutBtn = document.getElementById('nav-logout-btn');
-            
-            if (profTab) {
-                profTab.style.display = 'inline-flex';
-                let avatarSrc = localStorage.getItem('match_custom_avatar') || profile?.avatar_url || user.user_metadata?.avatar_url || `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%23FFF'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>`;
-                let badge = (isVIP || isAdFree) ? `<span style="font-size: 14px; margin-left: 5px;">💎</span>` : `<span style="font-size: 14px; margin-left: 5px;">✅</span>`;
-                profTab.innerHTML = `<img src="${avatarSrc}" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--gold); object-fit: cover; margin-right: 8px;"> Profile ${badge}`;
+            syncHeaderUserUI(user, profile);
+        } else { 
+            isUserLoggedIn = false; 
+            const savedAvatar = localStorage.getItem('match_custom_avatar');
+            const savedName = localStorage.getItem('match_user_name');
+            if (savedName || savedAvatar) {
+                syncHeaderUserUI(null, { avatar_url: savedAvatar });
             }
-            if (regBtn) regBtn.style.display = 'none'; if (logoutBtn) logoutBtn.style.display = 'inline-block';
-        } else { isUserLoggedIn = false; }
+        }
     });
+} else {
+    const savedAvatar = localStorage.getItem('match_custom_avatar');
+    const savedName = localStorage.getItem('match_user_name');
+    if (savedName || savedAvatar) {
+        syncHeaderUserUI(null, { avatar_url: savedAvatar });
+    }
 }
 
 function checkDailyLimit() {
@@ -164,13 +193,23 @@ async function fetchGeminiData(promptText) {
 window.triggerMatch = async function(isSpecificSearch = false) {
     if (!checkDailyLimit()) return;
     
-    const loadBox = document.getElementById('loading-box'); const qBox = document.getElementById('questionnaire-box'); const sBox = document.getElementById('search-box');
-    if (loadBox) { loadBox.style.display = 'block'; loadBox.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-    if (qBox) qBox.style.display = 'none'; if (sBox) sBox.style.display = 'none';
+    const loadBox = document.getElementById('loading-box'); 
+    const qBox = document.getElementById('questionnaire-box'); 
+    const sBox = document.getElementById('search-box');
+    const resultBox = document.getElementById('result-box');
+
+    if (resultBox) resultBox.style.display = 'none';
+    if (qBox) qBox.style.display = 'none'; 
+    if (sBox) sBox.style.display = 'none';
+    
+    if (loadBox) { 
+        loadBox.style.display = 'block'; 
+        loadBox.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
+    }
 
     let exclusionList = seenList.map(item => item.title || item).join(', ');
     let savedAge = localStorage.getItem('match_user_age'); let savedCountry = localStorage.getItem('match_user_country'); let savedSign = localStorage.getItem('match_user_sign');
-    let personaContext = (isUserLoggedIn && savedAge && savedCountry) ? `CRITICAL AUDIENCE MATCH: The user is ${savedAge} years old, lives in ${savedCountry}, and is a ${savedSign || 'unknown'} star sign. You MUST select a title that strongly appeals to this demographic. ` : "";
+    let personaContext = (savedAge && savedCountry) ? `CRITICAL AUDIENCE MATCH: The user is ${savedAge} years old, lives in ${savedCountry}, and is a ${savedSign || 'unknown'} star sign. You MUST select a title that strongly appeals to this demographic. ` : "";
     
     const strictRules = `RULES: 1. EXCLUDE: [${exclusionList}]. 2. "trailerId": MUST be the exact 11-char YouTube ID. If you are not 100% sure, output exactly "null". 3. IF Platform is "Spotify", recommend a Podcast. IF "microdrama", recommend a ReelShort/DramaBox/Globoplay. Output valid JSON ONLY: {"title": "Title", "synopsis": "3-sentence synopsis.", "platform": "Platform", "imdb": "Rating", "trailerId": "11-char-id or null", "posterPath": "/path.jpg"}`;
 
@@ -184,7 +223,6 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         promptText = `${personaContext} Find a perfect match based on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}. ${strictRules}`;
     }
 
-    // 🔥 SMART LOADING METER: Matches actual AI response time
     let aiResolved = false;
     let pct = 0;
     const pBar = document.getElementById('ai-progress-bar');
@@ -192,7 +230,7 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     
     let timerInterval = setInterval(() => {
         if (!aiResolved && pct < 90) {
-            pct += (90 - pct) * 0.05; // Slows down beautifully as it approaches 90% while AI thinks
+            pct += (90 - pct) * 0.05;
             if (pBar) pBar.style.width = pct + '%';
         }
     }, 100);
@@ -202,15 +240,13 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         matchResult = await fetchGeminiData(promptText);
     } catch (err) {
         console.warn("AI Backend Volume High, triggering Offline Catalog Fallback.", err);
-        matchResult = getFallbackMatch(cat, plat, mood); // ZERO ERRORS GUARANTEE
+        matchResult = getFallbackMatch(cat, plat, mood);
     }
 
-    // AI Has finished! Snap the bar to 100% instantly.
     aiResolved = true;
     if (pBar) pBar.style.width = '100%';
     clearInterval(timerInterval);
     
-    // Tiny half-second delay so the user sees it hit 100%
     await new Promise(resolve => setTimeout(resolve, 500)); 
 
     if (!seenList.some(i => (i.title || i) === matchResult.title)) {
@@ -253,7 +289,6 @@ async function renderResult(selected) {
     } else if (selected.platform.toLowerCase().includes('dramabox')) { directBtn.href = `https://www.dramabox.com/`; directBtn.innerText = `📺 Open on DramaBox`;
     } else { directBtn.href = `https://www.google.com/search?q=Watch+${encodeURIComponent(selected.title)}+on+${encodeURIComponent(selected.platform)}`; directBtn.innerText = `▶ Stream on ${selected.platform}`; }
 
-    // 🔥 TRAILER BUG FIX: STRICT HIDING
     const iframe = document.getElementById('res-trailer');
     const iframeWrapper = document.getElementById('res-iframe-wrapper'); 
     const ytFallbackLink = document.getElementById('res-trailer-fallback');
@@ -288,5 +323,5 @@ window.recordAction = function(type) {
 
 async function syncListsToDatabase() { 
     localStorage.setItem('match_seenList', JSON.stringify(seenList)); localStorage.setItem('match_savedList', JSON.stringify(savedList)); localStorage.setItem('match_dislikedList', JSON.stringify(dislikedList)); localStorage.setItem('match_userRatings', JSON.stringify(userRatings)); 
-    if (isUserLoggedIn && supabaseClient) { await supabaseClient.auth.updateUser({ data: { seen_list: seenList, saved_list: savedList, disliked_list: dislikedList, user_ratings: userRatings } }); } 
+    if (isUserLoggedIn && supabaseClient) { await supabaseClient.auth.updateUser({ data: { seen_list: savedList, saved_list: savedList, disliked_list: dislikedList, user_ratings: userRatings } }); } 
 }
