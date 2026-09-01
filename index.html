@@ -71,7 +71,7 @@
         .app-title-main { font-size: 28px; font-weight: 900; color: var(--gold); letter-spacing: 1px; text-shadow: 0 2px 15px rgba(229,193,88,0.6); }
         
         .main-layout { display: flex; width: 100%; max-width: 1500px; margin: 0 auto; gap: 20px; align-items: flex-start; justify-content: center; min-height: 80vh; padding-top: 30px; }
-        .sidebar-ad-left, .sidebar-ad-right { display: none; width: 160px; }
+        .sidebar-ad-left, .sidebar-ad-right { display: none; width: 160px; position: sticky; top: 120px; } /* STICKY ADS FOR MASSIVE VIEWABILITY */
         .container { flex: 1; max-width: 850px; width: 100%; padding-bottom: 80px; }
         @media (min-width: 1100px) { .sidebar-ad-left, .sidebar-ad-right { display: block; } }
 
@@ -83,8 +83,9 @@
         .marquee-track:hover { animation-play-state: paused; }
         .marquee-item { position: relative; width: 130px; height: 190px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(229,193,88,0.5); cursor: pointer; transition: all 0.3s ease; box-shadow: 0 5px 20px rgba(0,0,0,0.9); background: #1a0505; }
         .marquee-item:hover { transform: scale(1.1); border-color: var(--gold-glow); box-shadow: 0 0 30px var(--gold); z-index: 10; }
-        .marquee-item img { width: 100%; height: 100%; object-fit: cover; }
-        .marquee-title { position: absolute; bottom: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.95)); color: #fff; font-size: 11px; padding: 15px 4px 6px 4px; text-align: center; font-weight: bold; border-top: 1px solid var(--gold); }
+        .marquee-item img { width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 2; }
+        .marquee-title { position: absolute; bottom: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.95)); color: #fff; font-size: 11px; padding: 15px 4px 6px 4px; text-align: center; font-weight: bold; border-top: 1px solid var(--gold); z-index: 3; }
+        .offline-poster { position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(135deg, #2a0808, #110202); display: flex; align-items: center; justify-content: center; text-align: center; padding: 15px; color: var(--gold); font-weight: 900; font-size: 15px; text-transform: uppercase; text-shadow: 0 4px 15px rgba(0,0,0,0.9); z-index: 1; border-radius: 10px; }
         
         @keyframes marqueeScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
@@ -124,7 +125,7 @@
             
             <a id="profile-link-tab" href="/profile/profile.html" tabindex="0" style="display: none; background: rgba(229,193,88,0.2); border: 1px solid var(--gold); color: var(--gold-glow); padding: 8px 16px; border-radius: 12px; font-weight: bold; text-decoration: none; font-size: 14px; align-items: center; gap: 8px;">
                 <img id="nav-avatar-img" src="" alt="Avatar" style="width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--gold); object-fit: cover; display: none;">
-                <span id="nav-profile-text">👤 Profile Hub</span>
+                <span id="nav-profile-text">👤 Profile</span>
             </a>
 
             <button id="nav-reg-btn" tabindex="0" onclick="openAuthModal()" class="gold-btn" style="padding: 12px 20px; font-size: 14px; text-transform: uppercase;">👤 Sign In / Join</button>
@@ -145,22 +146,69 @@
                 <div class="marquee-wrapper fade-in">
                     <h4 style="color: var(--gold); font-size: 15px; text-transform: uppercase; text-align: center; margin: 0 0 15px 0; letter-spacing: 2px; text-shadow: 0 0 15px rgba(229,193,88,0.5);">🔥 Trending Blockbusters Worldwide</h4>
                     <div class="marquee-track">
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('The Bear')"><img src="https://m.media-amazon.com/images/M/MV5BNTIwMzc5MTctNDAzNC00Yzk4LTg3ZTgtMTVlYWNmNWNmOWVmXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="The Bear" onerror="this.onerror=null;this.src='/logo.jpeg'"><div class="marquee-title">The Bear</div></div>
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Shogun')"><img src="https://m.media-amazon.com/images/M/MV5BNmU1OTExYTktOTFjNi00OTEyLTg1NDEtZDMzYjA5ZGU3NDU3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="Shogun" onerror="this.onerror=null;this.src='/logo.jpeg'"><div class="marquee-title">Shogun</div></div>
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('A Vida Secreta do Meu Marido Bilionário')"><img src="https://m.media-amazon.com/images/M/MV5BMjA3NTU0NTM4MF5BMl5BanBnXkFtZTgwNTc3MTc1MDE@._V1_FMjpg_UX1000_.jpg" alt="Marido Bilionário" onerror="this.onerror=null;this.src='/logo.jpeg'"><div class="marquee-title">Marido Bilionário</div></div>
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Deadpool & Wolverine')"><img src="https://m.media-amazon.com/images/M/MV5BNzRiMjg0MzUtNTQwYi00NWQ4LTg3N2ItM2E3YWJhZTFhNWVhXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="Deadpool & Wolverine" onerror="this.onerror=null;this.src='/logo.jpeg'"><div class="marquee-title">Deadpool 3</div></div>
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Queen of Tears')"><img src="https://m.media-amazon.com/images/M/MV5BMjE4N2ZkNWUtNDM1My00NWFlLTliODEtN2NmNGY0OTFmNjVlXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="Queen of Tears" onerror="this.onerror=null;this.src='/logo.jpeg'"><div class="marquee-title">Queen of Tears</div></div>
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('The Joe Rogan Experience')"><img src="https://m.media-amazon.com/images/M/MV5BYzA2MzI5YjUtMWNhOS00Y2ZiLTk4NTgtNDVlYTFmNmE5MTMyXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="Joe Rogan Experience" onerror="this.onerror=null;this.src='/logo.jpeg'"><div class="marquee-title">Joe Rogan (Spotify)</div></div>
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Jujutsu Kaisen')"><img src="https://m.media-amazon.com/images/M/MV5BNGY4MTg3NjgtMmFkYi00ZTNkLTg2NDgtZDA4Y2QyZTY2Y2ViXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="Jujutsu Kaisen" onerror="this.onerror=null;this.src='/logo.jpeg'"><div class="marquee-title">Jujutsu Kaisen</div></div>
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('House of the Dragon')"><img src="https://m.media-amazon.com/images/M/MV5BM2QzM2JiNTMtOWU4NC00NmQ4LTg1OGUtMjg2M2Y5NTlhNmQzXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="House of the Dragon" onerror="this.onerror=null;this.src='/logo.jpeg'"><div class="marquee-title">House of the Dragon</div></div>
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Nas Profundezas do Amor')"><img src="https://m.media-amazon.com/images/M/MV5BYzg0NGVkMDUtNDNmNC00MDVlLTg5ZTUtMTExNWY4NjBhOWExXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="Nas Profundezas do Amor" onerror="this.onerror=null;this.src='/logo.jpeg'"><div class="marquee-title">Nas Profundezas</div></div>
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Fallout')"><img src="https://m.media-amazon.com/images/M/MV5BN2IzNWFlN2UtMGIzYi00YjVlLTg3M2EtZGU3Njc4NGJhNGEzXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="Fallout" onerror="this.onerror=null;this.src='/logo.jpeg'"><div class="marquee-title">Fallout</div></div>
+                        <!-- OFFLINE PERSPECTIVE: Native CSS Blockbusters behind every image! -->
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('The Bear')">
+                            <div class="offline-poster"><span>The Bear</span></div>
+                            <img src="https://m.media-amazon.com/images/M/MV5BNTIwMzc5MTctNDAzNC00Yzk4LTg3ZTgtMTVlYWNmNWNmOWVmXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="The Bear" onload="this.previousElementSibling.style.display='none'" onerror="this.style.display='none'; this.previousElementSibling.style.display='flex'">
+                            <div class="marquee-title">The Bear</div>
+                        </div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Shogun')">
+                            <div class="offline-poster"><span>Shogun</span></div>
+                            <img src="https://m.media-amazon.com/images/M/MV5BNmU1OTExYTktOTFjNi00OTEyLTg1NDEtZDMzYjA5ZGU3NDU3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="Shogun" onload="this.previousElementSibling.style.display='none'" onerror="this.style.display='none'; this.previousElementSibling.style.display='flex'">
+                            <div class="marquee-title">Shogun</div>
+                        </div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Marido Bilionário')">
+                            <div class="offline-poster"><span>Marido Bilionário</span></div>
+                            <img src="https://m.media-amazon.com/images/M/MV5BMjA3NTU0NTM4MF5BMl5BanBnXkFtZTgwNTc3MTc1MDE@._V1_FMjpg_UX1000_.jpg" alt="Marido Bilionário" onload="this.previousElementSibling.style.display='none'" onerror="this.style.display='none'; this.previousElementSibling.style.display='flex'">
+                            <div class="marquee-title">Marido Bilionário</div>
+                        </div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Deadpool & Wolverine')">
+                            <div class="offline-poster"><span>Deadpool 3</span></div>
+                            <img src="https://m.media-amazon.com/images/M/MV5BNzRiMjg0MzUtNTQwYi00NWQ4LTg3N2ItM2E3YWJhZTFhNWVhXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="Deadpool & Wolverine" onload="this.previousElementSibling.style.display='none'" onerror="this.style.display='none'; this.previousElementSibling.style.display='flex'">
+                            <div class="marquee-title">Deadpool 3</div>
+                        </div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Queen of Tears')">
+                            <div class="offline-poster"><span>Queen of Tears</span></div>
+                            <img src="https://m.media-amazon.com/images/M/MV5BMjE4N2ZkNWUtNDM1My00NWFlLTliODEtN2NmNGY0OTFmNjVlXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="Queen of Tears" onload="this.previousElementSibling.style.display='none'" onerror="this.style.display='none'; this.previousElementSibling.style.display='flex'">
+                            <div class="marquee-title">Queen of Tears</div>
+                        </div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('The Joe Rogan Experience')">
+                            <div class="offline-poster"><span>Joe Rogan</span></div>
+                            <img src="https://m.media-amazon.com/images/M/MV5BYzA2MzI5YjUtMWNhOS00Y2ZiLTk4NTgtNDVlYTFmNmE5MTMyXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="Joe Rogan Experience" onload="this.previousElementSibling.style.display='none'" onerror="this.style.display='none'; this.previousElementSibling.style.display='flex'">
+                            <div class="marquee-title">Joe Rogan (Spotify)</div>
+                        </div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Jujutsu Kaisen')">
+                            <div class="offline-poster"><span>Jujutsu Kaisen</span></div>
+                            <img src="https://m.media-amazon.com/images/M/MV5BNGY4MTg3NjgtMmFkYi00ZTNkLTg2NDgtZDA4Y2QyZTY2Y2ViXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="Jujutsu Kaisen" onload="this.previousElementSibling.style.display='none'" onerror="this.style.display='none'; this.previousElementSibling.style.display='flex'">
+                            <div class="marquee-title">Jujutsu Kaisen</div>
+                        </div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('House of the Dragon')">
+                            <div class="offline-poster"><span>House Dragon</span></div>
+                            <img src="https://m.media-amazon.com/images/M/MV5BM2QzM2JiNTMtOWU4NC00NmQ4LTg1OGUtMjg2M2Y5NTlhNmQzXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="House of the Dragon" onload="this.previousElementSibling.style.display='none'" onerror="this.style.display='none'; this.previousElementSibling.style.display='flex'">
+                            <div class="marquee-title">House of the Dragon</div>
+                        </div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Fallout')">
+                            <div class="offline-poster"><span>Fallout</span></div>
+                            <img src="https://m.media-amazon.com/images/M/MV5BN2IzNWFlN2UtMGIzYi00YjVlLTg3M2EtZGU3Njc4NGJhNGEzXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="Fallout" onload="this.previousElementSibling.style.display='none'" onerror="this.style.display='none'; this.previousElementSibling.style.display='flex'">
+                            <div class="marquee-title">Fallout</div>
+                        </div>
                         
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('The Bear')"><img src="https://m.media-amazon.com/images/M/MV5BNTIwMzc5MTctNDAzNC00Yzk4LTg3ZTgtMTVlYWNmNWNmOWVmXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="The Bear" onerror="this.onerror=null;this.src='/logo.jpeg'"><div class="marquee-title">The Bear</div></div>
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Shogun')"><img src="https://m.media-amazon.com/images/M/MV5BNmU1OTExYTktOTFjNi00OTEyLTg1NDEtZDMzYjA5ZGU3NDU3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="Shogun" onerror="this.onerror=null;this.src='/logo.jpeg'"><div class="marquee-title">Shogun</div></div>
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('A Vida Secreta do Meu Marido Bilionário')"><img src="https://m.media-amazon.com/images/M/MV5BMjA3NTU0NTM4MF5BMl5BanBnXkFtZTgwNTc3MTc1MDE@._V1_FMjpg_UX1000_.jpg" alt="Marido Bilionário" onerror="this.onerror=null;this.src='/logo.jpeg'"><div class="marquee-title">Marido Bilionário</div></div>
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Deadpool & Wolverine')"><img src="https://m.media-amazon.com/images/M/MV5BNzRiMjg0MzUtNTQwYi00NWQ4LTg3N2ItM2E3YWJhZTFhNWVhXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="Deadpool & Wolverine" onerror="this.onerror=null;this.src='/logo.jpeg'"><div class="marquee-title">Deadpool 3</div></div>
-                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Queen of Tears')"><img src="https://m.media-amazon.com/images/M/MV5BMjE4N2ZkNWUtNDM1My00NWFlLTliODEtN2NmNGY0OTFmNjVlXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="Queen of Tears" onerror="this.onerror=null;this.src='/logo.jpeg'"><div class="marquee-title">Queen of Tears</div></div>
+                        <!-- Duplicated loop -->
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('The Bear')">
+                            <div class="offline-poster"><span>The Bear</span></div>
+                            <img src="https://m.media-amazon.com/images/M/MV5BNTIwMzc5MTctNDAzNC00Yzk4LTg3ZTgtMTVlYWNmNWNmOWVmXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="The Bear" onload="this.previousElementSibling.style.display='none'" onerror="this.style.display='none'; this.previousElementSibling.style.display='flex'">
+                            <div class="marquee-title">The Bear</div>
+                        </div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Shogun')">
+                            <div class="offline-poster"><span>Shogun</span></div>
+                            <img src="https://m.media-amazon.com/images/M/MV5BNmU1OTExYTktOTFjNi00OTEyLTg1NDEtZDMzYjA5ZGU3NDU3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="Shogun" onload="this.previousElementSibling.style.display='none'" onerror="this.style.display='none'; this.previousElementSibling.style.display='flex'">
+                            <div class="marquee-title">Shogun</div>
+                        </div>
+                        <div class="marquee-item" tabindex="0" onclick="selectMarqueeItem('Deadpool & Wolverine')">
+                            <div class="offline-poster"><span>Deadpool 3</span></div>
+                            <img src="https://m.media-amazon.com/images/M/MV5BNzRiMjg0MzUtNTQwYi00NWQ4LTg3N2ItM2E3YWJhZTFhNWVhXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="Deadpool & Wolverine" onload="this.previousElementSibling.style.display='none'" onerror="this.style.display='none'; this.previousElementSibling.style.display='flex'">
+                            <div class="marquee-title">Deadpool 3</div>
+                        </div>
                     </div>
                 </div>
 
@@ -239,7 +287,7 @@
                     <h3 style="color: var(--gold); margin: 0; text-transform: uppercase; font-size: 28px; letter-spacing: 2px;">✨ Scanning Global Catalog ✨</h3>
                     <p style="color: #aaa; font-size: 16px; margin-top: 15px;">Cross-referencing your exact vibe with millions of titles...</p>
                     <div style="width: 100%; height: 40px; background: rgba(0,0,0,0.8); border: 2px solid var(--gold); border-radius: 20px; margin: 35px 0; overflow: hidden; box-shadow: inset 0 0 15px rgba(0,0,0,0.9);">
-                        <div id="ai-progress-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--gold), #fff, var(--gold)); transition: width 0.3s ease-out; background-size: 200% 100%; animation: shimmer 2s infinite linear;"></div>
+                        <div id="ai-progress-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--gold), #fff, var(--gold)); transition: width 0.1s linear; background-size: 200% 100%; animation: shimmer 2s infinite linear;"></div>
                     </div>
                     <p style="color: #777; font-size: 14px; margin-top: 25px;"><em>Tip: Registered users get personalized matches based on age and sign.</em></p>
                 </article>
@@ -344,6 +392,6 @@
         <p style="color: #666; font-size: 13px; margin-top: 45px; letter-spacing: 1px;">© 2026 MatchApp.cc - Support: support@matchapp.cc</p>
     </footer>
 
-    <script src="/app.js?v=98"></script>
+    <script src="/app.js?v=99"></script>
 </body>
 </html>
