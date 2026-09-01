@@ -1,4 +1,4 @@
-console.log("Mastercode 98.0: Instant Scroll & Header Avatar Sync Active");
+console.log("Mastercode 99.0: Auto-Scroll & Ad Dwell Enforcer Active");
 
 const SUPABASE_URL = 'https://zkymvqrmbabngsqblyye.supabase.co'; 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpreW12cXJtYmFibmdzcWJseXllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY4MDUyNDIsImV4cCI6MjEwMjM4MTI0Mn0._yEVFMfwVU6GBqQ8m3ljfOgA0HSLEDiKMOfYae6ZD8Q';
@@ -23,15 +23,12 @@ const FALLBACK_CATALOG = [
     { title: "Shogun", synopsis: "When a mysterious European ship is found marooned in a nearby fishing village, Lord Yoshii Toranaga discovers secrets that could tip the scales of power.", platform: "Disney+", imdb: "8.7", trailerId: "yAN5uspO_hk", format: "series", mood: "intense" },
     { title: "The Bear", synopsis: "A young, brilliant chef from the fine dining world returns to Chicago to run his family's sandwich shop.", platform: "Hulu", imdb: "8.6", trailerId: "y-caqB943yU", format: "series", mood: "intense" },
     { title: "House of the Dragon", synopsis: "An internal succession war within House Targaryen at the height of its power.", platform: "Max", imdb: "8.4", trailerId: "DotnJ7tTA34", format: "series", mood: "intense" },
-    { title: "Squid Game", synopsis: "Hundreds of cash-strapped players accept a strange invitation to compete in children's games with deadly stakes.", platform: "Netflix", imdb: "8.0", trailerId: "oqxAJKy0ii4", format: "series", mood: "mindbending" },
-    { title: "The Boys", synopsis: "A group of vigilantes set out to take down corrupt superheroes who abuse their superpowers.", platform: "Prime Video", imdb: "8.7", trailerId: "M1bhOaLV4FU", format: "series", mood: "funny" },
     { title: "Deadpool & Wolverine", synopsis: "A listless Wade Wilson toils away in civilian life until his home world is threatened, forcing him to team up with Wolverine.", platform: "Disney+", imdb: "8.1", trailerId: "73_1biulkYk", format: "movie", mood: "funny" },
     { title: "Dune: Part Two", synopsis: "Paul Atreides unites with Chani and the Fremen while on a warpath of revenge against the conspirators who destroyed his family.", platform: "Max", imdb: "8.6", trailerId: "Way9Dexny3w", format: "movie", mood: "mindbending" },
     { title: "A Vida Secreta do Meu Marido Bilionário", synopsis: "A heart-pounding vertical drama where a hidden identity shakes the foundation of a marriage.", platform: "ReelShort", imdb: "7.9", trailerId: "null", format: "microdrama", mood: "romantic" },
     { title: "Fated to the Alpha", synopsis: "A gripping tale of werewolf packs, soulmates, and a forbidden love.", platform: "DramaBox", imdb: "8.0", trailerId: "null", format: "microdrama", mood: "romantic" },
     { title: "Nas Profundezas do Amor", synopsis: "A captivating novela about forbidden passions and deep secrets in high society.", platform: "Globoplay", imdb: "8.1", trailerId: "null", format: "microdrama", mood: "romantic" },
     { title: "The Joe Rogan Experience", synopsis: "Long-form conversations with comedians, scientists, athletes, and artists.", platform: "Spotify", imdb: "8.8", trailerId: "null", format: "podcast", mood: "funny" },
-    { title: "Huberman Lab", synopsis: "Neuroscience and science-based tools for everyday life.", platform: "Spotify", imdb: "9.0", trailerId: "null", format: "podcast", mood: "mindbending" },
     { title: "Jujutsu Kaisen", synopsis: "A boy swallows a cursed talisman and becomes cursed himself to protect his friends.", platform: "Crunchyroll", imdb: "8.5", trailerId: "pkKQAjeBscE", format: "anime", mood: "intense" },
     { title: "Queen of Tears", synopsis: "The queen of department stores and her small-town husband weather a marital crisis.", platform: "Netflix", imdb: "8.3", trailerId: "vB43D5-3VfA", format: "dorama", mood: "romantic" }
 ];
@@ -202,9 +199,12 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     if (qBox) qBox.style.display = 'none'; 
     if (sBox) sBox.style.display = 'none';
     
+    // 🔥 AUTO-SCROLL TO LOADING METER INSTANTLY
     if (loadBox) { 
         loadBox.style.display = 'block'; 
-        loadBox.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
+        setTimeout(() => {
+            loadBox.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
+        }, 100);
     }
 
     let exclusionList = seenList.map(item => item.title || item).join(', ');
@@ -223,16 +223,16 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         promptText = `${personaContext} Find a perfect match based on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}. ${strictRules}`;
     }
 
-    let aiResolved = false;
-    let pct = 0;
+    const startTime = Date.now();
+    const MIN_WAIT_MS = (isVIP || isAdFree) ? 3000 : 13500; // 🔥 13.5 SECOND AD DWELL ENFORCER FOR FREE USERS
+    
     const pBar = document.getElementById('ai-progress-bar');
     if (pBar) pBar.style.width = '0%';
     
     let timerInterval = setInterval(() => {
-        if (!aiResolved && pct < 90) {
-            pct += (90 - pct) * 0.05;
-            if (pBar) pBar.style.width = pct + '%';
-        }
+        let elapsed = Date.now() - startTime;
+        let pct = Math.min((elapsed / MIN_WAIT_MS) * 95, 95); // Smoothly fill to 95% over 13.5 seconds
+        if (pBar) pBar.style.width = pct + '%';
     }, 100);
 
     let matchResult = null;
@@ -243,10 +243,14 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         matchResult = getFallbackMatch(cat, plat, mood);
     }
 
-    aiResolved = true;
+    // Force wait if AI responded too fast to ensure ad viewability
+    let timeSpent = Date.now() - startTime;
+    if (timeSpent < MIN_WAIT_MS) {
+        await new Promise(resolve => setTimeout(resolve, MIN_WAIT_MS - timeSpent));
+    }
+
     if (pBar) pBar.style.width = '100%';
     clearInterval(timerInterval);
-    
     await new Promise(resolve => setTimeout(resolve, 500)); 
 
     if (!seenList.some(i => (i.title || i) === matchResult.title)) {
