@@ -39,6 +39,18 @@ Expected shape:
 
 ---
 
+## What if `profiles` didn't exist?
+
+That's fine — the migration **creates it**, along with:
+- a trigger that auto-creates a profile row whenever someone signs up
+- a backfill for any users who registered before the migration ran
+- RLS policies scoped to `auth.uid() = id`
+
+If you previously saw `ERROR: 42P01: relation "public.profiles" does not exist`,
+that's what this fixes.
+
+---
+
 ## What the migration does
 
 | Object | Purpose |
