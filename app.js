@@ -528,8 +528,8 @@ window.onCategoryChange = function() {
 function applyAudioModeLabels(isAudio) {
     const saveBtn = document.getElementById('btn-watch-later');
     const seenBtn = document.getElementById('btn-seen-it');
-    if (saveBtn) saveBtn.innerHTML = isAudio ? '🎧 Listen Later' : '⭐ Watch Later';
-    if (seenBtn) seenBtn.innerHTML = isAudio ? '🎼 Have Heard It' : "👁️ I've Seen It";
+    if (saveBtn) saveBtn.innerHTML = window.t ? t(isAudio ? 'res.listenlater' : 'res.watchlater') : (isAudio ? '🎧 Listen Later' : '⭐ Watch Later');
+    if (seenBtn) seenBtn.innerHTML = window.t ? t(isAudio ? 'res.heardit' : 'res.seenit') : (isAudio ? '🎼 Have Heard It' : "👁️ I've Seen It");
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -824,9 +824,9 @@ async function renderResult(selected, isSpecificSearch) {
         directBtn.href = `https://www.justwatch.com/us/search?q=${encodeURIComponent(selected.title)}`;
     }
 
-    if (audioPick) directBtn.innerText = '🎧 Listen Now';
+    if (audioPick) directBtn.innerText = window.t ? t('res.listennow') : '🎧 Listen Now';
     else if (selected.platform && selected.platform !== 'any' && pfEntry) directBtn.innerText = `▶ Watch on ${selected.platform}`;
-    else directBtn.innerText = '▶ Find Where To Stream';
+    else directBtn.innerText = window.t ? t('res.findwhere') : '▶ Find Where To Stream';
 
     // Keep the save/seen buttons worded for the medium being shown.
     applyAudioModeLabels(audioPick);
@@ -1035,3 +1035,10 @@ window.changeParamsAndRematch = function() {
         if (catEl) setTimeout(() => catEl.focus(), 600);
     }
 };
+
+// Re-render language-dependent dynamic UI when the user switches language.
+document.addEventListener('matchapp:langchange', () => {
+    const catEl = document.getElementById('q-category');
+    if (catEl && typeof isAudioCategory === 'function') applyAudioModeLabels(isAudioCategory(catEl.value));
+    if (typeof window.onCategoryChange === 'function') window.onCategoryChange();
+});
