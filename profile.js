@@ -249,9 +249,6 @@ function platformFallbackUrl(platform, title) {
         "Max": t => `https://www.max.com/search?q=${encodeURIComponent(t)}`,
         "Apple TV+": t => `https://tv.apple.com/search?term=${encodeURIComponent(t)}`,
         "Globoplay": t => `https://globoplay.globo.com/busca/?q=${encodeURIComponent(t)}`,
-        "SBT+": t => `https://www.sbt.com.br/sbtplus/busca?q=${encodeURIComponent(t)}`,
-        "Claro tv+": t => `https://www.clarotvmais.com.br/busca?q=${encodeURIComponent(t)}`,
-        "NetMovies": t => `https://www.netmovies.com.br/busca?q=${encodeURIComponent(t)}`,
         "Crunchyroll": t => `https://www.crunchyroll.com/search?q=${encodeURIComponent(t)}`,
         "Viki": t => `https://www.viki.com/search?q=${encodeURIComponent(t)}`,
         "Spotify": t => `https://open.spotify.com/search/${encodeURIComponent(t)}`,
@@ -286,7 +283,7 @@ function buildPosterCard(item, accent) {
            onmouseover="this.style.transform='translateY(-6px) scale(1.03)'; this.style.boxShadow='0 14px 34px rgba(0,0,0,0.95)'; this.querySelector('.card-cta').style.opacity='1';"
            onmouseout="this.style.transform='none'; this.style.boxShadow='0 5px 20px rgba(0,0,0,0.9)'; this.querySelector('.card-cta').style.opacity='0';">
             ${imgTag}
-            <div class="css-poster-fallback" style="display:${fallbackDisplay}; background:linear-gradient(135deg,#1a0505,#4a2b00); width:100%; height:100%; align-items:center; justify-content:center; text-align:center; padding:10px; box-sizing:border-box; color:var(--gold); font-weight:900; font-size:16px; text-transform:uppercase; text-shadow:0 2px 8px rgba(0,0,0,0.9); box-shadow: inset 0 0 30px rgba(0,0,0,0.9);">
+            <div class="css-poster-fallback" style="display:${fallbackDisplay}; background:linear-gradient(135deg,#130734,#6B3FA0); width:100%; height:100%; align-items:center; justify-content:center; text-align:center; padding:10px; box-sizing:border-box; color:var(--gold); font-weight:900; font-size:16px; text-transform:uppercase; text-shadow:0 2px 8px rgba(0,0,0,0.9); box-shadow: inset 0 0 30px rgba(0,0,0,0.9);">
                 ${safeTitle}
             </div>
             ${platform ? `<div style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.85); color:${accent}; font-size:9px; font-weight:900; padding:4px 8px; border-radius:6px; text-transform:uppercase; border:1px solid ${accent};">${escapeHtml(platform)}</div>` : ''}

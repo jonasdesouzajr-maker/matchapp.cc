@@ -1,6 +1,19 @@
 :root {
-    --bg-dark: #05050A; --bg-card: rgba(15, 15, 22, 0.85); --border: rgba(212, 175, 55, 0.4);
-    --gold: #D4AF37; --gold-glow: #F3E5AB; --text-main: #FFFFFF; --text-muted: #A0A0B5;
+    /* ===== BRAND PALETTE — sampled directly from the MatchApp logo ===== */
+    /* Logo charcoal backdrop, royal purple orb, polished gold ring + play mark */
+    --ink:          #14131A;   /* deepest charcoal (logo backdrop) */
+    --ink-2:        #1A191F;   /* logo card charcoal               */
+    --royal-deep:   #130734;   /* darkest purple in the orb        */
+    --royal:        #402562;   /* core royal purple                */
+    --royal-lift:   #6B3FA0;   /* raised purple for gradients      */
+    --royal-glow:   #A376B6;   /* light purple highlight           */
+    --gold:         #E5C158;   /* logo gold                        */
+    --gold-deep:    #B8912F;   /* gold shadow side                 */
+    --gold-glow:    #FFF3A3;   /* brightest gold specular          */
+
+    --bg-dark: #14131A; --bg-card: rgba(26, 25, 31, 0.88);
+    --border: rgba(229, 193, 88, 0.38);
+    --text-main: #FFFFFF; --text-muted: #B3AEC4;
     --netflix-red: #E50914; --prime-blue: #00A8E1; --max-purple: #9A5CFF; --disney-blue: #113CCF;
     --spotify-green: #1DB954; --globoplay-orange: #FF5A00;
 }
@@ -12,13 +25,13 @@ body { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background
 body.ad-free-mode .ad-placement, body.ad-free-mode .sidebar-ad { display: none !important; }
 
 /* 🕒 CLOCK */
-.real-time-clock { position: fixed; top: 10px; right: 12px; background: rgba(10, 10, 15, 0.85); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 20px; padding: 6px 14px; font-size: 11px; color: var(--gold-glow); font-weight: 700; z-index: 10000; backdrop-filter: blur(15px); box-shadow: 0 4px 20px rgba(0,0,0,0.8); }
+.real-time-clock { position: fixed; top: 10px; right: 12px; background: rgba(26, 21, 38, 0.9); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 20px; padding: 6px 14px; font-size: 11px; color: var(--gold-glow); font-weight: 700; z-index: 10000; backdrop-filter: blur(15px); box-shadow: 0 4px 20px rgba(0,0,0,0.8); }
 
 /* 🌍 BACKGROUND */
-.luxury-bg { position: fixed; inset: 0; background: radial-gradient(circle at 20% 40%, rgba(48, 20, 75, 0.8), transparent 55%), radial-gradient(circle at 80% 60%, rgba(212, 175, 55, 0.25), transparent 55%); z-index: -2; pointer-events: none; }
+.luxury-bg { position: fixed; inset: 0; background: radial-gradient(circle at 18% 28%, rgba(107, 63, 160, 0.55), transparent 58%), radial-gradient(circle at 82% 72%, rgba(64, 37, 98, 0.68), transparent 60%), radial-gradient(circle at 50% 108%, rgba(229, 193, 88, 0.13), transparent 55%), linear-gradient(160deg, #14131A 0%, #1A1526 55%, #14131A 100%); z-index: -2; pointer-events: none; }
 .floating-orb { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.65; animation: float 10s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); }
-.orb-1 { width: 300px; height: 300px; background: rgba(212, 175, 55, 0.25); top: 5%; left: -10%; }
-.orb-2 { width: 350px; height: 350px; background: rgba(147, 51, 234, 0.25); bottom: -10%; right: -10%; animation-delay: -5s; }
+.orb-1 { width: 300px; height: 300px; background: rgba(229, 193, 88, 0.22); top: 5%; left: -10%; }
+.orb-2 { width: 350px; height: 350px; background: rgba(107, 63, 160, 0.38); bottom: -10%; right: -10%; animation-delay: -5s; }
 @keyframes float { 0% { transform: translateY(0px) scale(1); } 100% { transform: translateY(50px) scale(1.15); } }
 
 /* 🎬 STREAMING FLAGS */
@@ -53,7 +66,7 @@ body.ad-free-mode .ad-placement, body.ad-free-mode .sidebar-ad { display: none !
 .chrome-text { font-size: 13px; color: #fff; font-weight: 600; flex: 1; }
 .chrome-btn { background: #fff; color: #113ccf; font-weight: 900; font-size: 12px; padding: 8px 14px; border-radius: 20px; border: none; cursor: pointer; }
 
-.app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 12px; background: rgba(10, 10, 15, 0.85); border: 1px solid var(--border); padding: 16px 20px; border-radius: 24px; backdrop-filter: blur(35px); box-shadow: 0 15px 40px rgba(0,0,0,0.8); flex-wrap: wrap; }
+.app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 12px; background: rgba(26, 21, 38, 0.9); border: 1px solid var(--border); padding: 16px 20px; border-radius: 24px; backdrop-filter: blur(35px); box-shadow: 0 15px 40px rgba(0,0,0,0.8); flex-wrap: wrap; }
 .header-brand-area { display: flex; align-items: center; gap: 12px; text-decoration: none; }
 .brand-logo { height: 52px; width: auto; border-radius: 12px; box-shadow: 0 4px 20px rgba(212,175,55,0.4); }
 .brand-text-container { display: flex; flex-direction: column; }
@@ -62,7 +75,7 @@ body.ad-free-mode .ad-placement, body.ad-free-mode .sidebar-ad { display: none !
 .app-author { font-size: 9px; font-weight: 900; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; }
 @keyframes goldShimmer { to { background-position: 300% center; } }
 
-.info-panel { background: rgba(20,20,30,0.85); border-left: 4px solid var(--gold); border-radius: 16px; padding: 18px 20px; margin-bottom: 20px; backdrop-filter: blur(15px); }
+.info-panel { background: rgba(38, 28, 60, 0.72); border-left: 4px solid var(--gold); border-radius: 16px; padding: 18px 20px; margin-bottom: 20px; backdrop-filter: blur(15px); }
 .info-title { color: var(--gold-glow); font-size: 16px; font-weight: 900; margin: 0 0 8px 0; text-transform: uppercase; }
 .info-text { color: #ddd; font-size: 13px; line-height: 1.5; margin: 0; }
 

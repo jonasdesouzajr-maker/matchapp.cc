@@ -219,7 +219,7 @@ function generateLocalPosterSVG(title) {
     const safeTitle = (title || 'MatchApp').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="900" viewBox="0 0 600 900">
         <defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#1a0505"/><stop offset="100%" stop-color="#4a2b00"/>
+            <stop offset="0%" stop-color="#130734"/><stop offset="100%" stop-color="#6B3FA0"/>
         </linearGradient></defs>
         <rect width="600" height="900" fill="url(#g)"/>
         <rect x="20" y="20" width="560" height="860" fill="none" stroke="#E5C158" stroke-width="4"/>
@@ -418,11 +418,6 @@ const PLATFORMS = {
     "FlexTV":         { group: "Vertical Micro-Drama Apps", audio: false, countries: ['*'], cats: ["vertical micro-drama","short film"], url: "https://www.flextv.cc", search: t => `https://www.flextv.cc` },
 
     "Globoplay":      { group: "Brazil", audio: false, countries: ['Brazil','Brasil','Portugal'], cats: ["novela brasileira","telenovela","series","movie","documentary","reality show","kids"], url: "https://globoplay.globo.com", search: t => `https://globoplay.globo.com/busca/?q=${encodeURIComponent(t)}` },
-    "SBT+":           { group: "Brazil", audio: false, countries: ['Brazil','Brasil'], cats: ["novela brasileira","telenovela","series","reality show","kids","movie"], url: "https://www.sbt.com.br/sbtplus", search: t => `https://www.sbt.com.br/sbtplus/busca?q=${encodeURIComponent(t)}` },
-    "Claro tv+":      { group: "Brazil", audio: false, countries: ['Brazil','Brasil'], cats: ["movie","series","novela brasileira","telenovela","documentary","kids","reality show"], url: "https://www.clarotvmais.com.br", search: t => `https://www.clarotvmais.com.br/busca?q=${encodeURIComponent(t)}` },
-    "NetMovies":      { group: "Brazil", audio: false, countries: ['Brazil','Brasil'], cats: ["movie","series","documentary","kids"], url: "https://www.netmovies.com.br", search: t => `https://www.netmovies.com.br/busca?q=${encodeURIComponent(t)}` },
-    "A la Carte":     { group: "Brazil", audio: false, countries: ['Brazil','Brasil'], cats: ["movie","series","documentary","novela brasileira"], url: "https://www.alacarte.com.br", search: t => `https://www.alacarte.com.br` },
-
     "Viki":           { group: "Regional & Local", audio: false, countries: ['*'], cats: ["K-drama","C-drama","J-drama","series","movie","Turkish dizi"], url: "https://www.viki.com", search: t => `https://www.viki.com/search?q=${encodeURIComponent(t)}` },
     "Crunchyroll":    { group: "Regional & Local", audio: false, countries: ['*'], cats: ["anime","movie","series"], url: "https://www.crunchyroll.com", search: t => `https://www.crunchyroll.com/search?q=${encodeURIComponent(t)}` },
     "Hotstar":        { group: "Regional & Local", audio: false, countries: ['India'], cats: ["Bollywood","movie","series","documentary","reality show","kids"], url: "https://www.hotstar.com", search: t => `https://www.hotstar.com/in/search?q=${encodeURIComponent(t)}` },
@@ -815,7 +810,7 @@ async function renderResult(selected, isSpecificSearch) {
     posterEl.src = realCover; 
 
     // DIRECT LINK SETUP — routed through the platform catalog so every service
-    // (including SBT+, Claro tv+, NetMovies, A la Carte) gets a real deep link.
+    // gets a real deep link into that service.
     const directBtn = document.getElementById('res-direct-link');
     const catIsAudio = isAudioCategory(categoryHint);
     const pfEntry = PLATFORMS[selected.platform];
