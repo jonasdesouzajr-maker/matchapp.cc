@@ -56,11 +56,13 @@ async function populateEmail() {
 // PORTFOLIO TAB SWITCHING
 // ----------------------------------------------------
 window.switchPortfolioTab = function(tab) {
-    const isWatch = tab === 'watchlater';
-    document.getElementById('panel-watchlater').style.display = isWatch ? 'block' : 'none';
-    document.getElementById('panel-seenit').style.display = isWatch ? 'none' : 'block';
-    document.getElementById('tab-watchlater').classList.toggle('active', isWatch);
-    document.getElementById('tab-seenit').classList.toggle('active', !isWatch);
+    const tabs = ['watchlater', 'seenit', 'audio'];
+    tabs.forEach(t => {
+        const panel = document.getElementById('panel-' + t);
+        const btn = document.getElementById('tab-' + t);
+        if (panel) panel.style.display = (t === tab) ? 'block' : 'none';
+        if (btn) btn.classList.toggle('active', t === tab);
+    });
 };
 
 function calculateAgeFromDOB(dobString) {
@@ -239,28 +241,58 @@ function escapeHtml(str) {
     }[c]));
 }
 
+function platformFallbackUrl(platform, title) {
+    const map = {
+        "Netflix": t => `https://www.netflix.com/search?q=${encodeURIComponent(t)}`,
+        "Prime Video": t => `https://www.primevideo.com/search?phrase=${encodeURIComponent(t)}`,
+        "Disney+": t => `https://www.disneyplus.com/search?q=${encodeURIComponent(t)}`,
+        "Max": t => `https://www.max.com/search?q=${encodeURIComponent(t)}`,
+        "Apple TV+": t => `https://tv.apple.com/search?term=${encodeURIComponent(t)}`,
+        "Globoplay": t => `https://globoplay.globo.com/busca/?q=${encodeURIComponent(t)}`,
+        "SBT+": t => `https://www.sbt.com.br/sbtplus/busca?q=${encodeURIComponent(t)}`,
+        "Claro tv+": t => `https://www.clarotvmais.com.br/busca?q=${encodeURIComponent(t)}`,
+        "NetMovies": t => `https://www.netmovies.com.br/busca?q=${encodeURIComponent(t)}`,
+        "Crunchyroll": t => `https://www.crunchyroll.com/search?q=${encodeURIComponent(t)}`,
+        "Viki": t => `https://www.viki.com/search?q=${encodeURIComponent(t)}`,
+        "Spotify": t => `https://open.spotify.com/search/${encodeURIComponent(t)}`,
+        "Apple Music": t => `https://music.apple.com/search?term=${encodeURIComponent(t)}`,
+        "Apple Podcasts": t => `https://podcasts.apple.com/search?term=${encodeURIComponent(t)}`,
+        "YouTube Music": t => `https://music.youtube.com/search?q=${encodeURIComponent(t)}`,
+        "Audible": t => `https://www.audible.com/search?keywords=${encodeURIComponent(t)}`
+    };
+    if (map[platform]) return map[platform](title);
+    return `https://www.justwatch.com/us/search?q=${encodeURIComponent(title)}`;
+}
+
+// Cards are clickable: tapping one opens where the title actually plays.
 function buildPosterCard(item, accent) {
     const title = typeof item === 'string' ? item : (item.title || 'Untitled');
     let poster = typeof item === 'string' ? '' : (item.posterUrl || '');
     const platform = typeof item === 'string' ? '' : (item.platform || '');
+    const isAudio = typeof item === 'object' && item.isAudio;
+    const link = (typeof item === 'object' && item.streamUrl) ? item.streamUrl : platformFallbackUrl(platform, title);
 
     const safeTitle = escapeHtml(title);
-    // If we have no usable poster, start hidden and let the CSS fallback show immediately.
     const hasPoster = poster && poster.trim() !== '' && poster !== 'invalid-image' && poster !== 'fallback';
     const imgTag = hasPoster
-        ? `<img src="${escapeHtml(poster)}" alt="${safeTitle}" style="width:100%; height:100%; object-fit:cover; display:block;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">`
+        ? `<img src="${escapeHtml(poster)}" alt="${safeTitle}" style="width:100%; height:100%; object-fit:contain; background:#0b0303; display:block;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">`
         : '';
     const fallbackDisplay = hasPoster ? 'none' : 'flex';
+    const cta = isAudio ? '🎧 Listen Now' : '▶ Stream Now';
 
     return `
-        <div class="poster-card" style="position:relative; width:100%; height:230px; border-radius:12px; overflow:hidden; border:1px solid ${accent}; box-shadow:0 5px 20px rgba(0,0,0,0.9);">
+        <a class="poster-card" href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer" title="Open ${safeTitle}"
+           style="position:relative; display:block; width:100%; height:230px; border-radius:12px; overflow:hidden; border:1px solid ${accent}; box-shadow:0 5px 20px rgba(0,0,0,0.9); text-decoration:none; transition:transform 0.3s ease, box-shadow 0.3s ease;"
+           onmouseover="this.style.transform='translateY(-6px) scale(1.03)'; this.style.boxShadow='0 14px 34px rgba(0,0,0,0.95)'; this.querySelector('.card-cta').style.opacity='1';"
+           onmouseout="this.style.transform='none'; this.style.boxShadow='0 5px 20px rgba(0,0,0,0.9)'; this.querySelector('.card-cta').style.opacity='0';">
             ${imgTag}
             <div class="css-poster-fallback" style="display:${fallbackDisplay}; background:linear-gradient(135deg,#1a0505,#4a2b00); width:100%; height:100%; align-items:center; justify-content:center; text-align:center; padding:10px; box-sizing:border-box; color:var(--gold); font-weight:900; font-size:16px; text-transform:uppercase; text-shadow:0 2px 8px rgba(0,0,0,0.9); box-shadow: inset 0 0 30px rgba(0,0,0,0.9);">
                 ${safeTitle}
             </div>
             ${platform ? `<div style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.85); color:${accent}; font-size:9px; font-weight:900; padding:4px 8px; border-radius:6px; text-transform:uppercase; border:1px solid ${accent};">${escapeHtml(platform)}</div>` : ''}
+            <div class="card-cta" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.62); color:var(--gold-glow); font-weight:900; font-size:14px; text-transform:uppercase; opacity:0; transition:opacity 0.3s ease;">${cta}</div>
             <div class="poster-title" style="position:absolute; bottom:0; width:100%; background:linear-gradient(transparent, rgba(0,0,0,0.95)); color:#fff; font-size:12px; padding:10px 4px 4px 4px; text-align:center; font-weight:bold; border-top:1px solid ${accent};">${safeTitle}</div>
-        </div>
+        </a>
     `;
 }
 
@@ -268,25 +300,28 @@ window.renderProfileGrids = function() {
     const savedListData = JSON.parse(localStorage.getItem('match_savedList') || '[]');
     const seenListData = JSON.parse(localStorage.getItem('match_seenList') || '[]');
 
-    // --- WATCH LATER ---
-    const portGrid = document.getElementById('portfolio-grid');
-    if (portGrid) {
-        portGrid.innerHTML = savedListData.length === 0
-            ? '<p style="color:#aaa; font-size:15px; font-style:italic;">Your Watch Later portfolio is empty. Go match!</p>'
-            : savedListData.map(item => buildPosterCard(item, 'var(--gold)')).join('');
-    }
+    const isAudioItem = i => typeof i === 'object' && i.isAudio === true;
 
-    // --- SEEN IT ---
-    const seenGrid = document.getElementById('seen-grid');
-    if (seenGrid) {
-        seenGrid.innerHTML = seenListData.length === 0
-            ? '<p style="color:#aaa; font-size:15px; font-style:italic;">You haven\'t marked anything as seen yet.</p>'
-            : seenListData.map(item => buildPosterCard(item, 'rgba(255,255,255,0.55)')).join('');
-    }
+    // Audio picks (music, playlists, singles, podcasts, audiobooks) live in their
+    // own tab so they don't get mixed into the watch queues.
+    const audioItems  = [...savedListData, ...seenListData].filter(isAudioItem);
+    const watchLater  = savedListData.filter(i => !isAudioItem(i));
+    const seenVisual  = seenListData.filter(i => !isAudioItem(i));
 
-    // --- COUNTS ---
-    const cw = document.getElementById('count-watchlater');
-    const cs = document.getElementById('count-seenit');
-    if (cw) cw.innerText = savedListData.length;
-    if (cs) cs.innerText = seenListData.length;
+    const fill = (id, data, accent, emptyMsg) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.innerHTML = data.length === 0
+            ? `<p style="color:#aaa; font-size:15px; font-style:italic;">${emptyMsg}</p>`
+            : data.map(item => buildPosterCard(item, accent)).join('');
+    };
+
+    fill('portfolio-grid', watchLater, 'var(--gold)', 'Your Watch Later portfolio is empty. Go match!');
+    fill('seen-grid', seenVisual, 'rgba(255,255,255,0.55)', "You haven't marked anything as seen yet.");
+    fill('audio-grid', audioItems, '#1DB954', 'No saved music, playlists, singles or podcasts yet.');
+
+    const setCount = (id, n) => { const e = document.getElementById(id); if (e) e.innerText = n; };
+    setCount('count-watchlater', watchLater.length);
+    setCount('count-seenit', seenVisual.length);
+    setCount('count-audio', audioItems.length);
 };

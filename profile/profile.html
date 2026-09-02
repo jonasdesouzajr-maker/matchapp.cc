@@ -33,7 +33,12 @@
         .input-group label { color: #ccc; font-size: 14px; font-weight: bold; margin-bottom: 8px; display: block; text-transform: uppercase; }
         .input-group input, .input-group select { width: 100%; padding: 18px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: #000; color: #fff; font-size: 16px; }
         
-        #portfolio-grid, #seen-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
+        #portfolio-grid, #seen-grid, #audio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
+        @media (max-width: 640px) {
+            #portfolio-grid, #seen-grid, #audio-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 14px; }
+            .portfolio-tab { min-width: 100%; font-size: 13px; padding: 14px 10px; }
+            .identity-grid { grid-template-columns: 1fr 1fr; }
+        }
         .poster-card { position: relative; width: 100%; height: 230px; border-radius: 12px; overflow: hidden; border: 1px solid var(--gold); }
         .poster-title { position: absolute; bottom: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.95)); color: #fff; font-size: 12px; padding: 10px 4px 4px 4px; text-align: center; font-weight: bold; }
         
@@ -188,6 +193,7 @@
                 <div class="portfolio-tabs">
                     <button id="tab-watchlater" class="portfolio-tab active" onclick="switchPortfolioTab('watchlater')">⭐ Watch Later <span id="count-watchlater" class="tab-count">0</span></button>
                     <button id="tab-seenit" class="portfolio-tab" onclick="switchPortfolioTab('seenit')">👁️ Seen It <span id="count-seenit" class="tab-count">0</span></button>
+                    <button id="tab-audio" class="portfolio-tab" onclick="switchPortfolioTab('audio')">🎧 Audio Library <span id="count-audio" class="tab-count">0</span></button>
                 </div>
 
                 <div id="panel-watchlater" class="portfolio-panel" style="background: rgba(229,193,88,0.05); padding: 30px; border-radius: 20px; border: 2px solid var(--gold); margin-bottom: 40px;">
@@ -201,11 +207,17 @@
                     <p style="color:#999; font-size:13px; margin:0 0 25px 0;">Your watch history. The AI never recommends these again.</p>
                     <div id="seen-grid"><p style="color: #aaa; font-size: 15px; font-style: italic;">You haven't marked anything as seen yet.</p></div>
                 </div>
+
+                <div id="panel-audio" class="portfolio-panel" style="display:none; background: rgba(29,185,84,0.05); padding: 30px; border-radius: 20px; border: 2px solid #1DB954; margin-bottom: 40px;">
+                    <h3 style="color: #1DB954; margin: 0 0 8px 0; font-size: 26px; text-transform: uppercase; font-weight: 900;">🎧 Audio Library</h3>
+                    <p style="color:#999; font-size:13px; margin:0 0 25px 0;">Your saved music, playlists, singles, podcasts and audiobooks. Tap any cover to listen.</p>
+                    <div id="audio-grid"><p style="color: #aaa; font-size: 15px; font-style: italic;">No saved music, playlists, singles or podcasts yet.</p></div>
+                </div>
             </article>
         </section>
     </main>
 
-    <script src="/app.js?v=102"></script>
-    <script src="/profile.js?v=102"></script>
+    <script src="/app.js?v=103"></script>
+    <script src="/profile.js?v=103"></script>
 </body>
 </html>

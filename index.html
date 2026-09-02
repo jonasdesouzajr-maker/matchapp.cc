@@ -149,8 +149,66 @@
         body::before { content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none; background: radial-gradient(ellipse at 15% 10%, rgba(229,193,88,0.05), transparent 45%), radial-gradient(ellipse at 85% 90%, rgba(138,43,226,0.06), transparent 45%); }
         .premium-card { transition: box-shadow 0.4s ease, transform 0.4s ease; }
         .premium-card:hover { box-shadow: 0 20px 60px rgba(0,0,0,0.95), 0 0 40px rgba(229,193,88,0.08); }
-        #res-poster-img { transition: transform 0.5s ease; }
-        #res-poster-img:hover { transform: scale(1.015); }
+        /* ===== RESULT POSTER: show the artwork's TRUE shape, never cropped ===== */
+        .poster-stage { position: relative; display: inline-block; max-width: 100%; }
+        #res-poster-img {
+            display: block; max-width: 100%; width: auto; max-height: 70vh; height: auto;
+            object-fit: contain; border-radius: 16px; border: 3px solid var(--gold);
+            box-shadow: 0 15px 55px rgba(229,193,88,0.45); position: relative; z-index: 3;
+            transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); background: #0b0303;
+        }
+        #res-poster-img:hover { transform: scale(1.02); }
+
+        /* Purely decorative pulse rings radiating out from behind the cover */
+        .pulse-ring { position: absolute; top: 50%; left: 50%; width: 100%; height: 100%;
+            transform: translate(-50%, -50%); border-radius: 20px; border: 2px solid var(--gold);
+            opacity: 0; pointer-events: none; z-index: 1; animation: pulseOut 3.6s ease-out infinite; }
+        .pulse-ring:nth-child(2) { animation-delay: 1.2s; }
+        .pulse-ring:nth-child(3) { animation-delay: 2.4s; }
+        @keyframes pulseOut {
+            0%   { transform: translate(-50%,-50%) scale(1);    opacity: 0.55; }
+            70%  { opacity: 0.12; }
+            100% { transform: translate(-50%,-50%) scale(1.35); opacity: 0; }
+        }
+        @media (prefers-reduced-motion: reduce) { .pulse-ring { animation: none; } }
+
+        /* ===== PREMIUM TOASTS ===== */
+        #toast-host { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); z-index: 4000; display: flex; flex-direction: column; gap: 10px; align-items: center; pointer-events: none; width: min(92vw, 460px); }
+        .match-toast { background: linear-gradient(135deg, rgba(20,8,8,0.98), rgba(40,20,0,0.98)); border: 1px solid var(--gold); color: var(--gold-glow); padding: 15px 22px; border-radius: 14px; font-size: 15px; font-weight: 600; box-shadow: 0 10px 40px rgba(0,0,0,0.85); animation: toastIn 0.45s cubic-bezier(0.22,1,0.36,1); text-align: center; }
+        .match-toast.toast-error { border-color: #ff5252; color: #ff8a8a; }
+        .match-toast.toast-out { animation: toastOut 0.5s forwards; }
+        @keyframes toastIn { from { opacity: 0; transform: translateY(25px) scale(0.95); } to { opacity: 1; transform: none; } }
+        @keyframes toastOut { to { opacity: 0; transform: translateY(-12px); } }
+
+        /* ===== SHIMMER ON GOLD BUTTONS ===== */
+        .gold-btn { position: relative; overflow: hidden; }
+        .gold-btn::after { content: ""; position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.45), transparent);
+            transform: skewX(-20deg); animation: shimmer 4.5s ease-in-out infinite; pointer-events: none; }
+        @keyframes shimmer { 0%, 65% { left: -60%; } 100% { left: 130%; } }
+
+        /* ===== COUNTRY HINT ===== */
+        #platform-country-hint { display:none; color: var(--gold); font-size: 12px; margin-top: 8px; font-weight: 600; }
+
+        /* ===== RESPONSIVE: MOBILE ===== */
+        @media (max-width: 768px) {
+            #res-poster-img { max-height: 52vh; }
+            #res-title { font-size: 30px !important; }
+            #res-synopsis { font-size: 16px !important; }
+            .marquee-item { width: 110px; height: 162px; }
+            #toast-host { bottom: 78px; }
+            .premium-card { padding: 22px 18px !important; }
+            #res-direct-link { font-size: 18px !important; padding: 18px !important; }
+        }
+        @media (max-width: 480px) {
+            #res-poster-img { max-height: 46vh; }
+            #res-title { font-size: 25px !important; }
+            .marquee-item { width: 96px; height: 142px; }
+        }
+        /* ===== RESPONSIVE: LARGE DESKTOP ===== */
+        @media (min-width: 1600px) {
+            #res-poster-img { max-height: 76vh; }
+        }
         .fade-in { animation: fadeIn 0.6s cubic-bezier(0.25,0.8,0.25,1) forwards; }
         @keyframes fadeIn { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
 
@@ -215,45 +273,45 @@
                     <div class="marquee-track">
                         <!-- NEVER-FAIL IMAGE GENERATORS (ONERROR TRIGGERS DYNAMIC COVER) -->
                         <div class="marquee-item" onclick="selectMarqueeItem('The Bear')">
-                            <img data-title="The Bear" src="https://image.tmdb.org/t/p/w500/q2gJGrH0aGZ1X1qP440xQzKqOee.jpg" onerror="this.onerror=null; this.src='https://placehold.co/200x300/1a0505/E5C158?text=The+Bear'" alt="The Bear">
+                            <img data-title="The Bear" src="" alt="The Bear" loading="lazy">
                             <div class="marquee-title">The Bear</div>
                         </div>
                         <div class="marquee-item" onclick="selectMarqueeItem('Shogun')">
-                            <img data-title="Shogun" src="https://image.tmdb.org/t/p/w500/7O4iVfOMQmdCSxhOg1WwSCSOOOQ.jpg" onerror="this.onerror=null; this.src='https://placehold.co/200x300/1a0505/E5C158?text=Shogun'" alt="Shogun">
+                            <img data-title="Shogun" src="" alt="Shogun" loading="lazy">
                             <div class="marquee-title">Shogun</div>
                         </div>
                         <div class="marquee-item" onclick="selectMarqueeItem('A Vida Secreta do Meu Marido Bilionário')">
-                            <img data-title="A Vida Secreta do Meu Marido Bilionário" src="https://image.tmdb.org/t/p/w500/j9w5l2X4XhQx2J6p3N0V9a8S7g.jpg" onerror="this.onerror=null; this.src='https://placehold.co/200x300/1a0505/E5C158?text=Marido+Bilionário'" alt="Marido Bilionário">
+                            <img data-title="A Vida Secreta do Meu Marido Bilionário" src="" alt="A Vida Secreta do Meu Marido Bilionário" loading="lazy">
                             <div class="marquee-title">Marido Bilionário</div>
                         </div>
                         <div class="marquee-item" onclick="selectMarqueeItem('Deadpool & Wolverine')">
-                            <img data-title="Deadpool & Wolverine" src="https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg" onerror="this.onerror=null; this.src='https://placehold.co/200x300/1a0505/E5C158?text=Deadpool+3'" alt="Deadpool & Wolverine">
+                            <img data-title="Deadpool & Wolverine" src="" alt="Deadpool & Wolverine" loading="lazy">
                             <div class="marquee-title">Deadpool 3</div>
                         </div>
                         <div class="marquee-item" onclick="selectMarqueeItem('Queen of Tears')">
-                            <img data-title="Queen of Tears" src="https://image.tmdb.org/t/p/w500/8A1H55bC2m3n9P5D5d7lH2eO0O2.jpg" onerror="this.onerror=null; this.src='https://placehold.co/200x300/1a0505/E5C158?text=Queen+of+Tears'" alt="Queen of Tears">
+                            <img data-title="Queen of Tears" src="" alt="Queen of Tears" loading="lazy">
                             <div class="marquee-title">Queen of Tears</div>
                         </div>
                         <div class="marquee-item" onclick="selectMarqueeItem('The Joe Rogan Experience')">
-                            <img data-title="The Joe Rogan Experience" src="https://image.tmdb.org/t/p/w500/7aPRJUKFtdh6Qy8n3JpEqqV5m3W.jpg" onerror="this.onerror=null; this.src='https://placehold.co/200x300/1a0505/E5C158?text=Joe+Rogan'" alt="Joe Rogan Experience">
+                            <img data-title="The Joe Rogan Experience" src="" alt="The Joe Rogan Experience" loading="lazy">
                             <div class="marquee-title">Joe Rogan</div>
                         </div>
                         <div class="marquee-item" onclick="selectMarqueeItem('Jujutsu Kaisen')">
-                            <img data-title="Jujutsu Kaisen" src="https://image.tmdb.org/t/p/w500/hFWP5HkbVEe40hrptlzSyDpFBqw.jpg" onerror="this.onerror=null; this.src='https://placehold.co/200x300/1a0505/E5C158?text=Jujutsu+Kaisen'" alt="Jujutsu Kaisen">
+                            <img data-title="Jujutsu Kaisen" src="" alt="Jujutsu Kaisen" loading="lazy">
                             <div class="marquee-title">Jujutsu Kaisen</div>
                         </div>
                         
                         <!-- Duplicated Loop for Marquee -->
                         <div class="marquee-item" onclick="selectMarqueeItem('The Bear')">
-                            <img data-title="The Bear" src="https://image.tmdb.org/t/p/w500/q2gJGrH0aGZ1X1qP440xQzKqOee.jpg" onerror="this.onerror=null; this.src='https://placehold.co/200x300/1a0505/E5C158?text=The+Bear'" alt="The Bear">
+                            <img data-title="The Bear" src="" alt="The Bear" loading="lazy">
                             <div class="marquee-title">The Bear</div>
                         </div>
                         <div class="marquee-item" onclick="selectMarqueeItem('Shogun')">
-                            <img data-title="Shogun" src="https://image.tmdb.org/t/p/w500/7O4iVfOMQmdCSxhOg1WwSCSOOOQ.jpg" onerror="this.onerror=null; this.src='https://placehold.co/200x300/1a0505/E5C158?text=Shogun'" alt="Shogun">
+                            <img data-title="Shogun" src="" alt="Shogun" loading="lazy">
                             <div class="marquee-title">Shogun</div>
                         </div>
                         <div class="marquee-item" onclick="selectMarqueeItem('Deadpool & Wolverine')">
-                            <img data-title="Deadpool & Wolverine" src="https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg" onerror="this.onerror=null; this.src='https://placehold.co/200x300/1a0505/E5C158?text=Deadpool'" alt="Deadpool & Wolverine">
+                            <img data-title="Deadpool & Wolverine" src="" alt="Deadpool & Wolverine" loading="lazy">
                             <div class="marquee-title">Deadpool 3</div>
                         </div>
                     </div>
@@ -337,8 +395,14 @@
                                     <option value="GoodShort">GoodShort</option>
                                     <option value="FlexTV">FlexTV</option>
                                 </optgroup>
+                                <optgroup label="Brazil">
+                                    <option value="Globoplay">Globoplay</option>
+                                    <option value="SBT+">SBT+</option>
+                                    <option value="Claro tv+">Claro tv+</option>
+                                    <option value="NetMovies">NetMovies</option>
+                                    <option value="A la Carte">A la Carte</option>
+                                </optgroup>
                                 <optgroup label="Regional &amp; Local">
-                                    <option value="Globoplay">Globoplay (Brazil)</option>
                                     <option value="Viki">Rakuten Viki (K-Drama)</option>
                                     <option value="Crunchyroll">Crunchyroll (Anime)</option>
                                     <option value="Hotstar">JioHotstar (India)</option>
@@ -349,8 +413,10 @@
                                 </optgroup>
                                 <optgroup label="Audio">
                                     <option value="Spotify">Spotify</option>
+                                    <option value="Apple Music">Apple Music</option>
                                     <option value="Apple Podcasts">Apple Podcasts</option>
                                     <option value="YouTube Music">YouTube Music</option>
+                                    <option value="Audible">Audible</option>
                                 </optgroup>
                                 <optgroup label="Free / Ad-Supported">
                                     <option value="YouTube">YouTube</option>
@@ -359,6 +425,7 @@
                                     <option value="Roku Channel">The Roku Channel</option>
                                 </optgroup>
                             </select>
+                            <div id="platform-country-hint"></div>
                         </div>
                         <div>
                             <label style="color:#ccc; font-size:14px; font-weight:bold; margin-bottom:8px; display:block; text-transform:uppercase;">Mood</label>
@@ -444,7 +511,12 @@
                 <article id="result-box" class="premium-card" style="display: none; text-align: left;">
                     <div style="text-align: center; margin-bottom: 25px;">
                         <!-- THIS IMAGE TAG WILL ALWAYS BE VISIBLE, NO MATTER WHAT -->
-                        <img id="res-poster-img" src="" alt="Poster" style="width: 100%; max-width: 380px; height: 550px; object-fit: cover; border-radius: 15px; border: 3px solid var(--gold); box-shadow: 0 15px 50px rgba(229,193,88,0.5); display: none;">
+                        <div class="poster-stage">
+                            <span class="pulse-ring"></span>
+                            <span class="pulse-ring"></span>
+                            <span class="pulse-ring"></span>
+                            <img id="res-poster-img" src="" alt="Poster" style="display: none;">
+                        </div>
                     </div>
 
                     <!-- TRAILER / PREVIEW — right underneath the cover, for every result -->
@@ -553,6 +625,10 @@
                 <a href="https://www.viki.com" target="_blank" rel="noopener noreferrer">💜 Rakuten Viki</a>
                 <a href="https://www.crunchyroll.com" target="_blank" rel="noopener noreferrer">⚔️ Crunchyroll</a>
                 <a href="https://globoplay.globo.com" target="_blank" rel="noopener noreferrer">🇧🇷 Globoplay</a>
+                <a href="https://www.sbt.com.br/sbtplus" target="_blank" rel="noopener noreferrer">🇧🇷 SBT+</a>
+                <a href="https://www.clarotvmais.com.br" target="_blank" rel="noopener noreferrer">🇧🇷 Claro tv+</a>
+                <a href="https://www.netmovies.com.br" target="_blank" rel="noopener noreferrer">🇧🇷 NetMovies</a>
+                <a href="https://www.alacarte.com.br" target="_blank" rel="noopener noreferrer">🇧🇷 A la Carte</a>
                 <a href="https://www.hotstar.com" target="_blank" rel="noopener noreferrer">🇮🇳 JioHotstar</a>
                 <a href="https://www.iq.com" target="_blank" rel="noopener noreferrer">🏮 iQIYI</a>
                 <a href="https://wetv.vip" target="_blank" rel="noopener noreferrer">🎋 WeTV</a>
@@ -594,6 +670,10 @@
                     new anime summer 2026 · best anime on Crunchyroll right now · vertical micro-drama apps like ReelShort ·
                     DramaBox new episodes 2026 · ShortMax romance drama · vertical short drama billionaire romance ·
                     melhores novelas brasileiras 2026 · assistir novela brasileira online · Globoplay novelas ·
+                    SBT+ assistir online grátis · novelas SBT online · Claro tv+ streaming ·
+                    Claro tv mais catálogo · NetMovies filmes online · NetMovies assinatura ·
+                    A la Carte streaming brasileiro · melhores streamings do Brasil 2026 ·
+                    onde assistir filmes online no Brasil · streaming brasileiro barato ·
                     best Spotify playlists 2026 · lo-fi beats playlist Spotify · Korean drama OST playlist Spotify ·
                     BTS ARIRANG album stream · new Spotify singles this week · best podcast to listen to right now ·
                     what to watch on Netflix tonight · hidden gems on Prime Video · best shows Max HBO 2026 ·
@@ -624,6 +704,17 @@
             </p>
         </div>
     </footer>
+
+    <!-- "NOT FOR ME" RE-MATCH MODAL -->
+    <div id="rematch-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:3000; align-items:center; justify-content:center; padding:20px;">
+        <div class="premium-card" style="max-width:480px; width:100%; text-align:center; animation: fadeIn 0.45s cubic-bezier(0.22,1,0.36,1);">
+            <h3 style="color:var(--gold); font-size:24px; margin:0 0 18px 0; text-transform:uppercase; font-weight:900;">👎 Noted!</h3>
+            <p id="rematch-message" style="color:#ddd; font-size:16px; line-height:1.7; margin:0 0 28px 0;"></p>
+            <button onclick="rematchSameParams()" class="gold-btn" style="width:100%; margin-bottom:14px; font-size:17px; padding:18px;">⚡ Match Again — Same Choices</button>
+            <button onclick="changeParamsAndRematch()" style="width:100%; background:transparent; border:2px solid var(--gold); color:var(--gold-glow); padding:16px; border-radius:14px; font-weight:900; font-size:16px; cursor:pointer; text-transform:uppercase; transition:0.25s;" onmouseover="this.style.background='rgba(229,193,88,0.15)'" onmouseout="this.style.background='transparent'">🎛️ Change My Choices First</button>
+            <button onclick="closeRematchPrompt()" style="margin-top:16px; background:none; border:none; color:#888; font-size:13px; cursor:pointer; text-decoration:underline;">Close</button>
+        </div>
+    </div>
 
     <!-- STICKY MOBILE AD BAR (Adsterra 320x50) -->
     <div class="sticky-mobile-ad">
@@ -657,7 +748,7 @@
         </div>
     </div>
 
-    <script src="/app.js?v=102"></script>
+    <script src="/app.js?v=103"></script>
     <script>
         // OS-LEVEL CHROME FORCE LAUNCHER
         function openInChrome() {

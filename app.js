@@ -140,21 +140,46 @@ async function itunesRichLookup(title, media) {
 }
 
 // Tries each media type until one returns usable art/preview for this title.
-async function getRichMetadata(title, categoryHint) {
-    // Order the media types by what the user's chosen category implies,
-    // so a podcast pick isn't matched against the movie catalog first.
-    let order = ['movie', 'tvShow', 'podcast', 'musicTrack', 'album', 'shortFilm', 'audiobook'];
-    const hint = (categoryHint || '').toLowerCase();
-    if (hint.includes('podcast')) order = ['podcast', 'musicTrack', 'movie', 'tvShow'];
-    else if (hint.includes('playlist') || hint.includes('music') || hint.includes('single') || hint.includes('album') || hint.includes('spotify')) order = ['musicTrack', 'album', 'podcast', 'movie'];
-    else if (hint.includes('audiobook')) order = ['audiobook', 'podcast', 'movie'];
-    else if (hint.includes('series') || hint.includes('drama') || hint.includes('anime') || hint.includes('novela') || hint.includes('dizi')) order = ['tvShow', 'movie', 'shortFilm', 'musicTrack'];
+// Media kinds that carry an actual moving-picture preview.
+const VIDEO_MEDIA = ['movie', 'tvShow', 'shortFilm', 'musicVideo'];
+function isVideoPreview(meta) {
+    if (!meta || !meta.preview) return false;
+    // Apple serves video previews as .m4v/.mp4/.mov; audio as .m4a/.mp3.
+    if (/\.(m4v|mp4|mov)(\?|$)/i.test(meta.preview)) return true;
+    if (/\.(m4a|mp3|aac|wav)(\?|$)/i.test(meta.preview)) return false;
+    // Fall back on the iTunes `kind` when the extension is inconclusive.
+    return /movie|tv|video|short/i.test(meta.kind || '');
+}
 
+async function getRichMetadata(title, categoryHint) {
+    const hint = (categoryHint || '').toLowerCase();
+    const wantsAudio = /podcast|playlist|music|single|album|audiobook|spotify/.test(hint);
+
+    let order;
+    if (wantsAudio) {
+        // Audio request: audio sources first, and a video preview is fine too.
+        if (hint.includes('podcast')) order = ['podcast', 'audiobook', 'musicTrack', 'album'];
+        else if (hint.includes('audiobook')) order = ['audiobook', 'podcast', 'musicTrack'];
+        else order = ['musicTrack', 'album', 'musicVideo', 'podcast'];
+    } else {
+        // Visual request: ONLY search visual catalogs. Searching podcast/audiobook
+        // here is what caused a film to come back as a spoken-word narration.
+        order = ['movie', 'tvShow', 'shortFilm', 'musicVideo'];
+    }
+
+    let bestArtworkOnly = null;
     for (const media of order) {
         const meta = await itunesRichLookup(title, media);
-        if (meta && (meta.artwork || meta.preview)) return meta;
+        if (!meta) continue;
+        if (wantsAudio) { if (meta.artwork || meta.preview) return meta; }
+        else {
+            // For visual picks, only accept a preview that is genuinely video.
+            if (isVideoPreview(meta)) return meta;
+            // Otherwise keep the artwork but drop the (audio) preview.
+            if (meta.artwork && !bestArtworkOnly) bestArtworkOnly = { ...meta, preview: null };
+        }
     }
-    return null;
+    return bestArtworkOnly;
 }
 
 async function getRealCoverImage(title) {
@@ -209,20 +234,29 @@ function generateLocalPosterSVG(title) {
 // Replaces any placeholder/broken marquee art with real covers on page load.
 // ----------------------------------------------------
 async function hydrateMarqueeCovers() {
-    const items = document.querySelectorAll('.marquee-item');
-    for (const item of items) {
-        const img = item.querySelector('img');
-        if (!img) continue;
+    const imgs = document.querySelectorAll('.marquee-item img');
+
+    // Paint an instant local placeholder so a cover is visible on first frame —
+    // previously the hardcoded TMDB URLs were dead, the inline onerror nulled
+    // itself out, and the tile ended up blank with only the title showing.
+    imgs.forEach(img => {
+        const title = img.getAttribute('data-title') || img.getAttribute('alt') || '';
+        if (!img.getAttribute('src')) img.src = generateLocalPosterSVG(title);
+    });
+
+    // Then hydrate every tile in parallel so the strip fills quickly.
+    await Promise.all(Array.from(imgs).map(async img => {
         const title = img.getAttribute('data-title') || img.getAttribute('alt');
-        if (!title) continue;
+        if (!title) return;
         try {
-            const real = await getRealCoverImage(title);
+            const meta = await getRichMetadata(title, 'series');
+            const real = (meta && meta.artwork) ? meta.artwork : await getRealCoverImage(title);
             if (real) {
-                img.onerror = function() { this.onerror = function(){ this.onerror=null; this.src = generateLocalPosterSVG(title); }; this.src = generatedCover(title); };
+                img.onerror = function() { this.onerror = null; this.src = generateLocalPosterSVG(title); };
                 img.src = real;
             }
-        } catch (e) {}
-    }
+        } catch (e) { /* placeholder already showing */ }
+    }));
 }
 document.addEventListener('DOMContentLoaded', hydrateMarqueeCovers);
 
@@ -359,6 +393,156 @@ const CONTENT_CATALOG = [
 ];
 
 // ----------------------------------------------------
+// PLATFORM INTELLIGENCE CATALOG
+// Single source of truth powering: cascading dropdowns (only show platforms
+// that actually carry the chosen format), country-aware filtering for
+// registered users, audio-vs-video routing, and footer backlinks.
+//   cats     : formats this platform actually carries
+//   countries: ISO-ish country names it serves; ['*'] = worldwide
+//   audio    : true = music/spoken audio service (drives Listen Later wording)
+// ----------------------------------------------------
+const PLATFORMS = {
+    "Netflix":        { group: "Global Giants", audio: false, countries: ['*'], cats: ["movie","series","limited series","documentary","stand-up comedy special","reality show","K-drama","anime","kids","short film","Bollywood","European cinema","telenovela","C-drama","J-drama","Turkish dizi"], url: "https://www.netflix.com", search: t => `https://www.netflix.com/search?q=${encodeURIComponent(t)}` },
+    "Prime Video":    { group: "Global Giants", audio: false, countries: ['*'], cats: ["movie","series","limited series","documentary","stand-up comedy special","reality show","anime","kids","Bollywood","European cinema","Nollywood"], url: "https://www.primevideo.com", search: t => `https://www.primevideo.com/search?phrase=${encodeURIComponent(t)}` },
+    "Disney+":        { group: "Global Giants", audio: false, countries: ['*'], cats: ["movie","series","limited series","documentary","kids","anime"], url: "https://www.disneyplus.com", search: t => `https://www.disneyplus.com/search?q=${encodeURIComponent(t)}` },
+    "Max":            { group: "Global Giants", audio: false, countries: ['*'], cats: ["movie","series","limited series","documentary","stand-up comedy special","reality show","kids","anime"], url: "https://www.max.com", search: t => `https://www.max.com/search?q=${encodeURIComponent(t)}` },
+    "Apple TV+":      { group: "Global Giants", audio: false, countries: ['*'], cats: ["movie","series","limited series","documentary","kids","short film"], url: "https://tv.apple.com", search: t => `https://tv.apple.com/search?term=${encodeURIComponent(t)}` },
+    "Paramount+":     { group: "Global Giants", audio: false, countries: ['*'], cats: ["movie","series","limited series","documentary","reality show","kids","telenovela"], url: "https://www.paramountplus.com", search: t => `https://www.paramountplus.com/search/?q=${encodeURIComponent(t)}` },
+    "Hulu":           { group: "Global Giants", audio: false, countries: ['United States'], cats: ["movie","series","limited series","documentary","reality show","anime","stand-up comedy special"], url: "https://www.hulu.com", search: t => `https://www.hulu.com/search?q=${encodeURIComponent(t)}` },
+    "Peacock":        { group: "Global Giants", audio: false, countries: ['United States'], cats: ["movie","series","limited series","documentary","reality show","kids"], url: "https://www.peacocktv.com", search: t => `https://www.peacocktv.com/search?q=${encodeURIComponent(t)}` },
+
+    "ReelShort":      { group: "Vertical Micro-Drama Apps", audio: false, countries: ['*'], cats: ["vertical micro-drama","short film"], url: "https://www.reelshort.com", search: t => `https://www.reelshort.com/search?keyword=${encodeURIComponent(t)}` },
+    "DramaBox":       { group: "Vertical Micro-Drama Apps", audio: false, countries: ['*'], cats: ["vertical micro-drama","short film"], url: "https://www.dramaboxapp.com", search: t => `https://www.dramaboxapp.com/search?q=${encodeURIComponent(t)}` },
+    "ShortMax":       { group: "Vertical Micro-Drama Apps", audio: false, countries: ['*'], cats: ["vertical micro-drama","short film"], url: "https://www.shortmax.com", search: t => `https://www.shortmax.com` },
+    "GoodShort":      { group: "Vertical Micro-Drama Apps", audio: false, countries: ['*'], cats: ["vertical micro-drama","short film"], url: "https://www.goodshort.com", search: t => `https://www.goodshort.com` },
+    "FlexTV":         { group: "Vertical Micro-Drama Apps", audio: false, countries: ['*'], cats: ["vertical micro-drama","short film"], url: "https://www.flextv.cc", search: t => `https://www.flextv.cc` },
+
+    "Globoplay":      { group: "Brazil", audio: false, countries: ['Brazil','Brasil','Portugal'], cats: ["novela brasileira","telenovela","series","movie","documentary","reality show","kids"], url: "https://globoplay.globo.com", search: t => `https://globoplay.globo.com/busca/?q=${encodeURIComponent(t)}` },
+    "SBT+":           { group: "Brazil", audio: false, countries: ['Brazil','Brasil'], cats: ["novela brasileira","telenovela","series","reality show","kids","movie"], url: "https://www.sbt.com.br/sbtplus", search: t => `https://www.sbt.com.br/sbtplus/busca?q=${encodeURIComponent(t)}` },
+    "Claro tv+":      { group: "Brazil", audio: false, countries: ['Brazil','Brasil'], cats: ["movie","series","novela brasileira","telenovela","documentary","kids","reality show"], url: "https://www.clarotvmais.com.br", search: t => `https://www.clarotvmais.com.br/busca?q=${encodeURIComponent(t)}` },
+    "NetMovies":      { group: "Brazil", audio: false, countries: ['Brazil','Brasil'], cats: ["movie","series","documentary","kids"], url: "https://www.netmovies.com.br", search: t => `https://www.netmovies.com.br/busca?q=${encodeURIComponent(t)}` },
+    "A la Carte":     { group: "Brazil", audio: false, countries: ['Brazil','Brasil'], cats: ["movie","series","documentary","novela brasileira"], url: "https://www.alacarte.com.br", search: t => `https://www.alacarte.com.br` },
+
+    "Viki":           { group: "Regional & Local", audio: false, countries: ['*'], cats: ["K-drama","C-drama","J-drama","series","movie","Turkish dizi"], url: "https://www.viki.com", search: t => `https://www.viki.com/search?q=${encodeURIComponent(t)}` },
+    "Crunchyroll":    { group: "Regional & Local", audio: false, countries: ['*'], cats: ["anime","movie","series"], url: "https://www.crunchyroll.com", search: t => `https://www.crunchyroll.com/search?q=${encodeURIComponent(t)}` },
+    "Hotstar":        { group: "Regional & Local", audio: false, countries: ['India'], cats: ["Bollywood","movie","series","documentary","reality show","kids"], url: "https://www.hotstar.com", search: t => `https://www.hotstar.com/in/search?q=${encodeURIComponent(t)}` },
+    "iQIYI":          { group: "Regional & Local", audio: false, countries: ['*'], cats: ["C-drama","K-drama","anime","movie","series"], url: "https://www.iq.com", search: t => `https://www.iq.com/search?query=${encodeURIComponent(t)}` },
+    "WeTV":           { group: "Regional & Local", audio: false, countries: ['*'], cats: ["C-drama","K-drama","Thai drama","movie","series"], url: "https://wetv.vip", search: t => `https://wetv.vip/search?q=${encodeURIComponent(t)}` },
+    "Viu":            { group: "Regional & Local", audio: false, countries: ['*'], cats: ["K-drama","C-drama","Turkish dizi","movie","series"], url: "https://www.viu.com", search: t => `https://www.viu.com/ott/search?q=${encodeURIComponent(t)}` },
+    "MUBI":           { group: "Regional & Local", audio: false, countries: ['*'], cats: ["movie","European cinema","short film","documentary"], url: "https://mubi.com", search: t => `https://mubi.com/search/${encodeURIComponent(t)}` },
+
+    "Spotify":        { group: "Audio", audio: true, countries: ['*'], cats: ["podcast","Spotify playlist","Spotify single","music album","audiobook"], url: "https://open.spotify.com", search: t => `https://open.spotify.com/search/${encodeURIComponent(t)}` },
+    "Apple Music":    { group: "Audio", audio: true, countries: ['*'], cats: ["Spotify single","music album","Spotify playlist"], url: "https://music.apple.com", search: t => `https://music.apple.com/search?term=${encodeURIComponent(t)}` },
+    "Apple Podcasts": { group: "Audio", audio: true, countries: ['*'], cats: ["podcast","audiobook"], url: "https://podcasts.apple.com", search: t => `https://podcasts.apple.com/search?term=${encodeURIComponent(t)}` },
+    "YouTube Music":  { group: "Audio", audio: true, countries: ['*'], cats: ["Spotify playlist","Spotify single","music album"], url: "https://music.youtube.com", search: t => `https://music.youtube.com/search?q=${encodeURIComponent(t)}` },
+    "Audible":        { group: "Audio", audio: true, countries: ['*'], cats: ["audiobook","podcast"], url: "https://www.audible.com", search: t => `https://www.audible.com/search?keywords=${encodeURIComponent(t)}` },
+
+    "YouTube":        { group: "Free / Ad-Supported", audio: false, countries: ['*'], cats: ["movie","series","documentary","short film","stand-up comedy special","kids","YouTube Shorts","podcast"], url: "https://www.youtube.com", search: t => `https://www.youtube.com/results?search_query=${encodeURIComponent(t)}` },
+    "Tubi":           { group: "Free / Ad-Supported", audio: false, countries: ['United States','Canada','Mexico','Brazil','Brasil'], cats: ["movie","series","documentary","anime","kids","Nollywood"], url: "https://tubitv.com", search: t => `https://tubitv.com/search/${encodeURIComponent(t)}` },
+    "Pluto TV":       { group: "Free / Ad-Supported", audio: false, countries: ['*'], cats: ["movie","series","documentary","reality show","kids","telenovela"], url: "https://pluto.tv", search: t => `https://pluto.tv/en/search/details?q=${encodeURIComponent(t)}` },
+    "Roku Channel":   { group: "Free / Ad-Supported", audio: false, countries: ['United States','Canada','United Kingdom'], cats: ["movie","series","documentary","reality show","kids"], url: "https://therokuchannel.roku.com", search: t => `https://therokuchannel.roku.com/search/${encodeURIComponent(t)}` }
+};
+
+const AUDIO_CATEGORIES = ["podcast","Spotify playlist","Spotify single","music album","audiobook"];
+function isAudioCategory(cat) { return AUDIO_CATEGORIES.includes(cat); }
+
+// Country the user locked into their profile; drives availability filtering.
+function getUserCountry() {
+    const c = (localStorage.getItem('match_user_country') || '').trim();
+    return c || null;
+}
+
+function platformServesCountry(pf, country) {
+    if (!country) return true;
+    if (pf.countries.includes('*')) return true;
+    const norm = country.toLowerCase();
+    return pf.countries.some(c => c.toLowerCase() === norm);
+}
+
+// Platforms valid for a given format, filtered by the user's country when known.
+function platformsFor(cat, country) {
+    return Object.entries(PLATFORMS).filter(([name, pf]) => {
+        if (!platformServesCountry(pf, country)) return false;
+        if (!cat || cat === 'any') return true;
+        return pf.cats.includes(cat);
+    });
+}
+
+function platformSearchUrl(platformName, title) {
+    const pf = PLATFORMS[platformName];
+    if (pf && typeof pf.search === 'function') return pf.search(title);
+    return `https://www.justwatch.com/us/search?q=${encodeURIComponent(title)}`;
+}
+
+// ----------------------------------------------------
+// CASCADING QUESTIONNAIRE
+// Choosing a format narrows every downstream field to only complementary
+// options: platforms that actually carry that format, in the user's country.
+// "Surprise Me" reopens everything.
+// ----------------------------------------------------
+window.onCategoryChange = function() {
+    const catEl = document.getElementById('q-category');
+    const platEl = document.getElementById('q-platform');
+    if (!catEl || !platEl) return;
+
+    const cat = catEl.value;
+    const country = getUserCountry();
+    const previous = platEl.value;
+    const matches = platformsFor(cat === 'any' ? null : cat, country);
+
+    platEl.innerHTML = '';
+    const anyOpt = document.createElement('option');
+    anyOpt.value = 'any';
+    anyOpt.textContent = cat === 'any' ? 'Any Platform' : 'Any Platform That Has It';
+    platEl.appendChild(anyOpt);
+
+    const groups = {};
+    matches.forEach(([name, pf]) => {
+        if (!groups[pf.group]) groups[pf.group] = [];
+        groups[pf.group].push(name);
+    });
+    Object.keys(groups).forEach(groupName => {
+        const og = document.createElement('optgroup');
+        og.label = groupName;
+        groups[groupName].forEach(name => {
+            const o = document.createElement('option');
+            o.value = name; o.textContent = name;
+            og.appendChild(o);
+        });
+        platEl.appendChild(og);
+    });
+
+    // Keep the previous pick when it's still valid for the new format.
+    if (previous && previous !== 'any' && matches.some(([n]) => n === previous)) platEl.value = previous;
+    else platEl.value = 'any';
+
+    applyAudioModeLabels(isAudioCategory(cat));
+
+    const hint = document.getElementById('platform-country-hint');
+    if (hint) {
+        if (country) {
+            hint.textContent = cat === 'any'
+                ? `🌍 Personalized for ${country}.`
+                : `🌍 Showing only platforms available in ${country}.`;
+            hint.style.display = 'block';
+        } else { hint.style.display = 'none'; }
+    }
+};
+
+// Swaps Watch Later / Seen It wording for audio picks.
+function applyAudioModeLabels(isAudio) {
+    const saveBtn = document.getElementById('btn-watch-later');
+    const seenBtn = document.getElementById('btn-seen-it');
+    if (saveBtn) saveBtn.innerHTML = isAudio ? '🎧 Listen Later' : '⭐ Watch Later';
+    if (seenBtn) seenBtn.innerHTML = isAudio ? '🎼 Have Heard It' : "👁️ I've Seen It";
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const catEl = document.getElementById('q-category');
+    if (catEl) { catEl.addEventListener('change', window.onCategoryChange); window.onCategoryChange(); }
+});
+
+// ----------------------------------------------------
 // LIVE DISCOVERY ENGINE
 // Rather than a fixed hardcoded list, this queries the keyless iTunes catalog
 // with terms built from the user's own selections. That catalog spans the
@@ -433,11 +617,20 @@ async function discoverFromITunes(cat, mood, vibe, decade, rating) {
         const r = pool[Math.floor(Math.random() * pool.length)];
         const name = r.trackName || r.collectionName;
         const year = r.releaseDate ? String(r.releaseDate).substring(0, 4) : '';
+
+        // Attach a platform that actually carries this format in the user's country,
+        // so the Stream Now button lands somewhere real rather than a generic search.
+        const country = getUserCountry();
+        const candidates = platformsFor(cat === 'any' ? null : cat, country);
+        const chosenPlatform = candidates.length
+            ? candidates[Math.floor(Math.random() * candidates.length)][0]
+            : 'any';
+
         return {
             title: name,
             synopsis: r.longDescription || r.shortDescription ||
                 `${year ? year + ' — ' : ''}${r.primaryGenreName || 'A great pick'}${r.artistName ? ', from ' + r.artistName : ''}.`,
-            platform: 'any',
+            platform: chosenPlatform,
             _meta: {
                 artwork: upgradeArtwork(r.artworkUrl100),
                 preview: r.previewUrl || null,
@@ -621,43 +814,27 @@ async function renderResult(selected, isSpecificSearch) {
     };
     posterEl.src = realCover; 
 
-    // DIRECT LINK SETUP
+    // DIRECT LINK SETUP — routed through the platform catalog so every service
+    // (including SBT+, Claro tv+, NetMovies, A la Carte) gets a real deep link.
     const directBtn = document.getElementById('res-direct-link');
-    const plat = (selected.platform || '').toLowerCase();
-    const catLower = (categoryHint || '').toLowerCase();
-    const isMusicPick = /spotify|playlist|single|album|music|podcast/.test(plat + ' ' + catLower);
+    const catIsAudio = isAudioCategory(categoryHint);
+    const pfEntry = PLATFORMS[selected.platform];
+    const audioPick = catIsAudio || (pfEntry && pfEntry.audio);
 
-    if (isMusicPick) {
+    if (selected.platform && selected.platform !== 'any' && pfEntry) {
+        directBtn.href = platformSearchUrl(selected.platform, selected.title);
+    } else if (audioPick) {
         directBtn.href = `https://open.spotify.com/search/${encodeURIComponent(selected.title)}`;
-        directBtn.innerText = '🎧 Listen on Spotify';
-    } else if (plat.includes('reelshort')) {
-        directBtn.href = `https://www.reelshort.com/`;
-        directBtn.innerText = '▶ Stream Now';
-    } else if (plat.includes('dramabox')) {
-        directBtn.href = `https://www.dramabox.com/`;
-        directBtn.innerText = '▶ Stream Now';
-    } else if (plat.includes('netflix')) {
-        directBtn.href = `https://www.netflix.com/search?q=${encodeURIComponent(selected.title)}`;
-        directBtn.innerText = '▶ Stream Now';
-    } else if (plat.includes('prime')) {
-        directBtn.href = `https://www.primevideo.com/search?phrase=${encodeURIComponent(selected.title)}`;
-        directBtn.innerText = '▶ Stream Now';
-    } else if (plat.includes('disney')) {
-        directBtn.href = `https://www.disneyplus.com/search?q=${encodeURIComponent(selected.title)}`;
-        directBtn.innerText = '▶ Stream Now';
-    } else if (plat.includes('crunchyroll')) {
-        directBtn.href = `https://www.crunchyroll.com/search?q=${encodeURIComponent(selected.title)}`;
-        directBtn.innerText = '▶ Stream Now';
-    } else if (plat.includes('globoplay')) {
-        directBtn.href = `https://globoplay.globo.com/busca/?q=${encodeURIComponent(selected.title)}`;
-        directBtn.innerText = '▶ Assistir Agora';
-    } else if (plat.includes('viki')) {
-        directBtn.href = `https://www.viki.com/search?q=${encodeURIComponent(selected.title)}`;
-        directBtn.innerText = '▶ Stream Now';
     } else {
         directBtn.href = `https://www.justwatch.com/us/search?q=${encodeURIComponent(selected.title)}`;
-        directBtn.innerText = '▶ Find Where To Stream';
     }
+
+    if (audioPick) directBtn.innerText = '🎧 Listen Now';
+    else if (selected.platform && selected.platform !== 'any' && pfEntry) directBtn.innerText = `▶ Watch on ${selected.platform}`;
+    else directBtn.innerText = '▶ Find Where To Stream';
+
+    // Keep the save/seen buttons worded for the medium being shown.
+    applyAudioModeLabels(audioPick);
 
     // ----------------------------------------------------
     // TRAILER / PREVIEW
@@ -682,12 +859,16 @@ async function renderResult(selected, isSpecificSearch) {
     previewVideo.removeAttribute('src');
     previewAudio.removeAttribute('src');
 
-    const isAudioKind = meta && meta.kind && /song|music|podcast|audiobook/i.test(meta.kind);
-    if (meta && meta.preview && !isAudioKind) {
+    // A visual match must never render a spoken-audio preview — if no true video
+    // preview exists we show the YouTube trailer card instead.
+    const wantsAudio = isAudioCategory(categoryHint);
+    const hasVideo = isVideoPreview(meta);
+
+    if (hasVideo) {
         previewVideo.src = meta.preview;
         previewVideo.poster = realCover;
         previewVideo.style.display = 'block';
-    } else if (meta && meta.preview && isAudioKind) {
+    } else if (wantsAudio && meta && meta.preview) {
         previewAudio.src = meta.preview;
         previewAudio.style.display = 'block';
     } else {
@@ -737,28 +918,46 @@ window.recordAction = function(type) {
         return;
     }
 
-    const itemObj = { title: globalMatchTitle, posterUrl: globalMatchPoster, platform: globalPlatform };
+    // Store the resolved stream/listen link and audio flag so the profile can
+    // deep-link straight to where the title actually plays.
+    const catNow = document.getElementById('q-category')?.value || '';
+    const itemObj = {
+        title: globalMatchTitle,
+        posterUrl: globalMatchPoster,
+        platform: globalPlatform,
+        streamUrl: (document.getElementById('res-direct-link') || {}).href || platformSearchUrl(globalPlatform, globalMatchTitle),
+        isAudio: isAudioCategory(catNow) || (PLATFORMS[globalPlatform] && PLATFORMS[globalPlatform].audio) || false,
+        addedAt: Date.now()
+    };
 
     if (type === 'save') {
         if (!inList(savedList, globalMatchTitle)) {
             savedList.push(itemObj);
-            alert(`⭐ "${globalMatchTitle}" was added to your Watch Later portfolio!`);
+            showToast(`${itemObj.isAudio ? "🎧 Saved to Listen Later" : "⭐ Saved to Watch Later"}: "${globalMatchTitle}"`);
         } else {
-            alert(`"${globalMatchTitle}" is already in your Watch Later portfolio.`);
+            showToast(`"${globalMatchTitle}" is already saved.`);
         }
     } else if (type === 'seen') {
         if (!inList(seenList, globalMatchTitle)) {
             seenList.push(itemObj);
-            alert(`👁️ "${globalMatchTitle}" was added to your Seen It portfolio. The AI will stop suggesting it.`);
+            showToast(`${itemObj.isAudio ? "🎼 Marked as heard" : "👁️ Marked as seen"}: "${globalMatchTitle}"`);
         } else {
-            alert(`"${globalMatchTitle}" is already marked as seen.`);
+            showToast(`"${globalMatchTitle}" is already marked.`);
         }
     } else if (type === 'like') {
         userRatings[globalMatchTitle] = 5;
         if (!inList(seenList, globalMatchTitle)) seenList.push(itemObj);
+        window.playPremiumSound && window.playPremiumSound();
+        if (typeof confetti === 'function') confetti({ particleCount: 90, spread: 75, origin: { y: 0.7 }, colors: ['#E5C158','#FFF0B3','#ffffff'] });
+        showToast(`❤️ Loved it! We'll find you more like "${globalMatchTitle}".`);
     } else if (type === 'dislike') {
         userRatings[globalMatchTitle] = 1;
         if (!inList(dislikedList, globalMatchTitle)) dislikedList.push(itemObj);
+        // Drop it from Watch Later too — they don't want to see it again anywhere.
+        savedList = savedList.filter(i => (i.title || i) !== globalMatchTitle);
+        syncListsToDatabase();
+        openRematchPrompt(globalMatchTitle);
+        return;
     }
 
     syncListsToDatabase();
@@ -784,3 +983,60 @@ async function syncListsToDatabase() {
         } catch (e) { console.warn("Portfolio sync deferred:", e); }
     }
 }
+
+// ----------------------------------------------------
+// PREMIUM TOAST (non-blocking replacement for alert popups)
+// ----------------------------------------------------
+window.showToast = function(message, isError) {
+    let host = document.getElementById('toast-host');
+    if (!host) {
+        host = document.createElement('div');
+        host.id = 'toast-host';
+        document.body.appendChild(host);
+    }
+    const t = document.createElement('div');
+    t.className = 'match-toast' + (isError ? ' toast-error' : '');
+    t.textContent = message;
+    host.appendChild(t);
+    setTimeout(() => { t.classList.add('toast-out'); setTimeout(() => t.remove(), 500); }, 3600);
+};
+
+// ----------------------------------------------------
+// "NOT FOR ME" RE-MATCH FLOW
+// The disliked title is blacklisted permanently, then the user chooses to
+// either re-roll on the same parameters or go back and change them.
+// ----------------------------------------------------
+window.openRematchPrompt = function(deadTitle) {
+    const modal = document.getElementById('rematch-modal');
+    const msg = document.getElementById('rematch-message');
+    if (!modal) return;
+    if (msg) msg.innerHTML = `Got it — <strong style="color:var(--gold)">${deadTitle}</strong> won't be suggested to you again.<br><br>Want another match with the same choices, or would you like to change them first?`;
+    modal.style.display = 'flex';
+};
+
+window.closeRematchPrompt = function() {
+    const modal = document.getElementById('rematch-modal');
+    if (modal) modal.style.display = 'none';
+};
+
+// Re-roll immediately on the identical parameters.
+window.rematchSameParams = function() {
+    window.closeRematchPrompt();
+    const resultBox = document.getElementById('result-box');
+    if (resultBox) resultBox.style.display = 'none';
+    // Re-roll on the identical questionnaire selections (not a direct search).
+    if (typeof window.triggerMatch === 'function') window.triggerMatch(false);
+};
+
+// Send them back up to the questionnaire with a smooth scroll.
+window.changeParamsAndRematch = function() {
+    window.closeRematchPrompt();
+    const resultBox = document.getElementById('result-box');
+    if (resultBox) resultBox.style.display = 'none';
+    const form = document.getElementById('questionnaire-box') || document.getElementById('q-category');
+    if (form) {
+        form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const catEl = document.getElementById('q-category');
+        if (catEl) setTimeout(() => catEl.focus(), 600);
+    }
+};
