@@ -14,6 +14,10 @@
 -- ============================================================
 
 -- ---------- 1. Columns on profiles ----------
+-- is_vip is referenced by the limit logic; create it if this deployment lacks it.
+alter table public.profiles
+    add column if not exists is_vip boolean not null default false;
+
 alter table public.profiles
     add column if not exists daily_match_count integer      not null default 0,
     add column if not exists daily_match_date  date         not null default current_date,
@@ -33,6 +37,10 @@ grant update (full_name, country, dob, star_sign, age, profile_locked, avatar_ur
 
 -- Reads stay as they were (RLS still restricts to own row).
 grant select on public.profiles to authenticated;
+
+-- Signup/upsert still needs INSERT, which the revoke above does not touch,
+-- but grant it explicitly so profile creation cannot break.
+grant insert on public.profiles to authenticated;
 
 -- Make sure row-level security is on and scoped to the owner.
 alter table public.profiles enable row level security;
@@ -137,12 +145,12 @@ begin
     end if;
 
     -- Keep only rewards inside the rolling window.
-    select coalesce(array_agg(ts), '{}')
+    select coalesce(array_agg(ts), '{}'::timestamptz[])
       into v_recent
-      from unnest(coalesce(v_row.share_rewards, '{}')) ts
+      from unnest(coalesce(v_row.share_rewards, '{}'::timestamptz[])) ts
      where ts > now() - v_window;
 
-    if array_length(v_recent, 1) >= v_max then
+    if coalesce(array_length(v_recent, 1), 0) >= v_max then
         select min(ts) into v_oldest from unnest(v_recent) ts;
         update public.profiles set share_rewards = v_recent where id = v_uid;
         return jsonb_build_object(
@@ -201,9 +209,9 @@ begin
     v_used  := case when v_row.daily_match_date = current_date then v_row.daily_match_count else 0 end;
     v_limit := public.match_daily_limit(coalesce(v_row.is_vip, false));
 
-    select coalesce(array_agg(ts), '{}')
+    select coalesce(array_agg(ts), '{}'::timestamptz[])
       into v_recent
-      from unnest(coalesce(v_row.share_rewards, '{}')) ts
+      from unnest(coalesce(v_row.share_rewards, '{}'::timestamptz[])) ts
      where ts > now() - interval '6 hours';
 
     select min(ts) into v_oldest from unnest(v_recent) ts;

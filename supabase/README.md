@@ -9,11 +9,18 @@ tamper-able).
 
 ### How to apply
 
-1. Open your Supabase project → **SQL Editor** → **New query**
-2. Paste the entire contents of `migrations/001_server_quota.sql`
-3. Click **Run**
+> **Paste the file's CONTENTS, not its path.** Pasting
+> `supabase/migrations/001_server_quota.sql` into the editor makes Postgres try
+> to run the filename as SQL and fails with
+> `ERROR: 42601: syntax error at or near "supabase"`.
+
+1. Open `migrations/001_server_quota.sql` on GitHub and click **Raw**
+2. Select all (Ctrl/Cmd-A) and copy
+3. Supabase → **SQL Editor** → **New query** → paste → **Run**
 
 You should see `Success. No rows returned`.
+
+This migration is idempotent — safe to re-run.
 
 ### Verify it worked
 
