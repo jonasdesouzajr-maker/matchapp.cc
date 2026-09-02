@@ -17,6 +17,8 @@ let seenList = JSON.parse(localStorage.getItem('match_seenList') || '[]');
 let savedList = JSON.parse(localStorage.getItem('match_savedList') || '[]');
 let dislikedList = JSON.parse(localStorage.getItem('match_dislikedList') || '[]');
 let userRatings = JSON.parse(localStorage.getItem('match_userRatings') || '{}');
+// Titles shown recently, so the same result never repeats back-to-back.
+let recentTitles = JSON.parse(localStorage.getItem('match_recentTitles') || '[]');
 
 // ----------------------------------------------------
 // THE LIMIT LOGIC (3 Free, 5 Registered, 10 VIP)
@@ -89,19 +91,69 @@ function generatedCover(title) {
     return `https://placehold.co/600x900/1a0505/E5C158?text=${encodeURIComponent((title || 'MatchApp').replace(/ /g, '+'))}`;
 }
 
+function upgradeArtwork(url) {
+    if (!url) return null;
+    return url.replace('100x100bb', '600x900bb').replace('/100x100', '/600x900');
+}
+
 async function itunesLookup(title, media) {
+    const rich = await itunesRichLookup(title, media);
+    return rich ? rich.artwork : null;
+}
+
+// ----------------------------------------------------
+// RICH METADATA ENGINE (keyless iTunes Search API)
+// One call returns artwork, an actual trailer/preview clip, and the store link.
+// Apple's API terms require previews be displayed alongside a store link, so
+// every preview we render also renders its trackViewUrl badge.
+// ----------------------------------------------------
+const META_CACHE = {};
+
+async function itunesRichLookup(title, media) {
+    if (!title) return null;
+    const cacheKey = `${title}::${media}`;
+    if (META_CACHE[cacheKey] !== undefined) return META_CACHE[cacheKey];
     try {
         const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(title)}&media=${media}&limit=1`);
         if (res.ok) {
             const data = await res.json();
-            if (data.results && data.results.length > 0 && data.results[0].artworkUrl100) {
-                // Upgrade the thumbnail to a high-res poster crop.
-                return data.results[0].artworkUrl100
-                    .replace('100x100bb', '600x900bb')
-                    .replace('/100x100', '/600x900');
+            if (data.results && data.results.length > 0) {
+                const r = data.results[0];
+                if (r.artworkUrl100 || r.previewUrl) {
+                    const meta = {
+                        title: r.trackName || r.collectionName || title,
+                        artwork: upgradeArtwork(r.artworkUrl100),
+                        preview: r.previewUrl || null,
+                        storeUrl: r.trackViewUrl || r.collectionViewUrl || null,
+                        kind: r.kind || media,
+                        year: r.releaseDate ? String(r.releaseDate).substring(0, 4) : null,
+                        description: r.longDescription || r.shortDescription || null
+                    };
+                    META_CACHE[cacheKey] = meta;
+                    return meta;
+                }
             }
         }
     } catch (e) {}
+    META_CACHE[cacheKey] = null;
+    return null;
+}
+
+// Tries each media type until one returns usable art/preview for this title.
+async function getRichMetadata(title, categoryHint) {
+    // Order the media types by what the user's chosen category implies,
+    // so a podcast pick isn't matched against the movie catalog first.
+    let order = ['movie', 'tvShow', 'podcast', 'musicTrack', 'album', 'shortFilm', 'audiobook'];
+    const hint = (categoryHint || '').toLowerCase();
+    if (hint.includes('podcast')) order = ['podcast', 'musicTrack', 'movie', 'tvShow'];
+    else if (hint.includes('playlist') || hint.includes('music') || hint.includes('single') || hint.includes('album') || hint.includes('spotify')) order = ['musicTrack', 'album', 'podcast', 'movie'];
+    else if (hint.includes('audiobook')) order = ['audiobook', 'podcast', 'movie'];
+    else if (hint.includes('series') || hint.includes('drama') || hint.includes('anime') || hint.includes('novela') || hint.includes('dizi')) order = ['tvShow', 'movie', 'shortFilm', 'musicTrack'];
+
+    for (const media of order) {
+        const meta = await itunesRichLookup(title, media);
+        if (meta && (meta.artwork || meta.preview)) return meta;
+    }
     return null;
 }
 
@@ -306,8 +358,95 @@ const CONTENT_CATALOG = [
     { title: "Emilia Pérez", synopsis: "A Mexican cartel leader seeks a secret gender transition, told as a genre-defying musical thriller.", platform: "Netflix", cats: ["movie","European cinema"], moods: ["mind-bending","intense and thrilling"], vibes: ["prestige and critically acclaimed","award winning"], ratings: ["mature adults only R rated","any"] }
 ];
 
-// Titles shown this session, so the same result never repeats back-to-back.
-let recentTitles = JSON.parse(localStorage.getItem('match_recentTitles') || '[]');
+// ----------------------------------------------------
+// LIVE DISCOVERY ENGINE
+// Rather than a fixed hardcoded list, this queries the keyless iTunes catalog
+// with terms built from the user's own selections. That catalog spans the
+// entire commercial back catalogue (silent era through current releases), so
+// results are real titles with real covers and real preview clips — and the
+// pool is effectively unlimited instead of ~30 baked-in entries.
+// ----------------------------------------------------
+const CATEGORY_TERMS = {
+    'movie': 'movie', 'series': 'tv series', 'limited series': 'miniseries',
+    'documentary': 'documentary', 'stand-up comedy special': 'stand up comedy',
+    'reality show': 'reality tv', 'vertical micro-drama': 'short drama',
+    'short film': 'short film', 'K-drama': 'korean drama', 'anime': 'anime',
+    'novela brasileira': 'novela', 'telenovela': 'telenovela', 'C-drama': 'chinese drama',
+    'J-drama': 'japanese drama', 'Turkish dizi': 'turkish drama', 'Bollywood': 'bollywood',
+    'Nollywood': 'nigerian film', 'European cinema': 'european film',
+    'podcast': 'podcast', 'Spotify playlist': 'playlist', 'Spotify single': 'single',
+    'audiobook': 'audiobook', 'music album': 'album'
+};
+
+const MOOD_TERMS = {
+    'intense and thrilling': 'thriller', 'light and feel-good': 'feel good',
+    'romantic': 'romance', 'heartbreaking': 'drama', 'funny': 'comedy',
+    'scary': 'horror', 'mind-bending': 'sci-fi mystery', 'inspiring': 'inspirational',
+    'cozy comfort watch': 'comfort', 'dark and gritty': 'crime drama',
+    'epic and adventurous': 'adventure epic', 'nostalgic': 'classic'
+};
+
+// Decade → iTunes-friendly era phrasing, so users can reach back to the silent era.
+const DECADE_TERMS = {
+    '1920s': 'classic 1920s silent', '1930s': 'classic 1930s', '1940s': 'classic 1940s',
+    '1950s': 'classic 1950s', '1960s': 'classic 1960s', '1970s': 'classic 1970s',
+    '1980s': '1980s', '1990s': '1990s', '2000s': '2000s', '2010s': '2010s', '2020s': 'new release'
+};
+
+function mediaForCategory(cat) {
+    const c = (cat || '').toLowerCase();
+    if (c.includes('podcast')) return 'podcast';
+    if (c.includes('playlist') || c.includes('single') || c.includes('album') || c.includes('music')) return 'music';
+    if (c.includes('audiobook')) return 'audiobook';
+    if (c.includes('short film')) return 'shortFilm';
+    if (c === 'movie' || c.includes('bollywood') || c.includes('nollywood') || c.includes('cinema')) return 'movie';
+    if (c === 'any') return 'all';
+    return 'tvShow';
+}
+
+async function discoverFromITunes(cat, mood, vibe, decade, rating) {
+    const parts = [];
+    if (decade && decade !== 'any' && DECADE_TERMS[decade]) parts.push(DECADE_TERMS[decade]);
+    if (mood && mood !== 'any' && MOOD_TERMS[mood]) parts.push(MOOD_TERMS[mood]);
+    if (cat && cat !== 'any' && CATEGORY_TERMS[cat]) parts.push(CATEGORY_TERMS[cat]);
+    if (rating === 'kids' || rating === 'all ages family friendly') parts.push('family');
+    if (parts.length === 0) parts.push('popular');
+
+    const term = parts.join(' ');
+    const media = mediaForCategory(cat);
+    try {
+        const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(term)}&media=${media}&limit=40`);
+        if (!res.ok) return null;
+        const data = await res.json();
+        if (!data.results || data.results.length === 0) return null;
+
+        const excluded = new Set([...seenList, ...dislikedList].map(i => i.title || i));
+        const seenRecently = new Set(recentTitles);
+
+        // Only keep entries that actually have artwork, so covers never come back blank.
+        let pool = data.results.filter(r => r.artworkUrl100 && (r.trackName || r.collectionName));
+        pool = pool.filter(r => !excluded.has(r.trackName || r.collectionName));
+        const fresh = pool.filter(r => !seenRecently.has(r.trackName || r.collectionName));
+        if (fresh.length) pool = fresh;
+        if (!pool.length) return null;
+
+        const r = pool[Math.floor(Math.random() * pool.length)];
+        const name = r.trackName || r.collectionName;
+        const year = r.releaseDate ? String(r.releaseDate).substring(0, 4) : '';
+        return {
+            title: name,
+            synopsis: r.longDescription || r.shortDescription ||
+                `${year ? year + ' — ' : ''}${r.primaryGenreName || 'A great pick'}${r.artistName ? ', from ' + r.artistName : ''}.`,
+            platform: 'any',
+            _meta: {
+                artwork: upgradeArtwork(r.artworkUrl100),
+                preview: r.previewUrl || null,
+                storeUrl: r.trackViewUrl || r.collectionViewUrl || null,
+                year: year
+            }
+        };
+    } catch (e) { return null; }
+}
 
 function rememberShownTitle(title) {
     recentTitles.unshift(title);
@@ -372,6 +511,7 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         let mood = document.getElementById('q-mood')?.value || 'any'; 
         let vibe = document.getElementById('q-vibe')?.value || 'any';
         let rating = document.getElementById('q-rating')?.value || 'any';
+        let decade = document.getElementById('q-decade')?.value || 'any';
 
         // Personalization pulled from the locked Core Identity profile.
         const uCountry = localStorage.getItem('match_user_country') || '';
@@ -389,7 +529,8 @@ window.triggerMatch = async function(isSpecificSearch = false) {
             ? ` Do NOT recommend any of these already-watched or rejected titles: ${exclusions.join(', ')}.`
             : '';
 
-        promptText = `Find a perfect title recommendation based on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}, Vibe: ${vibe}, Age rating: ${rating}.${personalization}${exclusionText} Output valid JSON ONLY: {"title": "Title", "synopsis": "Summary.", "platform": "Platform"}`;
+        const eraText = (decade && decade !== 'any') ? ` Released in the ${decade}.` : ' Any era from the 1920s to today is fine.';
+        promptText = `Find a perfect title recommendation based on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}, Vibe: ${vibe}, Age rating: ${rating}.${eraText}${personalization}${exclusionText} Output valid JSON ONLY: {"title": "Title", "synopsis": "Summary.", "platform": "Platform"}`;
     }
 
     const startTime = Date.now();
@@ -416,7 +557,13 @@ window.triggerMatch = async function(isSpecificSearch = false) {
             let mood = document.getElementById('q-mood')?.value || 'any';
             let vibe = document.getElementById('q-vibe')?.value || 'any';
             let rating = document.getElementById('q-rating')?.value || 'any';
-            matchResult = pickFromCatalog(cat, plat, mood, vibe, rating);
+            let decade = document.getElementById('q-decade')?.value || 'any';
+
+            // Tier 2: live discovery across the full iTunes catalogue (1920s → today).
+            matchResult = await discoverFromITunes(cat, mood, vibe, decade, rating);
+            // Tier 3: curated offline catalog, so a match is always returned even offline.
+            if (!matchResult) matchResult = pickFromCatalog(cat, plat, mood, vibe, rating);
+            if (plat && plat !== 'any') matchResult.platform = plat;
         }
     }
     rememberShownTitle(matchResult.title);
@@ -446,9 +593,17 @@ async function renderResult(selected, isSpecificSearch) {
     document.getElementById('res-synopsis').innerText = selected.synopsis;
     document.getElementById('res-platform-badge').innerText = selected.platform;
 
-    // "NEVER FAIL" COVER PULL
-    const posterEl = document.getElementById('res-poster-img'); 
-    const realCover = await getRealCoverImage(selected.title);
+    // "NEVER FAIL" COVER PULL + TRAILER METADATA (single lookup, cached)
+    const posterEl = document.getElementById('res-poster-img');
+    const categoryHint = document.getElementById('q-category')?.value || '';
+
+    // The discovery engine already carries artwork/preview/store data — reuse it
+    // instead of making a second network round-trip for the same title.
+    let meta = selected._meta || null;
+    if (!meta) meta = await getRichMetadata(selected.title, categoryHint);
+
+    let realCover = (meta && meta.artwork) ? meta.artwork : await getRealCoverImage(selected.title);
+    if (!realCover) realCover = generatedCover(selected.title);
 
     // Track the current match globally so Watch Later / Seen It can record it.
     globalMatchTitle = selected.title;
@@ -468,25 +623,87 @@ async function renderResult(selected, isSpecificSearch) {
 
     // DIRECT LINK SETUP
     const directBtn = document.getElementById('res-direct-link');
-    if (selected.platform.toLowerCase().includes('spotify')) { 
-        directBtn.href = `https://open.spotify.com/search/${encodeURIComponent(selected.title)}`; 
-    } else if (selected.platform.toLowerCase().includes('reelshort')) { 
-        directBtn.href = `https://www.reelshort.com/`; 
-    } else if (selected.platform.toLowerCase().includes('dramabox')) { 
-        directBtn.href = `https://www.dramabox.com/`; 
-    } else { 
-        directBtn.href = `https://www.google.com/search?q=Watch+${encodeURIComponent(selected.title)}+on+${encodeURIComponent(selected.platform)}`; 
+    const plat = (selected.platform || '').toLowerCase();
+    const catLower = (categoryHint || '').toLowerCase();
+    const isMusicPick = /spotify|playlist|single|album|music|podcast/.test(plat + ' ' + catLower);
+
+    if (isMusicPick) {
+        directBtn.href = `https://open.spotify.com/search/${encodeURIComponent(selected.title)}`;
+        directBtn.innerText = '🎧 Listen on Spotify';
+    } else if (plat.includes('reelshort')) {
+        directBtn.href = `https://www.reelshort.com/`;
+        directBtn.innerText = '▶ Stream Now';
+    } else if (plat.includes('dramabox')) {
+        directBtn.href = `https://www.dramabox.com/`;
+        directBtn.innerText = '▶ Stream Now';
+    } else if (plat.includes('netflix')) {
+        directBtn.href = `https://www.netflix.com/search?q=${encodeURIComponent(selected.title)}`;
+        directBtn.innerText = '▶ Stream Now';
+    } else if (plat.includes('prime')) {
+        directBtn.href = `https://www.primevideo.com/search?phrase=${encodeURIComponent(selected.title)}`;
+        directBtn.innerText = '▶ Stream Now';
+    } else if (plat.includes('disney')) {
+        directBtn.href = `https://www.disneyplus.com/search?q=${encodeURIComponent(selected.title)}`;
+        directBtn.innerText = '▶ Stream Now';
+    } else if (plat.includes('crunchyroll')) {
+        directBtn.href = `https://www.crunchyroll.com/search?q=${encodeURIComponent(selected.title)}`;
+        directBtn.innerText = '▶ Stream Now';
+    } else if (plat.includes('globoplay')) {
+        directBtn.href = `https://globoplay.globo.com/busca/?q=${encodeURIComponent(selected.title)}`;
+        directBtn.innerText = '▶ Assistir Agora';
+    } else if (plat.includes('viki')) {
+        directBtn.href = `https://www.viki.com/search?q=${encodeURIComponent(selected.title)}`;
+        directBtn.innerText = '▶ Stream Now';
+    } else {
+        directBtn.href = `https://www.justwatch.com/us/search?q=${encodeURIComponent(selected.title)}`;
+        directBtn.innerText = '▶ Find Where To Stream';
     }
 
-    // EMBEDDED TRAILER — plays right under the cover for every title, direct search included.
+    // ----------------------------------------------------
+    // TRAILER / PREVIEW
+    // NOTE: YouTube removed the `listType=search` embed (it 404s since Nov 2020),
+    // which is why trailers previously rendered "unavailable". Getting a real
+    // YouTube video ID requires the paid YouTube Data API, so instead we play the
+    // keyless iTunes preview clip when one exists, and otherwise show a clean
+    // link card rather than a broken player.
+    // ----------------------------------------------------
     const trailerContainer = document.getElementById('res-trailer-container');
+    const previewVideo = document.getElementById('res-preview-video');
+    const previewAudio = document.getElementById('res-preview-audio');
+    const previewFallback = document.getElementById('res-preview-fallback');
+    const storeBadge = document.getElementById('res-store-badge');
     const ytLink = document.getElementById('yt-trailer-link');
-    const ytEmbed = document.getElementById('yt-trailer-embed');
 
     trailerContainer.style.display = 'block';
-    const trailerQuery = encodeURIComponent(selected.title + " official trailer");
-    if (ytEmbed) ytEmbed.src = `https://www.youtube.com/embed?listType=search&list=${trailerQuery}`;
-    ytLink.href = `https://www.youtube.com/results?search_query=${trailerQuery}`;
+    previewVideo.style.display = 'none';
+    previewAudio.style.display = 'none';
+    previewFallback.style.display = 'none';
+    storeBadge.style.display = 'none';
+    previewVideo.removeAttribute('src');
+    previewAudio.removeAttribute('src');
+
+    const isAudioKind = meta && meta.kind && /song|music|podcast|audiobook/i.test(meta.kind);
+    if (meta && meta.preview && !isAudioKind) {
+        previewVideo.src = meta.preview;
+        previewVideo.poster = realCover;
+        previewVideo.style.display = 'block';
+    } else if (meta && meta.preview && isAudioKind) {
+        previewAudio.src = meta.preview;
+        previewAudio.style.display = 'block';
+    } else {
+        previewFallback.style.display = 'block';
+    }
+
+    // Apple's API terms require previews to sit alongside a link to the store item.
+    if (meta && meta.storeUrl && meta.preview) {
+        storeBadge.href = meta.storeUrl;
+        storeBadge.style.display = 'inline-block';
+    }
+
+    const ytQuery = `https://www.youtube.com/results?search_query=${encodeURIComponent(selected.title + " official trailer")}`;
+    ytLink.href = ytQuery;
+    const ytLinkAlt = document.getElementById('yt-trailer-link-alt');
+    if (ytLinkAlt) ytLinkAlt.href = ytQuery;
 
     updateActionButtonStates();
 }

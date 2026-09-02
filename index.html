@@ -307,11 +307,12 @@
                                     <option value="Nollywood">Nollywood (Nigerian)</option>
                                     <option value="European cinema">European Cinema</option>
                                 </optgroup>
-                                <optgroup label="Audio">
+                                <optgroup label="Audio, Music &amp; Spotify">
                                     <option value="podcast">Podcasts</option>
                                     <option value="Spotify playlist">Spotify Playlists</option>
-                                    <option value="audiobook">Audiobooks</option>
+                                    <option value="Spotify single">Spotify Singles &amp; New Releases</option>
                                     <option value="music album">Music Albums</option>
+                                    <option value="audiobook">Audiobooks</option>
                                 </optgroup>
                             </select>
                         </div>
@@ -393,7 +394,24 @@
                                 <option value="long running series">Long-Running Series</option>
                             </select>
                         </div>
-                        <div style="grid-column: 1 / -1;">
+                        <div>
+                            <label style="color:#ccc; font-size:14px; font-weight:bold; margin-bottom:8px; display:block; text-transform:uppercase;">Era / Decade</label>
+                            <select id="q-decade" style="width:100%; padding:18px; border-radius:12px; border: 1px solid rgba(255,255,255,0.2); background: #000; color:#fff; font-size:16px;">
+                                <option value="any">Any Era (1920 – Today)</option>
+                                <option value="2020s">2020s — Right Now</option>
+                                <option value="2010s">2010s</option>
+                                <option value="2000s">2000s</option>
+                                <option value="1990s">1990s</option>
+                                <option value="1980s">1980s</option>
+                                <option value="1970s">1970s</option>
+                                <option value="1960s">1960s</option>
+                                <option value="1950s">1950s — Golden Age</option>
+                                <option value="1940s">1940s — Film Noir Era</option>
+                                <option value="1930s">1930s — Pre-Code &amp; Classics</option>
+                                <option value="1920s">1920s — Silent Era</option>
+                            </select>
+                        </div>
+                        <div>
                             <label style="color:#ccc; font-size:14px; font-weight:bold; margin-bottom:8px; display:block; text-transform:uppercase;">Age Appropriateness</label>
                             <select id="q-rating" style="width:100%; padding:18px; border-radius:12px; border: 1px solid rgba(255,255,255,0.2); background: #000; color:#fff; font-size:16px;">
                                 <option value="any">Use My Profile Age</option>
@@ -429,13 +447,26 @@
                         <img id="res-poster-img" src="" alt="Poster" style="width: 100%; max-width: 380px; height: 550px; object-fit: cover; border-radius: 15px; border: 3px solid var(--gold); box-shadow: 0 15px 50px rgba(229,193,88,0.5); display: none;">
                     </div>
 
-                    <!-- EMBEDDED TRAILER — right underneath the cover, for every result -->
+                    <!-- TRAILER / PREVIEW — right underneath the cover, for every result -->
                     <div id="res-trailer-container" style="margin-bottom: 30px; display: none;">
-                        <h4 style="color: var(--gold); font-size: 15px; text-transform: uppercase; margin: 0 0 12px 0; text-align: center; letter-spacing: 1px;">🎬 Trailer &amp; Previews</h4>
-                        <div class="video-container">
-                            <iframe id="yt-trailer-embed" src="" title="Official Trailer" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <h4 style="color: var(--gold); font-size: 15px; text-transform: uppercase; margin: 0 0 12px 0; text-align: center; letter-spacing: 1px;">🎬 Trailer &amp; Preview</h4>
+
+                        <!-- Real playable trailer clip (iTunes preview, keyless) -->
+                        <video id="res-preview-video" controls playsinline preload="none" style="display:none; width:100%; border-radius:14px; border:1px solid rgba(229,193,88,0.4); background:#000;"></video>
+
+                        <!-- Audio preview for songs, singles, podcasts and audiobooks -->
+                        <audio id="res-preview-audio" controls preload="none" style="display:none; width:100%;"></audio>
+
+                        <!-- Clean fallback when no preview clip exists (never a broken player) -->
+                        <div id="res-preview-fallback" style="display:none; background: rgba(0,0,0,0.6); padding: 22px; border-radius: 14px; border: 1px solid rgba(229,193,88,0.35); text-align:center;">
+                            <p style="color:#ccc; font-size:14px; margin:0 0 16px 0;">No preview clip available for this title. Watch the official trailer on YouTube:</p>
+                            <a id="yt-trailer-link-alt" href="#" target="_blank" rel="noopener" style="display:inline-block; background:#FF0000; color:#fff; padding:14px 26px; border-radius:10px; text-decoration:none; font-weight:900; text-transform:uppercase; font-size:15px;">▶ Search on YouTube</a>
                         </div>
-                        <a id="yt-trailer-link" href="#" target="_blank" style="display: block; text-align: center; margin-top: 10px; color: #ccc; font-size: 12px; text-decoration: none;">▶ Open full results on YouTube</a>
+
+                        <div style="text-align:center; margin-top:10px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
+                            <a id="res-store-badge" href="#" target="_blank" rel="noopener" style="display:none; color:var(--gold); font-size:12px; text-decoration:none; font-weight:bold;">🍎 View on Apple Store</a>
+                            <a id="yt-trailer-link" href="#" target="_blank" rel="noopener" style="color:#ccc; font-size:12px; text-decoration:none;">▶ More trailers on YouTube</a>
+                        </div>
                     </div>
                     
                     <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
@@ -528,12 +559,20 @@
                 <a href="https://www.viu.com" target="_blank" rel="noopener noreferrer">🌙 Viu</a>
             </nav>
 
-            <h3 class="seo-footer-sub">🎧 Podcasts, Playlists &amp; Audio</h3>
+            <h3 class="seo-footer-sub">🎧 Podcasts, Playlists, Singles &amp; Audio</h3>
             <nav class="streaming-links" aria-label="Audio streaming platforms">
-                <a href="https://www.spotify.com" target="_blank" rel="noopener noreferrer">🎵 Spotify</a>
-                <a href="https://podcasts.apple.com" target="_blank" rel="noopener noreferrer">🎙️ Apple Podcasts</a>
+                <a href="https://open.spotify.com/genre/podcasts-page" target="_blank" rel="noopener noreferrer">🎙️ Spotify Podcasts</a>
+                <a href="https://open.spotify.com/genre/playlists-page" target="_blank" rel="noopener noreferrer">🎵 Spotify Playlists</a>
+                <a href="https://open.spotify.com/genre/new-releases-page" target="_blank" rel="noopener noreferrer">🔥 Spotify New Singles</a>
+                <a href="https://podcasts.apple.com" target="_blank" rel="noopener noreferrer">🍎 Apple Podcasts</a>
                 <a href="https://music.youtube.com" target="_blank" rel="noopener noreferrer">▶️ YouTube Music</a>
                 <a href="https://www.audible.com" target="_blank" rel="noopener noreferrer">📚 Audible</a>
+            </nav>
+
+            <h3 class="seo-footer-sub">🔍 Find Where To Stream Anything</h3>
+            <nav class="streaming-links" aria-label="Streaming search tools">
+                <a href="https://www.justwatch.com" target="_blank" rel="noopener noreferrer">🌐 JustWatch</a>
+                <a href="https://www.reelgood.com" target="_blank" rel="noopener noreferrer">📊 Reelgood</a>
             </nav>
 
             <h3 class="seo-footer-sub">🆓 Free &amp; Ad-Supported Streaming</h3>
@@ -548,18 +587,24 @@
             <div class="seo-keyword-block">
                 <h3 class="seo-footer-sub">Popular Searches on MatchApp</h3>
                 <p class="seo-keywords">
-                    what to watch tonight · where to watch a movie online · best series to binge right now ·
+                    what to watch tonight · where to watch movies online free · best series to binge right now 2026 ·
                     AI movie recommendation engine · what should I watch quiz · find a movie based on my mood ·
-                    best K-drama to start with · new anime this season · vertical micro-drama apps like ReelShort ·
-                    melhores novelas brasileiras para assistir · best short dramas to binge ·
-                    what to watch on Netflix tonight · best shows on Max right now · hidden gems on Prime Video ·
-                    underrated movies nobody talks about · feel good movies to cheer you up ·
-                    best true crime podcasts on Spotify · Spotify playlists for every mood ·
-                    family friendly movies for kids · age appropriate shows for teens ·
-                    what to watch based on your star sign · movie recommendations by zodiac sign ·
-                    streaming guide by country · what is streaming in Brazil · romance micro dramas ·
-                    slow burn romance series · mind bending thrillers with a twist ·
-                    best limited series of the year · comfort shows to rewatch · one sitting movies under 90 minutes
+                    best K-drama 2026 · most watched K-drama 2026 · The Scarecrow K-drama · Filing for Love Korean drama ·
+                    Legend of Kitchen Soldier K-drama · K-drama recommendations Netflix · Crash Landing on You ·
+                    new anime summer 2026 · best anime on Crunchyroll right now · vertical micro-drama apps like ReelShort ·
+                    DramaBox new episodes 2026 · ShortMax romance drama · vertical short drama billionaire romance ·
+                    melhores novelas brasileiras 2026 · assistir novela brasileira online · Globoplay novelas ·
+                    best Spotify playlists 2026 · lo-fi beats playlist Spotify · Korean drama OST playlist Spotify ·
+                    BTS ARIRANG album stream · new Spotify singles this week · best podcast to listen to right now ·
+                    what to watch on Netflix tonight · hidden gems on Prime Video · best shows Max HBO 2026 ·
+                    Squid Game season 3 · House of the Dragon season 3 · The Bear season 4 ·
+                    feel good movies to cheer you up · slow burn romance series to binge · mind bending thriller with a twist ·
+                    classic films 1950s streaming · 1980s movies where to watch · best silent era films 1920s ·
+                    best movies to watch with family tonight · age appropriate shows for teens ·
+                    what to watch based on star sign · movie recommendations by zodiac sign ·
+                    streaming guide by country · what is streaming in Brazil right now · best Bollywood 2026 ·
+                    RRR 2 release · best Turkish dizi to watch · Nollywood movies streaming ·
+                    one sitting movies under 90 minutes · best limited series of the year · comfort shows to rewatch
                 </p>
             </div>
 
