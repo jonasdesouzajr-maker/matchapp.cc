@@ -7,7 +7,7 @@ let supabaseClient = null;
 try { if (window.supabase) supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch (e) {}
 window.supabaseClient = supabaseClient;
 
-let globalMatchTitle = ""; let globalMatchPoster = ""; let globalPlatform = ""; let isUserLoggedIn = false;
+let globalMatchTitle = ""; let globalMatchPoster = ""; let globalPlatform = ""; let isUserLoggedIn = false; window.isUserLoggedIn = false;
 let isVIP = localStorage.getItem('match_isVIP') === 'true';
 
 // ----------------------------------------------------
@@ -23,34 +23,99 @@ let recentTitles = JSON.parse(localStorage.getItem('match_recentTitles') || '[]'
 // ----------------------------------------------------
 // THE LIMIT LOGIC (3 Free, 5 Registered, 10 VIP)
 // ----------------------------------------------------
-function checkDailyLimit() {
-    const todayStr = new Date().toLocaleDateString(); 
-    let lastDate = localStorage.getItem('match_lastDate'); 
+// ----------------------------------------------------
+// MATCH QUOTA
+// Registered users are metered server-side in Postgres via the
+// consume_match() RPC — the client can request a match but cannot
+// set its own counter, so devtools tampering does nothing.
+//
+// Anonymous visitors have no server identity to meter against, so
+// their 3 free matches remain client-side. That is deliberate: the
+// enforceable tier is the one worth protecting, and it is also the
+// incentive to register.
+// ----------------------------------------------------
+let lastQuotaStatus = null;
+
+function anonLimitCheck() {
+    const todayStr = new Date().toLocaleDateString();
+    const lastDate = localStorage.getItem('match_lastDate');
     let dailyCount = parseInt(localStorage.getItem('match_dailyCount') || '0');
-    
     if (lastDate !== todayStr) { dailyCount = 0; localStorage.setItem('match_lastDate', todayStr); }
-    
-    let maxLimit = 3; 
-    if (isUserLoggedIn && !isVIP) maxLimit = 5; 
-    if (isVIP) maxLimit = 10; 
-    
-    if (dailyCount >= maxLimit) {
-        if (!isUserLoggedIn) {
-            alert("🔒 You've used your 3 free searches today!\n\nRegister for FREE to unlock 5 daily searches."); 
-            window.openAuthModal();
-        } else if (!isVIP) {
-            alert("🔒 You've used your 5 registered searches today!\n\nUpgrade to VIP for 10 daily searches."); 
-            window.location.href = '/pricing/pricing.html';
-        } else {
-            alert("💎 VIP Limit Reached! You've used your 10 daily searches.");
-        }
+
+    if (dailyCount >= 3) {
+        showQuotaMessage('anon');
         return false;
     }
-    
-    dailyCount++; 
-    localStorage.setItem('match_dailyCount', dailyCount.toString()); 
+    localStorage.setItem('match_dailyCount', (dailyCount + 1).toString());
     return true;
 }
+
+function showQuotaMessage(kind, status) {
+    if (kind === 'anon') {
+        if (window.showToast) showToast("🔒 That's your 3 free matches for today — register free to unlock 5 daily.");
+        else alert("🔒 You've used your 3 free searches today!\n\nRegister for FREE to unlock 5 daily searches.");
+        if (window.openAuthModal) window.openAuthModal();
+    } else if (kind === 'registered') {
+        const extra = (status && status.share_rewards_left > 0)
+            ? ` Share a match to earn ${status.share_rewards_left} more.`
+            : '';
+        if (window.showToast) showToast(`🔒 You've used all ${status ? status.limit : 5} matches today.${extra} Upgrade to VIP for 10 daily.`);
+        setTimeout(() => { window.location.href = '/pricing/pricing.html'; }, 2600);
+    } else {
+        if (window.showToast) showToast(`💎 VIP limit reached — you've used all ${status ? status.limit : 10} matches today.`);
+    }
+}
+
+async function checkDailyLimit() {
+    // Logged out → local metering.
+    if (!isUserLoggedIn || !supabaseClient) return anonLimitCheck();
+
+    try {
+        const { data, error } = await supabaseClient.rpc('consume_match');
+        if (error) throw error;
+
+        lastQuotaStatus = data;
+        if (data && data.allowed) {
+            updateQuotaBadge(data);
+            return true;
+        }
+        if (data && data.reason === 'limit_reached') {
+            showQuotaMessage(data.limit >= 10 ? 'vip' : 'registered', data);
+            updateQuotaBadge(data);
+            return false;
+        }
+        // No profile row yet (e.g. mid-signup) — fall back rather than block.
+        return anonLimitCheck();
+    } catch (e) {
+        // Network/RPC failure must not lock a paying user out of the product.
+        console.warn('Quota RPC unavailable, falling back to local metering:', e.message || e);
+        return anonLimitCheck();
+    }
+}
+window.checkDailyLimit = checkDailyLimit;
+
+// Live "matches left today" pill in the header.
+function updateQuotaBadge(status) {
+    const el = document.getElementById('quota-badge');
+    if (!el || !status || typeof status.remaining !== 'number') return;
+    el.style.display = 'inline-flex';
+    el.innerHTML = `⚡ <strong>${status.remaining}</strong>&nbsp;left today`;
+    el.classList.toggle('quota-low', status.remaining <= 1);
+}
+window.updateQuotaBadge = updateQuotaBadge;
+
+// Pull status without consuming — used on load and after auth changes.
+window.refreshQuotaStatus = async function() {
+    if (!isUserLoggedIn || !supabaseClient) return null;
+    try {
+        const { data, error } = await supabaseClient.rpc('match_status');
+        if (error || !data || !data.authenticated) return null;
+        lastQuotaStatus = data;
+        updateQuotaBadge(data);
+        return data;
+    } catch (e) { return null; }
+};
+
 
 // ----------------------------------------------------
 // AUDIO & FX ENGINE
@@ -332,9 +397,18 @@ if (supabaseClient) {
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
         if (session && session.user) {
             isUserLoggedIn = true;
-            document.getElementById('nav-reg-btn').style.display = 'none'; 
-            document.getElementById('nav-logout-btn').style.display = 'inline-block';
-            document.getElementById('profile-link-tab').style.display = 'inline-flex';
+            window.isUserLoggedIn = true;
+            const regBtn = document.getElementById('nav-reg-btn');
+            const outBtn = document.getElementById('nav-logout-btn');
+            const profTab = document.getElementById('profile-link-tab');
+            if (regBtn) regBtn.style.display = 'none';
+            if (outBtn) outBtn.style.display = 'inline-block';
+            if (profTab) profTab.style.display = 'inline-flex';
+            // Pull the authoritative server-side quota for this account.
+            if (window.refreshQuotaStatus) window.refreshQuotaStatus();
+        } else {
+            isUserLoggedIn = false;
+            window.isUserLoggedIn = false;
         }
     });
 }
@@ -672,7 +746,7 @@ function pickFromCatalog(cat, plat, mood, vibe, rating) {
 }
 
 window.triggerMatch = async function(isSpecificSearch = false) {
-    if (!checkDailyLimit()) return;
+    if (!(await checkDailyLimit())) return;
     
     const loadBox = document.getElementById('loading-box'); 
     const qBox = document.getElementById('questionnaire-box'); 

@@ -190,7 +190,7 @@ async function runDiscovery() {
     document.title = `${q} — MatchApp AI Search`;
 
     // Discovery consumes a match from the daily allowance, same as a normal match.
-    if (typeof checkDailyLimit === 'function' && !checkDailyLimit()) {
+    if (typeof checkDailyLimit === 'function' && !(await checkDailyLimit())) {
         if (loadEl) loadEl.style.display = 'none';
         return;
     }

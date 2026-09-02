@@ -30,16 +30,29 @@ function nextRewardResetText() {
     return h > 0 ? `${h}h ${m}m` : `${m}m`;
 }
 
-function grantShareReward() {
-    if (shareRewardsLeft() <= 0) return false;
+// Server-enforced when signed in (claim_share_reward RPC), local otherwise.
+async function grantShareReward() {
+    if (window.isUserLoggedIn && window.supabaseClient) {
+        try {
+            const { data, error } = await window.supabaseClient.rpc('claim_share_reward');
+            if (error) throw error;
+            if (data && data.granted) {
+                if (window.refreshQuotaStatus) window.refreshQuotaStatus();
+                return { ok: true, left: data.remaining_rewards };
+            }
+            return { ok: false, left: 0, resetIn: (data && data.reset_in_seconds) || 0 };
+        } catch (e) {
+            console.warn('Share reward RPC unavailable, using local grant:', e.message || e);
+        }
+    }
+    // Anonymous / offline path
+    if (shareRewardsLeft() <= 0) return { ok: false, left: 0 };
     const log = getShareLog();
     log.push(Date.now());
     localStorage.setItem('match_shareLog', JSON.stringify(log));
-
-    // Refund one match against today's counter.
     const current = parseInt(localStorage.getItem('match_dailyCount') || '0');
     localStorage.setItem('match_dailyCount', Math.max(0, current - 1).toString());
-    return true;
+    return { ok: true, left: shareRewardsLeft() };
 }
 
 /* ---------- Share card renderer ---------- */
@@ -184,7 +197,11 @@ window.openShareSheet = async function() {
         preview.appendChild(canvas);
     }
 
-    const left = shareRewardsLeft();
+    let left = shareRewardsLeft();
+    if (window.refreshQuotaStatus) {
+        const st = await window.refreshQuotaStatus();
+        if (st && typeof st.share_rewards_left === 'number') left = st.share_rewards_left;
+    }
     if (statusEl) {
         statusEl.innerHTML = left > 0
             ? `🎁 Share this and earn <strong>+1 bonus match</strong> — <strong>${left}</strong> of ${SHARE_MAX_REWARDS} bonus matches left this 6-hour window.`
@@ -270,17 +287,23 @@ window.shareTo = function(network) {
 };
 
 let _rewardedThisCard = false;
-function afterShare(network) {
+async function afterShare(network) {
     if (typeof gtag === 'function') gtag('event', 'share', { method: network, content_type: 'match', item_id: window.globalMatchTitle || '' });
     if (_rewardedThisCard) return;
-    if (grantShareReward()) {
+
+    const result = await grantShareReward();
+    const statusEl = document.getElementById('share-reward-status');
+    if (result.ok) {
         _rewardedThisCard = true;
-        const statusEl = document.getElementById('share-reward-status');
-        if (statusEl) statusEl.innerHTML = `🎉 <strong>Bonus match unlocked!</strong> ${shareRewardsLeft()} of ${SHARE_MAX_REWARDS} left this window.`;
+        if (statusEl) statusEl.innerHTML = `🎉 <strong>Bonus match unlocked!</strong> ${result.left} of ${SHARE_MAX_REWARDS} left this window.`;
         if (window.showToast) showToast('🎁 Thanks for sharing! +1 bonus match unlocked.');
         if (typeof confetti === 'function') confetti({ particleCount: 130, spread: 88, origin: { y: 0.65 }, colors: ['#E5C158', '#FFF3A3', '#A376B6', '#ffffff'] });
-        const btn = document.getElementById('share-claim-note');
-        if (btn) btn.style.display = 'block';
+        const note = document.getElementById('share-claim-note');
+        if (note) note.style.display = 'block';
+    } else if (statusEl) {
+        const mins = result.resetIn ? Math.ceil(result.resetIn / 60) : null;
+        const when = mins ? (mins >= 60 ? `${Math.floor(mins/60)}h ${mins%60}m` : `${mins}m`) : nextRewardResetText();
+        statusEl.innerHTML = `⏳ All ${SHARE_MAX_REWARDS} bonus matches claimed. Next unlocks in <strong>${when}</strong>. Thanks for sharing!`;
     }
 }
 

@@ -122,7 +122,7 @@
     <link rel="alternate" hreflang="zh" href="https://matchapp.cc/?lang=zh">
 
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=106"></script>
+    <script defer src="/i18n.js?v=107"></script>
 
     <!-- GOOGLE ANALYTICS (GTAG) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
@@ -356,6 +356,12 @@
             #res-title, .app-title-main { color: var(--gold); -webkit-text-fill-color: var(--gold); }
         }
 
+        /* ===== SERVER-BACKED QUOTA BADGE ===== */
+        .quota-badge { display:none; align-items:center; gap:5px; background:rgba(107,63,160,0.35); border:1px solid rgba(229,193,88,0.55); color:var(--gold-glow); padding:8px 14px; border-radius:20px; font-size:12.5px; font-weight:700; white-space:nowrap; transition:0.3s; }
+        .quota-badge strong { color:#fff; font-size:14px; }
+        .quota-badge.quota-low { border-color:#ff8a5c; background:rgba(255,138,92,0.2); color:#ffc9b0; animation: quotaPulse 2s ease-in-out infinite; }
+        @keyframes quotaPulse { 0%,100% { box-shadow:0 0 0 rgba(255,138,92,0); } 50% { box-shadow:0 0 16px rgba(255,138,92,0.5); } }
+
         /* ===== LANGUAGE SWITCHER ===== */
         .lang-switcher { background: rgba(19,7,52,0.9); color: var(--gold-glow); border: 1px solid rgba(229,193,88,0.5); border-radius: 12px; padding: 9px 12px; font-size: 13px; font-weight: 700; cursor: pointer; outline: none; max-width: 165px; transition: 0.25s; }
         .lang-switcher:hover { border-color: var(--gold); box-shadow: 0 0 18px rgba(229,193,88,0.3); }
@@ -429,6 +435,7 @@
             <div><span class="app-title-main">MatchApp</span></div>
         </a>
         <nav style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
+            <span id="quota-badge" class="quota-badge" style="display:none;"></span>
             <div id="lang-switcher-host"></div>
             <a id="profile-link-tab" href="/profile/profile.html" style="display: none; background: rgba(229,193,88,0.2); border: 1px solid var(--gold); color: var(--gold-glow); padding: 8px 16px; border-radius: 12px; font-weight: bold; text-decoration: none; font-size: 14px; align-items: center; gap: 8px;">
                 <img id="nav-avatar-img" src="" alt="Avatar" style="width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--gold); object-fit: cover; display: none;">
@@ -1032,8 +1039,8 @@
         </div>
     </div>
 
-    <script src="/app.js?v=106"></script>
-    <script src="/share.js?v=106"></script>
+    <script src="/app.js?v=107"></script>
+    <script src="/share.js?v=107"></script>
     <script>
         // OS-LEVEL CHROME FORCE LAUNCHER
         function openInChrome() {
