@@ -1,10 +1,11 @@
 console.log("Mastercode 87.0: Live Stripe Payments Engine Initialized");
 
 // ==========================================
-// 💳 INSERT YOUR ACTUAL STRIPE PAYMENT LINKS HERE
+// 💳 LIVE STRIPE PAYMENT LINKS
 // ==========================================
-const STRIPE_LINK_AD_FREE = "https://buy.stripe.com/test_123456789"; 
-const STRIPE_LINK_VIP_MONTHLY = "https://buy.stripe.com/test_987654321"; 
+const STRIPE_LINK_AD_FREE = "https://buy.stripe.com/fZu4gz6nEaDHbpY7k0gEg01";
+const STRIPE_LINK_VIP_MONTHLY = "https://buy.stripe.com/fZu3cvbHY13779I47OgEg03";
+const STRIPE_LINK_VIP_ANNUAL = "https://buy.stripe.com/7sY28reUa137dy65bSgEg02";
 
 window.processCheckout = async function(planType) {
     if (!isUserLoggedIn || !supabaseClient) {
@@ -35,6 +36,8 @@ window.processCheckout = async function(planType) {
                 checkoutUrl = `${STRIPE_LINK_AD_FREE}?client_reference_id=${userId}`;
             } else if (planType === 'vip_monthly') {
                 checkoutUrl = `${STRIPE_LINK_VIP_MONTHLY}?client_reference_id=${userId}`;
+            } else if (planType === 'vip_annual') {
+                checkoutUrl = `${STRIPE_LINK_VIP_ANNUAL}?client_reference_id=${userId}`;
             }
 
             // Route user directly to Stripe Checkout

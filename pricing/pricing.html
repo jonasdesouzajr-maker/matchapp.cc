@@ -62,6 +62,21 @@
             }
           },
           "description": "Unlimited AI Matches daily, zero ads permanently, instant 4-second VIP routing."
+        },
+        {
+          "@type": "Offer",
+          "name": "VIP Annual Pass",
+          "price": "39.99",
+          "priceCurrency": "USD",
+          "priceSpecification": {
+            "@type": "UnitPriceSpecification",
+            "referenceQuantity": {
+              "@type": "QuantitativeValue",
+              "value": "1",
+              "unitCode": "ANN"
+            }
+          },
+          "description": "Best value: unlimited AI Matches daily, zero ads permanently, instant 4-second VIP routing, billed once a year at a discount to monthly."
         }
       ]
     }
@@ -192,8 +207,8 @@
                         <button id="btn-ad_free" onclick="processCheckout('ad_free')" class="gold-btn" style="width: 100%; font-size: 16px; padding: 14px;">Get Ad-Free Pass ($1.99)</button>
                     </article>
 
-                    <article class="premium-card" style="border: 2px solid var(--gold); background: rgba(212,175,55,0.05);">
-                        <h3 style="color: var(--gold-glow); font-size: 22px; margin-bottom: 5px;">VIP Monthly</h3>
+                    <article class="premium-card">
+                        <h3 style="color: var(--gold); font-size: 22px; margin-bottom: 5px;">VIP Monthly</h3>
                         <div class="price-badge">$4.99 <span>/ month</span></div>
                         <ul style="color: #bbb; font-size: 13px; line-height: 1.8; margin-bottom: 25px; padding-left: 18px;">
                             <li>✔️ <strong>Unlimited</strong> AI Matches Daily</li>
@@ -201,7 +216,20 @@
                             <li>✔️ Instant 4-second VIP Routing</li>
                             <li>✔️ Prioritized Regional Content</li>
                         </ul>
-                        <button id="btn-vip_monthly" onclick="processCheckout('vip_monthly')" class="gold-btn" style="width: 100%; font-size: 16px; padding: 14px; background: linear-gradient(90deg,#FFD700,#FFA500);">Go VIP ($4.99/mo)</button>
+                        <button id="btn-vip_monthly" onclick="processCheckout('vip_monthly')" class="gold-btn" style="width: 100%; font-size: 16px; padding: 14px;">Go VIP ($4.99/mo)</button>
+                    </article>
+
+                    <article class="premium-card" style="border: 2px solid var(--gold); background: rgba(212,175,55,0.05); position: relative;">
+                        <div style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: linear-gradient(90deg,#FFD700,#FFA500); color: #000; font-size: 11px; font-weight: 900; padding: 5px 16px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 12px rgba(212,175,55,0.5); white-space: nowrap;">🏆 Best Value</div>
+                        <h3 style="color: var(--gold-glow); font-size: 22px; margin-bottom: 5px;">VIP Annual Pass</h3>
+                        <div class="price-badge">$39.99 <span>/ year</span></div>
+                        <ul style="color: #bbb; font-size: 13px; line-height: 1.8; margin-bottom: 25px; padding-left: 18px;">
+                            <li>✔️ Everything in VIP Monthly, all year</li>
+                            <li>✔️ <strong>Save 33%</strong> vs. paying monthly</li>
+                            <li>✔️ Instant 4-second VIP Routing</li>
+                            <li>✔️ <strong>Zero Ads</strong> permanently</li>
+                        </ul>
+                        <button id="btn-vip_annual" onclick="processCheckout('vip_annual')" class="gold-btn" style="width: 100%; font-size: 16px; padding: 14px; background: linear-gradient(90deg,#FFD700,#FFA500);">Go Annual ($39.99/yr)</button>
                     </article>
 
                 </div>
