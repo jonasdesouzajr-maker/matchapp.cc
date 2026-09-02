@@ -1,4 +1,67 @@
-console.log("Profile Engine 99.0: Google Sync & Identity Lock Active");
+console.log("Profile Engine 100.0: Identity Showcase, Email Sync & Dual Portfolios Active");
+
+// ----------------------------------------------------
+// STAR SIGN PERSONALITY → MATCHING HINTS
+// ----------------------------------------------------
+const STAR_SIGN_TRAITS = {
+    "Aries": "Bold, fast-paced action and competitive stories",
+    "Taurus": "Comfort watches, food, romance and beautiful worlds",
+    "Gemini": "Witty dialogue, twists and clever ensemble stories",
+    "Cancer": "Emotional family sagas and heartfelt dramas",
+    "Leo": "Big, glamorous, star-driven blockbusters",
+    "Virgo": "Smart procedurals, mysteries and detailed docs",
+    "Libra": "Romance, beauty and balanced feel-good stories",
+    "Scorpio": "Dark thrillers, secrets and psychological intensity",
+    "Sagittarius": "Adventure, travel and world cinema",
+    "Capricorn": "Ambition, power struggles and prestige drama",
+    "Aquarius": "Sci-fi, dystopia and unconventional storytelling",
+    "Pisces": "Dreamy, artistic and emotionally sweeping films"
+};
+
+const SIGN_SYMBOLS = {
+    "Aries":"♈","Taurus":"♉","Gemini":"♊","Cancer":"♋","Leo":"♌","Virgo":"♍",
+    "Libra":"♎","Scorpio":"♏","Sagittarius":"♐","Capricorn":"♑","Aquarius":"♒","Pisces":"♓"
+};
+
+function formatSign(sign) {
+    if (!sign) return "N/A";
+    return `${SIGN_SYMBOLS[sign] || ''} ${sign}`.trim();
+}
+
+// Pull the account email straight from Supabase Auth.
+async function populateEmail() {
+    const el = document.getElementById('lock-val-email');
+    if (!el) return;
+    const cached = localStorage.getItem('match_user_email');
+    if (cached) el.innerText = cached;
+
+    if (window.supabaseClient) {
+        try {
+            const { data } = await window.supabaseClient.auth.getUser();
+            if (data && data.user && data.user.email) {
+                el.innerText = data.user.email;
+                localStorage.setItem('match_user_email', data.user.email);
+            } else if (!cached) {
+                el.innerText = "Not signed in";
+            }
+        } catch (e) {
+            if (!cached) el.innerText = "Unavailable";
+        }
+    } else if (!cached) {
+        el.innerText = "Not signed in";
+    }
+}
+
+// ----------------------------------------------------
+// PORTFOLIO TAB SWITCHING
+// ----------------------------------------------------
+window.switchPortfolioTab = function(tab) {
+    const isWatch = tab === 'watchlater';
+    document.getElementById('panel-watchlater').style.display = isWatch ? 'block' : 'none';
+    document.getElementById('panel-seenit').style.display = isWatch ? 'none' : 'block';
+    document.getElementById('tab-watchlater').classList.toggle('active', isWatch);
+    document.getElementById('tab-seenit').classList.toggle('active', !isWatch);
+};
 
 function calculateAgeFromDOB(dobString) {
     let parts = dobString.split('/');
@@ -69,10 +132,14 @@ function checkAndRenderProfileState() {
         if (editableSection) editableSection.style.display = 'none';
         if (lockedCard) {
             lockedCard.style.display = 'block';
-            document.getElementById('lock-val-name').innerText = savedName || "User";
-            document.getElementById('lock-val-country').innerText = savedCountry || "N/A";
-            document.getElementById('lock-val-dob').innerText = savedDob || "N/A";
-            document.getElementById('lock-val-sign').innerText = savedSign || "N/A";
+            const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+            setVal('lock-val-name', savedName || "User");
+            setVal('lock-val-country', savedCountry || "N/A");
+            setVal('lock-val-dob', savedDob || "N/A");
+            setVal('lock-val-sign', formatSign(savedSign));
+            setVal('lock-val-age', localStorage.getItem('match_user_age') ? `${localStorage.getItem('match_user_age')} years old` : "N/A");
+            setVal('lock-val-sign-trait', STAR_SIGN_TRAITS[savedSign] || "Shapes your recommended themes");
+            populateEmail();
         }
         if (instructionsText) instructionsText.innerHTML = "Your core identity is locked and permanently guiding your AI Matches.";
         if (changeBadge) changeBadge.innerText = "Avatar Locked";
@@ -166,35 +233,60 @@ window.saveProfileData = function() {
     window.location.reload();
 };
 
+function escapeHtml(str) {
+    return String(str || '').replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[c]));
+}
+
+function buildPosterCard(item, accent) {
+    const title = typeof item === 'string' ? item : (item.title || 'Untitled');
+    let poster = typeof item === 'string' ? '' : (item.posterUrl || '');
+    const platform = typeof item === 'string' ? '' : (item.platform || '');
+
+    const safeTitle = escapeHtml(title);
+    // If we have no usable poster, start hidden and let the CSS fallback show immediately.
+    const hasPoster = poster && poster.trim() !== '' && poster !== 'invalid-image' && poster !== 'fallback';
+    const imgTag = hasPoster
+        ? `<img src="${escapeHtml(poster)}" alt="${safeTitle}" style="width:100%; height:100%; object-fit:cover; display:block;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">`
+        : '';
+    const fallbackDisplay = hasPoster ? 'none' : 'flex';
+
+    return `
+        <div class="poster-card" style="position:relative; width:100%; height:230px; border-radius:12px; overflow:hidden; border:1px solid ${accent}; box-shadow:0 5px 20px rgba(0,0,0,0.9);">
+            ${imgTag}
+            <div class="css-poster-fallback" style="display:${fallbackDisplay}; background:linear-gradient(135deg,#1a0505,#4a2b00); width:100%; height:100%; align-items:center; justify-content:center; text-align:center; padding:10px; box-sizing:border-box; color:var(--gold); font-weight:900; font-size:16px; text-transform:uppercase; text-shadow:0 2px 8px rgba(0,0,0,0.9); box-shadow: inset 0 0 30px rgba(0,0,0,0.9);">
+                ${safeTitle}
+            </div>
+            ${platform ? `<div style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.85); color:${accent}; font-size:9px; font-weight:900; padding:4px 8px; border-radius:6px; text-transform:uppercase; border:1px solid ${accent};">${escapeHtml(platform)}</div>` : ''}
+            <div class="poster-title" style="position:absolute; bottom:0; width:100%; background:linear-gradient(transparent, rgba(0,0,0,0.95)); color:#fff; font-size:12px; padding:10px 4px 4px 4px; text-align:center; font-weight:bold; border-top:1px solid ${accent};">${safeTitle}</div>
+        </div>
+    `;
+}
+
 window.renderProfileGrids = function() {
+    const savedListData = JSON.parse(localStorage.getItem('match_savedList') || '[]');
+    const seenListData = JSON.parse(localStorage.getItem('match_seenList') || '[]');
+
+    // --- WATCH LATER ---
     const portGrid = document.getElementById('portfolio-grid');
-    let sList = JSON.parse(localStorage.getItem('match_savedList') || '[]');
-    
-    if(portGrid) {
-        portGrid.innerHTML = '';
-        if(sList.length === 0) {
-            portGrid.innerHTML = '<p style="color:#aaa; font-size: 15px; font-style: italic;">Your portfolio is empty. Go match!</p>';
-        } else {
-            sList.forEach(item => {
-                let title = typeof item === 'string' ? item : item.title;
-                let poster = typeof item === 'string' ? '' : item.posterUrl;
-                
-                if (!poster || poster.includes('placeholder.com') || poster.includes('placehold.co') || poster === 'fallback') {
-                    poster = "invalid-image";
-                }
-                
-                portGrid.innerHTML += `
-                    <div class="poster-card" style="position: relative; width: 100%; height: 230px; border-radius: 12px; overflow: hidden; border: 1px solid var(--gold); box-shadow: 0 5px 20px rgba(0,0,0,0.9);">
-                        <img src="${poster}" alt="${title}" style="width: 100%; height: 100%; object-fit: cover; display: block;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        
-                        <div class="css-poster-fallback" style="display:none; background: linear-gradient(135deg, #1a0505, #4a2b00); width: 100%; height: 100%; align-items: center; justify-content: center; text-align: center; padding: 10px; box-sizing: border-box; color: var(--gold); font-weight: 900; font-size: 16px; text-transform: uppercase; text-shadow: 0 2px 8px rgba(0,0,0,0.9); box-shadow: inset 0 0 30px rgba(0,0,0,0.9);">
-                            ${title}
-                        </div>
-                        
-                        <div class="poster-title" style="position: absolute; bottom: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.95)); color: #fff; font-size: 12px; padding: 10px 4px 4px 4px; text-align: center; font-weight: bold; border-top: 1px solid var(--gold);">${title}</div>
-                    </div>
-                `;
-            });
-        }
+    if (portGrid) {
+        portGrid.innerHTML = savedListData.length === 0
+            ? '<p style="color:#aaa; font-size:15px; font-style:italic;">Your Watch Later portfolio is empty. Go match!</p>'
+            : savedListData.map(item => buildPosterCard(item, 'var(--gold)')).join('');
     }
+
+    // --- SEEN IT ---
+    const seenGrid = document.getElementById('seen-grid');
+    if (seenGrid) {
+        seenGrid.innerHTML = seenListData.length === 0
+            ? '<p style="color:#aaa; font-size:15px; font-style:italic;">You haven\'t marked anything as seen yet.</p>'
+            : seenListData.map(item => buildPosterCard(item, 'rgba(255,255,255,0.55)')).join('');
+    }
+
+    // --- COUNTS ---
+    const cw = document.getElementById('count-watchlater');
+    const cs = document.getElementById('count-seenit');
+    if (cw) cw.innerText = savedListData.length;
+    if (cs) cs.innerText = seenListData.length;
 };

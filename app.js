@@ -11,6 +11,14 @@ let globalMatchTitle = ""; let globalMatchPoster = ""; let globalPlatform = ""; 
 let isVIP = localStorage.getItem('match_isVIP') === 'true';
 
 // ----------------------------------------------------
+// PORTFOLIO LISTS (Watch Later / Seen It / Disliked)
+// ----------------------------------------------------
+let seenList = JSON.parse(localStorage.getItem('match_seenList') || '[]');
+let savedList = JSON.parse(localStorage.getItem('match_savedList') || '[]');
+let dislikedList = JSON.parse(localStorage.getItem('match_dislikedList') || '[]');
+let userRatings = JSON.parse(localStorage.getItem('match_userRatings') || '{}');
+
+// ----------------------------------------------------
 // THE LIMIT LOGIC (3 Free, 5 Registered, 10 VIP)
 // ----------------------------------------------------
 function checkDailyLimit() {
@@ -63,46 +71,93 @@ window.playPremiumSound = function() {
 // ----------------------------------------------------
 // "NEVER-FAIL" COVER DICTIONARY & GENERATOR
 // ----------------------------------------------------
+// NOTE: Only verified-live TMDB paths belong here. Several previous entries were
+// invalid poster hashes that 404'd, which is why covers fell back to text placeholders.
 const OFFLINE_COVERS = {
     "The Bear": "https://image.tmdb.org/t/p/w500/q2gJGrH0aGZ1X1qP440xQzKqOee.jpg",
     "Shogun": "https://image.tmdb.org/t/p/w500/7O4iVfOMQmdCSxhOg1WwSCSOOOQ.jpg",
     "House of the Dragon": "https://image.tmdb.org/t/p/w500/t9XkeE7HzOsdQcOGaTOFdZCEYnF.jpg",
     "Deadpool & Wolverine": "https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg",
     "Dune: Part Two": "https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2JGjjc9CW.jpg",
-    "A Vida Secreta do Meu Marido Bilionário": "https://image.tmdb.org/t/p/w500/j9w5l2X4XhQx2J6p3N0V9a8S7g.jpg",
-    "Marido Bilionário": "https://image.tmdb.org/t/p/w500/j9w5l2X4XhQx2J6p3N0V9a8S7g.jpg",
-    "Fated to the Alpha": "https://image.tmdb.org/t/p/w500/8A1H55bC2m3n9P5D5d7lH2eO0O2.jpg",
-    "The Joe Rogan Experience": "https://image.tmdb.org/t/p/w500/7aPRJUKFtdh6Qy8n3JpEqqV5m3W.jpg",
-    "Jujutsu Kaisen": "https://image.tmdb.org/t/p/w500/hFWP5HkbVEe40hrptlzSyDpFBqw.jpg",
-    "Queen of Tears": "https://image.tmdb.org/t/p/w500/8A1H55bC2m3n9P5D5d7lH2eO0O2.jpg"
+    "Jujutsu Kaisen": "https://image.tmdb.org/t/p/w500/hFWP5HkbVEe40hrptlzSyDpFBqw.jpg"
 };
 
-async function getRealCoverImage(title) {
-    // 1. Offline Dictionary
-    const matchKey = Object.keys(OFFLINE_COVERS).find(k => title.toLowerCase().includes(k.toLowerCase()) || k.toLowerCase().includes(title.toLowerCase()));
-    if (matchKey) return OFFLINE_COVERS[matchKey];
+// In-memory cache so the same title never re-hits the network twice per session.
+const COVER_CACHE = {};
 
-    // 2. iTunes Search API (Ultra-Reliable CORS)
+function generatedCover(title) {
+    return `https://placehold.co/600x900/1a0505/E5C158?text=${encodeURIComponent((title || 'MatchApp').replace(/ /g, '+'))}`;
+}
+
+async function itunesLookup(title, media) {
     try {
-        const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(title)}&media=movie&limit=1`);
+        const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(title)}&media=${media}&limit=1`);
         if (res.ok) {
             const data = await res.json();
-            if (data.results && data.results.length > 0) return data.results[0].artworkUrl100.replace('100x100bb', '600x900bb');
+            if (data.results && data.results.length > 0 && data.results[0].artworkUrl100) {
+                // Upgrade the thumbnail to a high-res poster crop.
+                return data.results[0].artworkUrl100
+                    .replace('100x100bb', '600x900bb')
+                    .replace('/100x100', '/600x900');
+            }
         }
-    } catch(e) {}
-    
-    // 3. TVMaze Fetch
+    } catch (e) {}
+    return null;
+}
+
+async function getRealCoverImage(title) {
+    if (!title) return generatedCover(title);
+    if (COVER_CACHE[title]) return COVER_CACHE[title];
+
+    const cacheAndReturn = (url) => { COVER_CACHE[title] = url; return url; };
+
+    // 1. Offline Dictionary (fast path for known hero titles)
+    const matchKey = Object.keys(OFFLINE_COVERS).find(k => title.toLowerCase().includes(k.toLowerCase()) || k.toLowerCase().includes(title.toLowerCase()));
+    if (matchKey) return cacheAndReturn(OFFLINE_COVERS[matchKey]);
+
+    // 2. iTunes across several media types (movies, TV, podcasts, music).
+    //    Podcast/music included so Spotify + podcast matches also get real art.
+    for (const media of ['movie', 'tvShow', 'podcast', 'music']) {
+        const art = await itunesLookup(title, media);
+        if (art) return cacheAndReturn(art);
+    }
+
+    // 3. TVMaze (strong for international + K-drama series)
     try {
         const tvRes = await fetch(`https://api.tvmaze.com/singlesearch/shows?q=${encodeURIComponent(title)}`);
-        if (tvRes.ok) { 
-            const tvData = await tvRes.json(); 
-            if (tvData && tvData.image && tvData.image.original) return tvData.image.original; 
+        if (tvRes.ok) {
+            const tvData = await tvRes.json();
+            if (tvData && tvData.image && (tvData.image.original || tvData.image.medium)) {
+                return cacheAndReturn(tvData.image.original || tvData.image.medium);
+            }
         }
     } catch(e) {}
-    
+
     // 4. ABSOLUTE FALLBACK: Dynamic Text Image Generator (Impossible to fail)
-    return `https://placehold.co/600x900/1a0505/E5C158?text=${encodeURIComponent(title.replace(/ /g, '+'))}`;
+    return cacheAndReturn(generatedCover(title));
 }
+
+// ----------------------------------------------------
+// MARQUEE COVER HYDRATION
+// Replaces any placeholder/broken marquee art with real covers on page load.
+// ----------------------------------------------------
+async function hydrateMarqueeCovers() {
+    const items = document.querySelectorAll('.marquee-item');
+    for (const item of items) {
+        const img = item.querySelector('img');
+        if (!img) continue;
+        const title = img.getAttribute('data-title') || img.getAttribute('alt');
+        if (!title) continue;
+        try {
+            const real = await getRealCoverImage(title);
+            if (real) {
+                img.onerror = function() { this.onerror = null; this.src = generatedCover(title); };
+                img.src = real;
+            }
+        } catch (e) {}
+    }
+}
+document.addEventListener('DOMContentLoaded', hydrateMarqueeCovers);
 
 window.selectMarqueeItem = function(titleName) {
     const searchInput = document.getElementById('specific-search-input');
@@ -223,7 +278,26 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         let cat = document.getElementById('q-category')?.value || 'any'; 
         let plat = document.getElementById('q-platform')?.value || 'any'; 
         let mood = document.getElementById('q-mood')?.value || 'any'; 
-        promptText = `Find a perfect title recommendation based on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}. Output valid JSON ONLY: {"title": "Title", "synopsis": "Summary.", "platform": "Platform"}`;
+        let vibe = document.getElementById('q-vibe')?.value || 'any';
+        let rating = document.getElementById('q-rating')?.value || 'any';
+
+        // Personalization pulled from the locked Core Identity profile.
+        const uCountry = localStorage.getItem('match_user_country') || '';
+        const uAge = localStorage.getItem('match_user_age') || '';
+        const uSign = localStorage.getItem('match_user_sign') || '';
+
+        let personalization = '';
+        if (uCountry) personalization += ` Viewer is in ${uCountry}, so prefer titles legally streamable there and include local-language content where relevant.`;
+        if (uAge) personalization += ` Viewer is ${uAge} years old, so keep the recommendation age-appropriate.`;
+        if (uSign) personalization += ` Viewer's star sign is ${uSign}; subtly favor themes matching that sign's personality.`;
+
+        // Never recommend something already seen or disliked.
+        const exclusions = [...seenList, ...dislikedList].map(i => i.title || i).filter(Boolean);
+        const exclusionText = exclusions.length
+            ? ` Do NOT recommend any of these already-watched or rejected titles: ${exclusions.join(', ')}.`
+            : '';
+
+        promptText = `Find a perfect title recommendation based on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}, Vibe: ${vibe}, Age rating: ${rating}.${personalization}${exclusionText} Output valid JSON ONLY: {"title": "Title", "synopsis": "Summary.", "platform": "Platform"}`;
     }
 
     const startTime = Date.now();
@@ -271,6 +345,12 @@ async function renderResult(selected, isSpecificSearch) {
     // "NEVER FAIL" COVER PULL
     const posterEl = document.getElementById('res-poster-img'); 
     const realCover = await getRealCoverImage(selected.title);
+
+    // Track the current match globally so Watch Later / Seen It can record it.
+    globalMatchTitle = selected.title;
+    globalMatchPoster = realCover;
+    globalPlatform = selected.platform;
+
     posterEl.style.display = 'block';
     
     // In case somehow the browser blocks the valid URL, it falls back to the dynamic generator directly inside the DOM
@@ -301,5 +381,84 @@ async function renderResult(selected, isSpecificSearch) {
     } else {
         trailerContainer.style.display = 'block';
         ytLink.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(selected.title + " official trailer")}`;
+    }
+
+    updateActionButtonStates();
+}
+
+// ----------------------------------------------------
+// WATCH LATER / SEEN IT ENGINE
+// ----------------------------------------------------
+const inList = (list, title) => list.some(i => (i.title || i) === title);
+
+function updateActionButtonStates() {
+    const saveBtn = document.getElementById('btn-watch-later');
+    const seenBtn = document.getElementById('btn-seen-it');
+
+    if (saveBtn) {
+        const already = inList(savedList, globalMatchTitle);
+        saveBtn.innerText = already ? '⭐ Saved to Watch Later' : '⭐ Watch Later';
+        saveBtn.style.opacity = already ? '0.65' : '1';
+    }
+    if (seenBtn) {
+        const already = inList(seenList, globalMatchTitle);
+        seenBtn.innerText = already ? '👁️ Marked as Seen' : "👁️ I've Seen It";
+        seenBtn.style.opacity = already ? '0.65' : '1';
+    }
+}
+
+window.recordAction = function(type) {
+    if (!globalMatchTitle) return;
+    if (!isUserLoggedIn) {
+        alert("💎 Join for FREE!\n\nTo save titles to your Portfolio, please create a free account.");
+        window.openAuthModal();
+        return;
+    }
+
+    const itemObj = { title: globalMatchTitle, posterUrl: globalMatchPoster, platform: globalPlatform };
+
+    if (type === 'save') {
+        if (!inList(savedList, globalMatchTitle)) {
+            savedList.push(itemObj);
+            alert(`⭐ "${globalMatchTitle}" was added to your Watch Later portfolio!`);
+        } else {
+            alert(`"${globalMatchTitle}" is already in your Watch Later portfolio.`);
+        }
+    } else if (type === 'seen') {
+        if (!inList(seenList, globalMatchTitle)) {
+            seenList.push(itemObj);
+            alert(`👁️ "${globalMatchTitle}" was added to your Seen It portfolio. The AI will stop suggesting it.`);
+        } else {
+            alert(`"${globalMatchTitle}" is already marked as seen.`);
+        }
+    } else if (type === 'like') {
+        userRatings[globalMatchTitle] = 5;
+        if (!inList(seenList, globalMatchTitle)) seenList.push(itemObj);
+    } else if (type === 'dislike') {
+        userRatings[globalMatchTitle] = 1;
+        if (!inList(dislikedList, globalMatchTitle)) dislikedList.push(itemObj);
+    }
+
+    syncListsToDatabase();
+    updateActionButtonStates();
+};
+
+async function syncListsToDatabase() {
+    localStorage.setItem('match_seenList', JSON.stringify(seenList));
+    localStorage.setItem('match_savedList', JSON.stringify(savedList));
+    localStorage.setItem('match_dislikedList', JSON.stringify(dislikedList));
+    localStorage.setItem('match_userRatings', JSON.stringify(userRatings));
+
+    if (isUserLoggedIn && supabaseClient) {
+        try {
+            await supabaseClient.auth.updateUser({
+                data: {
+                    seen_list: seenList,
+                    saved_list: savedList,
+                    disliked_list: dislikedList,
+                    user_ratings: userRatings
+                }
+            });
+        } catch (e) { console.warn("Portfolio sync deferred:", e); }
     }
 }
