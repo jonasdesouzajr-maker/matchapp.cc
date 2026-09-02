@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#14131A">
+    <title>Lost the plot? | MatchApp</title>
+    <meta name="robots" content="noindex, follow">
+    <link rel="icon" href="/logo.jpeg" type="image/jpeg">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date()); gtag('config', 'G-2ECND229RR');
+      gtag('event', 'page_not_found', { page_path: location.pathname });
+    </script>
+    <style>
+        :root { --gold:#E5C158; --gold-glow:#FFF3A3; --royal:#402562; --royal-lift:#6B3FA0; --ink:#14131A; }
+        * { box-sizing:border-box; }
+        body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
+               font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif; color:#fff; text-align:center;
+               background: radial-gradient(circle at 18% 28%, rgba(107,63,160,0.55), transparent 58%),
+                           radial-gradient(circle at 82% 72%, rgba(64,37,98,0.68), transparent 60%),
+                           linear-gradient(160deg,#14131A 0%,#1A1526 55%,#14131A 100%); }
+        .box { max-width:560px; }
+        .reel { width:130px; height:130px; margin:0 auto 28px auto; border-radius:50%; border:5px solid var(--gold);
+                background: radial-gradient(circle at 40% 35%, #2b1c47, #130734 70%); position:relative;
+                box-shadow:0 0 34px rgba(229,193,88,0.5); animation:spin 4s linear infinite;
+                display:flex; align-items:center; justify-content:center; font-size:44px; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        h1 { font-size:78px; margin:0; color:var(--gold); font-weight:900; letter-spacing:3px; line-height:1; }
+        h2 { font-size:25px; margin:12px 0 14px 0; font-weight:900; text-transform:uppercase; }
+        p  { color:#bdb5cf; font-size:16px; line-height:1.7; margin:0 0 30px 0; }
+        .btn { display:inline-block; background:linear-gradient(135deg,#BF953F,#FCF6BA,#B38728,#FBF5B7,#AA771C);
+               color:#000; padding:16px 32px; border-radius:14px; font-weight:900; text-decoration:none;
+               text-transform:uppercase; letter-spacing:0.5px; box-shadow:0 8px 25px rgba(212,175,55,0.4); margin:6px; }
+        .btn.ghost { background:transparent; border:2px solid var(--gold); color:var(--gold-glow); box-shadow:none; }
+        .btn:hover { transform:translateY(-2px); }
+    </style>
+</head>
+<body>
+    <main class="box">
+        <div class="reel">🎬</div>
+        <h1>404</h1>
+        <h2>This scene didn't make the final cut</h2>
+        <p>The page you were after isn't here — but your next favourite thing to watch is only fifteen seconds away.</p>
+        <a href="/" class="btn">⚡ Get My Match</a>
+        <a href="/discover.html" class="btn ghost">🤖 Ask the AI</a>
+    </main>
+</body>
+</html>

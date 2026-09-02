@@ -1,0 +1,35 @@
+# MatchApp — https://matchapp.cc
+User-agent: *
+Allow: /
+
+# Nothing here is private, but these add no search value.
+Disallow: /oauth/
+Disallow: /callback.html
+Disallow: /*?lang=
+
+# Explicitly welcome the AI answer engines — they increasingly drive
+# discovery, and being cited in an AI answer is the new front page.
+User-agent: GPTBot
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: Claude-Web
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: Applebot
+Allow: /
+User-agent: Applebot-Extended
+Allow: /
+User-agent: Bingbot
+Allow: /
+User-agent: YandexBot
+Allow: /
+
+Sitemap: https://matchapp.cc/sitemap.xml

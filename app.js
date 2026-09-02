@@ -1182,3 +1182,55 @@ window.smartSearch = function() {
     if (looksLikeQuestion(val)) window.askAI(val);
     else window.triggerMatch(true);
 };
+
+// ----------------------------------------------------
+// CONVERSION FUNNEL TRACKING
+// Without these, GA shows pageviews but nothing about what people
+// actually DO — which step loses them, which format converts, whether
+// share traffic returns. That is the data you optimise revenue on.
+// ----------------------------------------------------
+function track(event, params) {
+    if (typeof gtag === 'function') gtag('event', event, params || {});
+}
+window.track = track;
+
+document.addEventListener('matchapp:newmatch', () => {
+    track('match_completed', {
+        category:  document.getElementById('q-category')?.value || 'unknown',
+        platform:  document.getElementById('q-platform')?.value || 'any',
+        mood:      document.getElementById('q-mood')?.value || 'any',
+        era:       document.getElementById('q-decade')?.value || 'any',
+        logged_in: !!window.isUserLoggedIn,
+        is_vip:    !!isVIP
+    });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Which outbound platform actually earns the click — your affiliate signal.
+    const streamBtn = document.getElementById('res-direct-link');
+    if (streamBtn) streamBtn.addEventListener('click', () => {
+        track('stream_click', { platform: window.globalPlatform || 'unknown', title: window.globalMatchTitle || '' });
+    });
+
+    const wl = document.getElementById('btn-watch-later');
+    if (wl) wl.addEventListener('click', () => track('save_watch_later', { title: window.globalMatchTitle || '' }));
+
+    const seen = document.getElementById('btn-seen-it');
+    if (seen) seen.addEventListener('click', () => track('mark_seen', { title: window.globalMatchTitle || '' }));
+
+    const share = document.getElementById('btn-share-match');
+    if (share) share.addEventListener('click', () => track('share_sheet_opened', { title: window.globalMatchTitle || '' }));
+
+    // Registration funnel — the single most valuable conversion on the site.
+    const reg = document.getElementById('nav-reg-btn');
+    if (reg) reg.addEventListener('click', () => track('signup_intent', { source: 'header' }));
+
+    // Scroll depth tells you whether the SEO footer is ever actually reached.
+    let depths = { 25: false, 50: false, 75: false, 100: false };
+    window.addEventListener('scroll', () => {
+        const pct = Math.round(((window.scrollY + window.innerHeight) / document.body.scrollHeight) * 100);
+        Object.keys(depths).forEach(d => {
+            if (!depths[d] && pct >= d) { depths[d] = true; track('scroll_depth', { percent: Number(d) }); }
+        });
+    }, { passive: true });
+});

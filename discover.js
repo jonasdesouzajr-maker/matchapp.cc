@@ -195,9 +195,18 @@ async function runDiscovery() {
         return;
     }
 
-    let payload;
+    let payload, source = 'ai';
     try { payload = await askAIForList(q); }
-    catch (e) { payload = await fallbackSearch(q); }
+    catch (e) { payload = await fallbackSearch(q); source = 'fallback'; }
+
+    // The questions people ask here are free keyword research — track them.
+    if (typeof gtag === 'function') {
+        gtag('event', 'ai_search', {
+            search_term: q,
+            source: source,
+            results: (payload.results || []).length
+        });
+    }
 
     if (loadEl) loadEl.style.display = 'none';
 
