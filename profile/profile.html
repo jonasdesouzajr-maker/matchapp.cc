@@ -38,6 +38,9 @@
         .poster-title { position: absolute; bottom: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.95)); color: #fff; font-size: 12px; padding: 10px 4px 4px 4px; text-align: center; font-weight: bold; }
         
         .ad-banner-container { text-align: center; margin-bottom: 30px; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 15px; border: 1px dashed rgba(255,255,255,0.2); min-height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .premium-ad-frame { position: relative; border: 1px solid rgba(229,193,88,0.35) !important; border-radius: 16px; overflow: hidden; }
+        .premium-ad-frame::before { content: ""; position: absolute; inset: 0; border-radius: 16px; box-shadow: inset 0 0 25px rgba(229,193,88,0.08); pointer-events: none; animation: adFrameGlow 4s ease-in-out infinite; }
+        @keyframes adFrameGlow { 0%, 100% { box-shadow: inset 0 0 15px rgba(229,193,88,0.06); } 50% { box-shadow: inset 0 0 30px rgba(229,193,88,0.16); } }
 
         /* ===== IDENTITY SHOWCASE ===== */
         .identity-showcase { background: linear-gradient(150deg, rgba(229,193,88,0.14), rgba(10,2,2,0.96)); border: 2px solid var(--gold); border-radius: 22px; padding: 35px; margin-bottom: 40px; box-shadow: 0 12px 45px rgba(229,193,88,0.18); }
@@ -81,7 +84,7 @@
                 </div>
 
                 <!-- PROFILE TOP MONETIZATION BANNER -->
-                <div class="ad-banner-container">
+                <div class="ad-banner-container premium-ad-frame">
                     <span style="font-size: 10px; color: #888; display: block; margin-bottom: 5px;">SPONSORED ADVERTISEMENT</span>
                     <ins class="adsbygoogle" style="display:block; min-height: 90px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins>
                     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
@@ -169,6 +172,15 @@
                 </div>
 
                 <button id="save-profile-btn" onclick="saveProfileData()" class="gold-btn" style="width: 100%; padding: 22px; font-size: 22px; margin-bottom: 40px;">💾 Save & Lock Identity</button>
+
+                <!-- ADSTERRA BANNER (728x90, auto-scales on mobile) -->
+                <div class="ad-banner-container premium-ad-frame">
+                    <span style="font-size: 10px; color: #888; display: block; margin-bottom: 5px;">SPONSORED CONTENT</span>
+                    <div class="adsterra-top-wrapper">
+                        <script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script>
+                        <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
+                    </div>
+                </div>
 
                 <!-- ============================================ -->
                 <!-- DUAL PORTFOLIOS: WATCH LATER + SEEN IT       -->

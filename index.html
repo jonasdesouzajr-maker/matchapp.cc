@@ -12,6 +12,14 @@
     <meta name="author" content="MatchApp">
     <link rel="canonical" href="https://matchapp.cc/">
 
+    <!-- SEARCH ENGINE VERIFICATION (Google is verified via IndexNow + Search Console already).
+         Bing Webmaster Tools and Yandex Webmaster both also accept IndexNow pings — this site's
+         existing /matchappindexnowkey2026.txt automation already notifies both. For direct
+         dashboard verification (optional, unlocks Bing/Yandex Search Console-style reporting),
+         replace the placeholder content below with the real code from each webmaster tool. -->
+    <meta name="msvalidate.01" content="REPLACE-WITH-BING-WEBMASTER-VERIFICATION-CODE">
+    <meta name="yandex-verification" content="0948bb9f3d3a868d">
+
     <!-- OPEN GRAPH / SOCIAL -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="MatchApp">
@@ -132,6 +140,20 @@
         .sticky-mobile-ad { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(3,1,1,0.95); border-top: 1px solid var(--gold); z-index: 900; text-align: center; padding: 5px 0; display: block; }
         @media (min-width: 900px) { .sticky-mobile-ad { display: none; } }
 
+        /* ===== PREMIUM AD FRAME (beautifies AdSense + Adsterra placements) ===== */
+        .premium-ad-frame { position: relative; border: 1px solid rgba(229,193,88,0.35) !important; border-radius: 16px; overflow: hidden; }
+        .premium-ad-frame::before { content: ""; position: absolute; inset: 0; border-radius: 16px; box-shadow: inset 0 0 25px rgba(229,193,88,0.08); pointer-events: none; animation: adFrameGlow 4s ease-in-out infinite; }
+        @keyframes adFrameGlow { 0%, 100% { box-shadow: inset 0 0 15px rgba(229,193,88,0.06); } 50% { box-shadow: inset 0 0 30px rgba(229,193,88,0.16); } }
+
+        /* ===== 8K PREMIUM POLISH: subtle cinematic ambience ===== */
+        body::before { content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none; background: radial-gradient(ellipse at 15% 10%, rgba(229,193,88,0.05), transparent 45%), radial-gradient(ellipse at 85% 90%, rgba(138,43,226,0.06), transparent 45%); }
+        .premium-card { transition: box-shadow 0.4s ease, transform 0.4s ease; }
+        .premium-card:hover { box-shadow: 0 20px 60px rgba(0,0,0,0.95), 0 0 40px rgba(229,193,88,0.08); }
+        #res-poster-img { transition: transform 0.5s ease; }
+        #res-poster-img:hover { transform: scale(1.015); }
+        .fade-in { animation: fadeIn 0.6s cubic-bezier(0.25,0.8,0.25,1) forwards; }
+        @keyframes fadeIn { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
+
         /* ===== SEO FOOTER ===== */
         .seo-footer { background: linear-gradient(180deg, rgba(3,1,1,0.6), rgba(10,2,2,0.98)); border-top: 2px solid var(--gold); padding: 50px 20px 90px 20px; margin-top: 40px; width: 100%; box-sizing: border-box; }
         .seo-footer-inner { max-width: 1100px; margin: 0 auto; text-align: center; }
@@ -180,7 +202,7 @@
     <main class="page-wrapper" style="flex: 1; position: relative;">
         <div class="main-layout">
             <!-- STICKY ADSENSE SIDEBAR AD LEFT -->
-            <aside class="sidebar-ad-left">
+            <aside class="sidebar-ad-left premium-ad-frame">
                 <span style="font-size: 10px; color: #888; display: block; text-align: center; margin-bottom: 5px;">SPONSORED</span>
                 <ins class="adsbygoogle" style="display:block; width:160px; height:600px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical"></ins>
                 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
@@ -237,11 +259,13 @@
                     </div>
                 </div>
 
-                <!-- ADSTERRA BANNER 1 -->
-                <div class="ad-banner-container">
+                <!-- ADSTERRA BANNER 1 (728x90, auto-scales on mobile via .adsterra-top-wrapper) -->
+                <div class="ad-banner-container premium-ad-frame">
                     <span style="font-size: 10px; color: #888; display: block; margin-bottom: 5px;">SPONSORED CONTENT</span>
-                    <script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script>
-                    <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
+                    <div class="adsterra-top-wrapper">
+                        <script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };</script>
+                        <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
+                    </div>
                 </div>
 
                 <article id="search-box" class="premium-card">
@@ -385,7 +409,7 @@
                 </article>
 
                 <!-- ADSENSE RESPONSIVE BANNER 2 -->
-                <div class="ad-banner-container" style="margin-top: 30px;">
+                <div class="ad-banner-container premium-ad-frame" style="margin-top: 30px;">
                     <span style="font-size: 10px; color: #888; display: block; margin-bottom: 5px;">SPONSORED ADVERTISEMENT</span>
                     <ins class="adsbygoogle" style="display:block; min-height: 90px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins>
                     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
@@ -400,9 +424,18 @@
                 </article>
 
                 <article id="result-box" class="premium-card" style="display: none; text-align: left;">
-                    <div style="text-align: center; margin-bottom: 35px;">
+                    <div style="text-align: center; margin-bottom: 25px;">
                         <!-- THIS IMAGE TAG WILL ALWAYS BE VISIBLE, NO MATTER WHAT -->
                         <img id="res-poster-img" src="" alt="Poster" style="width: 100%; max-width: 380px; height: 550px; object-fit: cover; border-radius: 15px; border: 3px solid var(--gold); box-shadow: 0 15px 50px rgba(229,193,88,0.5); display: none;">
+                    </div>
+
+                    <!-- EMBEDDED TRAILER — right underneath the cover, for every result -->
+                    <div id="res-trailer-container" style="margin-bottom: 30px; display: none;">
+                        <h4 style="color: var(--gold); font-size: 15px; text-transform: uppercase; margin: 0 0 12px 0; text-align: center; letter-spacing: 1px;">🎬 Trailer &amp; Previews</h4>
+                        <div class="video-container">
+                            <iframe id="yt-trailer-embed" src="" title="Official Trailer" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                        <a id="yt-trailer-link" href="#" target="_blank" style="display: block; text-align: center; margin-top: 10px; color: #ccc; font-size: 12px; text-decoration: none;">▶ Open full results on YouTube</a>
                     </div>
                     
                     <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
@@ -410,18 +443,9 @@
                     </div>
                     <h2 id="res-title" style="color: #fff; font-size: 42px; margin: 0 0 15px 0; font-weight: 900; text-transform: uppercase;">Title</h2>
                     <p id="res-synopsis" style="color: #ddd; font-size: 18px; line-height: 1.7; margin: 0 0 30px 0;"></p>
-                    
-                    <!-- NEW: SLEEK YOUTUBE BUTTON BOX -->
-                    <div id="res-trailer-container" style="margin-bottom: 35px; background: rgba(0,0,0,0.6); padding: 25px; border-radius: 15px; border: 1px solid rgba(229,193,88,0.4); text-align: center; display: none;">
-                        <h4 style="color: var(--gold); font-size: 18px; text-transform: uppercase; margin: 0 0 10px 0;">🎬 Trailer & Previews</h4>
-                        <p style="color: #ccc; font-size: 15px; margin-bottom: 20px;">Search YouTube instantly for the official trailer, clips, and reviews.</p>
-                        <a id="yt-trailer-link" href="#" target="_blank" style="display: inline-block; width: 100%; background: #FF0000; color: #fff; font-size: 18px; padding: 18px; border-radius: 12px; text-decoration: none; font-weight: 900; text-transform: uppercase; box-shadow: 0 5px 20px rgba(255,0,0,0.4); transition: 0.3s;">
-                            ▶ Open in YouTube
-                        </a>
-                    </div>
 
                     <!-- IN-RESULT HIGH VALUE ADSENSE BANNER -->
-                    <div class="ad-banner-container" style="margin-bottom: 30px;">
+                    <div class="ad-banner-container premium-ad-frame" style="margin-bottom: 30px;">
                         <span style="font-size: 10px; color: #888; display: block; margin-bottom: 5px;">SPONSORED</span>
                         <ins class="adsbygoogle" style="display:block; min-height: 90px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins>
                         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
@@ -448,7 +472,7 @@
             </section>
 
             <!-- STICKY ADSENSE SIDEBAR AD RIGHT -->
-            <aside class="sidebar-ad-right">
+            <aside class="sidebar-ad-right premium-ad-frame">
                 <span style="font-size: 10px; color: #888; display: block; text-align: center; margin-bottom: 5px;">SPONSORED</span>
                 <ins class="adsbygoogle" style="display:block; width:160px; height:600px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="vertical"></ins>
                 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
@@ -556,11 +580,13 @@
         </div>
     </footer>
 
-    <!-- STICKY MOBILE AD BAR -->
+    <!-- STICKY MOBILE AD BAR (Adsterra 320x50) -->
     <div class="sticky-mobile-ad">
         <span style="font-size: 9px; color: #888; display: block;">SPONSORED</span>
-        <script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };</script>
-        <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
+        <div class="adsterra-bot-wrapper">
+            <script>atOptions = { 'key' : '0ffd8484dc13e2d5967d0d70f61fc753', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };</script>
+            <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
+        </div>
     </div>
 
     <!-- Hidden Authentication Modals -->
@@ -620,6 +646,17 @@
         }
         setInterval(createFloatingLogo, 3000);
         for(let i=0; i<5; i++) setTimeout(createFloatingLogo, i*500);
+
+        const footerYearEl = document.getElementById('footer-year');
+        if (footerYearEl) footerYearEl.innerText = new Date().getFullYear();
+
+        // PREMIUM SCROLL REVEAL: cards gently fade/rise into view as the user scrolls
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) { entry.target.classList.add('fade-in'); revealObserver.unobserve(entry.target); }
+            });
+        }, { threshold: 0.15 });
+        document.querySelectorAll('.premium-card, .ad-banner-container').forEach(el => revealObserver.observe(el));
     </script>
 </body>
 </html>

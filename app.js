@@ -137,6 +137,21 @@ async function getRealCoverImage(title) {
     return cacheAndReturn(generatedCover(title));
 }
 
+// LOCAL (NO-NETWORK) POSTER — guaranteed to render even if placehold.co is blocked too.
+function generateLocalPosterSVG(title) {
+    const safeTitle = (title || 'MatchApp').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="900" viewBox="0 0 600 900">
+        <defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#1a0505"/><stop offset="100%" stop-color="#4a2b00"/>
+        </linearGradient></defs>
+        <rect width="600" height="900" fill="url(#g)"/>
+        <rect x="20" y="20" width="560" height="860" fill="none" stroke="#E5C158" stroke-width="4"/>
+        <text x="300" y="440" font-family="Arial, sans-serif" font-size="40" font-weight="900" fill="#E5C158" text-anchor="middle">${safeTitle.length > 26 ? safeTitle.substring(0, 24) + '…' : safeTitle}</text>
+        <text x="300" y="500" font-family="Arial, sans-serif" font-size="20" fill="#FFF0B3" text-anchor="middle">MatchApp.cc</text>
+    </svg>`;
+    return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+}
+
 // ----------------------------------------------------
 // MARQUEE COVER HYDRATION
 // Replaces any placeholder/broken marquee art with real covers on page load.
@@ -151,7 +166,7 @@ async function hydrateMarqueeCovers() {
         try {
             const real = await getRealCoverImage(title);
             if (real) {
-                img.onerror = function() { this.onerror = null; this.src = generatedCover(title); };
+                img.onerror = function() { this.onerror = function(){ this.onerror=null; this.src = generateLocalPosterSVG(title); }; this.src = generatedCover(title); };
                 img.src = real;
             }
         } catch (e) {}
@@ -252,6 +267,83 @@ async function fetchGeminiData(promptText) {
     throw new Error("Invalid format");
 }
 
+// ----------------------------------------------------
+// CLIENT-SIDE MATCHMAKING CATALOG
+// Used whenever the Gemini proxy is unavailable, so users NEVER see the
+// same hardcoded title twice in a row. Real, well-known titles across
+// every category/platform offered in the questionnaire.
+// ----------------------------------------------------
+const CONTENT_CATALOG = [
+    { title: "The Bear", synopsis: "A young chef returns home to run his family's Chicago sandwich shop after a family tragedy.", platform: "Hulu", cats: ["series"], moods: ["intense and thrilling","dark and gritty"], vibes: ["fast-paced binge-worthy","prestige and critically acclaimed"], ratings: ["teen PG-13","mature adults only R rated","any"] },
+    { title: "Shogun", synopsis: "A political thriller set in feudal Japan following a shipwrecked English sailor caught in a power struggle.", platform: "Hulu", cats: ["series","limited series"], moods: ["intense and thrilling","epic and adventurous"], vibes: ["prestige and critically acclaimed","slow burn"], ratings: ["teen PG-13","mature adults only R rated","any"] },
+    { title: "Dune: Part Two", synopsis: "Paul Atreides unites with the Fremen to seek revenge against the conspirators who destroyed his family.", platform: "Max", cats: ["movie"], moods: ["epic and adventurous","intense and thrilling"], vibes: ["prestige and critically acclaimed","fast-paced binge-worthy"], ratings: ["teen PG-13","any"] },
+    { title: "Deadpool & Wolverine", synopsis: "A fast, foul-mouthed superhero team-up across the Marvel multiverse.", platform: "Disney+", cats: ["movie"], moods: ["funny","intense and thrilling"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["mature adults only R rated","any"] },
+    { title: "House of the Dragon", synopsis: "Two centuries before Game of Thrones, the Targaryen dynasty tears itself apart in civil war.", platform: "Max", cats: ["series"], moods: ["dark and gritty","epic and adventurous"], vibes: ["prestige and critically acclaimed","long running series"], ratings: ["mature adults only R rated","any"] },
+    { title: "Queen of Tears", synopsis: "A K-drama about a wealthy heiress and her husband navigating love, betrayal and a terminal illness twist.", platform: "Viki", cats: ["K-drama","series"], moods: ["romantic","heartbreaking"], vibes: ["slow burn","long running series"], ratings: ["teen PG-13","any"] },
+    { title: "Crash Landing on You", synopsis: "A South Korean heiress paraglides into North Korea and falls for the officer who hides her.", platform: "Netflix", cats: ["K-drama","series"], moods: ["romantic","light and feel-good"], vibes: ["slow burn","fast-paced binge-worthy"], ratings: ["teen PG-13","any"] },
+    { title: "Jujutsu Kaisen", synopsis: "A boy swallows a cursed talisman and joins a secret school to battle supernatural threats.", platform: "Crunchyroll", cats: ["anime"], moods: ["intense and thrilling","dark and gritty"], vibes: ["fast-paced binge-worthy","long running series"], ratings: ["teen PG-13","any"] },
+    { title: "Frieren: Beyond Journey's End", synopsis: "An elven mage reflects on mortality and friendship long after her adventuring party has aged and passed.", platform: "Crunchyroll", cats: ["anime"], moods: ["cozy comfort watch","heartbreaking"], vibes: ["slow burn","award winning"], ratings: ["all ages family friendly","any"] },
+    { title: "A Vida Secreta do Meu Marido Bilionário", synopsis: "A Brazilian vertical novela about a woman who discovers her husband is secretly a billionaire tycoon.", platform: "ReelShort", cats: ["vertical micro-drama","novela brasileira"], moods: ["romantic","intense and thrilling"], vibes: ["guilty pleasure","one sitting short watch"], ratings: ["teen PG-13","any"] },
+    { title: "CEO's Contract Bride", synopsis: "A gripping vertical micro-drama romance between a ruthless CEO and the woman forced into a marriage of convenience.", platform: "DramaBox", cats: ["vertical micro-drama"], moods: ["romantic","guilty pleasure"], vibes: ["one sitting short watch","fast-paced binge-worthy"], ratings: ["teen PG-13","any"] },
+    { title: "Vale Tudo", synopsis: "A classic Brazilian telenovela about family rivalry, ambition and moral compromise in Rio de Janeiro.", platform: "Globoplay", cats: ["novela brasileira","telenovela"], moods: ["dark and gritty","intense and thrilling"], vibes: ["long running series","award winning"], ratings: ["mature adults only R rated","any"] },
+    { title: "The Joe Rogan Experience", synopsis: "Long-form conversations spanning comedy, science, MMA and culture.", platform: "Spotify", cats: ["podcast"], moods: ["funny","inspiring"], vibes: ["easy background watch","long running series"], ratings: ["mature adults only R rated","any"] },
+    { title: "SmartLess", synopsis: "Three friends surprise each other with a mystery guest for freewheeling, funny conversation.", platform: "Spotify", cats: ["podcast"], moods: ["funny","light and feel-good"], vibes: ["easy background watch"], ratings: ["all ages family friendly","any"] },
+    { title: "Baby Reindeer", synopsis: "A darkly comic true story about a struggling comedian stalked by a woman he shows a moment of kindness.", platform: "Netflix", cats: ["limited series","series"], moods: ["dark and gritty","heartbreaking"], vibes: ["award winning","prestige and critically acclaimed"], ratings: ["mature adults only R rated","any"] },
+    { title: "Fallout", synopsis: "Generations after a nuclear apocalypse, surface dwellers and vault dwellers collide in a darkly funny wasteland.", platform: "Prime Video", cats: ["series"], moods: ["dark and gritty","funny"], vibes: ["fast-paced binge-worthy","award winning"], ratings: ["mature adults only R rated","any"] },
+    { title: "Bluey", synopsis: "An imaginative six-year-old Blue Heeler pup and her family turn everyday life into playful adventure.", platform: "Disney+", cats: ["kids","series"], moods: ["light and feel-good","cozy comfort watch"], vibes: ["easy background watch","award winning"], ratings: ["all ages family friendly","kids","any"] },
+    { title: "Moana 2", synopsis: "Moana sets sail on a new ocean adventure alongside Maui to reconnect with scattered island peoples.", platform: "Disney+", cats: ["movie","kids"], moods: ["epic and adventurous","inspiring"], vibes: ["fast-paced binge-worthy"], ratings: ["all ages family friendly","kids","any"] },
+    { title: "Nimona", synopsis: "A knight framed for a crime teams up with a shapeshifting teen to clear his name in a sci-fi/medieval kingdom.", platform: "Netflix", cats: ["movie","kids","anime"], moods: ["funny","inspiring"], vibes: ["fast-paced binge-worthy"], ratings: ["all ages family friendly","teen PG-13","any"] },
+    { title: "Cosmos: Possible Worlds", synopsis: "A documentary journey through space, time and the origins of scientific discovery.", platform: "Netflix", cats: ["documentary"], moods: ["inspiring","mind-bending"], vibes: ["easy background watch","award winning"], ratings: ["all ages family friendly","any"] },
+    { title: "Chef's Table", synopsis: "An intimate documentary series profiling the world's most creative chefs and their craft.", platform: "Netflix", cats: ["documentary"], moods: ["inspiring","cozy comfort watch"], vibes: ["easy background watch","hidden gem underrated"], ratings: ["all ages family friendly","any"] },
+    { title: "John Mulaney: Baby J", synopsis: "A stand-up special turning the comedian's very public struggles into sharp, self-deprecating comedy.", platform: "Netflix", cats: ["stand-up comedy special"], moods: ["funny"], vibes: ["one sitting short watch","award winning"], ratings: ["mature adults only R rated","any"] },
+    { title: "Love Is Blind", synopsis: "Singles date and get engaged sight unseen, meeting face-to-face only after saying yes.", platform: "Netflix", cats: ["reality show"], moods: ["romantic","funny"], vibes: ["guilty pleasure","fast-paced binge-worthy"], ratings: ["teen PG-13","any"] },
+    { title: "Alcarràs", synopsis: "A Catalan farming family faces their final harvest as their land is sold for solar panels.", platform: "MUBI", cats: ["European cinema","movie"], moods: ["heartbreaking","nostalgic"], vibes: ["slow burn","hidden gem underrated"], ratings: ["all ages family friendly","any"] },
+    { title: "RRR", synopsis: "Two revolutionaries in colonial India form an epic, action-packed friendship in this Tollywood blockbuster.", platform: "Netflix", cats: ["Bollywood","movie"], moods: ["epic and adventurous","intense and thrilling"], vibes: ["fast-paced binge-worthy","award winning"], ratings: ["teen PG-13","any"] },
+    { title: "Business Proposal", synopsis: "A woman goes on a blind date pretending to be someone else — and it turns out to be her own CEO.", platform: "Viki", cats: ["K-drama","series"], moods: ["light and feel-good","romantic"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["teen PG-13","any"] },
+    { title: "Rebel Moon", synopsis: "A peaceful colony on the edge of the galaxy sends a warrior to recruit fighters against a tyrannical regime.", platform: "Netflix", cats: ["movie"], moods: ["epic and adventurous","intense and thrilling"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["mature adults only R rated","any"] },
+    { title: "Midnight Diner", synopsis: "A quiet late-night Tokyo diner serves comfort food and even more comforting stories to its regulars.", platform: "Netflix", cats: ["J-drama","series"], moods: ["cozy comfort watch","nostalgic"], vibes: ["easy background watch","hidden gem underrated"], ratings: ["all ages family friendly","any"] },
+    { title: "Kingdom", synopsis: "A Korean crown prince investigates a mysterious plague that turns the dead into the undead.", platform: "Netflix", cats: ["K-drama","series"], moods: ["scary","dark and gritty"], vibes: ["fast-paced binge-worthy","hidden gem underrated"], ratings: ["mature adults only R rated","any"] },
+    { title: "Emilia Pérez", synopsis: "A Mexican cartel leader seeks a secret gender transition, told as a genre-defying musical thriller.", platform: "Netflix", cats: ["movie","European cinema"], moods: ["mind-bending","intense and thrilling"], vibes: ["prestige and critically acclaimed","award winning"], ratings: ["mature adults only R rated","any"] }
+];
+
+// Titles shown this session, so the same result never repeats back-to-back.
+let recentTitles = JSON.parse(localStorage.getItem('match_recentTitles') || '[]');
+
+function rememberShownTitle(title) {
+    recentTitles.unshift(title);
+    recentTitles = recentTitles.slice(0, 6);
+    localStorage.setItem('match_recentTitles', JSON.stringify(recentTitles));
+}
+
+function pickFromCatalog(cat, plat, mood, vibe, rating) {
+    const excluded = new Set([...seenList, ...dislikedList].map(i => i.title || i));
+    const seenRecently = new Set(recentTitles);
+
+    // Tiered relaxation: try a full match first, then progressively relax filters
+    // rather than ever falling back to one hardcoded title.
+    const tiers = [
+        (e) => (cat === 'any' || e.cats.includes(cat)) && (plat === 'any' || e.platform === plat) && (mood === 'any' || e.moods.includes(mood)) && (rating === 'any' || e.ratings.includes(rating)),
+        (e) => (cat === 'any' || e.cats.includes(cat)) && (mood === 'any' || e.moods.includes(mood)) && (rating === 'any' || e.ratings.includes(rating)),
+        (e) => (cat === 'any' || e.cats.includes(cat)) && (rating === 'any' || e.ratings.includes(rating)),
+        (e) => (rating === 'any' || e.ratings.includes(rating)),
+        () => true
+    ];
+
+    for (const tierFilter of tiers) {
+        let pool = CONTENT_CATALOG.filter(e => tierFilter(e) && !excluded.has(e.title));
+        let freshPool = pool.filter(e => !seenRecently.has(e.title));
+        if (freshPool.length > 0) pool = freshPool;
+        if (pool.length > 0) {
+            const pick = pool[Math.floor(Math.random() * pool.length)];
+            return { title: pick.title, synopsis: pick.synopsis, platform: plat !== 'any' ? plat : pick.platform };
+        }
+    }
+    // Absolute last resort: any catalog title not shown in the last 6 results.
+    const anyFresh = CONTENT_CATALOG.filter(e => !seenRecently.has(e.title));
+    const pick = (anyFresh.length ? anyFresh : CONTENT_CATALOG)[Math.floor(Math.random() * (anyFresh.length ? anyFresh.length : CONTENT_CATALOG.length))];
+    return { title: pick.title, synopsis: pick.synopsis, platform: pick.platform };
+}
+
 window.triggerMatch = async function(isSpecificSearch = false) {
     if (!checkDailyLimit()) return;
     
@@ -313,9 +405,21 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     let matchResult = null;
     try {
         matchResult = await fetchGeminiData(promptText);
+        if (!matchResult || !matchResult.title) throw new Error("Empty AI result");
     } catch (err) {
-        matchResult = { title: isSpecificSearch ? document.getElementById('specific-search-input').value : "The Bear", synopsis: "Stream this popular title now.", platform: "Web" };
+        if (isSpecificSearch) {
+            const input = document.getElementById('specific-search-input');
+            matchResult = { title: input.value.trim(), synopsis: "Here's your title — tap Stream Now to find it on your platform of choice.", platform: "Web" };
+        } else {
+            let cat = document.getElementById('q-category')?.value || 'any';
+            let plat = document.getElementById('q-platform')?.value || 'any';
+            let mood = document.getElementById('q-mood')?.value || 'any';
+            let vibe = document.getElementById('q-vibe')?.value || 'any';
+            let rating = document.getElementById('q-rating')?.value || 'any';
+            matchResult = pickFromCatalog(cat, plat, mood, vibe, rating);
+        }
     }
+    rememberShownTitle(matchResult.title);
 
     let timeSpent = Date.now() - startTime;
     if (timeSpent < MIN_WAIT_MS) await new Promise(resolve => setTimeout(resolve, MIN_WAIT_MS - timeSpent));
@@ -352,10 +456,12 @@ async function renderResult(selected, isSpecificSearch) {
     globalPlatform = selected.platform;
 
     posterEl.style.display = 'block';
+    posterEl.classList.remove('fade-in'); void posterEl.offsetWidth; posterEl.classList.add('fade-in');
     
-    // In case somehow the browser blocks the valid URL, it falls back to the dynamic generator directly inside the DOM
+    // In case somehow the browser blocks the valid URL, it falls back to the dynamic generator,
+    // then to a pure local (no-network) SVG so a cover is ALWAYS visible no matter what's blocked.
     posterEl.onerror = function() { 
-        this.onerror = null; 
+        this.onerror = function() { this.onerror = null; this.src = generateLocalPosterSVG(selected.title); };
         this.src = `https://placehold.co/600x900/1a0505/E5C158?text=${encodeURIComponent(selected.title.replace(/ /g, '+'))}`; 
     };
     posterEl.src = realCover; 
@@ -372,16 +478,15 @@ async function renderResult(selected, isSpecificSearch) {
         directBtn.href = `https://www.google.com/search?q=Watch+${encodeURIComponent(selected.title)}+on+${encodeURIComponent(selected.platform)}`; 
     }
 
-    // YOUTUBE BOX SETUP (No more broken iframes)
+    // EMBEDDED TRAILER — plays right under the cover for every title, direct search included.
     const trailerContainer = document.getElementById('res-trailer-container');
     const ytLink = document.getElementById('yt-trailer-link');
-    
-    if (isSpecificSearch) {
-        trailerContainer.style.display = 'none';
-    } else {
-        trailerContainer.style.display = 'block';
-        ytLink.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(selected.title + " official trailer")}`;
-    }
+    const ytEmbed = document.getElementById('yt-trailer-embed');
+
+    trailerContainer.style.display = 'block';
+    const trailerQuery = encodeURIComponent(selected.title + " official trailer");
+    if (ytEmbed) ytEmbed.src = `https://www.youtube.com/embed?listType=search&list=${trailerQuery}`;
+    ytLink.href = `https://www.youtube.com/results?search_query=${trailerQuery}`;
 
     updateActionButtonStates();
 }
