@@ -34,6 +34,7 @@ const I18N_LANGS = {
 
 const I18N = {
   'en': {
+    'search.heading': 'Search or Ask Anything', 'search.hint': 'Type a title for a direct match — or ask a full question and our AI will find every title that fits.', 'search.trythese': 'Try:',
     'nav.signin': '👤 Sign In / Join', 'nav.profile': '👤 Profile', 'nav.logout': 'Logout',
     'chrome.notice': 'Open on Google Chrome for the Best Experience',
     'marquee.title': '🔥 Trending Blockbusters Worldwide',
@@ -69,6 +70,7 @@ const I18N = {
     'lang.label': 'Language'
   },
   'pt-BR': {
+    'search.heading': 'Busque ou pergunte qualquer coisa', 'search.hint': 'Digite um título para busca direta — ou faça uma pergunta completa e nossa IA encontrará todos os títulos que combinam.', 'search.trythese': 'Experimente:',
     'nav.signin': '👤 Entrar / Cadastrar', 'nav.profile': '👤 Perfil', 'nav.logout': 'Sair',
     'chrome.notice': 'Abra no Google Chrome para a melhor experiência',
     'marquee.title': '🔥 Sucessos em alta no mundo todo',
@@ -104,6 +106,7 @@ const I18N = {
     'lang.label': 'Idioma'
   },
   'es': {
+    'search.heading': 'Busca o pregunta lo que quieras', 'search.hint': 'Escribe un título para búsqueda directa — o haz una pregunta completa y nuestra IA encontrará todos los títulos que encajen.', 'search.trythese': 'Prueba:',
     'nav.signin': '👤 Iniciar sesión / Registrarse', 'nav.profile': '👤 Perfil', 'nav.logout': 'Cerrar sesión',
     'chrome.notice': 'Abre en Google Chrome para la mejor experiencia',
     'marquee.title': '🔥 Grandes éxitos en tendencia mundial',
@@ -139,6 +142,7 @@ const I18N = {
     'lang.label': 'Idioma'
   },
   'fr': {
+    'search.heading': 'Cherchez ou posez une question', 'search.hint': 'Tapez un titre pour une recherche directe — ou posez une question complète et notre IA trouvera tous les titres correspondants.', 'search.trythese': 'Essayez :',
     'nav.signin': '👤 Connexion / Inscription', 'nav.profile': '👤 Profil', 'nav.logout': 'Déconnexion',
     'chrome.notice': 'Ouvrez dans Google Chrome pour une expérience optimale',
     'marquee.title': '🔥 Blockbusters tendance dans le monde',
@@ -174,6 +178,7 @@ const I18N = {
     'lang.label': 'Langue'
   },
   'de': {
+    'search.heading': 'Suchen oder fragen Sie alles', 'search.hint': 'Geben Sie einen Titel für die Direktsuche ein — oder stellen Sie eine ganze Frage, und unsere KI findet alle passenden Titel.', 'search.trythese': 'Probieren Sie:',
     'nav.signin': '👤 Anmelden / Registrieren', 'nav.profile': '👤 Profil', 'nav.logout': 'Abmelden',
     'chrome.notice': 'Für das beste Erlebnis in Google Chrome öffnen',
     'marquee.title': '🔥 Weltweit angesagte Blockbuster',
@@ -209,6 +214,7 @@ const I18N = {
     'lang.label': 'Sprache'
   },
   'it': {
+    'search.heading': 'Cerca o chiedi qualsiasi cosa', 'search.hint': 'Digita un titolo per la ricerca diretta — oppure fai una domanda completa e la nostra IA troverà tutti i titoli adatti.', 'search.trythese': 'Prova:',
     'nav.signin': '👤 Accedi / Registrati', 'nav.profile': '👤 Profilo', 'nav.logout': 'Esci',
     'chrome.notice': 'Apri su Google Chrome per la migliore esperienza',
     'marquee.title': '🔥 Blockbuster di tendenza nel mondo',
@@ -244,6 +250,7 @@ const I18N = {
     'lang.label': 'Lingua'
   },
   'tr': {
+    'search.heading': 'Arayın ya da her şeyi sorun', 'search.hint': 'Doğrudan arama için bir başlık yazın — ya da tam bir soru sorun, yapay zekâmız uyan tüm yapımları bulsun.', 'search.trythese': 'Deneyin:',
     'nav.signin': '👤 Giriş / Kayıt', 'nav.profile': '👤 Profil', 'nav.logout': 'Çıkış',
     'chrome.notice': 'En iyi deneyim için Google Chrome\'da açın',
     'marquee.title': '🔥 Dünya çapında trend yapımlar',
@@ -279,6 +286,7 @@ const I18N = {
     'lang.label': 'Dil'
   },
   'ru': {
+    'search.heading': 'Найдите или спросите что угодно', 'search.hint': 'Введите название для прямого поиска — или задайте полный вопрос, и наш ИИ найдёт все подходящие варианты.', 'search.trythese': 'Попробуйте:',
     'nav.signin': '👤 Войти / Регистрация', 'nav.profile': '👤 Профиль', 'nav.logout': 'Выйти',
     'chrome.notice': 'Откройте в Google Chrome для лучшего впечатления',
     'marquee.title': '🔥 Мировые хиты в тренде',
@@ -314,6 +322,7 @@ const I18N = {
     'lang.label': 'Язык'
   },
   'ar': {
+    'search.heading': 'ابحث أو اسأل عن أي شيء', 'search.hint': 'اكتب عنوانًا للبحث المباشر — أو اطرح سؤالًا كاملًا وسيجد الذكاء الاصطناعي كل الأعمال المناسبة.', 'search.trythese': 'جرّب:',
     'nav.signin': '👤 تسجيل الدخول / التسجيل', 'nav.profile': '👤 الملف الشخصي', 'nav.logout': 'تسجيل الخروج',
     'chrome.notice': 'افتح في Google Chrome للحصول على أفضل تجربة',
     'marquee.title': '🔥 الأعمال الرائجة حول العالم',
@@ -349,6 +358,7 @@ const I18N = {
     'lang.label': 'اللغة'
   },
   'hi': {
+    'search.heading': 'खोजें या कुछ भी पूछें', 'search.hint': 'सीधी खोज के लिए टाइटल टाइप करें — या पूरा सवाल पूछें और हमारा AI हर मिलता-जुलता टाइटल ढूंढ़ेगा।', 'search.trythese': 'आज़माएं:',
     'nav.signin': '👤 साइन इन / जुड़ें', 'nav.profile': '👤 प्रोफ़ाइल', 'nav.logout': 'लॉग आउट',
     'chrome.notice': 'बेहतरीन अनुभव के लिए Google Chrome में खोलें',
     'marquee.title': '🔥 दुनिया भर में ट्रेंडिंग ब्लॉकबस्टर',
@@ -384,6 +394,7 @@ const I18N = {
     'lang.label': 'भाषा'
   },
   'id': {
+    'search.heading': 'Cari atau tanyakan apa saja', 'search.hint': 'Ketik judul untuk pencarian langsung — atau ajukan pertanyaan lengkap dan AI kami akan menemukan semua judul yang cocok.', 'search.trythese': 'Coba:',
     'nav.signin': '👤 Masuk / Daftar', 'nav.profile': '👤 Profil', 'nav.logout': 'Keluar',
     'chrome.notice': 'Buka di Google Chrome untuk pengalaman terbaik',
     'marquee.title': '🔥 Blockbuster yang sedang tren di dunia',
@@ -419,6 +430,7 @@ const I18N = {
     'lang.label': 'Bahasa'
   },
   'ja': {
+    'search.heading': '検索、または何でも質問', 'search.hint': 'タイトルを入力すれば直接検索。文章で質問すれば、AI が該当する作品をすべて探します。', 'search.trythese': '例:',
     'nav.signin': '👤 ログイン / 登録', 'nav.profile': '👤 プロフィール', 'nav.logout': 'ログアウト',
     'chrome.notice': '最適な体験のため Google Chrome で開いてください',
     'marquee.title': '🔥 世界で話題の大ヒット作',
@@ -454,6 +466,7 @@ const I18N = {
     'lang.label': '言語'
   },
   'ko': {
+    'search.heading': '검색하거나 무엇이든 물어보세요', 'search.hint': '제목을 입력하면 바로 검색됩니다 — 문장으로 질문하면 AI가 어울리는 작품을 모두 찾아드립니다.', 'search.trythese': '예시:',
     'nav.signin': '👤 로그인 / 가입', 'nav.profile': '👤 프로필', 'nav.logout': '로그아웃',
     'chrome.notice': '최상의 경험을 위해 Google Chrome에서 열어보세요',
     'marquee.title': '🔥 전 세계 인기 대작',
@@ -489,6 +502,7 @@ const I18N = {
     'lang.label': '언어'
   },
   'zh': {
+    'search.heading': '搜索或随意提问', 'search.hint': '输入片名可直接搜索——或提出完整问题，AI 将找出所有符合的作品。', 'search.trythese': '试试：',
     'nav.signin': '👤 登录 / 注册', 'nav.profile': '👤 个人资料', 'nav.logout': '退出',
     'chrome.notice': '在 Google Chrome 中打开以获得最佳体验',
     'marquee.title': '🔥 全球热门大片',

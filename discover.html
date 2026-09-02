@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#14131A">
+
+    <title>AI Streaming Search — Ask Anything | MatchApp</title>
+    <meta name="description" content="Ask MatchApp's AI anything about what to watch — by topic, theme, real event, organisation or mood — and get a ranked list of real movies, series, documentaries and podcasts with direct streaming links.">
+    <meta name="keywords" content="AI streaming search, ask AI what to watch, find a show about a topic, semantic movie search, natural language movie search, documentary finder, find series by subject, AI streaming concierge">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="https://matchapp.cc/discover.html">
+    <link rel="icon" href="/logo.jpeg" type="image/jpeg">
+
+    <script defer src="/i18n.js?v=106"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date()); gtag('config', 'G-2ECND229RR');
+    </script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="/style.css?v=106">
+    <style>
+        :root { --gold: #E5C158; --gold-deep: #B8912F; --gold-glow: #FFF3A3; --ink: #14131A; --royal-deep: #130734; --royal: #402562; --royal-lift: #6B3FA0; --royal-glow: #A376B6; --bg-dark: #14131A; --card-bg: rgba(26, 22, 38, 0.90); }
+        body { background: var(--bg-dark); color: #fff; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
+        .app-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 25px; background: linear-gradient(135deg, rgba(19,7,52,0.97), rgba(26,25,31,0.97)); border-bottom: 2px solid var(--gold); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(15px); flex-wrap: wrap; gap: 14px; }
+        .header-brand-area { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+        .brand-logo { width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--gold); box-shadow: 0 0 22px rgba(229,193,88,0.55); }
+        .app-title-main { font-size: 25px; font-weight: 900; color: var(--gold); letter-spacing: 1px; }
+        .wrap { max-width: 1150px; margin: 0 auto; padding: 34px 18px 110px 18px; }
+        .premium-card { background: linear-gradient(160deg, rgba(32,24,52,0.92), rgba(20,19,26,0.94)); border: 1px solid rgba(229,193,88,0.45); border-radius: 20px; padding: 30px; margin-bottom: 26px; box-shadow: 0 15px 50px rgba(0,0,0,0.9); }
+
+        .discover-head h1 { color: var(--gold); font-size: 30px; margin: 0 0 8px 0; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+        #discover-query { color: var(--gold-glow); font-size: 20px; font-style: italic; display: block; margin-bottom: 14px; }
+        #discover-answer { display: none; color: #ddd6ec; font-size: 17px; line-height: 1.7; background: rgba(107,63,160,0.18); border-left: 4px solid var(--gold); padding: 16px 20px; border-radius: 12px; margin-top: 6px; }
+
+        .newsearch-row { display: flex; gap: 12px; margin-top: 22px; flex-wrap: wrap; }
+        .newsearch-row input { flex: 1; min-width: 220px; padding: 16px; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.6); color: #fff; font-size: 16px; }
+        .newsearch-row input:focus { outline: none; box-shadow: 0 0 20px rgba(229,193,88,0.4); }
+
+        #discover-grid { display: none; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 22px; }
+        .discover-card { display: flex; gap: 16px; background: linear-gradient(160deg, rgba(32,24,52,0.92), rgba(20,19,26,0.94)); border: 1px solid rgba(229,193,88,0.32); border-radius: 18px; padding: 16px; opacity: 0; animation: cardIn 0.6s cubic-bezier(0.22,1,0.36,1) forwards; transition: transform 0.35s, border-color 0.35s, box-shadow 0.35s; }
+        .discover-card:hover { transform: translateY(-6px); border-color: var(--gold); box-shadow: 0 16px 44px rgba(107,63,160,0.5); }
+        @keyframes cardIn { from { opacity:0; transform: translateY(22px); } to { opacity:1; transform:none; } }
+        .discover-poster { position: relative; flex-shrink: 0; width: 104px; height: 156px; border-radius: 11px; overflow: hidden; border: 1px solid var(--gold); background: var(--royal-deep); }
+        .discover-poster img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .discover-rank { position: absolute; top: 6px; left: 6px; background: var(--gold); color: #14131A; font-size: 10px; font-weight: 900; padding: 3px 7px; border-radius: 6px; }
+        .discover-body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+        .discover-body h3 { color: #fff; font-size: 17px; margin: 0 0 5px 0; font-weight: 900; line-height: 1.3; }
+        .discover-meta { color: var(--gold); font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 800; margin-bottom: 9px; }
+        .discover-body p { color: #b9b1cc; font-size: 13.5px; line-height: 1.6; margin: 0 0 14px 0; flex: 1; }
+        .discover-actions { display: flex; gap: 9px; flex-wrap: wrap; }
+        .discover-play { flex: 1; min-width: 120px; font-size: 13px !important; padding: 11px !important; }
+        .discover-save { background: transparent; border: 1px solid var(--gold); color: var(--gold-glow); padding: 11px 15px; border-radius: 12px; font-weight: 900; font-size: 13px; cursor: pointer; transition: 0.25s; }
+        .discover-save:hover { background: rgba(229,193,88,0.16); }
+        .discover-save.saved { background: var(--gold); color: #14131A; }
+
+        #discover-loading { text-align: center; padding: 40px 20px; }
+        .scan-dots { display: inline-flex; gap: 9px; margin-bottom: 20px; }
+        .scan-dots span { width: 13px; height: 13px; border-radius: 50%; background: var(--gold); animation: scanBounce 1.15s ease-in-out infinite; }
+        .scan-dots span:nth-child(2) { animation-delay: 0.16s; } .scan-dots span:nth-child(3) { animation-delay: 0.32s; }
+        @keyframes scanBounce { 0%,80%,100% { transform: translateY(0); opacity:0.45; } 40% { transform: translateY(-16px); opacity:1; } }
+        #discover-empty { display:none; text-align:center; padding: 34px; color:#b9b1cc; }
+        .ad-banner-container { text-align:center; margin-bottom:26px; background: rgba(0,0,0,0.55); padding:15px; border-radius:16px; border:1px solid rgba(229,193,88,0.35); min-height:100px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+        @media (max-width: 620px) { .discover-card { flex-direction: column; } .discover-poster { width: 100%; height: 210px; } .wrap { padding: 22px 14px 110px 14px; } }
+    </style>
+</head>
+<body>
+    <div class="luxury-bg"></div>
+
+    <header class="app-header">
+        <a href="/index.html" class="header-brand-area">
+            <img src="/logo.jpeg" alt="MatchApp Logo" class="brand-logo">
+            <span class="app-title-main">MatchApp</span>
+        </a>
+        <nav style="display:flex; gap:12px; align-items:center;">
+            <div id="lang-switcher-host"></div>
+            <a href="/index.html" class="gold-btn" style="padding:11px 18px; font-size:13px; width:auto;">⚡ New Match</a>
+        </nav>
+    </header>
+
+    <main class="wrap">
+        <section class="premium-card discover-head">
+            <h1>🤖 AI Streaming Search</h1>
+            <span id="discover-query"></span>
+            <p id="discover-answer"></p>
+            <div class="newsearch-row">
+                <input type="text" id="discover-new-input" placeholder="Ask anything — e.g. Is there a series about Doctors Without Borders?" onkeydown="if(event.key==='Enter') newDiscoverSearch()">
+                <button onclick="newDiscoverSearch()" class="gold-btn" style="width:auto; padding:16px 26px;">🔍 Ask AI</button>
+            </div>
+        </section>
+
+        <div class="ad-banner-container">
+            <span style="font-size:10px; color:#888; display:block; margin-bottom:5px;">SPONSORED</span>
+            <ins class="adsbygoogle" style="display:block; min-height:90px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <div id="discover-loading" class="premium-card">
+            <div class="scan-dots"><span></span><span></span><span></span></div>
+            <h3 style="color:var(--gold); margin:0 0 8px 0; text-transform:uppercase; font-size:20px;">Scanning the global catalog…</h3>
+            <p style="color:#b9b1cc; margin:0; font-size:14px;">Our AI is reading your question and matching it against millions of titles.</p>
+        </div>
+
+        <div id="discover-grid"></div>
+
+        <div id="discover-empty" class="premium-card">
+            <div style="font-size:52px; margin-bottom:14px;">🔍</div>
+            <h3 style="color:var(--gold); margin:0 0 10px 0;">No confident matches</h3>
+            <p>Try rephrasing with a topic, person, event or genre — for example <em>"documentaries about Antarctic expeditions"</em>.</p>
+            <a href="/index.html" class="gold-btn" style="max-width:280px; margin:18px auto 0 auto;">⚡ Try the Match Engine</a>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/app.js?v=106"></script>
+    <script src="/discover.js?v=106"></script>
+</body>
+</html>

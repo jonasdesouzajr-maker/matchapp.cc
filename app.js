@@ -725,10 +725,46 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     const MIN_WAIT_MS = (isVIP) ? 3000 : 13500;
     
     const pBar = document.getElementById('ai-progress-bar');
+    const pctLabel = document.getElementById('meter-pct');
+    const headline = document.getElementById('loading-headline');
+    const substep = document.getElementById('loading-substep');
+    const eqBars = document.querySelectorAll('#eq-bars span');
     if (pBar) pBar.style.width = '0%';
+
+    // Narrated stages keep the wait feeling purposeful instead of idle.
+    const STAGES = [
+        { at: 0,  head: 'Scanning the global catalog…', sub: 'Reading your mood profile' },
+        { at: 18, head: 'Cross-referencing platforms…', sub: 'Checking what streams in your region' },
+        { at: 38, head: 'Filtering the noise…',          sub: 'Removing what you have already seen' },
+        { at: 58, head: 'Ranking the contenders…',       sub: 'Weighing mood, era and vibe' },
+        { at: 78, head: 'Pulling cover art & trailer…',  sub: 'Fetching artwork in high resolution' },
+        { at: 92, head: 'Finalising your match…',        sub: 'Almost there' }
+    ];
+    let stageIdx = -1;
+
     let timerInterval = setInterval(() => {
-        let pct = Math.min(((Date.now() - startTime) / MIN_WAIT_MS) * 95, 95);
+        const pct = Math.min(((Date.now() - startTime) / MIN_WAIT_MS) * 95, 95);
         if (pBar) pBar.style.width = pct + '%';
+        if (pctLabel) pctLabel.innerText = Math.round(pct) + '%';
+
+        // Equalizer intensity rises with progress, so the motion reads as "working".
+        const intensity = 0.35 + (pct / 100) * 0.65;
+        eqBars.forEach((b, i) => {
+            b.style.animationDuration = (1.15 - intensity * 0.55).toFixed(2) + 's';
+            b.style.opacity = (0.55 + intensity * 0.45).toFixed(2);
+        });
+
+        // Advance the narration.
+        let next = -1;
+        for (let i = 0; i < STAGES.length; i++) if (pct >= STAGES[i].at) next = i;
+        if (next !== stageIdx && next >= 0) {
+            stageIdx = next;
+            if (headline) headline.innerText = STAGES[next].head;
+            if (substep) {
+                substep.style.opacity = '0';
+                setTimeout(() => { substep.innerText = STAGES[next].sub; substep.style.opacity = '1'; }, 180);
+            }
+        }
     }, 100);
 
     let matchResult = null;
@@ -755,6 +791,7 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         }
     }
     rememberShownTitle(matchResult.title);
+    document.dispatchEvent(new CustomEvent('matchapp:newmatch'));
 
     let timeSpent = Date.now() - startTime;
     if (timeSpent < MIN_WAIT_MS) await new Promise(resolve => setTimeout(resolve, MIN_WAIT_MS - timeSpent));
@@ -1042,3 +1079,32 @@ document.addEventListener('matchapp:langchange', () => {
     if (catEl && typeof isAudioCategory === 'function') applyAudioModeLabels(isAudioCategory(catEl.value));
     if (typeof window.onCategoryChange === 'function') window.onCategoryChange();
 });
+
+// ----------------------------------------------------
+// SMART SEARCH ROUTER
+// A short entry ("Fallout") is a direct title lookup and runs the normal
+// match flow. A natural-language question ("Is there a show about...?")
+// goes to the AI discovery page, which returns a ranked list instead.
+// ----------------------------------------------------
+function looksLikeQuestion(text) {
+    const t = text.trim();
+    if (t.endsWith('?')) return true;
+    const wordCount = t.split(/\s+/).length;
+    // Question/qualifier openers, or simply a long descriptive phrase.
+    if (/^(is|are|was|were|do|does|did|can|could|should|what|which|who|whom|whose|where|when|why|how|any|show me|find me|give me|recommend|suggest|looking for|i want|i need|something)\b/i.test(t)) return true;
+    if (/\b(about|similar to|like .+ but|based on|set in|starring|directed by|with a|that (has|features|deals))\b/i.test(t) && wordCount >= 4) return true;
+    return wordCount >= 6;
+}
+
+window.askAI = function(question) {
+    window.location.href = '/discover.html?q=' + encodeURIComponent(question);
+};
+
+window.smartSearch = function() {
+    const input = document.getElementById('specific-search-input');
+    if (!input) return;
+    const val = input.value.trim();
+    if (!val) { if (window.showToast) showToast('Type a title or ask a question first.', true); return; }
+    if (looksLikeQuestion(val)) window.askAI(val);
+    else window.triggerMatch(true);
+};

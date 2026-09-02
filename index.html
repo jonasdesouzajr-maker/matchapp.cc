@@ -122,7 +122,7 @@
     <link rel="alternate" hreflang="zh" href="https://matchapp.cc/?lang=zh">
 
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=105"></script>
+    <script defer src="/i18n.js?v=106"></script>
 
     <!-- GOOGLE ANALYTICS (GTAG) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
@@ -244,6 +244,117 @@
         .how-step p { color: #bdb5cf; font-size: 14px; line-height: 1.65; margin: 0; }
         .how-step em { color: var(--gold); font-style: normal; font-weight: 700; }
         @media (max-width: 860px) { .how-steps { grid-template-columns: 1fr; } }
+
+        /* ============ CINEMA SCANNER LOADING EXPERIENCE ============ */
+        .scanner-stage { position: relative; width: 190px; height: 190px; margin: 0 auto 26px auto; display: flex; align-items: center; justify-content: center; }
+        .scan-beam { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 0deg, transparent 0deg, rgba(229,193,88,0.42) 38deg, rgba(163,118,182,0.30) 70deg, transparent 110deg); animation: beamSweep 2.4s linear infinite; filter: blur(2px); }
+        @keyframes beamSweep { to { transform: rotate(360deg); } }
+
+        .reel-wrap { position: relative; width: 112px; height: 112px; }
+        .film-reel { position: absolute; inset: 0; border-radius: 50%; border: 5px solid var(--gold); background: radial-gradient(circle at 40% 35%, #2b1c47, #130734 70%); box-shadow: 0 0 34px rgba(229,193,88,0.55), inset 0 0 22px rgba(0,0,0,0.85); animation: reelSpin 3.1s linear infinite; }
+        @keyframes reelSpin { to { transform: rotate(360deg); } }
+        .reel-hole { position: absolute; width: 21px; height: 21px; border-radius: 50%; background: var(--ink); border: 2px solid rgba(229,193,88,0.75); top: 50%; left: 50%; margin: -10.5px 0 0 -10.5px; }
+        .reel-hole:nth-child(1) { transform: rotate(0deg)   translateY(-33px); }
+        .reel-hole:nth-child(2) { transform: rotate(60deg)  translateY(-33px); }
+        .reel-hole:nth-child(3) { transform: rotate(120deg) translateY(-33px); }
+        .reel-hole:nth-child(4) { transform: rotate(180deg) translateY(-33px); }
+        .reel-hole:nth-child(5) { transform: rotate(240deg) translateY(-33px); }
+        .reel-hole:nth-child(6) { transform: rotate(300deg) translateY(-33px); }
+        .reel-core { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 36px; animation: corePulse 1.5s ease-in-out infinite; }
+        @keyframes corePulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.16); } }
+
+        .orbit-icons { position: absolute; inset: 0; animation: orbitSpin 11s linear infinite; }
+        @keyframes orbitSpin { to { transform: rotate(360deg); } }
+        .orbit-icon { position: absolute; top: 50%; left: 50%; font-size: 21px; transform: rotate(var(--a)) translateY(-88px) rotate(calc(-1 * var(--a))); animation: orbitBob 2.1s ease-in-out infinite; }
+        .orbit-icon:nth-child(even) { animation-delay: 0.55s; }
+        @keyframes orbitBob { 0%,100% { opacity:0.5; } 50% { opacity:1; } }
+
+        #loading-headline { font-size: 25px; font-weight: 900; text-transform: uppercase; margin: 0 0 8px 0; letter-spacing: 0.6px; }
+        .shimmer-text { background: linear-gradient(100deg, var(--gold) 20%, #fff 42%, var(--royal-glow) 58%, var(--gold) 80%); background-size: 240% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: textShimmer 3.4s linear infinite; }
+        @keyframes textShimmer { to { background-position: -240% center; } }
+        #loading-substep { color: var(--royal-glow); font-size: 14px; margin: 0 0 26px 0; min-height: 20px; transition: opacity 0.3s; letter-spacing: 0.3px; }
+
+        /* Film-strip meter */
+        .meter-shell { position: relative; width: 100%; height: 42px; background: rgba(0,0,0,0.82); border: 2px solid var(--gold); border-radius: 21px; overflow: hidden; box-shadow: inset 0 2px 14px rgba(0,0,0,0.9), 0 0 26px rgba(229,193,88,0.25); }
+        .meter-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--royal-lift), var(--gold) 55%, var(--gold-glow)); transition: width 0.12s linear; position: relative; box-shadow: 0 0 22px rgba(229,193,88,0.75); }
+        .meter-fill::after { content:""; position:absolute; inset:0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent); width: 45%; animation: meterSheen 1.35s ease-in-out infinite; }
+        @keyframes meterSheen { 0% { transform: translateX(-110%); } 100% { transform: translateX(340%); } }
+        .meter-perforations { position:absolute; inset:0; pointer-events:none; background-image: radial-gradient(circle, rgba(0,0,0,0.62) 2.6px, transparent 2.9px); background-size: 19px 100%; background-position: center; opacity: 0.55; }
+        .meter-pct { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:14px; color:#fff; text-shadow: 0 2px 6px rgba(0,0,0,0.95); letter-spacing:1px; }
+
+        /* Equalizer synced to progress */
+        .eq-bars { display:flex; align-items:flex-end; justify-content:center; gap:5px; height:44px; margin-top:22px; }
+        .eq-bars span { width:6px; height:18%; background: linear-gradient(180deg, var(--gold-glow), var(--royal-lift)); border-radius:3px; animation: eqDance 0.85s ease-in-out infinite; opacity:0.85; }
+        .eq-bars span:nth-child(3n)   { animation-duration: 1.15s; }
+        .eq-bars span:nth-child(3n+1) { animation-duration: 0.7s; }
+        .eq-bars span:nth-child(4n)   { animation-delay: 0.22s; }
+        .eq-bars span:nth-child(2n)   { animation-delay: 0.11s; }
+        @keyframes eqDance { 0%,100% { height:16%; } 50% { height:100%; } }
+        .loading-adnote { color:#8f88a5; font-size:12px; margin:24px 0 0 0; font-style:italic; }
+        @media (prefers-reduced-motion: reduce) {
+            .scan-beam, .film-reel, .orbit-icons, .reel-core, .eq-bars span, .meter-fill::after, .shimmer-text { animation: none !important; }
+            .shimmer-text { color: var(--gold); -webkit-text-fill-color: var(--gold); }
+        }
+        @media (max-width: 520px) {
+            .scanner-stage { width: 158px; height: 158px; }
+            .orbit-icon { transform: rotate(var(--a)) translateY(-72px) rotate(calc(-1 * var(--a))); }
+            #loading-headline { font-size: 20px; }
+        }
+
+        /* ===== SEARCH EXAMPLE CHIPS ===== */
+        .search-examples { margin-top:16px; display:flex; gap:9px; flex-wrap:wrap; align-items:center; justify-content:center; }
+        .search-examples > span { color:#8f88a5; font-size:12px; text-transform:uppercase; letter-spacing:1px; font-weight:800; }
+        .search-examples button { background:rgba(107,63,160,0.28); border:1px solid rgba(229,193,88,0.35); color:#d9d1e8; padding:8px 14px; border-radius:20px; font-size:12.5px; cursor:pointer; transition:0.25s; }
+        .search-examples button:hover { background:rgba(229,193,88,0.2); border-color:var(--gold); color:var(--gold-glow); transform:translateY(-2px); }
+
+        /* ============ SOCIAL SHARE ============ */
+        .share-cta { flex:1; min-width:100%; margin-top:10px; background: linear-gradient(135deg, #E1306C, #6B3FA0, #E5C158); background-size:200% auto; color:#fff; border:none; padding:16px; border-radius:14px; font-weight:900; font-size:15px; cursor:pointer; text-transform:uppercase; letter-spacing:0.5px; box-shadow:0 8px 26px rgba(225,48,108,0.42); animation: shareGlow 4s ease infinite; }
+        @keyframes shareGlow { 0%,100% { background-position:0% center; } 50% { background-position:100% center; } }
+        .share-cta:hover { transform:translateY(-2px); }
+
+        .share-sheet { position:relative; max-width:470px; width:100%; margin:auto; animation: fadeIn 0.45s cubic-bezier(0.22,1,0.36,1); }
+        .share-close { position:absolute; top:14px; right:16px; background:none; border:none; color:#8f88a5; font-size:22px; cursor:pointer; line-height:1; }
+        .share-close:hover { color:var(--gold); }
+        .share-title { color:var(--gold); font-size:23px; margin:0 0 8px 0; text-transform:uppercase; font-weight:900; text-align:center; }
+        .share-sub { color:#bdb5cf; font-size:14px; line-height:1.6; margin:0 0 18px 0; text-align:center; }
+        .share-sub strong { color:var(--gold-glow); }
+        .share-preview { min-height:150px; display:flex; align-items:center; justify-content:center; margin-bottom:16px; }
+        .share-spinner { width:42px; height:42px; border:4px solid rgba(229,193,88,0.25); border-top-color:var(--gold); border-radius:50%; animation: spin 0.9s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .share-reward { background:rgba(107,63,160,0.25); border:1px solid rgba(229,193,88,0.4); border-radius:12px; padding:12px 15px; color:#ddd6ec; font-size:13.5px; text-align:center; margin:0 0 14px 0; line-height:1.6; }
+        .share-claim { display:none; background:rgba(37,211,102,0.16); border:1px solid #25D366; color:#7ff0a8; border-radius:12px; padding:11px; font-size:13.5px; text-align:center; margin:0 0 14px 0; font-weight:700; }
+        .share-native { margin-bottom:16px !important; font-size:17px !important; padding:17px !important; }
+        .share-grid { display:grid; grid-template-columns: repeat(4, 1fr); gap:9px; margin-bottom:14px; }
+        .share-grid button { background:rgba(0,0,0,0.55); border:1px solid var(--c); color:var(--c); padding:12px 5px; border-radius:12px; font-size:11.5px; font-weight:800; cursor:pointer; transition:0.25s; }
+        .share-grid button:hover { background:var(--c); color:#14131A; transform:translateY(-3px); box-shadow:0 8px 20px rgba(0,0,0,0.6); }
+        .share-utils { display:flex; gap:10px; margin-bottom:16px; }
+        .share-utils button { flex:1; background:transparent; border:1px solid rgba(229,193,88,0.45); color:var(--gold-glow); padding:12px; border-radius:12px; font-size:13px; font-weight:700; cursor:pointer; transition:0.25s; }
+        .share-utils button:hover { background:rgba(229,193,88,0.15); }
+        .share-how { color:#9d95b0; font-size:13px; }
+        .share-how summary { cursor:pointer; color:var(--gold); font-weight:800; text-transform:uppercase; font-size:12px; letter-spacing:0.8px; padding:8px 0; }
+        .share-how ul { margin:10px 0 0 0; padding-left:20px; line-height:1.85; }
+        .share-how strong { color:var(--gold-glow); }
+        @media (max-width:420px) { .share-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        /* ============ FUN CINEMATIC UI FLOURISHES ============ */
+        .gold-btn:active, .share-cta:active, .discover-save:active { transform: scale(0.97); }
+        .premium-card { position: relative; }
+        #res-platform-badge { animation: badgePop 0.55s cubic-bezier(0.34,1.56,0.64,1); }
+        @keyframes badgePop { 0% { transform: scale(0); } 70% { transform: scale(1.18); } 100% { transform: scale(1); } }
+        #res-title { background: linear-gradient(100deg, #fff 30%, var(--gold-glow) 50%, #fff 70%); background-size: 220% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: textShimmer 5s linear infinite; }
+        .marquee-item { transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s, border-color 0.35s; }
+        .marquee-item:hover { transform: scale(1.13) rotate(-1.5deg); box-shadow: 0 14px 34px rgba(229,193,88,0.45); }
+        .how-num { animation: numFloat 3.2s ease-in-out infinite; }
+        .how-step:nth-child(2) .how-num { animation-delay: 0.4s; }
+        .how-step:nth-child(3) .how-num { animation-delay: 0.8s; }
+        @keyframes numFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+        .app-title-main { background: linear-gradient(100deg, var(--gold) 25%, #fff 45%, var(--royal-glow) 60%, var(--gold) 80%); background-size: 250% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: textShimmer 6s linear infinite; }
+        .brand-logo { transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+        .header-brand-area:hover .brand-logo { transform: rotate(-8deg) scale(1.08); }
+        @media (prefers-reduced-motion: reduce) {
+            .share-cta, #res-title, .app-title-main, .how-num, #res-platform-badge { animation: none !important; }
+            #res-title, .app-title-main { color: var(--gold); -webkit-text-fill-color: var(--gold); }
+        }
 
         /* ===== LANGUAGE SWITCHER ===== */
         .lang-switcher { background: rgba(19,7,52,0.9); color: var(--gold-glow); border: 1px solid rgba(229,193,88,0.5); border-radius: 12px; padding: 9px 12px; font-size: 13px; font-weight: 700; cursor: pointer; outline: none; max-width: 165px; transition: 0.25s; }
@@ -398,10 +509,17 @@
                 </div>
 
                 <article id="search-box" class="premium-card">
-                    <h2 style="color: var(--gold); margin: 0 0 20px 0; font-size: 26px; text-align: center; text-transform: uppercase; font-weight: 900;">Direct Title Search</h2>
+                    <h2 style="color: var(--gold); margin: 0 0 8px 0; font-size: 26px; text-align: center; text-transform: uppercase; font-weight: 900;" data-i18n="search.heading">Search or Ask Anything</h2>
+                    <p style="color:#b9b1cc; font-size:14px; text-align:center; margin:0 0 20px 0;" data-i18n="search.hint">Type a title for a direct match — or ask a full question and our AI will find every title that fits.</p>
                     <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                        <input type="text" id="specific-search-input" placeholder="e.g., Billionaire Husband, Fallout..." data-i18n-placeholder="search.placeholder" style="flex: 1; padding: 18px; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.7); color: #fff; font-size: 18px;">
-                        <button onclick="triggerMatch(true)" class="gold-btn" style="padding: 18px 35px; font-size: 18px;" data-i18n="search.button">🔍 Search</button>
+                        <input type="text" id="specific-search-input" placeholder="e.g., Fallout — or: Is there a TV show about Doctors Without Borders?" data-i18n-placeholder="search.placeholder" onkeydown="if(event.key==='Enter') smartSearch()" style="flex: 1; padding: 18px; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.7); color: #fff; font-size: 17px;">
+                        <button onclick="smartSearch()" class="gold-btn" style="padding: 18px 35px; font-size: 18px;" data-i18n="search.button">🔍 Search</button>
+                    </div>
+                    <div class="search-examples">
+                        <span data-i18n="search.trythese">Try:</span>
+                        <button onclick="askAI('Is there a TV show about Doctors Without Borders?')">Shows about Doctors Without Borders</button>
+                        <button onclick="askAI('Best documentaries about deep sea exploration')">Deep sea documentaries</button>
+                        <button onclick="askAI('Series like Breaking Bad but funnier')">Like Breaking Bad but funnier</button>
                     </div>
                 </article>
 
@@ -594,12 +712,47 @@
                     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                 </div>
 
-                <article id="loading-box" class="premium-card" style="display: none; padding: 70px 20px; text-align: center;">
-                    <div style="font-size: 80px; margin-bottom: 25px;">🕵️‍♂️</div>
-                    <h3 style="color: var(--gold); margin: 0; text-transform: uppercase; font-size: 28px;">✨ Scanning Catalog ✨</h3>
-                    <div style="width: 100%; height: 40px; background: rgba(0,0,0,0.8); border: 2px solid var(--gold); border-radius: 20px; margin: 35px 0; overflow: hidden;">
-                        <div id="ai-progress-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--gold), #fff, var(--gold)); transition: width 0.1s linear;"></div>
+                <article id="loading-box" class="premium-card" style="display: none; padding: 46px 20px 40px 20px; text-align: center;">
+
+                    <!-- CINEMA SCANNER: film reel + sweeping search beam, synced to the meter -->
+                    <div class="scanner-stage">
+                        <div class="scan-beam"></div>
+                        <div class="reel-wrap">
+                            <div class="film-reel">
+                                <span class="reel-hole"></span><span class="reel-hole"></span>
+                                <span class="reel-hole"></span><span class="reel-hole"></span>
+                                <span class="reel-hole"></span><span class="reel-hole"></span>
+                            </div>
+                            <div class="reel-core">🎬</div>
+                        </div>
+                        <div class="orbit-icons">
+                            <span class="orbit-icon" style="--a:0deg">🍿</span>
+                            <span class="orbit-icon" style="--a:60deg">🎞️</span>
+                            <span class="orbit-icon" style="--a:120deg">🎧</span>
+                            <span class="orbit-icon" style="--a:180deg">📺</span>
+                            <span class="orbit-icon" style="--a:240deg">⭐</span>
+                            <span class="orbit-icon" style="--a:300deg">🎵</span>
+                        </div>
                     </div>
+
+                    <h3 id="loading-headline" class="shimmer-text">Scanning the global catalog…</h3>
+                    <p id="loading-substep">Reading your mood profile</p>
+
+                    <!-- FILM-STRIP PROGRESS METER -->
+                    <div class="meter-shell">
+                        <div id="ai-progress-bar" class="meter-fill"></div>
+                        <div class="meter-perforations"></div>
+                        <span id="meter-pct" class="meter-pct">0%</span>
+                    </div>
+
+                    <!-- Equalizer pulses in time with the meter -->
+                    <div class="eq-bars" id="eq-bars">
+                        <span></span><span></span><span></span><span></span><span></span>
+                        <span></span><span></span><span></span><span></span><span></span>
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+
+                    <p class="loading-adnote">✨ Your perfect match is being curated — thanks for supporting us by viewing our sponsors below.</p>
                 </article>
 
                 <article id="result-box" class="premium-card" style="display: none; text-align: left;">
@@ -654,6 +807,7 @@
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
                         <button id="btn-watch-later" onclick="recordAction('save')" style="background: rgba(229,193,88,0.12); border: 2px solid var(--gold); color: var(--gold-glow); padding: 18px 10px; border-radius: 14px; cursor: pointer; font-size: 16px; font-weight: 900; text-transform: uppercase; transition: 0.3s;" onmouseover="this.style.background='rgba(229,193,88,0.28)'" onmouseout="this.style.background='rgba(229,193,88,0.12)'" data-i18n="res.watchlater">⭐ Watch Later</button>
                         <button id="btn-seen-it" onclick="recordAction('seen')" style="background: rgba(255,255,255,0.06); border: 2px solid rgba(255,255,255,0.35); color: #fff; padding: 18px 10px; border-radius: 14px; cursor: pointer; font-size: 16px; font-weight: 900; text-transform: uppercase; transition: 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.16)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'" data-i18n="res.seenit">👁️ I've Seen It</button>
+                        <button id="btn-share-match" onclick="openShareSheet()" class="share-cta">📢 Share &amp; Earn +1 Match</button>
                     </div>
 
                     <!-- RATING ACTIONS -->
@@ -753,25 +907,26 @@
             <div class="seo-keyword-block">
                 <h3 class="seo-footer-sub" data-i18n="footer.popular">Popular Searches on MatchApp</h3>
                 <p class="seo-keywords">
-                    what to watch tonight · where to watch movies online free · best series to binge right now 2026 ·
-                    AI movie recommendation engine · what should I watch quiz · find a movie based on my mood ·
-                    best K-drama 2026 · most watched K-drama 2026 · The Scarecrow K-drama · Filing for Love Korean drama ·
-                    Legend of Kitchen Soldier K-drama · K-drama recommendations Netflix · Crash Landing on You ·
-                    new anime summer 2026 · best anime on Crunchyroll right now · vertical micro-drama apps like ReelShort ·
-                    DramaBox new episodes 2026 · ShortMax romance drama · vertical short drama billionaire romance ·
+                    what to watch tonight · best shows to watch right now · where to stream movies online ·
+                    AI streaming concierge · premium AI streaming service · ask AI what to watch ·
+                    find a show about a topic · natural language movie search · semantic streaming search ·
+                    best shows and movies September 2026 · new on streaming September 2026 ·
+                    The Mandalorian and Grogu Disney+ · American Horror Story 13 Hulu · Slow Horses season Apple TV ·
+                    Reacher new season Prime Video · Carrie Mike Flanagan Prime Video · The Traitors Peacock ·
+                    summerween movies · slasher movies to stream · spooky season streaming 2026 ·
+                    best K-drama 2026 · most watched K-drama right now · Korean drama OST Spotify playlist ·
+                    new anime fall 2026 · best anime on Crunchyroll right now ·
+                    vertical micro-drama apps like ReelShort · DramaBox new episodes 2026 · ShortMax romance drama ·
                     melhores novelas brasileiras 2026 · assistir novela brasileira online · Globoplay novelas ·
                     melhores streamings do Brasil 2026 ·
-                    onde assistir filmes online no Brasil · streaming brasileiro barato ·
-                    best Spotify playlists 2026 · lo-fi beats playlist Spotify · Korean drama OST playlist Spotify ·
-                    BTS ARIRANG album stream · new Spotify singles this week · best podcast to listen to right now ·
-                    what to watch on Netflix tonight · hidden gems on Prime Video · best shows Max HBO 2026 ·
-                    Squid Game season 3 · House of the Dragon season 3 · The Bear season 4 ·
+                    best Spotify playlists 2026 · new Spotify singles this week · lo-fi beats playlist Spotify ·
+                    best podcast to listen to right now · true crime podcasts Spotify ·
+                    hidden gems on Prime Video · best shows Max HBO 2026 · what to watch on Netflix tonight ·
                     feel good movies to cheer you up · slow burn romance series to binge · mind bending thriller with a twist ·
                     classic films 1950s streaming · 1980s movies where to watch · best silent era films 1920s ·
-                    best movies to watch with family tonight · age appropriate shows for teens ·
+                    family friendly movies tonight · age appropriate shows for teens ·
                     what to watch based on star sign · movie recommendations by zodiac sign ·
-                    streaming guide by country · what is streaming in Brazil right now · best Bollywood 2026 ·
-                    RRR 2 release · best Turkish dizi to watch · Nollywood movies streaming ·
+                    streaming guide by country · best Bollywood 2026 · best Turkish dizi to watch · Nollywood movies streaming ·
                     one sitting movies under 90 minutes · best limited series of the year · comfort shows to rewatch
                 </p>
             </div>
@@ -792,6 +947,47 @@
             </p>
         </div>
     </footer>
+
+    <!-- SOCIAL SHARE MODAL -->
+    <div id="share-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:3200; align-items:center; justify-content:center; padding:18px; overflow-y:auto;">
+        <div class="premium-card share-sheet">
+            <button onclick="closeShareSheet()" class="share-close" aria-label="Close">✕</button>
+            <h3 class="share-title">📢 Share Your Match</h3>
+            <p class="share-sub">Post your match and instantly unlock a <strong>bonus match</strong> — a fresh pick with different characteristics.</p>
+
+            <div id="share-preview" class="share-preview"></div>
+            <p id="share-reward-status" class="share-reward"></p>
+            <p id="share-claim-note" class="share-claim">✅ Bonus match added — scroll down and match again!</p>
+
+            <button onclick="shareNative()" class="gold-btn share-native">📲 Share Now</button>
+
+            <div class="share-grid">
+                <button onclick="shareTo('whatsapp')"  style="--c:#25D366">WhatsApp</button>
+                <button onclick="shareTo('instagram')" style="--c:#E1306C">Instagram</button>
+                <button onclick="shareTo('x')"         style="--c:#ffffff">X</button>
+                <button onclick="shareTo('tiktok')"    style="--c:#69C9D0">TikTok</button>
+                <button onclick="shareTo('facebook')"  style="--c:#1877F2">Facebook</button>
+                <button onclick="shareTo('telegram')"  style="--c:#29A9EB">Telegram</button>
+                <button onclick="shareTo('reddit')"    style="--c:#FF4500">Reddit</button>
+                <button onclick="shareTo('pinterest')" style="--c:#E60023">Pinterest</button>
+            </div>
+
+            <div class="share-utils">
+                <button onclick="downloadShareCard()">⬇️ Save Image</button>
+                <button onclick="copyShareText()">📋 Copy Caption</button>
+            </div>
+
+            <details class="share-how">
+                <summary>How the bonus works</summary>
+                <ul>
+                    <li>Share any match to one of your socials — you instantly get <strong>+1 extra match</strong>.</li>
+                    <li>You can earn up to <strong>3 bonus matches every 6 hours</strong>.</li>
+                    <li>Each bonus match is generated fresh, so it always differs from the one you shared.</li>
+                    <li>Instagram and TikTok have no web share link, so we save the image and copy your caption instead — just paste it in.</li>
+                </ul>
+            </details>
+        </div>
+    </div>
 
     <!-- "NOT FOR ME" RE-MATCH MODAL -->
     <div id="rematch-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:3000; align-items:center; justify-content:center; padding:20px;">
@@ -836,7 +1032,8 @@
         </div>
     </div>
 
-    <script src="/app.js?v=105"></script>
+    <script src="/app.js?v=106"></script>
+    <script src="/share.js?v=106"></script>
     <script>
         // OS-LEVEL CHROME FORCE LAUNCHER
         function openInChrome() {
