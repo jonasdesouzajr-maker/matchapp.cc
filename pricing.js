@@ -1,3 +1,9 @@
+/* ============================================================
+   © 2026 MatchApp.cc — All Rights Reserved.
+   Proprietary source code. Not licensed for reproduction, scraping,
+   or reuse in competing products. See /terms.html Section 4.
+   ============================================================ */
+
 console.log("Mastercode 87.0: Live Stripe Payments Engine Initialized");
 
 // ==========================================

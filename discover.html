@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#14131A">
 
-    <title>AI Streaming Search — Ask Anything | MatchApp</title>
-    <meta name="description" content="Ask MatchApp's AI anything about what to watch — by topic, theme, real event, organisation or mood — and get a ranked list of real movies, series, documentaries and podcasts with direct streaming links.">
-    <meta name="keywords" content="AI streaming search, ask AI what to watch, find a show about a topic, semantic movie search, natural language movie search, documentary finder, find series by subject, AI streaming concierge">
+    <title>Talk to Our AI Concierge — Voice &amp; Text Streaming Search | MatchApp</title>
+    <meta name="description" content="Speak or type any question to MatchApp's AI Concierge for entertainment — by topic, theme, real event, organisation or mood — and get a natural spoken and written answer plus a ranked list of real movies, series, documentaries and podcasts with direct streaming links. Works in 14 languages.">
+    <meta name="keywords" content="AI streaming search, ask AI what to watch, find a show about a topic, semantic movie search, natural language movie search, documentary finder, find series by subject, AI streaming concierge, AI concierge for entertainment, voice search movies, talk to AI about what to watch, voice activated streaming search, AI entertainment consultant, speak to AI find a movie, voice assistant streaming app">
     <meta name="robots" content="index, follow, max-image-preview:large">
     <link rel="canonical" href="https://matchapp.cc/discover.html">
     <link rel="manifest" href="/manifest.json">
@@ -15,18 +15,18 @@
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="MatchApp">
     <meta property="og:url" content="https://matchapp.cc/discover.html">
-    <meta property="og:title" content="Ask AI What To Watch — MatchApp Streaming Search">
-    <meta property="og:description" content="Ask a real question — “Is there a series about Doctors Without Borders?” — and get a ranked list of real titles with direct streaming links.">
+    <meta property="og:title" content="Talk to Our AI Concierge — MatchApp Voice Streaming Search">
+    <meta property="og:description" content="Speak or type a real question to our AI Concierge — “Is there a series about Doctors Without Borders?” — and get a spoken answer plus a ranked list of real titles with direct streaming links.">
     <meta property="og:image" content="https://matchapp.cc/og-image.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Ask AI What To Watch — MatchApp">
-    <meta name="twitter:description" content="Natural-language streaming search. Ask anything, get real titles with links.">
+    <meta name="twitter:title" content="Talk to Our AI Concierge — MatchApp">
+    <meta name="twitter:description" content="Voice or text AI Concierge for entertainment. Ask anything, hear and see real titles with links.">
     <meta name="twitter:image" content="https://matchapp.cc/og-image.jpg">
     <link rel="icon" href="/logo.jpeg" type="image/jpeg">
 
-    <script defer src="/i18n.js?v=109"></script>
+    <script defer src="/i18n.js?v=111"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -35,7 +35,7 @@
     </script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
 
-    <link rel="stylesheet" href="/style.css?v=109">
+    <link rel="stylesheet" href="/style.css?v=111">
     <style>
         :root { --gold: #E5C158; --gold-deep: #B8912F; --gold-glow: #FFF3A3; --ink: #14131A; --royal-deep: #130734; --royal: #402562; --royal-lift: #6B3FA0; --royal-glow: #A376B6; --bg-dark: #14131A; --card-bg: rgba(26, 22, 38, 0.90); }
         body { background: var(--bg-dark); color: #fff; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
@@ -59,6 +59,17 @@
         .newsearch-row { display: flex; gap: 12px; margin-top: 22px; flex-wrap: wrap; }
         .newsearch-row input { flex: 1; min-width: 220px; padding: 16px; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.6); color: #fff; font-size: 16px; }
         .newsearch-row input:focus { outline: none; box-shadow: 0 0 20px rgba(229,193,88,0.4); }
+        .concierge-tagline { color: #a89cc4; font-size: 13.5px; font-style: italic; margin: 0 0 4px 0; }
+
+        /* ===== VOICE INPUT (mic button) ===== */
+        .mic-btn { flex-shrink: 0; width: 56px; height: 56px; border-radius: 50%; background: rgba(229,193,88,0.12); border: 2px solid var(--gold); color: var(--gold-glow); font-size: 21px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: 0.25s; position: relative; }
+        .mic-btn:hover { background: rgba(229,193,88,0.26); transform: scale(1.06); }
+        .mic-btn.mic-listening { background: #ff4757; border-color: #ff4757; color: #fff; animation: micCorePulse 1.15s ease-in-out infinite; }
+        @keyframes micCorePulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+        .mic-btn.mic-listening::before, .mic-btn.mic-listening::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(255,71,87,0.55); animation: micRing 1.6s ease-out infinite; }
+        .mic-btn.mic-listening::after { animation-delay: 0.5s; }
+        @keyframes micRing { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(2.1); opacity: 0; } }
+        @media (prefers-reduced-motion: reduce) { .mic-btn.mic-listening, .mic-btn.mic-listening::before, .mic-btn.mic-listening::after { animation: none; } }
 
         #discover-grid { display: none; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 22px; }
         .discover-card { display: flex; gap: 16px; background: linear-gradient(160deg, rgba(32,24,52,0.92), rgba(20,19,26,0.94)); border: 1px solid rgba(229,193,88,0.32); border-radius: 18px; padding: 16px; opacity: 0; animation: cardIn 0.6s cubic-bezier(0.22,1,0.36,1) forwards; transition: transform 0.35s, border-color 0.35s, box-shadow 0.35s; }
@@ -104,6 +115,7 @@
     <main class="wrap">
         <section class="premium-card discover-head">
             <h1 data-i18n="discover.title">🤖 AI Streaming Search</h1>
+            <p class="concierge-tagline" data-i18n="discover.conciergeTagline">Your personal AI Concierge for entertainment — ask a question by typing or speaking, in any language.</p>
             <span id="discover-query"></span>
             <div id="discover-answer-wrap" style="display:none;">
                 <span id="discover-offline-badge" class="offline-badge" style="display:none;">📡 Offline mode — catalog results</span>
@@ -114,6 +126,7 @@
             </div>
             <div class="newsearch-row">
                 <input type="text" id="discover-new-input" placeholder="Ask anything — e.g. Is there a series about Doctors Without Borders?" data-i18n-placeholder="discover.placeholder" onkeydown="if(event.key==='Enter') newDiscoverSearch()">
+                <button id="mic-btn-discover" class="mic-btn" type="button" aria-label="Speak your question" title="Speak your question" style="display:none;">🎙️</button>
                 <button onclick="newDiscoverSearch()" class="gold-btn" style="width:auto; padding:16px 26px;" data-i18n="discover.ask">🔍 Ask AI</button>
             </div>
         </section>
@@ -141,7 +154,13 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="/app.js?v=109"></script>
-    <script src="/discover.js?v=109"></script>
+    <script src="/app.js?v=111"></script>
+    <script src="/discover.js?v=111"></script>
+    <script src="/voice-input.js?v=111"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initVoiceInput('discover-new-input', 'mic-btn-discover', () => newDiscoverSearch());
+        });
+    </script>
 </body>
 </html>

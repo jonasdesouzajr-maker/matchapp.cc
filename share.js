@@ -1,4 +1,10 @@
 /* ============================================================
+   © 2026 MatchApp.cc — All Rights Reserved.
+   Proprietary source code. Not licensed for reproduction, scraping,
+   or reuse in competing products. See /terms.html Section 4.
+   ============================================================ */
+
+/* ============================================================
    MatchApp — SOCIAL SHARE & REWARD ENGINE
    Renders a branded share card on <canvas> from the user's match,
    opens the native share sheet (or per-network intents), and grants

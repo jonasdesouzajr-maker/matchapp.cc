@@ -1,4 +1,10 @@
 /* ============================================================
+   © 2026 MatchApp.cc — All Rights Reserved.
+   Proprietary source code. Not licensed for reproduction, scraping,
+   or reuse in competing products. See /terms.html Section 4.
+   ============================================================ */
+
+/* ============================================================
    MatchApp — AI NATURAL-LANGUAGE DISCOVERY
    Powers discover.html. Takes a plain-language question such as
    "Is there a TV show about Medecins Sans Frontieres?" and returns
@@ -27,16 +33,11 @@ function getQueryParam(name) {
     catch (e) { return ''; }
 }
 
-const LANG_NAMES = {
-    'en': 'English', 'pt-BR': 'Brazilian Portuguese', 'es': 'Spanish', 'fr': 'French',
-    'de': 'German', 'it': 'Italian', 'tr': 'Turkish', 'ru': 'Russian', 'ar': 'Arabic',
-    'hi': 'Hindi', 'id': 'Indonesian', 'ja': 'Japanese', 'ko': 'Korean', 'zh': 'Chinese'
-};
-
 /* ---------- Intent detection ---------- */
 // Decides whether the question is actually about audio (podcasts, music,
 // playlists, singles, audiobooks) so the fallback never pulls in podcasts
-// for a question about a movie, and the AI prompt can steer accordingly.
+// for a question about a movie. (The AI Concierge path does its own,
+// identical intent check server-side, in the Edge Function.)
 function detectAudioIntent(q) {
     return /\b(podcast|playlist|song|songs|music|album|albums|single|singles|audiobook|spotify|listen|radio show)\b/i.test(q);
 }
@@ -45,32 +46,19 @@ function detectAudioIntent(q) {
 async function askAIConversational(question) {
     if (!window.supabaseClient) throw new Error('No backend');
 
+    // The actual prompt engineering — how the AI Concierge is instructed to
+    // behave, what tone to use, how it structures its answer — now lives in
+    // the gemini-proxy Edge Function, not here. This client only sends the
+    // question and the context needed to personalize it; the server builds
+    // the real prompt. (Previously the full prompt text was assembled in
+    // this file, which meant anyone opening DevTools could read MatchApp's
+    // exact AI instructions verbatim.)
     const country = localStorage.getItem('match_user_country') || '';
     const age = localStorage.getItem('match_user_age') || '';
-    const lang = LANG_NAMES[window.MATCH_LANG] || 'English';
-    const audioIntent = detectAudioIntent(question);
 
-    let personal = '';
-    if (country) personal += ` The viewer is in ${country}; prefer titles genuinely available there.`;
-    if (age) personal += ` The viewer is ${age} years old; keep suggestions age-appropriate.`;
-
-    const prompt =
-        `You are the friendly, knowledgeable AI concierge inside MatchApp, a streaming discovery app. ` +
-        `A user just asked you: "${question}"\n\n` +
-        `Respond exactly like a real, warm, well-informed person would in a chat — not a search engine. ` +
-        `Write 2-4 natural sentences that directly answer what they asked, using your own knowledge of movies, ` +
-        `TV series, documentaries, K-dramas, anime, telenovelas, podcasts, music and audiobooks. ` +
-        `Be specific and genuinely helpful, the way you'd explain it to a friend.` +
-        `${personal}\n\n` +
-        (audioIntent
-            ? `This question is about audio content (podcasts, music, playlists, or audiobooks) — only suggest audio titles.`
-            : `This question is about something to watch — only suggest movies, series, documentaries or similar visual titles, not podcasts or music, unless the user explicitly asked for audio.`) +
-        `\n\nCRITICAL: Write your "answer" field in ${lang}, matching the language the user asked in. ` +
-        `Then list 3 to ${DISCOVER_MAX} real, existing titles that back up your answer, best match first. ` +
-        `Output valid JSON ONLY, no markdown fences, no text outside the JSON: ` +
-        `{"answer":"Your natural 2-4 sentence conversational reply in ${lang}.","results":[{"title":"Exact Title","year":"YYYY","type":"movie|series|documentary|podcast|music","platform":"Where to watch or listen","synopsis":"One or two sentences, in ${lang}."}]}`;
-
-    const { data, error } = await window.supabaseClient.functions.invoke('gemini-proxy', { body: { prompt } });
+    const { data, error } = await window.supabaseClient.functions.invoke('gemini-proxy', {
+        body: { mode: 'discover', question, lang: window.MATCH_LANG || 'en', country, age }
+    });
     if (error || !data) throw new Error('AI unavailable');
     if (data.error) throw new Error(data.error);
     if (!data.candidates || !data.candidates[0]) throw new Error('AI unavailable');

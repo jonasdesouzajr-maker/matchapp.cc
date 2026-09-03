@@ -1,6 +1,11 @@
 # MatchApp — Supabase Setup
 
-## ⚠️ Required: deploy the fixed gemini-proxy Edge Function
+## ⚠️ Required: deploy the gemini-proxy Edge Function
+
+> **Already deployed this before?** The file changed again — the AI
+> Concierge's prompt engineering moved from the browser into this function
+> (see "What changed most recently" below). **Redeploy it**, same steps as
+> before.
 
 **Root cause of both the "always shows the same result" and "Ask AI only
 returns podcasts" bugs:** Google shut down Gemini 1.0, 1.5, and 2.0 Flash
@@ -13,6 +18,17 @@ offline mode" rather than surface the error.
 of currently-supported models (`gemini-3.5-flash` → `gemini-2.5-flash` →
 `gemini-3.1-flash-lite`), only falling through to the next one on an actual
 failure — so a future Google deprecation alone can't take this down again.
+
+### What changed most recently
+
+The AI Concierge's actual prompt — the instructions that shape its tone,
+what it's allowed to recommend, how it structures its JSON reply — used to
+be built as a plain string in `discover.js`, fully readable by anyone who
+opened the browser's DevTools. It now lives in this function instead. The
+browser sends only `{ mode: "discover", question, lang, country, age }`;
+the function assembles the real prompt server-side. The main questionnaire's
+match engine is unaffected — it still sends a pre-built `{ prompt }` directly,
+which this function still accepts for backward compatibility.
 
 ### How to deploy
 
