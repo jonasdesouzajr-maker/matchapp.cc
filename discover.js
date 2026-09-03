@@ -2,10 +2,22 @@
    MatchApp — AI NATURAL-LANGUAGE DISCOVERY
    Powers discover.html. Takes a plain-language question such as
    "Is there a TV show about Medecins Sans Frontieres?" and returns
-   a ranked list of real titles with covers, synopses and links.
+   a real conversational answer (spoken and written) plus a ranked
+   list of matching titles.
+
+   BUG FIX (podcast-only results): the previous fallback searched
+   movie + tvShow + podcast media for every question, unconditionally.
+   iTunes' podcast search is far looser than its movie/show search —
+   almost any phrase returns dozens of podcasts, while offbeat movie
+   questions often return zero — so after filtering, results were
+   frequently 100% podcasts regardless of what was asked. This
+   version detects whether the question is actually about audio
+   content before ever touching the podcast/music catalogs.
 
    Falls back to the keyless iTunes catalog if the AI proxy is
-   unavailable, so the page never comes back empty.
+   unavailable, so the page never comes back empty — but the
+   fallback is now honestly labelled as offline mode rather than
+   presented as if it were the full conversational AI.
    ============================================================ */
 
 const DISCOVER_MAX = 12;
@@ -15,35 +27,65 @@ function getQueryParam(name) {
     catch (e) { return ''; }
 }
 
-/* ---------- AI list generation ---------- */
-async function askAIForList(question) {
+const LANG_NAMES = {
+    'en': 'English', 'pt-BR': 'Brazilian Portuguese', 'es': 'Spanish', 'fr': 'French',
+    'de': 'German', 'it': 'Italian', 'tr': 'Turkish', 'ru': 'Russian', 'ar': 'Arabic',
+    'hi': 'Hindi', 'id': 'Indonesian', 'ja': 'Japanese', 'ko': 'Korean', 'zh': 'Chinese'
+};
+
+/* ---------- Intent detection ---------- */
+// Decides whether the question is actually about audio (podcasts, music,
+// playlists, singles, audiobooks) so the fallback never pulls in podcasts
+// for a question about a movie, and the AI prompt can steer accordingly.
+function detectAudioIntent(q) {
+    return /\b(podcast|playlist|song|songs|music|album|albums|single|singles|audiobook|spotify|listen|radio show)\b/i.test(q);
+}
+
+/* ---------- AI conversational answer ---------- */
+async function askAIConversational(question) {
     if (!window.supabaseClient) throw new Error('No backend');
 
     const country = localStorage.getItem('match_user_country') || '';
     const age = localStorage.getItem('match_user_age') || '';
-    let personal = '';
-    if (country) personal += ` Viewer is in ${country}; prefer titles streamable there.`;
-    if (age) personal += ` Viewer is ${age} years old; keep results age-appropriate.`;
+    const lang = LANG_NAMES[window.MATCH_LANG] || 'English';
+    const audioIntent = detectAudioIntent(question);
 
-    const prompt = `A user asked: "${question}". Identify real, existing movies, TV series, documentaries, ` +
-        `K-dramas, anime, telenovelas, podcasts or albums that genuinely answer this question.${personal} ` +
-        `Return between 3 and ${DISCOVER_MAX} results, best match first. ` +
-        `If the question names an organisation, event, person or topic, include titles genuinely about that subject. ` +
-        `Output valid JSON ONLY, no markdown: ` +
-        `{"answer":"One sentence answering the question directly.","results":[{"title":"Exact Title","year":"YYYY","type":"movie|series|documentary|podcast","platform":"Where to watch","synopsis":"Two sentences."}]}`;
+    let personal = '';
+    if (country) personal += ` The viewer is in ${country}; prefer titles genuinely available there.`;
+    if (age) personal += ` The viewer is ${age} years old; keep suggestions age-appropriate.`;
+
+    const prompt =
+        `You are the friendly, knowledgeable AI concierge inside MatchApp, a streaming discovery app. ` +
+        `A user just asked you: "${question}"\n\n` +
+        `Respond exactly like a real, warm, well-informed person would in a chat — not a search engine. ` +
+        `Write 2-4 natural sentences that directly answer what they asked, using your own knowledge of movies, ` +
+        `TV series, documentaries, K-dramas, anime, telenovelas, podcasts, music and audiobooks. ` +
+        `Be specific and genuinely helpful, the way you'd explain it to a friend.` +
+        `${personal}\n\n` +
+        (audioIntent
+            ? `This question is about audio content (podcasts, music, playlists, or audiobooks) — only suggest audio titles.`
+            : `This question is about something to watch — only suggest movies, series, documentaries or similar visual titles, not podcasts or music, unless the user explicitly asked for audio.`) +
+        `\n\nCRITICAL: Write your "answer" field in ${lang}, matching the language the user asked in. ` +
+        `Then list 3 to ${DISCOVER_MAX} real, existing titles that back up your answer, best match first. ` +
+        `Output valid JSON ONLY, no markdown fences, no text outside the JSON: ` +
+        `{"answer":"Your natural 2-4 sentence conversational reply in ${lang}.","results":[{"title":"Exact Title","year":"YYYY","type":"movie|series|documentary|podcast|music","platform":"Where to watch or listen","synopsis":"One or two sentences, in ${lang}."}]}`;
 
     const { data, error } = await window.supabaseClient.functions.invoke('gemini-proxy', { body: { prompt } });
-    if (error || !data || !data.candidates) throw new Error('AI unavailable');
+    if (error || !data) throw new Error('AI unavailable');
+    if (data.error) throw new Error(data.error);
+    if (!data.candidates || !data.candidates[0]) throw new Error('AI unavailable');
 
     const raw = data.candidates[0].content.parts[0].text;
     const s = raw.indexOf('{'), e = raw.lastIndexOf('}');
     if (s === -1 || e === -1) throw new Error('Bad AI format');
     const parsed = JSON.parse(raw.substring(s, e + 1));
-    if (!parsed.results || !parsed.results.length) throw new Error('Empty AI list');
+    if (!parsed.answer) throw new Error('Empty AI answer');
+    parsed.results = parsed.results || [];
+    parsed._live = true;
     return parsed;
 }
 
-/* ---------- Keyless fallback ---------- */
+/* ---------- Keyless fallback (intent-aware — the actual bug fix) ---------- */
 function stripQuestionWords(q) {
     return q.replace(/^(is|are|was|were|does|do|did|can|could|what|which|who|where|when|why|how|show me|find me|any|there)\b/gi, ' ')
             .replace(/\b(a|an|the|about|on|for|with|tv|show|shows|series|movie|movies|film|films|please|me)\b/gi, ' ')
@@ -54,10 +96,16 @@ function stripQuestionWords(q) {
 
 async function fallbackSearch(question) {
     const term = stripQuestionWords(question) || question;
+    const audioIntent = detectAudioIntent(question);
+    // Only the media types that actually match intent are searched — this is
+    // the fix for the "only podcasts" bug. A question about a movie will
+    // never touch the podcast catalog at all now.
+    const mediaTypes = audioIntent ? ['podcast', 'musicTrack'] : ['movie', 'tvShow'];
+
     const out = [];
-    for (const media of ['movie', 'tvShow', 'podcast']) {
+    for (const media of mediaTypes) {
         try {
-            const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(term)}&media=${media}&limit=6`);
+            const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(term)}&media=${media}&limit=8`);
             if (!res.ok) continue;
             const data = await res.json();
             (data.results || []).forEach(r => {
@@ -66,7 +114,7 @@ async function fallbackSearch(question) {
                 out.push({
                     title,
                     year: r.releaseDate ? String(r.releaseDate).substring(0, 4) : '',
-                    type: media === 'tvShow' ? 'series' : (media === 'podcast' ? 'podcast' : 'movie'),
+                    type: media === 'tvShow' ? 'series' : (media === 'podcast' ? 'podcast' : (media === 'musicTrack' ? 'music' : 'movie')),
                     platform: 'any',
                     synopsis: r.longDescription || r.shortDescription || `${r.primaryGenreName || ''}${r.artistName ? ' — ' + r.artistName : ''}`.trim(),
                     _meta: {
@@ -78,17 +126,90 @@ async function fallbackSearch(question) {
             });
         } catch (e) { /* try next media type */ }
     }
-    return { answer: out.length
-        ? `Here's what we found matching "${question}".`
-        : `We couldn't find a confident match for "${question}". Try rephrasing with a title, topic or person.`,
-        results: out.slice(0, DISCOVER_MAX) };
+
+    const offlineNote = (typeof t === 'function') ? t('discover.offlineNote') : "Our AI concierge is temporarily offline, so here's what our catalog found for you:";
+    const noResults = (typeof t === 'function') ? t('discover.noResults') : `We couldn't find a confident match for "${question}". Try rephrasing with a title, topic or person.`;
+
+    return {
+        answer: out.length ? `${offlineNote} “${question}”` : noResults,
+        results: out.slice(0, DISCOVER_MAX),
+        _live: false
+    };
 }
+
+/* ---------- Typewriter reveal ---------- */
+// Makes the answer feel spoken/written by a person rather than dumped on
+// screen — mirrors how the loading meter narration already behaves.
+function typewriterReveal(el, text, speedMs) {
+    return new Promise(resolve => {
+        el.textContent = '';
+        el.style.display = 'block';
+        let i = 0;
+        const step = () => {
+            if (i <= text.length) {
+                el.textContent = text.slice(0, i);
+                i += Math.max(1, Math.round(text.length / 90)); // scales with length, feels natural either way
+                setTimeout(step, speedMs);
+            } else {
+                el.textContent = text;
+                resolve();
+            }
+        };
+        step();
+    });
+}
+
+/* ---------- Text-to-speech ("read aloud") ---------- */
+// Fully client-side via the Web Speech API — no backend needed. Voice and
+// speed come from the user's Profile > Voice & AI settings (localStorage),
+// with a sensible default matched to the current UI language.
+function pickVoiceForLang(voices, lang) {
+    const saved = localStorage.getItem('match_voice_name');
+    if (saved) {
+        const exact = voices.find(v => v.name === saved);
+        if (exact) return exact;
+    }
+    const bcp = { 'pt-BR': 'pt-BR', 'zh': 'zh-CN' }[lang] || lang;
+    return voices.find(v => v.lang && v.lang.toLowerCase().startsWith(bcp.toLowerCase()))
+        || voices.find(v => v.lang && v.lang.toLowerCase().startsWith((bcp.split('-')[0] || 'en')))
+        || voices.find(v => v.default)
+        || voices[0] || null;
+}
+
+window.readAloud = function(text, btn) {
+    if (!('speechSynthesis' in window)) {
+        if (window.showToast) showToast((typeof t === 'function' ? t('discover.noTts') : 'Voice playback is not supported in this browser.'), true);
+        return;
+    }
+    // Toggle off if this button is already speaking.
+    if (btn && btn.classList.contains('speaking')) {
+        speechSynthesis.cancel();
+        btn.classList.remove('speaking');
+        return;
+    }
+    speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    const voices = speechSynthesis.getVoices();
+    const voice = pickVoiceForLang(voices, window.MATCH_LANG || 'en');
+    if (voice) { utter.voice = voice; utter.lang = voice.lang; }
+    else { utter.lang = window.MATCH_LANG || 'en'; }
+    utter.rate = parseFloat(localStorage.getItem('match_voice_rate') || '1');
+    utter.pitch = 1;
+
+    document.querySelectorAll('.discover-speak.speaking').forEach(b => b.classList.remove('speaking'));
+    if (btn) btn.classList.add('speaking');
+    utter.onend = () => { if (btn) btn.classList.remove('speaking'); };
+    utter.onerror = () => { if (btn) btn.classList.remove('speaking'); };
+    speechSynthesis.speak(utter);
+};
 
 /* ---------- Rendering ---------- */
 function discoverCardHTML(item, idx) {
     const title = item.title;
     const safe = title.replace(/"/g, '&quot;');
     const meta = [item.year, item.type].filter(Boolean).join(' · ');
+    const watchLabel = (typeof t === 'function') ? t('res.streamnow') : '▶ Watch / Listen';
+    const saveLabel = (typeof t === 'function') ? t('discover.save') : '⭐ Save';
     return `
     <article class="discover-card" style="animation-delay:${idx * 70}ms">
         <div class="discover-poster">
@@ -100,8 +221,8 @@ function discoverCardHTML(item, idx) {
             ${meta ? `<div class="discover-meta">${meta}</div>` : ''}
             <p>${(item.synopsis || '').replace(/</g, '&lt;')}</p>
             <div class="discover-actions">
-                <a id="dl-${idx}" class="gold-btn discover-play" href="#" target="_blank" rel="noopener">▶ Watch / Listen</a>
-                <button class="discover-save" onclick="saveDiscoverItem(${idx})" id="ds-${idx}">⭐ Save</button>
+                <a id="dl-${idx}" class="gold-btn discover-play" href="#" target="_blank" rel="noopener">${watchLabel}</a>
+                <button class="discover-save" onclick="saveDiscoverItem(${idx})" id="ds-${idx}">${saveLabel}</button>
             </div>
         </div>
     </article>`;
@@ -114,10 +235,7 @@ async function hydrateDiscoverCard(item, idx) {
     const link = document.getElementById('dl-' + idx);
     if (!img) return;
 
-    // Instant local placeholder so nothing renders blank.
-    img.src = (typeof generateLocalPosterSVG === 'function')
-        ? generateLocalPosterSVG(item.title)
-        : '';
+    img.src = (typeof generateLocalPosterSVG === 'function') ? generateLocalPosterSVG(item.title) : '';
 
     let meta = item._meta || null;
     if (!meta && typeof getRichMetadata === 'function') {
@@ -144,7 +262,7 @@ async function hydrateDiscoverCard(item, idx) {
             url = `https://www.justwatch.com/us/search?q=${encodeURIComponent(item.title)}`;
         }
         link.href = url;
-        link.textContent = isAudio ? '🎧 Listen' : '▶ Watch Now';
+        link.textContent = isAudio ? (typeof t === 'function' ? t('res.listennow') : '🎧 Listen') : (typeof t === 'function' ? t('discover.watchNow') : '▶ Watch Now');
         item._url = url;
     }
 }
@@ -155,7 +273,7 @@ window.saveDiscoverItem = function (idx) {
     let list = [];
     try { list = JSON.parse(localStorage.getItem('match_savedList') || '[]'); } catch (e) {}
     if (list.some(i => (i.title || i) === item.title)) {
-        if (window.showToast) showToast(`"${item.title}" is already saved.`);
+        if (window.showToast) showToast(`"${item.title}" ${typeof t === 'function' ? t('discover.alreadySaved') : 'is already saved.'}`);
         return;
     }
     list.unshift({
@@ -168,8 +286,8 @@ window.saveDiscoverItem = function (idx) {
     });
     localStorage.setItem('match_savedList', JSON.stringify(list));
     const btn = document.getElementById('ds-' + idx);
-    if (btn) { btn.textContent = '✓ Saved'; btn.classList.add('saved'); }
-    if (window.showToast) showToast(`⭐ Saved "${item.title}" to Watch Later`);
+    if (btn) { btn.textContent = '✓'; btn.classList.add('saved'); }
+    if (window.showToast) showToast(`⭐ "${item.title}" ${typeof t === 'function' ? t('discover.savedToast') : 'saved to Watch Later'}`);
 };
 
 /* ---------- Boot ---------- */
@@ -177,6 +295,9 @@ async function runDiscovery() {
     const q = getQueryParam('q').trim();
     const qEcho = document.getElementById('discover-query');
     const answerEl = document.getElementById('discover-answer');
+    const answerWrap = document.getElementById('discover-answer-wrap');
+    const speakBtn = document.getElementById('discover-speak-btn');
+    const offlineBadge = document.getElementById('discover-offline-badge');
     const gridEl = document.getElementById('discover-grid');
     const loadEl = document.getElementById('discover-loading');
     const emptyEl = document.getElementById('discover-empty');
@@ -196,25 +317,32 @@ async function runDiscovery() {
     }
 
     let payload, source = 'ai';
-    try { payload = await askAIForList(q); }
+    try { payload = await askAIConversational(q); }
     catch (e) { payload = await fallbackSearch(q); source = 'fallback'; }
 
-    // The questions people ask here are free keyword research — track them.
     if (typeof gtag === 'function') {
-        gtag('event', 'ai_search', {
-            search_term: q,
-            source: source,
-            results: (payload.results || []).length
-        });
+        gtag('event', 'ai_search', { search_term: q, source: source, results: (payload.results || []).length });
     }
 
     if (loadEl) loadEl.style.display = 'none';
 
     DISCOVER_ITEMS = payload.results || [];
+
+    if (offlineBadge) offlineBadge.style.display = payload._live ? 'none' : 'inline-flex';
+
     if (answerEl && payload.answer) {
-        answerEl.textContent = payload.answer;
-        answerEl.style.display = 'block';
+        if (answerWrap) answerWrap.style.display = 'block';
+        await typewriterReveal(answerEl, payload.answer, 14);
+        if (speakBtn) {
+            speakBtn.style.display = 'inline-flex';
+            speakBtn.onclick = () => window.readAloud(payload.answer, speakBtn);
+            // Respect the user's "always read aloud" preference from profile settings.
+            if (localStorage.getItem('match_voice_autoread') === 'true') {
+                window.readAloud(payload.answer, speakBtn);
+            }
+        }
     }
+
     if (!DISCOVER_ITEMS.length) {
         if (emptyEl) emptyEl.style.display = 'block';
         return;
@@ -223,7 +351,6 @@ async function runDiscovery() {
         gridEl.innerHTML = DISCOVER_ITEMS.map((it, i) => discoverCardHTML(it, i)).join('');
         gridEl.style.display = 'grid';
     }
-    // Hydrate covers in parallel so the grid fills fast.
     await Promise.all(DISCOVER_ITEMS.map((it, i) => hydrateDiscoverCard(it, i)));
 }
 

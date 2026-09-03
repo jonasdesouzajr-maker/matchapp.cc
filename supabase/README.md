@@ -1,5 +1,50 @@
 # MatchApp — Supabase Setup
 
+## ⚠️ Required: deploy the fixed gemini-proxy Edge Function
+
+**Root cause of both the "always shows the same result" and "Ask AI only
+returns podcasts" bugs:** Google shut down Gemini 1.0, 1.5, and 2.0 Flash
+between early and mid-2026. Any Edge Function still pointed at one of those
+retired model names has been returning 404 on every single call — silently,
+since the frontend was written to treat any proxy failure as "fall back to
+offline mode" rather than surface the error.
+
+`supabase/functions/gemini-proxy/index.ts` is the fix: it tries a short chain
+of currently-supported models (`gemini-3.5-flash` → `gemini-2.5-flash` →
+`gemini-3.1-flash-lite`), only falling through to the next one on an actual
+failure — so a future Google deprecation alone can't take this down again.
+
+### How to deploy
+
+**Option A — Supabase CLI** (if you have it installed locally):
+```bash
+supabase functions deploy gemini-proxy --project-ref <your-project-ref>
+```
+
+**Option B — Dashboard** (no CLI needed):
+1. Supabase Dashboard → **Edge Functions** → open (or create) `gemini-proxy`
+2. Open `supabase/functions/gemini-proxy/index.ts` on GitHub, click **Raw**
+3. Select all, copy, paste over the existing function code in the dashboard editor
+4. Click **Deploy**
+
+### Also verify the secret is set
+
+The function reads `GEMINI_API_KEY` from the project's Edge Function secrets.
+Dashboard → **Edge Functions** → **Manage secrets** → confirm `GEMINI_API_KEY`
+exists and is a valid key from [Google AI Studio](https://aistudio.google.com/apikey).
+If it's missing, the function now returns a clear `"GEMINI_API_KEY secret is
+not set"` error instead of failing silently — check the Edge Function logs
+in the dashboard if Ask AI still isn't working after deploying.
+
+### Verify it worked
+
+Ask a real question on `/discover.html` — you should get a natural-language
+answer within a couple of seconds, not the offline-mode badge. The response
+also includes a `_servedByModel` field if you want to confirm which model in
+the chain actually answered (visible in the browser's Network tab).
+
+---
+
 ## ⚠️ Required: run the quota migration
 
 The match quota and share-reward system is enforced **server-side**. Until the
