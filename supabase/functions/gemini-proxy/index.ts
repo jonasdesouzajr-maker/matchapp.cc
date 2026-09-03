@@ -103,6 +103,70 @@ function buildDiscoverPrompt(question: string, langCode: string, country: string
   );
 }
 
+// Shared generation settings.
+//
+// ROOT CAUSE OF THE "OFFLINE" BUG: on Gemini 2.5+ and 3.x, internal "thinking"
+// tokens are billed against maxOutputTokens — unlike OpenAI, where reasoning
+// tokens are counted separately. The old limit of 1024 meant the model could
+// spend most of its budget reasoning and get cut off mid-JSON, returning
+// finishReason: MAX_TOKENS with unparseable output. The frontend caught the
+// parse error and showed a generic "offline" badge, hiding the real cause.
+//
+// Fixes: a much larger budget, thinking disabled (this task doesn't need
+// chain-of-thought), and native structured output so valid JSON is guaranteed
+// rather than merely requested in the prompt.
+function buildGenerationConfig(isDiscover: boolean) {
+  const base = {
+    temperature: 0.8,
+    maxOutputTokens: 8192,
+    thinkingConfig: { thinkingBudget: 0 },
+    responseMimeType: "application/json",
+  };
+
+  if (isDiscover) {
+    return {
+      ...base,
+      responseSchema: {
+        type: "OBJECT",
+        properties: {
+          answer: { type: "STRING" },
+          results: {
+            type: "ARRAY",
+            items: {
+              type: "OBJECT",
+              properties: {
+                title: { type: "STRING" },
+                year: { type: "STRING" },
+                type: { type: "STRING" },
+                platform: { type: "STRING" },
+                synopsis: { type: "STRING" },
+              },
+              required: ["title"],
+            },
+          },
+        },
+        required: ["answer"],
+      },
+    };
+  }
+
+  // Legacy path — the questionnaire match engine, which expects a flat
+  // {title, synopsis, platform} object. Applying the discover schema here
+  // would silently break every match.
+  return {
+    ...base,
+    responseSchema: {
+      type: "OBJECT",
+      properties: {
+        title: { type: "STRING" },
+        synopsis: { type: "STRING" },
+        platform: { type: "STRING" },
+      },
+      required: ["title"],
+    },
+  };
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: CORS_HEADERS });
@@ -119,6 +183,7 @@ Deno.serve(async (req: Request) => {
 
     const body = await req.json();
     let prompt: string;
+    let isDiscoverMode = false;
 
     // ---- DIAGNOSTIC MODE ----
     // POST { "mode": "selftest" } to get a plain-language report of what is
@@ -180,6 +245,7 @@ Deno.serve(async (req: Request) => {
 
     if (body && body.mode === "discover" && typeof body.question === "string") {
       // AI Concierge path: build the real prompt here, server-side.
+      isDiscoverMode = true;
       prompt = buildDiscoverPrompt(
         body.question,
         typeof body.lang === "string" ? body.lang : "en",
@@ -212,16 +278,36 @@ Deno.serve(async (req: Request) => {
             },
             body: JSON.stringify({
               contents: [{ parts: [{ text: prompt }] }],
-              generationConfig: { temperature: 0.8, maxOutputTokens: 1024 },
+              generationConfig: buildGenerationConfig(isDiscoverMode),
             }),
           }
         );
 
         if (geminiRes.ok) {
           const data = await geminiRes.json();
-          // Surface which model actually answered — useful for debugging
-          // in the browser console without needing Supabase log access.
-          return new Response(JSON.stringify({ ...data, _servedByModel: model }), {
+          const cand = data?.candidates?.[0];
+          const finish = cand?.finishReason;
+          const text = cand?.content?.parts?.[0]?.text;
+
+          // A 200 does NOT guarantee usable output. If the model ran out of
+          // budget it returns finishReason: MAX_TOKENS with text that is either
+          // empty or truncated mid-JSON — which is exactly what produced the
+          // "offline" fallback before. Treat that as a failure and try the next
+          // model rather than handing the frontend something it can't parse.
+          if (finish === "MAX_TOKENS" || !text) {
+            lastError = `${model}: finishReason=${finish ?? "none"}, ` +
+              `thoughtsTokens=${data?.usageMetadata?.thoughtsTokenCount ?? "n/a"}, ` +
+              `outputTokens=${data?.usageMetadata?.candidatesTokenCount ?? 0} — response unusable`;
+            continue;
+          }
+
+          // Surface which model answered and how it finished, so the browser
+          // console can show this without needing Supabase log access.
+          return new Response(JSON.stringify({
+            ...data,
+            _servedByModel: model,
+            _finishReason: finish,
+          }), {
             headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
           });
         }

@@ -75,14 +75,59 @@ const LANG_NAMES_DISCOVER = {
     'hi': 'Hindi', 'id': 'Indonesian', 'ja': 'Japanese', 'ko': 'Korean', 'zh': 'Chinese'
 };
 
+// Attempts to salvage JSON that was cut off mid-object (the classic symptom of
+// a model hitting its token ceiling). Closes any unterminated string, then any
+// still-open brackets, in the right order. Returns null if it's beyond saving.
+function repairTruncatedJSON(raw) {
+    let s = raw.slice(raw.indexOf('{'));
+    // Drop trailing partial fragments so we don't close a half-written key or
+    // an object that only has an opening brace. Order matters: strip the most
+    // specific patterns first.
+    s = s.replace(/,\s*\{\s*"[^"]*$/, '')   // ,{"tit      → partial key in a new object
+         .replace(/,\s*"[^"]*$/, '')        // ,"tit       → partial key
+         .replace(/,\s*\{\s*$/, '')         // ,{          → empty trailing object
+         .replace(/,\s*$/, '');             // trailing comma
+
+    let inStr = false, esc = false;
+    const stack = [];
+    for (const ch of s) {
+        if (esc) { esc = false; continue; }
+        if (ch === '\\') { esc = true; continue; }
+        if (ch === '"') { inStr = !inStr; continue; }
+        if (inStr) continue;
+        if (ch === '{' || ch === '[') stack.push(ch);
+        else if (ch === '}' || ch === ']') stack.pop();
+    }
+    if (inStr) s += '"';
+    while (stack.length) s += (stack.pop() === '{' ? '}' : ']');
+
+    try { return JSON.parse(s); } catch (e) { return null; }
+}
+
 function parseAIResponse(data) {
     if (!data) throw new Error('AI unavailable');
     if (data.error) throw new Error(data.error);
     if (!data.candidates || !data.candidates[0]) throw new Error('AI unavailable');
+
     const raw = data.candidates[0].content.parts[0].text;
     const s = raw.indexOf('{'), e = raw.lastIndexOf('}');
-    if (s === -1 || e === -1) throw new Error('Bad AI format');
-    const parsed = JSON.parse(raw.substring(s, e + 1));
+    if (s === -1) throw new Error('Bad AI format');
+
+    let parsed = null;
+    if (e !== -1) {
+        try { parsed = JSON.parse(raw.substring(s, e + 1)); } catch (err) { parsed = null; }
+    }
+    // Last resort before giving up: try to repair a truncated payload rather
+    // than dropping the user into offline mode over a missing closing brace.
+    if (!parsed) {
+        parsed = repairTruncatedJSON(raw);
+        if (parsed) console.warn('[MatchApp AI] Response was truncated; recovered it by repairing the JSON.');
+    }
+    if (!parsed) {
+        console.error('[MatchApp AI] Could not parse response. finishReason:', data._finishReason,
+            '| model:', data._servedByModel, '\nFirst 400 chars:', String(raw).slice(0, 400));
+        throw new Error('Bad AI format');
+    }
     if (!parsed.answer) throw new Error('Empty AI answer');
     parsed.results = parsed.results || [];
     parsed._live = true;
