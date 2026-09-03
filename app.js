@@ -143,6 +143,16 @@ window.refreshQuotaStatus = async function() {
             window.isVIP = data.is_vip;
             localStorage.setItem('match_isVIP', data.is_vip ? 'true' : 'false');
         }
+        // Business tier (set by the stripe-webhook function after payment).
+        if (typeof data.is_business === 'boolean') {
+            window.isBusiness = data.is_business;
+            localStorage.setItem('match_isBusiness', data.is_business ? 'true' : 'false');
+        }
+        // Whether the profile is complete, which decides 3 vs 5 daily sessions.
+        if (typeof data.profile_complete === 'boolean') {
+            window.profileComplete = data.profile_complete;
+            localStorage.setItem('match_profileComplete', data.profile_complete ? 'true' : 'false');
+        }
 
         return data;
     } catch (e) { return null; }
@@ -1598,3 +1608,53 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('matchapp:langchange', renderSpotlightCountdown);
+
+// ----------------------------------------------------
+// POST-CHECKOUT SYNC
+// Stripe redirects the buyer back to the site the instant payment
+// succeeds, but the webhook that actually grants the tier is a separate
+// server-to-server call that may land a second or two later. Without
+// this, a user who just paid would briefly still see their old limits
+// and reasonably think the purchase failed.
+//
+// So when we return from a checkout, poll match_status() a few times
+// until the new tier appears, then confirm it visibly.
+// ----------------------------------------------------
+async function syncAfterCheckout() {
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('checkout') && !params.has('success')) return;
+
+    // Clean the URL so a refresh doesn't re-trigger this.
+    const clean = window.location.pathname;
+    history.replaceState(null, '', clean);
+
+    if (!window.isUserLoggedIn || !supabaseClient) return;
+
+    const before = {
+        vip: localStorage.getItem('match_isVIP') === 'true',
+        business: localStorage.getItem('match_isBusiness') === 'true'
+    };
+
+    if (window.showToast) showToast('⏳ Confirming your purchase…');
+
+    // Up to ~10s of polling; webhooks are usually far faster than this.
+    for (let attempt = 0; attempt < 6; attempt++) {
+        const status = await window.refreshQuotaStatus();
+        if (status && (status.is_vip !== before.vip || status.is_business !== before.business)) {
+            const tier = status.is_business ? 'Business' : (status.is_vip ? 'VIP' : 'your new plan');
+            if (window.showToast) showToast(`🎉 ${tier} unlocked — thank you! You now have ${status.limit} sessions a day.`);
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 160, spread: 90, origin: { y: 0.6 }, colors: ['#E5C158','#FFF3A3','#6B3FA0','#ffffff'] });
+            }
+            return;
+        }
+        await new Promise(r => setTimeout(r, 1700));
+    }
+
+    // Payment may still be processing — never imply it failed.
+    if (window.showToast) {
+        showToast('Payment received. Your plan will activate momentarily — refresh in a minute if it hasn\'t.');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => { setTimeout(syncAfterCheckout, 1200); });

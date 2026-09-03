@@ -1,0 +1,16 @@
+# Supabase local/CLI configuration.
+#
+# The stripe-webhook function MUST have JWT verification disabled: Stripe
+# signs its requests with its own signature scheme and cannot send a Supabase
+# JWT. Security for that endpoint comes from Stripe signature verification
+# inside the function itself, not from Supabase auth.
+#
+# If you deploy via the Dashboard instead of the CLI, untick
+# "Verify JWT with legacy secret" on the stripe-webhook function — otherwise
+# every Stripe delivery is rejected with 401 before your code ever runs.
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.gemini-proxy]
+verify_jwt = true

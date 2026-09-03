@@ -1,5 +1,131 @@
 # MatchApp — Supabase Setup
 
+## ⚠️ Required: deploy the stripe-webhook Edge Function
+
+This is what automatically grants VIP / Business / Ad-Free after payment,
+and revokes them when a subscription ends — replacing flipping `is_vip` by
+hand in the table editor.
+
+### Step 1 — Run migration 003
+
+`migrations/003_stripe_webhook.sql` → Raw → copy → Supabase SQL Editor → Run.
+
+Adds the Stripe linkage columns (`stripe_customer_id`, `stripe_subscription_id`,
+`subscription_status`, `subscription_plan`) and the `stripe_events` audit table.
+You should see `stripe_columns_added = 5` and `events_table_created = 1`.
+
+### Step 2 — Set the Edge Function secrets
+
+Supabase Dashboard → **Edge Functions** → **Manage secrets**. You need three:
+
+| Secret | Where to get it |
+|---|---|
+| `STRIPE_SECRET_KEY` | Stripe Dashboard → Developers → API keys → **Secret key** (`sk_live_...`) |
+| `STRIPE_WEBHOOK_SECRET` | Created in Step 4 below (`whsec_...`) — come back and add it |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Project Settings → API → **service_role** key |
+
+> **The service_role key bypasses all row-level security.** It belongs only in
+> Edge Function secrets — never in `app.js`, never in any file the browser
+> downloads, never committed to this repo.
+
+### Step 3 — Deploy the function
+
+**CLI:**
+```bash
+supabase functions deploy stripe-webhook --no-verify-jwt --project-ref <your-ref>
+```
+
+**Dashboard:** Edge Functions → Create function → name it exactly
+`stripe-webhook` → paste the contents of
+`supabase/functions/stripe-webhook/index.ts` → Deploy.
+
+> **Then untick "Verify JWT with legacy secret" on this function.** Stripe
+> cannot send a Supabase JWT, so leaving it on rejects every delivery with a
+> 401 before your code runs. This is why `config.toml` sets
+> `verify_jwt = false` for this function specifically. Security here comes
+> from Stripe signature verification inside the function, not Supabase auth.
+
+Your endpoint URL will be:
+```
+https://zkymvqrmbabngsqblyye.supabase.co/functions/v1/stripe-webhook
+```
+
+### Step 4 — Create the webhook in Stripe
+
+Stripe Dashboard → **Developers** → **Webhooks** → **Add endpoint**
+
+- **Endpoint URL:** the URL above
+- **Events to send** — select exactly these four:
+  - `checkout.session.completed` (grants the plan)
+  - `invoice.payment_succeeded` (confirms renewals)
+  - `customer.subscription.deleted` (revokes on cancellation)
+  - `customer.subscription.updated` (revokes on lapse/unpaid)
+
+Click **Add endpoint**, then reveal the **Signing secret** (`whsec_...`) and
+put it in the `STRIPE_WEBHOOK_SECRET` secret from Step 2.
+
+### Step 5 — Turn on Client reference ID (critical)
+
+For **each** of your four Payment Links: Stripe → Payment Links → open the
+link → **⋯** → Edit → under options, enable **"Client reference ID"**.
+
+Without this, payments arrive with no indication of *which* user paid, and
+the webhook can't grant anything. If you see this in the function logs:
+
+```
+No client_reference_id on session cs_... — cannot identify the user.
+```
+
+…that's the switch that's missing.
+
+### Step 6 — Set the success redirect (optional but recommended)
+
+On each Payment Link, set the confirmation page to redirect to:
+```
+https://matchapp.cc/?checkout=success
+```
+The app watches for that parameter and polls until the new tier appears,
+then fires a confirmation toast and confetti — so a buyer sees their upgrade
+immediately instead of wondering whether it worked.
+
+### Step 7 — Test it
+
+Stripe → Webhooks → your endpoint → **Send test webhook** →
+`checkout.session.completed`. Then check:
+
+- Supabase → Edge Functions → stripe-webhook → **Logs** for `[stripe-webhook]` lines
+- `select * from public.stripe_events order by processed_at desc limit 5;`
+
+For a real end-to-end test, use a [Stripe test card](https://docs.stripe.com/testing)
+(`4242 4242 4242 4242`) in test mode with test-mode keys and links.
+
+---
+
+## How it behaves
+
+| Event | Effect |
+|---|---|
+| Ad-Free Pass purchased ($1.99) | `is_ad_free = true` |
+| VIP Monthly / Annual purchased | `is_vip = true`, `is_ad_free = true` |
+| Business purchased ($49) | `is_business = true`, plus VIP and ad-free |
+| Renewal succeeds | status refreshed to `active` |
+| Subscription cancelled / unpaid | `is_vip` and `is_business` cleared |
+
+Two deliberate design choices worth knowing:
+
+**Cancellation never clears `is_ad_free`.** The $1.99 Ad-Free Pass is a
+one-time purchase — a separate lapsed subscription must not take it away.
+
+**`past_due` does not revoke access.** Stripe retries failed cards for days;
+locking out a paying customer over a temporary decline would be worse than
+briefly serving someone whose renewal is still resolving.
+
+**Retries are safe.** Stripe redelivers webhooks on failure. Every event ID
+is recorded in `stripe_events`, and a duplicate is detected and skipped
+rather than applied twice.
+
+---
+
 ## ⚠️ Required: deploy the gemini-proxy Edge Function
 
 > **Already deployed this before?** The file changed again — the AI
