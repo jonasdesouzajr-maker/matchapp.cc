@@ -194,8 +194,13 @@ const OFFLINE_COVERS = {
 // In-memory cache so the same title never re-hits the network twice per session.
 const COVER_CACHE = {};
 
+// Kept as a named function because several call sites use it, but it no longer
+// depends on placehold.co. Relying on a third-party image host for the fallback
+// meant that if that service was slow, blocked by an ad-blocker, or down, the
+// "never fail" cover path failed — leaving a genuinely blank poster. The local
+// SVG generator has no network dependency at all.
 function generatedCover(title) {
-    return `https://placehold.co/600x900/1a0505/E5C158?text=${encodeURIComponent((title || 'MatchApp').replace(/ /g, '+'))}`;
+    return generateLocalPosterSVG(title);
 }
 
 function upgradeArtwork(url) {
@@ -343,18 +348,79 @@ async function getRealCoverImage(title) {
 }
 
 // LOCAL (NO-NETWORK) POSTER — guaranteed to render even if placehold.co is blocked too.
+// ----------------------------------------------------
+// VERIFIED POSTER REGISTRY
+// Some titles can never be resolved by a live catalog lookup:
+//   • Unreleased titles (AHS 13 premieres Sept 24 2026 — iTunes only indexes
+//     things that already shipped, so a search returns an OLDER season's art
+//     or nothing at all).
+//   • App-exclusive vertical micro-dramas (ReelShort / DramaBox / ShortMax /
+//     Globoplay's own line) which were never indexed anywhere public.
+// For those, a lookup is worse than useless: it confidently returns the wrong
+// image. This registry is checked FIRST, before any network call, so these
+// titles always get correct art.
+// ----------------------------------------------------
+const VERIFIED_POSTERS = {
+    'American Horror Story: 13': '/ahs13-poster.jpg?v=116'
+};
+
+function getVerifiedPoster(title) {
+    if (!title) return null;
+    if (VERIFIED_POSTERS[title]) return VERIFIED_POSTERS[title];
+    // Tolerate small punctuation differences between catalog and lookup.
+    const norm = s => String(s).toLowerCase().replace(/[^a-z0-9]/g, '');
+    const key = norm(title);
+    for (const k of Object.keys(VERIFIED_POSTERS)) {
+        if (norm(k) === key) return VERIFIED_POSTERS[k];
+    }
+    return null;
+}
+
 function generateLocalPosterSVG(title) {
-    const safeTitle = (title || 'MatchApp').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const raw = (title || 'MatchApp').trim();
+    const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    // Wrap onto up to 4 lines instead of truncating mid-word at 24 chars, which
+    // turned longer titles into unreadable stubs like "A Vida Secreta do Meu B…".
+    const words = raw.split(/\s+/);
+    const lines = [];
+    let line = '';
+    for (const w of words) {
+        const test = line ? line + ' ' + w : w;
+        if (test.length > 16 && line) { lines.push(line); line = w; } else { line = test; }
+    }
+    if (line) lines.push(line);
+    const shown = lines.slice(0, 4);
+    if (lines.length > 4) shown[3] = shown[3].slice(0, 14) + '…';
+
+    const fontSize = shown.length >= 4 ? 40 : (shown.length === 3 ? 46 : 54);
+    const lineHeight = fontSize + 12;
+    const blockTop = 450 - ((shown.length - 1) * lineHeight) / 2;
+    const tspans = shown.map((l, i) =>
+        `<text x="300" y="${blockTop + i * lineHeight}" font-family="Arial, Helvetica, sans-serif" font-size="${fontSize}" font-weight="900" fill="#E5C158" text-anchor="middle">${esc(l)}</text>`
+    ).join('');
+
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="900" viewBox="0 0 600 900">
-        <defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#130734"/><stop offset="100%" stop-color="#6B3FA0"/>
-        </linearGradient></defs>
+        <defs>
+            <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#14131A"/><stop offset="55%" stop-color="#2A1A47"/><stop offset="100%" stop-color="#130734"/>
+            </linearGradient>
+            <radialGradient id="glow" cx="50%" cy="38%" r="55%">
+                <stop offset="0%" stop-color="#6B3FA0" stop-opacity="0.55"/><stop offset="100%" stop-color="#6B3FA0" stop-opacity="0"/>
+            </radialGradient>
+        </defs>
         <rect width="600" height="900" fill="url(#g)"/>
-        <rect x="20" y="20" width="560" height="860" fill="none" stroke="#E5C158" stroke-width="4"/>
-        <text x="300" y="440" font-family="Arial, sans-serif" font-size="40" font-weight="900" fill="#E5C158" text-anchor="middle">${safeTitle.length > 26 ? safeTitle.substring(0, 24) + '…' : safeTitle}</text>
-        <text x="300" y="500" font-family="Arial, sans-serif" font-size="20" fill="#FFF0B3" text-anchor="middle">MatchApp.cc</text>
+        <rect width="600" height="900" fill="url(#glow)"/>
+        <rect x="22" y="22" width="556" height="856" fill="none" stroke="#E5C158" stroke-width="3"/>
+        <rect x="34" y="34" width="532" height="832" fill="none" stroke="#E5C158" stroke-opacity="0.35" stroke-width="1"/>
+        <text x="300" y="300" font-family="Arial, Helvetica, sans-serif" font-size="58" text-anchor="middle">🎬</text>
+        <line x1="180" y1="352" x2="420" y2="352" stroke="#6B3FA0" stroke-width="2"/>
+        ${tspans}
+        <line x1="180" y1="620" x2="420" y2="620" stroke="#6B3FA0" stroke-width="2"/>
+        <text x="300" y="672" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="bold" fill="#FFF0B3" text-anchor="middle" letter-spacing="2">matchapp.cc</text>
+        <text x="300" y="702" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#A376B6" text-anchor="middle">AI Concierge for Entertainment</text>
     </svg>`;
-    return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+    return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
 }
 
 // ----------------------------------------------------
@@ -376,6 +442,19 @@ async function hydrateMarqueeCovers() {
     await Promise.all(Array.from(imgs).map(async img => {
         const title = img.getAttribute('data-title') || img.getAttribute('alt');
         if (!title) return;
+
+        // Hand-verified art short-circuits the lookup entirely.
+        const verified = getVerifiedPoster(title);
+        if (verified) {
+            img.onerror = function() { this.onerror = null; this.src = generateLocalPosterSVG(title); };
+            img.src = verified;
+            return;
+        }
+
+        // App-exclusive vertical dramas aren't in any public catalog, so a
+        // lookup would return something unrelated. Keep the branded cover.
+        if (typeof VERTICAL_DRAMA_TITLES !== 'undefined' && VERTICAL_DRAMA_TITLES.includes(title)) return;
+
         try {
             const meta = await getRichMetadata(title, 'series');
             const real = (meta && meta.artwork) ? meta.artwork : await getRealCoverImage(title);
@@ -1169,18 +1248,25 @@ async function renderResult(selected, isSpecificSearch) {
     const isVerticalDrama = categoryHint.toLowerCase() === 'vertical micro-drama' ||
         (typeof VERTICAL_DRAMA_TITLES !== 'undefined' && VERTICAL_DRAMA_TITLES.includes(selected.title));
 
+    // Hand-verified art wins over everything — no lookup can beat a known-correct
+    // image, and for unreleased/app-exclusive titles a lookup actively returns
+    // the wrong one.
+    const verified = getVerifiedPoster(selected.title);
+
     // The discovery engine already carries artwork/preview/store data — reuse it
     // instead of making a second network round-trip for the same title.
     let meta = selected._meta || null;
-    if (!meta && !isVerticalDrama) meta = await getRichMetadata(selected.title, categoryHint);
+    if (!meta && !isVerticalDrama && !verified) meta = await getRichMetadata(selected.title, categoryHint);
 
     let realCover;
-    if (isVerticalDrama && !(meta && meta.artwork)) {
+    if (verified) {
+        realCover = verified;
+    } else if (isVerticalDrama && !(meta && meta.artwork)) {
         realCover = generateLocalPosterSVG(selected.title);
     } else {
         realCover = (meta && meta.artwork) ? meta.artwork : await getRealCoverImage(selected.title);
     }
-    if (!realCover) realCover = generatedCover(selected.title);
+    if (!realCover) realCover = generateLocalPosterSVG(selected.title);
 
     // Track the current match globally so Watch Later / Seen It can record it.
     globalMatchTitle = selected.title;
@@ -1192,9 +1278,13 @@ async function renderResult(selected, isSpecificSearch) {
     
     // In case somehow the browser blocks the valid URL, it falls back to the dynamic generator,
     // then to a pure local (no-network) SVG so a cover is ALWAYS visible no matter what's blocked.
-    posterEl.onerror = function() { 
-        this.onerror = function() { this.onerror = null; this.src = generateLocalPosterSVG(selected.title); };
-        this.src = `https://placehold.co/600x900/1a0505/E5C158?text=${encodeURIComponent(selected.title.replace(/ /g, '+'))}`; 
+    // If the real cover fails to load for any reason, go straight to the local
+    // SVG. There used to be an intermediate hop through placehold.co here, which
+    // added a second chance to fail (blocked by ad-blockers, service downtime)
+    // before reaching a fallback that needs no network at all.
+    posterEl.onerror = function() {
+        this.onerror = null;
+        this.src = generateLocalPosterSVG(selected.title);
     };
     posterEl.src = realCover; 
 
@@ -1578,18 +1668,24 @@ window.saveSpotlightTitle = function () {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    // The spotlight poster is a real committed image (/ahs13-poster.jpg) set
+    // directly in the HTML, so it paints on the first frame with no network
+    // lookup and no async race.
+    //
+    // It used to call getRichMetadata() here instead, which was the bug: AHS 13
+    // is unreleased, so iTunes has no entry for it — the lookup either returned
+    // nothing (leaving the img with its empty src="" and rendering blank) or,
+    // worse, returned artwork for an OLDER season, putting the wrong cover on
+    // the flagship banner. A dated upcoming title simply cannot be resolved
+    // from a catalog of things that already shipped.
     const img = document.getElementById('spotlight-poster-img');
     if (img) {
-        // Real artwork where available, branded local cover if not — never blank,
-        // and never an unrelated image (same guarantee as the match results).
-        getRichMetadata(SPOTLIGHT.title, 'series').then(meta => {
-            if (meta && meta.artwork) {
-                img.onerror = function () { this.onerror = null; this.src = generateLocalPosterSVG(SPOTLIGHT.title); };
-                img.src = meta.artwork;
-            } else {
-                img.src = generateLocalPosterSVG(SPOTLIGHT.title);
-            }
-        }).catch(() => { img.src = generateLocalPosterSVG(SPOTLIGHT.title); });
+        // Only a last-resort net: if the file itself ever 404s, fall back to the
+        // generated cover rather than showing a broken-image icon.
+        img.onerror = function () {
+            this.onerror = null;
+            this.src = generateLocalPosterSVG(SPOTLIGHT.title);
+        };
     }
 
     if (document.getElementById('spotlight-countdown')) {
