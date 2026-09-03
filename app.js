@@ -16,6 +16,15 @@ window.supabaseClient = supabaseClient;
 let globalMatchTitle = ""; let globalMatchPoster = ""; let globalPlatform = ""; let isUserLoggedIn = false; window.isUserLoggedIn = false;
 let isVIP = localStorage.getItem('match_isVIP') === 'true';
 
+// Shared with the specific-search prompt and the synopsis-translation step —
+// keeps every AI call in this file speaking the user's actual UI language
+// instead of defaulting to English regardless of what was selected.
+const LANG_NAMES_FOR_PROMPT = {
+    'en': 'English', 'pt-BR': 'Brazilian Portuguese', 'es': 'Spanish', 'fr': 'French',
+    'de': 'German', 'it': 'Italian', 'tr': 'Turkish', 'ru': 'Russian', 'ar': 'Arabic',
+    'hi': 'Hindi', 'id': 'Indonesian', 'ja': 'Japanese', 'ko': 'Korean', 'zh': 'Chinese'
+};
+
 // ----------------------------------------------------
 // PORTFOLIO LISTS (Watch Later / Seen It / Disliked)
 // ----------------------------------------------------
@@ -118,6 +127,23 @@ window.refreshQuotaStatus = async function() {
         if (error || !data || !data.authenticated) return null;
         lastQuotaStatus = data;
         updateQuotaBadge(data);
+
+        // THE ACTUAL FIX: this RPC has always returned the real is_vip value
+        // from the profiles row, but nothing ever wrote it back into the
+        // client-side flag that controls VIP behavior (10 vs 5 daily matches
+        // was already safe, since that's enforced server-side by this same
+        // RPC — but the 3-second fast-pass loading animation reads the local
+        // `isVIP` variable directly, so a manually-flipped is_vip in Supabase
+        // had zero visible effect until the next full code deploy, which is
+        // not how database changes are supposed to work). Now it takes effect
+        // the moment this RPC is called — on login, and on every page load
+        // for an already-logged-in user.
+        if (typeof data.is_vip === 'boolean') {
+            isVIP = data.is_vip;
+            window.isVIP = data.is_vip;
+            localStorage.setItem('match_isVIP', data.is_vip ? 'true' : 'false');
+        }
+
         return data;
     } catch (e) { return null; }
 };
@@ -167,6 +193,26 @@ function upgradeArtwork(url) {
     return url.replace('100x100bb', '600x900bb').replace('/100x100', '/600x900');
 }
 
+// Guards against the exact bug that put a "20-minute book summaries" app
+// cover on a vertical-drama title: iTunes' search is fuzzy, and previously
+// the code trusted data.results[0] no matter how unrelated it was to the
+// query. This requires the returned name to genuinely share a significant
+// word with what was searched before its artwork gets used.
+const STOPWORDS = new Set(['the','a','an','of','and','or','in','on','at','to','for','with','my','her','his','their','is']);
+function significantWords(s) {
+    return (s || '').toLowerCase().replace(/['’]/g, '').split(/[^a-z0-9À-ÿ]+/i).filter(w => w.length > 2 && !STOPWORDS.has(w));
+}
+function isRelevantMatch(query, resultName) {
+    const qWords = significantWords(query);
+    const rWords = new Set(significantWords(resultName));
+    if (!qWords.length) return true; // nothing meaningful to compare against — don't block
+    const overlap = qWords.filter(w => rWords.has(w)).length;
+    // At least one real shared word, or the majority for short queries — either
+    // is enough to reject something like "12min: Book Summaries" for a query
+    // like "The Prohibition Queens' Double Life" (zero shared significant words).
+    return overlap > 0;
+}
+
 async function itunesLookup(title, media) {
     const rich = await itunesRichLookup(title, media);
     return rich ? rich.artwork : null;
@@ -190,9 +236,10 @@ async function itunesRichLookup(title, media) {
             const data = await res.json();
             if (data.results && data.results.length > 0) {
                 const r = data.results[0];
-                if (r.artworkUrl100 || r.previewUrl) {
+                const resultName = r.trackName || r.collectionName || '';
+                if ((r.artworkUrl100 || r.previewUrl) && isRelevantMatch(title, resultName)) {
                     const meta = {
-                        title: r.trackName || r.collectionName || title,
+                        title: resultName || title,
                         artwork: upgradeArtwork(r.artworkUrl100),
                         preview: r.previewUrl || null,
                         storeUrl: r.trackViewUrl || r.collectionViewUrl || null,
@@ -397,7 +444,43 @@ window.handleEmailLogin = async function() {
     }
 };
 
+// 🔵 GOOGLE OAUTH — restored here because it was never carried over when the
+// auth system was rebuilt directly into app.js; the old implementation still
+// existed in auth.js, but that file isn't loaded by index.html at all anymore.
+window.loginWithGoogle = async function() {
+    const msgEl = document.getElementById('auth-message');
+    if (!supabaseClient) {
+        if (msgEl) { msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.style.background = 'rgba(255,0,0,0.1)'; msgEl.innerText = "Database connection offline."; }
+        return;
+    }
+    const { error } = await supabaseClient.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: window.location.origin + '/index.html' }
+    });
+    if (error && msgEl) {
+        msgEl.style.display = 'block'; msgEl.style.color = '#ff5252'; msgEl.style.background = 'rgba(255,0,0,0.1)'; msgEl.innerText = "Google Login Error: " + error.message;
+    }
+    // On success, Supabase redirects the browser to Google and back — no
+    // further action needed here; onAuthStateChange picks up the new session.
+};
+
 window.doLogout = async function() { if (supabaseClient) { await supabaseClient.auth.signOut(); } localStorage.clear(); window.location.href = '/index.html'; };
+
+// "Find My Match — It's Free" needs to feel like it obviously did something,
+// not just a scroll that might be a no-op if the form was already in view.
+// A brief highlight pulse + auto-focusing the first field makes the outcome
+// unambiguous no matter where the click happened from.
+window.scrollToQuestionnaire = function() {
+    const box = document.getElementById('questionnaire-box');
+    if (!box) return;
+    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => {
+        box.classList.add('cta-highlight');
+        const firstField = document.getElementById('q-category');
+        if (firstField) firstField.focus({ preventScroll: true });
+        setTimeout(() => box.classList.remove('cta-highlight'), 1600);
+    }, 450); // let the smooth scroll settle before drawing attention to it
+};
 
 if (supabaseClient) {
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
@@ -495,12 +578,29 @@ const CONTENT_CATALOG = [
     { title: "Maverick City Music: Worship Sessions", synopsis: "Live, choir-backed worship recordings from the Grammy-winning collective redefining modern gospel and praise music.", platform: "Spotify", cats: ["Spotify playlist","music album"], moods: ["inspiring","cozy comfort watch","gospel and faith"], vibes: ["easy background watch","award winning"], ratings: ["all ages family friendly","any"] },
     { title: "The Gospel of Luke", synopsis: "A word-for-word cinematic telling of the Gospel of Luke, following the ministry of Jesus from birth to resurrection.", platform: "Angel Studios", cats: ["movie","documentary"], moods: ["inspiring","gospel and faith"], vibes: ["prestige and critically acclaimed","based on a true story"], ratings: ["all ages family friendly","any"] },
     { title: "Sound of Freedom", synopsis: "A former federal agent risks everything to rescue children from traffickers, in this faith-driven true story that became a surprise box-office phenomenon.", platform: "Angel Studios", cats: ["movie"], moods: ["intense and thrilling","inspiring","gospel and faith"], vibes: ["based on a true story","award winning"], ratings: ["teen PG-13","any"] },
-    { title: "CeCe Winans: Believe for It", synopsis: "The Grammy-winning gospel album blending traditional choir arrangements with modern worship production.", platform: "Apple Music", cats: ["music album"], moods: ["inspiring","gospel and faith"], vibes: ["easy background watch","award winning"], ratings: ["all ages family friendly","any"] }
+    { title: "CeCe Winans: Believe for It", synopsis: "The Grammy-winning gospel album blending traditional choir arrangements with modern worship production.", platform: "Apple Music", cats: ["music album"], moods: ["inspiring","gospel and faith"], vibes: ["easy background watch","award winning"], ratings: ["all ages family friendly","any"] },
+
+    // ---- Globoplay's own vertical micro-drama line (real, launched 2025-2026 —
+    // confirmed via Variety and Brazilian press, not invented) ----
+    { title: "Então É Amor?", synopsis: "A vertical micro-drama starring Carla Diaz: Rosa and Vicente fall in love as children, are separated, and reunite years later — but their romance must survive a dangerous power struggle within the Valmori family.", platform: "Globoplay", cats: ["vertical micro-drama","novela brasileira"], moods: ["romantic","intense and thrilling"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["teen PG-13","any"] },
+    { title: "Quando o Coração Entra em Campo", synopsis: "A soccer-themed vertical micro-drama following Rocca, star forward for Rio's biggest club, whose career leaps forward when he makes Brazil's preliminary World Cup squad.", platform: "Globoplay", cats: ["vertical micro-drama"], moods: ["epic and adventurous","inspiring"], vibes: ["fast-paced binge-worthy","based on a true story"], ratings: ["all ages family friendly","teen PG-13","any"] },
+
+    // ---- More real, verified ReelShort / DramaBox / ShortMax titles, spread
+    // across platforms so a platform-specific filter has more than one option ----
+    { title: "Divorced at the Wedding Day", synopsis: "A bride is humiliated and divorced at the altar, then returns transformed — richer, sharper, and done playing nice.", platform: "DramaBox", cats: ["vertical micro-drama"], moods: ["dark and gritty","intense and thrilling"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["teen PG-13","any"] },
+    { title: "The Double Life of a Billionaire's Daughter", synopsis: "Raised in secret away from her family's empire, a young woman is pulled back into a world of corporate warfare and inheritance schemes.", platform: "ReelShort", cats: ["vertical micro-drama"], moods: ["intense and thrilling","dark and gritty"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["teen PG-13","any"] },
+    { title: "Second Chance Mafia Wife", synopsis: "A marriage of convenience to a mafia heir spirals into real danger — and real feelings — as old enemies resurface.", platform: "ShortMax", cats: ["vertical micro-drama"], moods: ["intense and thrilling","romantic"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["mature adults only R rated","any"] }
 ];
 
 // Titles genuinely rooted in gospel/faith content, for quick lookup by other
 // features (e.g. surfacing them preferentially in the SEO footer copy).
 const GOSPEL_TITLES = ["The Chosen","Voices of Fire","I Can Only Imagine","A Week Away","Faith in the Flames: The Nichole Jolly Story","The Case for Christ","Crosswalk Talk","Kirk Franklin: Gospel Essentials","Maverick City Music: Worship Sessions","The Gospel of Luke","Sound of Freedom","CeCe Winans: Believe for It"];
+
+// Titles genuinely rooted in vertical micro-drama content with no public poster
+// source (they don't exist on iTunes at all — see getRichMetadata), so the
+// render pipeline knows to skip live lookups and go straight to a branded
+// local cover rather than risk an unrelated real photo from a fuzzy search.
+const VERTICAL_DRAMA_TITLES = ["Então É Amor?","Quando o Coração Entra em Campo","Divorced at the Wedding Day","The Double Life of a Billionaire's Daughter","Second Chance Mafia Wife","A Vida Secreta do Meu Marido Bilionário","CEO's Contract Bride","The Alpha's Rejected Mate","Married to the Billionaire's Twin","My Secret Baby, His Empire"];
 
 // ----------------------------------------------------
 // PLATFORM INTELLIGENCE CATALOG
@@ -527,7 +627,7 @@ const PLATFORMS = {
     "GoodShort":      { group: "Vertical Micro-Drama Apps", audio: false, countries: ['*'], cats: ["vertical micro-drama","short film"], url: "https://www.goodshort.com", search: t => `https://www.goodshort.com` },
     "FlexTV":         { group: "Vertical Micro-Drama Apps", audio: false, countries: ['*'], cats: ["vertical micro-drama","short film"], url: "https://www.flextv.cc", search: t => `https://www.flextv.cc` },
 
-    "Globoplay":      { group: "Brazil", audio: false, countries: ['Brazil','Brasil','Portugal'], cats: ["novela brasileira","telenovela","series","movie","documentary","reality show","kids"], url: "https://globoplay.globo.com", search: t => `https://globoplay.globo.com/busca/?q=${encodeURIComponent(t)}` },
+    "Globoplay":      { group: "Brazil", audio: false, countries: ['Brazil','Brasil','Portugal'], cats: ["novela brasileira","telenovela","series","movie","documentary","reality show","kids","vertical micro-drama"], url: "https://globoplay.globo.com", search: t => `https://globoplay.globo.com/busca/?q=${encodeURIComponent(t)}` },
     "Viki":           { group: "Regional & Local", audio: false, countries: ['*'], cats: ["K-drama","C-drama","J-drama","series","movie","Turkish dizi"], url: "https://www.viki.com", search: t => `https://www.viki.com/search?q=${encodeURIComponent(t)}` },
     "Crunchyroll":    { group: "Regional & Local", audio: false, countries: ['*'], cats: ["anime","movie","series"], url: "https://www.crunchyroll.com", search: t => `https://www.crunchyroll.com/search?q=${encodeURIComponent(t)}` },
     "Hotstar":        { group: "Regional & Local", audio: false, countries: ['India'], cats: ["Bollywood","movie","series","documentary","reality show","kids"], url: "https://www.hotstar.com", search: t => `https://www.hotstar.com/in/search?q=${encodeURIComponent(t)}` },
@@ -698,6 +798,13 @@ function mediaForCategory(cat) {
 }
 
 async function discoverFromITunes(cat, mood, vibe, decade, rating) {
+    // Vertical micro-dramas live entirely inside proprietary apps (ReelShort,
+    // DramaBox, ShortMax, Globoplay's own line) and were never indexed by
+    // iTunes — searching here doesn't come back empty, it comes back with
+    // something confidently unrelated (this was the root of the "book
+    // summaries app cover on a drama title" bug). Don't even try.
+    if ((cat || '').toLowerCase() === 'vertical micro-drama') return null;
+
     const parts = [];
     if (decade && decade !== 'any' && DECADE_TERMS[decade]) parts.push(DECADE_TERMS[decade]);
     if (mood && mood !== 'any' && MOOD_TERMS[mood]) parts.push(MOOD_TERMS[mood]);
@@ -727,19 +834,19 @@ async function discoverFromITunes(cat, mood, vibe, decade, rating) {
         const name = r.trackName || r.collectionName;
         const year = r.releaseDate ? String(r.releaseDate).substring(0, 4) : '';
 
-        // Attach a platform that actually carries this format in the user's country,
-        // so the Stream Now button lands somewhere real rather than a generic search.
-        const country = getUserCountry();
-        const candidates = platformsFor(cat === 'any' ? null : cat, country);
-        const chosenPlatform = candidates.length
-            ? candidates[Math.floor(Math.random() * candidates.length)][0]
-            : 'any';
-
+        // iTunes' Search API has no concept of third-party platform availability
+        // (Netflix, Globoplay, etc. aren't part of Apple's own catalog data), so
+        // there is no honest way to name a specific service here. Randomly
+        // assigning one and calling it verified was the exact bug reported —
+        // a title gets a "Find Where To Stream" treatment instead, which is
+        // truthful about what this tier actually knows.
         return {
             title: name,
             synopsis: r.longDescription || r.shortDescription ||
                 `${year ? year + ' — ' : ''}${r.primaryGenreName || 'A great pick'}${r.artistName ? ', from ' + r.artistName : ''}.`,
-            platform: chosenPlatform,
+            platform: 'any',
+            platformVerified: false,
+            source: 'itunes-live',
             _meta: {
                 artwork: upgradeArtwork(r.artworkUrl100),
                 preview: r.previewUrl || null,
@@ -761,28 +868,34 @@ function pickFromCatalog(cat, plat, mood, vibe, rating) {
     const seenRecently = new Set(recentTitles);
 
     // Tiered relaxation: try a full match first, then progressively relax filters
-    // rather than ever falling back to one hardcoded title.
+    // rather than ever falling back to one hardcoded title. Tier 0 is the only
+    // tier where the platform constraint is actually honored — every other tier
+    // drops it, so the caller must not display it as a confirmed platform.
     const tiers = [
-        (e) => (cat === 'any' || e.cats.includes(cat)) && (plat === 'any' || e.platform === plat) && (mood === 'any' || e.moods.includes(mood)) && (rating === 'any' || e.ratings.includes(rating)),
-        (e) => (cat === 'any' || e.cats.includes(cat)) && (mood === 'any' || e.moods.includes(mood)) && (rating === 'any' || e.ratings.includes(rating)),
-        (e) => (cat === 'any' || e.cats.includes(cat)) && (rating === 'any' || e.ratings.includes(rating)),
-        (e) => (rating === 'any' || e.ratings.includes(rating)),
-        () => true
+        { platformHonored: true,  test: (e) => (cat === 'any' || e.cats.includes(cat)) && (plat === 'any' || e.platform === plat) && (mood === 'any' || e.moods.includes(mood)) && (rating === 'any' || e.ratings.includes(rating)) },
+        { platformHonored: false, test: (e) => (cat === 'any' || e.cats.includes(cat)) && (mood === 'any' || e.moods.includes(mood)) && (rating === 'any' || e.ratings.includes(rating)) },
+        { platformHonored: false, test: (e) => (cat === 'any' || e.cats.includes(cat)) && (rating === 'any' || e.ratings.includes(rating)) },
+        { platformHonored: false, test: (e) => (rating === 'any' || e.ratings.includes(rating)) },
+        { platformHonored: false, test: () => true }
     ];
 
-    for (const tierFilter of tiers) {
-        let pool = CONTENT_CATALOG.filter(e => tierFilter(e) && !excluded.has(e.title));
+    for (const tier of tiers) {
+        let pool = CONTENT_CATALOG.filter(e => tier.test(e) && !excluded.has(e.title));
         let freshPool = pool.filter(e => !seenRecently.has(e.title));
         if (freshPool.length > 0) pool = freshPool;
         if (pool.length > 0) {
             const pick = pool[Math.floor(Math.random() * pool.length)];
-            return { title: pick.title, synopsis: pick.synopsis, platform: plat !== 'any' ? plat : pick.platform };
+            // Only ever display the user's requested platform when this tier
+            // actually filtered on it — never invent/echo it back otherwise.
+            const platformVerified = plat === 'any' || tier.platformHonored;
+            return { title: pick.title, synopsis: pick.synopsis, platform: pick.platform, platformVerified, source: 'catalog' };
         }
     }
     // Absolute last resort: any catalog title not shown in the last 6 results.
+    // No platform request could be honored here, by definition.
     const anyFresh = CONTENT_CATALOG.filter(e => !seenRecently.has(e.title));
     const pick = (anyFresh.length ? anyFresh : CONTENT_CATALOG)[Math.floor(Math.random() * (anyFresh.length ? anyFresh.length : CONTENT_CATALOG.length))];
-    return { title: pick.title, synopsis: pick.synopsis, platform: pick.platform };
+    return { title: pick.title, synopsis: pick.synopsis, platform: pick.platform, platformVerified: (plat === 'any'), source: 'catalog' };
 }
 
 window.triggerMatch = async function(isSpecificSearch = false) {
@@ -806,33 +919,19 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     if (isSpecificSearch) {
         const input = document.getElementById('specific-search-input');
         if (!input || !input.value.trim()) { window.location.reload(); return; }
-        promptText = `Find streaming information strictly for "${input.value.trim()}". Output valid JSON ONLY: {"title": "Exact Title Found", "synopsis": "A 2 sentence summary.", "platform": "Primary platform to watch it on"}`;
+        const lang = LANG_NAMES_FOR_PROMPT[window.MATCH_LANG] || 'English';
+        promptText = `Find real, accurate streaming information strictly for the existing title "${input.value.trim()}". ` +
+            `Do not invent a title if you don't recognize it — return your best guess at the closest real match instead. ` +
+            `Write the "synopsis" field in ${lang}. Output valid JSON ONLY: {"title": "Exact Title Found", "synopsis": "A 2 sentence summary in ${lang}.", "platform": "Primary platform to watch it on"}`;
     } else {
-        let cat = document.getElementById('q-category')?.value || 'any'; 
-        let plat = document.getElementById('q-platform')?.value || 'any'; 
-        let mood = document.getElementById('q-mood')?.value || 'any'; 
-        let vibe = document.getElementById('q-vibe')?.value || 'any';
-        let rating = document.getElementById('q-rating')?.value || 'any';
-        let decade = document.getElementById('q-decade')?.value || 'any';
-
-        // Personalization pulled from the locked Core Identity profile.
-        const uCountry = localStorage.getItem('match_user_country') || '';
-        const uAge = localStorage.getItem('match_user_age') || '';
-        const uSign = localStorage.getItem('match_user_sign') || '';
-
-        let personalization = '';
-        if (uCountry) personalization += ` Viewer is in ${uCountry}, so prefer titles legally streamable there and include local-language content where relevant.`;
-        if (uAge) personalization += ` Viewer is ${uAge} years old, so keep the recommendation age-appropriate.`;
-        if (uSign) personalization += ` Viewer's star sign is ${uSign}; subtly favor themes matching that sign's personality.`;
-
-        // Never recommend something already seen or disliked.
-        const exclusions = [...seenList, ...dislikedList].map(i => i.title || i).filter(Boolean);
-        const exclusionText = exclusions.length
-            ? ` Do NOT recommend any of these already-watched or rejected titles: ${exclusions.join(', ')}.`
-            : '';
-
-        const eraText = (decade && decade !== 'any') ? ` Released in the ${decade}.` : ' Any era from the 1920s to today is fine.';
-        promptText = `Find a perfect title recommendation based on: Format: ${cat}, Platform: ${plat}, Mood: ${mood}, Vibe: ${vibe}, Age rating: ${rating}.${eraText}${personalization}${exclusionText} Output valid JSON ONLY: {"title": "Title", "synopsis": "Summary.", "platform": "Platform"}`;
+        // No prompt is built here anymore. The old version asked Gemini to
+        // freely invent a title + platform from category/mood/vibe keywords
+        // alone, with no grounding in what MatchApp actually knows and no
+        // language instruction — that open-ended call was the direct cause
+        // of titles, covers and platforms not matching each other or the
+        // user's language. The real decision logic now lives further down,
+        // built entirely from verified sources (curated catalog, then live
+        // iTunes discovery), never from free-form AI invention.
     }
 
     const startTime = Date.now();
@@ -882,26 +981,63 @@ window.triggerMatch = async function(isSpecificSearch = false) {
     }, 100);
 
     let matchResult = null;
-    try {
-        matchResult = await fetchGeminiData(promptText);
-        if (!matchResult || !matchResult.title) throw new Error("Empty AI result");
-    } catch (err) {
-        if (isSpecificSearch) {
+    if (isSpecificSearch) {
+        try {
+            matchResult = await fetchGeminiData(promptText);
+            if (!matchResult || !matchResult.title) throw new Error("Empty AI result");
+        } catch (err) {
             const input = document.getElementById('specific-search-input');
             matchResult = { title: input.value.trim(), synopsis: "Here's your title — tap Stream Now to find it on your platform of choice.", platform: "Web" };
-        } else {
-            let cat = document.getElementById('q-category')?.value || 'any';
-            let plat = document.getElementById('q-platform')?.value || 'any';
-            let mood = document.getElementById('q-mood')?.value || 'any';
-            let vibe = document.getElementById('q-vibe')?.value || 'any';
-            let rating = document.getElementById('q-rating')?.value || 'any';
-            let decade = document.getElementById('q-decade')?.value || 'any';
+        }
+    } else {
+        let cat = document.getElementById('q-category')?.value || 'any';
+        let plat = document.getElementById('q-platform')?.value || 'any';
+        let mood = document.getElementById('q-mood')?.value || 'any';
+        let vibe = document.getElementById('q-vibe')?.value || 'any';
+        let rating = document.getElementById('q-rating')?.value || 'any';
+        let decade = document.getElementById('q-decade')?.value || 'any';
 
-            // Tier 2: live discovery across the full iTunes catalogue (1920s → today).
-            matchResult = await discoverFromITunes(cat, mood, vibe, decade, rating);
-            // Tier 3: curated offline catalog, so a match is always returned even offline.
-            if (!matchResult) matchResult = pickFromCatalog(cat, plat, mood, vibe, rating);
-            if (plat && plat !== 'any') matchResult.platform = plat;
+        // Tier 1: curated catalog. Every title/platform pairing here was
+        // hand-verified, so when it can honor the exact platform requested,
+        // it's the single most trustworthy source available and wins outright.
+        const catalogPick = pickFromCatalog(cat, plat, mood, vibe, rating);
+
+        if (catalogPick.platformVerified) {
+            matchResult = catalogPick;
+        } else {
+            // Tier 2: live iTunes discovery — real titles, real cover art,
+            // but (like every keyless third-party lookup) no way to honestly
+            // confirm availability on a specific streaming service. Skipped
+            // automatically for vertical micro-dramas, which iTunes doesn't
+            // carry at all.
+            const livePick = await discoverFromITunes(cat, mood, vibe, decade, rating);
+            matchResult = livePick || catalogPick;
+        }
+
+        // Never claim the user's exact requested platform unless the winning
+        // source actually verified it. This is the direct fix for a title
+        // showing up tagged with a platform it isn't really on — the badge
+        // now reads "any" (rendered as "Find Where To Stream") instead of a
+        // confident, unverified lie.
+        if (!matchResult.platformVerified) matchResult.platform = 'any';
+
+        // Optional, narrow AI use: translate the ALREADY-CHOSEN, ALREADY-REAL
+        // synopsis into the user's language. This never touches title,
+        // platform, or cover — only the descriptive blurb — so it cannot
+        // reintroduce the hallucination risk the old single big prompt had.
+        // If it fails for any reason, the English synopsis is kept rather
+        // than blocking the match.
+        if (window.MATCH_LANG && window.MATCH_LANG !== 'en' && matchResult.synopsis) {
+            try {
+                const lang = LANG_NAMES_FOR_PROMPT[window.MATCH_LANG] || null;
+                if (lang && supabaseClient) {
+                    const translatePrompt = `Translate this movie/show synopsis into natural, fluent ${lang}. ` +
+                        `Do not add or remove any facts. Output ONLY the translated text, nothing else, no quotes:\n\n${matchResult.synopsis}`;
+                    const { data, error } = await supabaseClient.functions.invoke('gemini-proxy', { body: { prompt: translatePrompt } });
+                    const translated = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+                    if (!error && translated) matchResult.synopsis = translated;
+                }
+            } catch (e) { /* keep the English synopsis — never block the match over this */ }
         }
     }
     rememberShownTitle(matchResult.title);
@@ -930,18 +1066,32 @@ async function renderResult(selected, isSpecificSearch) {
 
     document.getElementById('res-title').innerText = selected.title; 
     document.getElementById('res-synopsis').innerText = selected.synopsis;
-    document.getElementById('res-platform-badge').innerText = selected.platform;
+    document.getElementById('res-platform-badge').innerText =
+        (selected.platform && selected.platform !== 'any') ? selected.platform : (window.t ? t('res.multiplatform') : 'Multiple Platforms');
 
     // "NEVER FAIL" COVER PULL + TRAILER METADATA (single lookup, cached)
     const posterEl = document.getElementById('res-poster-img');
     const categoryHint = document.getElementById('q-category')?.value || '';
 
+    // Vertical micro-dramas (ReelShort, DramaBox, ShortMax, Globoplay's line)
+    // live entirely inside proprietary apps with no public catalog anywhere —
+    // iTunes and TVMaze will correctly find nothing, but only after several
+    // wasted network round-trips. Skip straight to the branded local cover,
+    // which always shows the correct title text with zero network dependency.
+    const isVerticalDrama = categoryHint.toLowerCase() === 'vertical micro-drama' ||
+        (typeof VERTICAL_DRAMA_TITLES !== 'undefined' && VERTICAL_DRAMA_TITLES.includes(selected.title));
+
     // The discovery engine already carries artwork/preview/store data — reuse it
     // instead of making a second network round-trip for the same title.
     let meta = selected._meta || null;
-    if (!meta) meta = await getRichMetadata(selected.title, categoryHint);
+    if (!meta && !isVerticalDrama) meta = await getRichMetadata(selected.title, categoryHint);
 
-    let realCover = (meta && meta.artwork) ? meta.artwork : await getRealCoverImage(selected.title);
+    let realCover;
+    if (isVerticalDrama && !(meta && meta.artwork)) {
+        realCover = generateLocalPosterSVG(selected.title);
+    } else {
+        realCover = (meta && meta.artwork) ? meta.artwork : await getRealCoverImage(selected.title);
+    }
     if (!realCover) realCover = generatedCover(selected.title);
 
     // Track the current match globally so Watch Later / Seen It can record it.

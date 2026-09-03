@@ -7,7 +7,7 @@
     
     <title>MatchApp — Your AI Concierge for Entertainment | Talk or Type to Find What to Watch Tonight</title>
     <meta name="description" content="MatchApp is your AI Concierge for entertainment — a voice-enabled AI consultant that matches you to the perfect movie, series, K-drama, anime, novela, micro-drama, podcast or Spotify playlist. Speak or type your mood in any language and it links you straight to where it streams. Netflix, Prime Video, Max, Disney+, Apple TV+, Globoplay, Crunchyroll, ReelShort, Spotify and 20+ more. Free to start.">
-    <meta name="keywords" content="AI streaming concierge, premium AI streaming service, AI powered movie recommendations, personalized streaming recommendations, what to watch tonight, what should I watch, where to watch movies online, find a movie by mood, best series to binge 2026, AI TV show recommender, streaming search engine, cross platform streaming search, movie matchmaker AI, best AI recommendation engine for streaming, K-drama recommendations, anime to watch, vertical micro drama, ReelShort, DramaBox, novelas brasileiras, telenovelas, Spotify playlist finder, Spotify singles, best podcasts, Netflix what to watch, Max series, Prime Video hidden gems, Disney Plus recommendations, movie finder by star sign, age appropriate shows, streaming guide by country, what to stream near me, what's trending on Netflix, Netflix top 10 this week, The Whisper Man Netflix, Death of the Pastor's Wife, Beauty in Black Netflix, Outer Banks new season, Love Is Blind UK, gospel movies to watch, Christian movies streaming, The Chosen series, faith based movies 2026, gospel music playlist Spotify, Christian podcasts, Kirk Franklin gospel, Maverick City Music, Angel Studios movies, Pure Flix Christian streaming, ask AI what to watch, AI movie search engine, AI concierge for entertainment, voice search streaming app, talk to AI about movies, voice assistant for streaming, AI entertainment consultant, speak to find a movie, voice activated movie finder, AI concierge service entertainment industry">
+    <meta name="keywords" content="AI streaming concierge, premium AI streaming service, AI powered movie recommendations, personalized streaming recommendations, what to watch tonight, what should I watch, where to watch movies online, find a movie by mood, best series to binge 2026, AI TV show recommender, streaming search engine, cross platform streaming search, movie matchmaker AI, best AI recommendation engine for streaming, K-drama recommendations, anime to watch, vertical micro drama, ReelShort, DramaBox, novelas brasileiras, telenovelas, Spotify playlist finder, Spotify singles, best podcasts, Netflix what to watch, Max series, Prime Video hidden gems, Disney Plus recommendations, movie finder by star sign, age appropriate shows, streaming guide by country, what to stream near me, what's trending on Netflix, Netflix top 10 this week, The Whisper Man Netflix, Death of the Pastor's Wife, Beauty in Black Netflix, Outer Banks new season, Love Is Blind UK, gospel movies to watch, Christian movies streaming, The Chosen series, faith based movies 2026, gospel music playlist Spotify, Christian podcasts, Kirk Franklin gospel, Maverick City Music, Angel Studios movies, Pure Flix Christian streaming, ask AI what to watch, AI movie search engine, AI concierge for entertainment, voice search streaming app, talk to AI about movies, voice assistant for streaming, AI entertainment consultant, speak to find a movie, voice activated movie finder, AI concierge service entertainment industry, contact matchapp support, matchapp customer service, matchapp instagram">
     <meta name="robots" content="index, follow, max-image-preview:large">
     <meta name="author" content="MatchApp">
     <link rel="canonical" href="https://matchapp.cc/">
@@ -73,7 +73,14 @@
         { "@type": "Offer", "price": "0", "priceCurrency": "USD", "name": "Free — 3 matches daily" },
         { "@type": "Offer", "price": "0", "priceCurrency": "USD", "name": "Registered — 5 matches daily" }
       ],
-      "publisher": { "@type": "Organization", "name": "MatchApp", "url": "https://matchapp.cc/", "logo": "https://matchapp.cc/logo.jpeg" }
+      "publisher": {
+        "@type": "Organization",
+        "name": "MatchApp",
+        "url": "https://matchapp.cc/",
+        "logo": "https://matchapp.cc/logo.jpeg",
+        "sameAs": ["https://instagram.com/matchapp.cc"],
+        "contactPoint": { "@type": "ContactPoint", "email": "support@matchapp.cc", "contactType": "customer support" }
+      }
     }
     </script>
 
@@ -126,6 +133,11 @@
           "@type": "Question",
           "name": "What is MatchApp's AI Concierge?",
           "acceptedAnswer": { "@type": "Answer", "text": "MatchApp's AI Concierge is a voice- and text-enabled AI consultant for entertainment. Instead of scrolling menus, you ask it what you're in the mood for — by typing or speaking, in any of 14 languages — and it responds like a knowledgeable friend, with a real recommendation and a direct link to stream it." }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I contact MatchApp support?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Email support@matchapp.cc or message @matchapp.cc on Instagram — both are checked by a real person, not a bot." }
         }
       ]
     }
@@ -184,7 +196,7 @@
     <link rel="alternate" hreflang="zh" href="https://matchapp.cc/?lang=zh">
 
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=111"></script>
+    <script defer src="/i18n.js?v=112"></script>
 
     <!-- GOOGLE ANALYTICS (GTAG) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
@@ -240,6 +252,21 @@
         @keyframes marqueeScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
         .ad-banner-container { text-align: center; margin-bottom: 30px; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 15px; border: 1px dashed rgba(255,255,255,0.2); min-height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+        /* ===== "FIND MY MATCH" CTA — unmistakable highlight on arrival ===== */
+        #questionnaire-box.cta-highlight { animation: ctaPulse 1.6s ease-out; }
+        @keyframes ctaPulse {
+            0%   { box-shadow: 0 0 0 0 rgba(229,193,88,0.9); }
+            60%  { box-shadow: 0 0 0 22px rgba(229,193,88,0); }
+            100% { box-shadow: 0 0 0 0 rgba(229,193,88,0); }
+        }
+        @media (prefers-reduced-motion: reduce) { #questionnaire-box.cta-highlight { animation: none; outline: 3px solid var(--gold); } }
+
+        /* ===== GOOGLE SIGN-IN ===== */
+        .google-signin-btn { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; padding: 15px; margin-top: 22px; background: #fff; color: #3c4043; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: 0.25s; font-family: inherit; }
+        .google-signin-btn:hover { background: #f4f4f4; box-shadow: 0 4px 14px rgba(255,255,255,0.15); transform: translateY(-1px); }
+        .auth-divider { display: flex; align-items: center; gap: 14px; margin: 20px 0 0 0; color: #8f88a5; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .auth-divider::before, .auth-divider::after { content: ""; flex: 1; height: 1px; background: rgba(229,193,88,0.25); }
 
         .auth-tabs { display: flex; border-bottom: 2px solid rgba(229,193,88,0.3); margin-bottom: 25px; }
         .auth-tab { flex: 1; text-align: center; padding: 15px; color: #bbb; cursor: pointer; font-weight: bold; }
@@ -498,6 +525,7 @@
         .seo-footer-links a { color: var(--gold); text-decoration: none; font-size: 14px; font-weight: bold; text-transform: uppercase; }
         .seo-footer-links a:hover { color: var(--gold-glow); text-decoration: underline; }
         .seo-footer-legal { color: #555; font-size: 11px; margin-top: 30px; line-height: 1.7; }
+        .contact-blurb { color: #9d95b0; font-size: 12.5px; margin: 8px 0 0 0; }
     </style>
 </head>
 <body>
@@ -653,7 +681,7 @@
                             <p data-i18n-html="how.s3.body">One tap opens it on Netflix, Prime, Max, Disney+, Spotify or wherever it lives. Save it to Watch Later, or hit <em>Not For Me</em> and we'll instantly find another.</p>
                         </div>
                     </div>
-                    <button onclick="document.getElementById('questionnaire-box').scrollIntoView({behavior:'smooth', block:'center'})" class="gold-btn" style="margin-top:28px; max-width:420px; font-size:17px; padding:18px;" data-i18n="how.cta">⚡ Find My Match — It's Free</button>
+                    <button onclick="scrollToQuestionnaire()" class="gold-btn" style="margin-top:28px; max-width:420px; font-size:17px; padding:18px;" data-i18n="how.cta">⚡ Find My Match — It's Free</button>
                     <p style="color:#8f88a5; font-size:12px; margin:14px 0 0 0;" data-i18n="how.freeline">3 free matches daily · Register free for 5 · No credit card required</p>
                 </section>
 
@@ -1086,6 +1114,13 @@
                 <a href="/terms.html">Terms of Service</a>
             </div>
 
+            <h3 class="seo-footer-sub" data-i18n="footer.contact">📬 Contact &amp; Support</h3>
+            <nav class="streaming-links contact-links" aria-label="Contact and support">
+                <a href="mailto:support@matchapp.cc">✉️ support@matchapp.cc</a>
+                <a href="https://instagram.com/matchapp.cc" target="_blank" rel="noopener noreferrer">📸 @matchapp.cc on Instagram</a>
+            </nav>
+            <p class="contact-blurb" data-i18n="footer.contactBlurb">Questions, feedback, or a title you think we're missing? Email us or say hello on Instagram — a real person reads every message.</p>
+
             <p class="seo-footer-legal">
                 © <span id="footer-year"></span> MatchApp.cc — All Rights Reserved. Your AI Concierge for Entertainment. Unauthorized reproduction of this software or its AI systems is prohibited. Support: support@matchapp.cc<br>
                 MatchApp is an independent discovery service and is not affiliated with, endorsed by, or sponsored by
@@ -1160,10 +1195,22 @@
     <div id="main-auth-modal" style="display:none; position:fixed; top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95); z-index:9999; justify-content:center; align-items:center; backdrop-filter: blur(15px);">
         <div class="premium-card" style="width: 90%; max-width: 450px; position:relative;">
             <span onclick="closeAuthModal()" style="position:absolute; top:15px; right:20px; font-size:36px; cursor:pointer; color:#fff;">×</span>
-            <h3 style="text-align: center; color: var(--gold); font-size: 26px; margin-top: 0; text-transform: uppercase;">Unlock Full Concierge</h3>
-            <div class="auth-tabs" style="margin-top: 25px;">
-                <div id="tab-login" class="auth-tab active" onclick="switchAuthTab('login')">Log In</div>
-                <div id="tab-signup" class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</div>
+            <h3 style="text-align: center; color: var(--gold); font-size: 26px; margin-top: 0; text-transform: uppercase;" data-i18n="auth.unlockTitle">Unlock Full Concierge</h3>
+
+            <button onclick="loginWithGoogle()" class="google-signin-btn" type="button">
+                <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true">
+                    <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.4 29.3 35.5 24 35.5c-6.4 0-11.7-4.9-12.4-11.1C11.5 23.5 11.5 22.6 11.5 22c0-6.9 5.6-12.5 12.5-12.5 3.1 0 5.9 1.1 8.1 3l6-6C34.5 3.1 29.5 1 24 1 11.9 1 2 10.9 2 23s9.9 22 22 22c11.6 0 21-8.5 21.4-21 0-1.2-.1-2.4-.3-3.5z"/>
+                    <path fill="#FF3D00" d="M6.3 14.6l6.6 4.8C14.6 15.5 18.9 13 24 13c3.1 0 5.9 1.1 8.1 3l6-6C34.5 6.1 29.5 4 24 4 16.3 4 9.7 8.3 6.3 14.6z"/>
+                    <path fill="#4CAF50" d="M24 44c5.4 0 10.3-1.9 14.1-5.1l-6.5-5.4C29.5 35.3 26.9 36 24 36c-5.3 0-9.7-3.4-11.3-8.1l-6.5 5C9.6 39.6 16.2 44 24 44z"/>
+                    <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.2-4.2 5.5l6.5 5.4C41.5 35.6 44 30.1 44 24c0-1.2-.1-2.4-.4-3.5z"/>
+                </svg>
+                <span data-i18n="auth.continueGoogle">Continue with Google</span>
+            </button>
+            <div class="auth-divider"><span data-i18n="auth.orEmail">or continue with email</span></div>
+
+            <div class="auth-tabs" style="margin-top: 20px;">
+                <div id="tab-login" class="auth-tab active" onclick="switchAuthTab('login')" data-i18n="auth.login">Log In</div>
+                <div id="tab-signup" class="auth-tab" onclick="switchAuthTab('signup')" data-i18n="auth.signup">Sign Up</div>
             </div>
             <div id="form-login" class="auth-form-section active">
                 <input type="email" id="login-email" placeholder="Email Address" style="width: 100%; padding: 16px; margin-bottom: 15px; border-radius: 12px; border: 1px solid var(--gold); background: #000; color: #fff;">
@@ -1179,9 +1226,9 @@
         </div>
     </div>
 
-    <script src="/app.js?v=111"></script>
-    <script src="/share.js?v=111"></script>
-    <script src="/voice-input.js?v=111"></script>
+    <script src="/app.js?v=112"></script>
+    <script src="/share.js?v=112"></script>
+    <script src="/voice-input.js?v=112"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initVoiceInput('specific-search-input', 'mic-btn-index', () => smartSearch());
