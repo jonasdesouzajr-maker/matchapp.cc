@@ -103,12 +103,17 @@ async function askAIConversational(question, history) {
     const lang = window.MATCH_LANG || 'en';
 
     // Attempt 1 — current contract (server-side prompt building).
+    let firstError = null;
     try {
         const { data, error } = await window.supabaseClient.functions.invoke('gemini-proxy', {
             body: { mode: 'discover', question, lang, country, age, history: history || [] }
         });
         if (!error && data && !data.error) return parseAIResponse(data);
-    } catch (e) { /* fall through to legacy attempt */ }
+        firstError = (error && error.message) || (data && data.error) || 'unknown';
+    } catch (e) { firstError = e.message || String(e); }
+
+    console.warn('[MatchApp AI] discover-mode attempt failed:', firstError,
+        '\n→ Retrying with the legacy prompt format (this is expected if the Edge Function has not been redeployed).');
 
     // Attempt 2 — legacy contract, for an Edge Function that predates mode:'discover'.
     const langName = LANG_NAMES_DISCOVER[lang] || 'English';
@@ -123,7 +128,17 @@ async function askAIConversational(question, history) {
     }
 
     const { data, error } = await window.supabaseClient.functions.invoke('gemini-proxy', { body: { prompt } });
-    if (error) throw new Error('AI unavailable');
+    if (error) {
+        const detail = error.message || String(error);
+        console.error('[MatchApp AI] Both attempts failed. Legacy attempt error:', detail,
+            '\n→ Run the diagnostic to see exactly why: open /ai-check.html on this site.');
+        throw new Error('AI unavailable: ' + detail);
+    }
+    if (data && data.error) {
+        console.error('[MatchApp AI] Edge Function returned an error:', data.error, data.detail || '',
+            '\n→ Run the diagnostic: open /ai-check.html on this site.');
+        throw new Error('AI unavailable: ' + data.error);
+    }
     return parseAIResponse(data);
 }
 

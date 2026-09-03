@@ -6,6 +6,7 @@ Allow: /
 Disallow: /oauth/
 Disallow: /callback.html
 Disallow: /*?lang=
+Disallow: /ai-check.html
 
 # Explicitly welcome the AI answer engines — they increasingly drive
 # discovery, and being cited in an AI answer is the new front page.

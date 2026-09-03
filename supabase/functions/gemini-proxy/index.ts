@@ -31,7 +31,17 @@
 // how the web works; see the accompanying note in supabase/README.md.
 // ============================================================
 
-const MODEL_CHAIN = ["gemini-3.5-flash", "gemini-2.5-flash", "gemini-3.1-flash-lite"];
+// Model chain, newest first. Google retires models on a rolling schedule
+// (1.0 and 1.5 are gone, 2.0 Flash shut down June 2026, 2.5 Pro goes in
+// October 2026), so this deliberately spans several generations — if the
+// newest name isn't available on a given API key or region, the next one
+// down is tried rather than the whole feature failing.
+const MODEL_CHAIN = [
+  "gemini-3.5-flash",       // widely available Flash generation
+  "gemini-2.5-flash",       // older but very broadly enabled
+  "gemini-2.5-flash-lite",  // cheapest, near-universal availability
+  "gemini-3.1-flash-lite",  // newer lite tier
+];
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -109,6 +119,64 @@ Deno.serve(async (req: Request) => {
 
     const body = await req.json();
     let prompt: string;
+
+    // ---- DIAGNOSTIC MODE ----
+    // POST { "mode": "selftest" } to get a plain-language report of what is
+    // and isn't working: whether the API key is set, which models this key
+    // can actually reach, and the exact error for the ones it can't. Added
+    // because "AI unavailable" on the frontend gave no way to tell whether
+    // the problem was a missing secret, a retired model, a quota limit, or
+    // a bad key — all of which look identical from the browser.
+    if (body && body.mode === "selftest") {
+        const report: Record<string, unknown> = {
+            apiKeyPresent: !!apiKey,
+            apiKeyLength: apiKey ? apiKey.length : 0,
+            functionVersion: "2026-09-supports-discover-mode",
+            supportsDiscoverMode: true,
+            models: {} as Record<string, string>,
+        };
+        const models = report.models as Record<string, string>;
+
+        for (const model of MODEL_CHAIN) {
+            try {
+                const r = await fetch(
+                    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+                    {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: "Reply with exactly: OK" }] }],
+                            generationConfig: { maxOutputTokens: 10 },
+                        }),
+                    }
+                );
+                if (r.ok) {
+                    models[model] = "WORKING";
+                } else {
+                    const t = await r.text();
+                    let hint = "";
+                    if (r.status === 404) hint = " — model does not exist or is not enabled for this key";
+                    if (r.status === 400) hint = " — bad request or invalid API key";
+                    if (r.status === 403) hint = " — key rejected; check the key is valid and the Generative Language API is enabled";
+                    if (r.status === 429) hint = " — rate limit or quota exhausted";
+                    models[model] = `FAILED ${r.status}${hint}: ${t.slice(0, 200)}`;
+                }
+            } catch (e) {
+                models[model] = `NETWORK ERROR: ${e instanceof Error ? e.message : String(e)}`;
+            }
+        }
+
+        const anyWorking = Object.values(models).some((v) => v === "WORKING");
+        report.verdict = !apiKey
+            ? "GEMINI_API_KEY secret is NOT set on this Edge Function. Set it in Supabase → Edge Functions → Manage secrets."
+            : anyWorking
+                ? "Healthy — at least one model is reachable. If Ask AI still shows offline, the deployed function is likely an older version; redeploy this file."
+                : "API key is set but NO model is reachable. Check the key at aistudio.google.com/apikey and confirm the Generative Language API is enabled for that project.";
+
+        return new Response(JSON.stringify(report, null, 2), {
+            headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+        });
+    }
 
     if (body && body.mode === "discover" && typeof body.question === "string") {
       // AI Concierge path: build the real prompt here, server-side.

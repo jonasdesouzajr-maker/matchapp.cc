@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Diagnostic — MatchApp</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" href="/logo.jpeg" type="image/jpeg">
+    <style>
+        :root { --gold:#E5C158; --gold-glow:#FFF3A3; --royal:#402562; --royal-lift:#6B3FA0; --ink:#14131A; }
+        * { box-sizing: border-box; }
+        body { margin:0; padding:24px; background:#14131A; color:#fff;
+               font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif; line-height:1.6; }
+        .wrap { max-width: 820px; margin: 0 auto; }
+        h1 { color: var(--gold); font-size: 26px; margin: 0 0 6px 0; }
+        .sub { color:#9d95b0; font-size:14px; margin:0 0 24px 0; }
+        .card { background: linear-gradient(160deg, rgba(32,24,52,0.9), rgba(20,19,26,0.94));
+                border:1px solid rgba(229,193,88,0.35); border-radius:14px; padding:20px; margin-bottom:16px; }
+        .card h2 { font-size:16px; color:var(--gold); margin:0 0 10px 0; text-transform:uppercase; letter-spacing:0.6px; }
+        button { background:linear-gradient(135deg,#BF953F,#FCF6BA,#B38728); color:#000; border:none;
+                 padding:14px 26px; border-radius:12px; font-weight:900; font-size:15px; cursor:pointer; font-family:inherit; }
+        button:disabled { opacity:0.5; cursor:wait; }
+        pre { background:#0a0910; border:1px solid rgba(229,193,88,0.2); border-radius:10px; padding:14px;
+              overflow-x:auto; font-size:12.5px; color:#c9c2d8; white-space:pre-wrap; word-break:break-word; margin:10px 0 0 0; }
+        .ok   { color:#4ade80; font-weight:700; }
+        .bad  { color:#ff6b6b; font-weight:700; }
+        .warn { color:#ffb84d; font-weight:700; }
+        .step { padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.07); font-size:14px; }
+        .step:last-child { border-bottom:none; }
+        .verdict { border-left:4px solid var(--gold); padding:14px 18px; background:rgba(107,63,160,0.2);
+                   border-radius:10px; margin-top:14px; font-size:15px; }
+        a { color: var(--gold); }
+        .fixlist { margin:10px 0 0 0; padding-left:20px; font-size:14px; color:#ddd6ec; }
+        .fixlist li { margin-bottom:8px; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <h1>🔧 AI Diagnostic</h1>
+    <p class="sub">Tests the Ask&nbsp;AI pipeline end to end and reports exactly what's broken.
+       This page is <code>noindex</code> — not linked anywhere and not in the sitemap.</p>
+
+    <div class="card">
+        <button id="run" onclick="runDiagnostic()">▶ Run full diagnostic</button>
+        <div id="steps" style="margin-top:16px;"></div>
+    </div>
+
+    <div id="verdict-card" class="card" style="display:none;">
+        <h2>Verdict</h2>
+        <div id="verdict"></div>
+    </div>
+
+    <div id="raw-card" class="card" style="display:none;">
+        <h2>Raw output</h2>
+        <pre id="raw"></pre>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://zkymvqrmbabngsqblyye.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpreW12cXJtYmFibmdzcWJseXllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY4MDUyNDIsImV4cCI6MjEwMjM4MTI0Mn0._yEVFMfwVU6GBqQ8m3ljfOgA0HSLEDiKMOfYae6ZD8Q";
+
+let client = null;
+try { client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch (e) {}
+
+const stepsEl = () => document.getElementById('steps');
+function step(label, state, detail) {
+    const icon = state === 'ok' ? '<span class="ok">✔</span>'
+              : state === 'bad' ? '<span class="bad">✖</span>'
+              : '<span class="warn">…</span>';
+    const div = document.createElement('div');
+    div.className = 'step';
+    div.innerHTML = `${icon} <strong>${label}</strong>${detail ? `<br><span style="color:#9d95b0; font-size:13px;">${detail}</span>` : ''}`;
+    stepsEl().appendChild(div);
+    return div;
+}
+
+function showVerdict(html) {
+    document.getElementById('verdict-card').style.display = 'block';
+    document.getElementById('verdict').innerHTML = html;
+}
+function showRaw(obj) {
+    document.getElementById('raw-card').style.display = 'block';
+    document.getElementById('raw').textContent = typeof obj === 'string' ? obj : JSON.stringify(obj, null, 2);
+}
+
+async function runDiagnostic() {
+    const btn = document.getElementById('run');
+    btn.disabled = true; btn.textContent = 'Running…';
+    stepsEl().innerHTML = '';
+    document.getElementById('verdict-card').style.display = 'none';
+    document.getElementById('raw-card').style.display = 'none';
+
+    const raw = {};
+
+    // 1. Supabase client
+    if (!client) {
+        step('Supabase client', 'bad', 'Could not initialise. The supabase-js library may be blocked.');
+        showVerdict('<span class="bad">The Supabase library failed to load.</span> Check for an ad-blocker or network filter blocking <code>cdn.jsdelivr.net</code>.');
+        btn.disabled = false; btn.textContent = '▶ Run full diagnostic';
+        return;
+    }
+    step('Supabase client', 'ok', 'Initialised.');
+
+    // 2. Can we reach the Edge Function at all?
+    let selftest = null, reachError = null;
+    try {
+        const { data, error } = await client.functions.invoke('gemini-proxy', { body: { mode: 'selftest' } });
+        if (error) reachError = error.message || String(error);
+        else selftest = data;
+        raw.selftest = data || error;
+    } catch (e) {
+        reachError = e.message || String(e);
+        raw.selftest = reachError;
+    }
+
+    if (reachError && !selftest) {
+        step('Edge Function reachable', 'bad', reachError);
+        showVerdict(`<span class="bad">Could not reach the <code>gemini-proxy</code> Edge Function.</span>
+            <ul class="fixlist">
+              <li>Check it exists: Supabase → Edge Functions → is there a function named exactly <code>gemini-proxy</code>?</li>
+              <li>If it exists, it may be an <strong>older deployed version</strong>. Redeploy <code>supabase/functions/gemini-proxy/index.ts</code> from the repo.</li>
+              <li>Error returned: <code>${reachError}</code></li>
+            </ul>`);
+        showRaw(raw);
+        btn.disabled = false; btn.textContent = '▶ Run full diagnostic';
+        return;
+    }
+    step('Edge Function reachable', 'ok', 'Responded to the request.');
+
+    // 3. Is it the current version (does it understand selftest)?
+    if (!selftest || !selftest.functionVersion) {
+        step('Function version', 'bad', 'The deployed function did not recognise the selftest command.');
+        showVerdict(`<span class="bad">The deployed Edge Function is an OLD version.</span>
+            <p>It responded, but doesn't understand the current request format — which is exactly why Ask&nbsp;AI falls back to offline mode.</p>
+            <ul class="fixlist">
+              <li>Open <code>supabase/functions/gemini-proxy/index.ts</code> on GitHub → <strong>Raw</strong> → select all → copy.</li>
+              <li>Supabase → Edge Functions → <code>gemini-proxy</code> → paste over the existing code → <strong>Deploy</strong>.</li>
+              <li>Then run this diagnostic again.</li>
+            </ul>`);
+        showRaw(raw);
+        btn.disabled = false; btn.textContent = '▶ Run full diagnostic';
+        return;
+    }
+    step('Function version', 'ok', selftest.functionVersion);
+
+    // 4. API key present?
+    if (!selftest.apiKeyPresent) {
+        step('GEMINI_API_KEY secret', 'bad', 'Not set on the Edge Function.');
+        showVerdict(`<span class="bad">The <code>GEMINI_API_KEY</code> secret is not set.</span>
+            <ul class="fixlist">
+              <li>Get a key at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a></li>
+              <li>Supabase → Edge Functions → <strong>Manage secrets</strong> → add <code>GEMINI_API_KEY</code></li>
+              <li>Redeploy the function so it picks up the new secret, then re-run this.</li>
+            </ul>`);
+        showRaw(raw);
+        btn.disabled = false; btn.textContent = '▶ Run full diagnostic';
+        return;
+    }
+    step('GEMINI_API_KEY secret', 'ok', `Present (${selftest.apiKeyLength} characters).`);
+
+    // 5. Which models actually work?
+    const models = selftest.models || {};
+    const working = Object.entries(models).filter(([, v]) => v === 'WORKING').map(([k]) => k);
+    for (const [name, result] of Object.entries(models)) {
+        step(`Model: ${name}`, result === 'WORKING' ? 'ok' : 'bad', result === 'WORKING' ? 'Reachable' : result);
+    }
+
+    if (!working.length) {
+        showVerdict(`<span class="bad">The API key is set, but no model is reachable.</span>
+            <p>${selftest.verdict || ''}</p>
+            <ul class="fixlist">
+              <li>Verify the key works: <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a></li>
+              <li>Confirm the <strong>Generative Language API</strong> is enabled on that Google Cloud project.</li>
+              <li>If you see <code>429</code>, you've hit a quota limit — wait or raise the quota.</li>
+              <li>The exact per-model errors are listed above and in the raw output.</li>
+            </ul>`);
+        showRaw(raw);
+        btn.disabled = false; btn.textContent = '▶ Run full diagnostic';
+        return;
+    }
+
+    // 6. Real end-to-end question
+    let live = null, liveErr = null;
+    try {
+        const { data, error } = await client.functions.invoke('gemini-proxy', {
+            body: { mode: 'discover', question: 'What is a good feel-good movie for a rainy Sunday?', lang: 'en' }
+        });
+        if (error) liveErr = error.message || String(error);
+        else if (data && data.error) liveErr = data.error;
+        else live = data;
+        raw.liveTest = data || error;
+    } catch (e) { liveErr = e.message || String(e); raw.liveTest = liveErr; }
+
+    if (!live) {
+        step('End-to-end question', 'bad', liveErr || 'No response');
+        showVerdict(`<span class="warn">Models work, but a real question failed.</span>
+            <p>Error: <code>${liveErr}</code></p><p>See the raw output below.</p>`);
+        showRaw(raw);
+        btn.disabled = false; btn.textContent = '▶ Run full diagnostic';
+        return;
+    }
+
+    let answer = '';
+    try {
+        const text = live.candidates[0].content.parts[0].text;
+        const s = text.indexOf('{'), e = text.lastIndexOf('}');
+        answer = JSON.parse(text.slice(s, e + 1)).answer;
+    } catch (e) { answer = '(response received but could not be parsed as JSON)'; }
+
+    step('End-to-end question', 'ok', `Served by ${live._servedByModel || 'unknown model'}`);
+    showVerdict(`<span class="ok">✅ Everything is working.</span>
+        <p style="margin:12px 0 0 0;">The AI answered: <em>"${String(answer).slice(0, 220)}"</em></p>
+        <p style="margin:10px 0 0 0; color:#9d95b0; font-size:13px;">
+        If Ask&nbsp;AI still shows offline on the main page, hard-refresh (Ctrl/Cmd + Shift + R) to clear cached JavaScript.</p>`);
+    showRaw(raw);
+    btn.disabled = false; btn.textContent = '▶ Run diagnostic again';
+}
+</script>
+</body>
+</html>
