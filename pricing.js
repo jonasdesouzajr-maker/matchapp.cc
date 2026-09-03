@@ -13,11 +13,10 @@ const STRIPE_LINK_AD_FREE = "https://buy.stripe.com/fZu4gz6nEaDHbpY7k0gEg01";
 const STRIPE_LINK_VIP_MONTHLY = "https://buy.stripe.com/fZu3cvbHY13779I47OgEg03";
 const STRIPE_LINK_VIP_ANNUAL = "https://buy.stripe.com/7sY28reUa137dy65bSgEg02";
 
-// ⚠️ REPLACE THIS with the real Payment Link once you create the Business
-// product in Stripe (see the setup steps in the message accompanying this
-// change). Until then, the Business button routes to email so no one hits
-// a dead checkout page.
-const STRIPE_LINK_BUSINESS = "PASTE_YOUR_BUSINESS_PAYMENT_LINK_HERE";
+// Business plan — $49/mo, 50 AI sessions daily, up to 5 seats.
+// The email fallback below still guards against a blanked-out or broken link,
+// so the button can never dead-end on a checkout page that doesn't exist.
+const STRIPE_LINK_BUSINESS = "https://buy.stripe.com/eVqcN5dQ66nr51AgUAgEg04";
 
 window.processCheckout = async function(planType) {
     if (!isUserLoggedIn || !supabaseClient) {
