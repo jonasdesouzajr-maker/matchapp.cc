@@ -43,26 +43,42 @@ function detectAudioIntent(q) {
 }
 
 /* ---------- AI conversational answer ---------- */
-async function askAIConversational(question) {
-    if (!window.supabaseClient) throw new Error('No backend');
 
-    // The actual prompt engineering — how the AI Concierge is instructed to
-    // behave, what tone to use, how it structures its answer — now lives in
-    // the gemini-proxy Edge Function, not here. This client only sends the
-    // question and the context needed to personalize it; the server builds
-    // the real prompt. (Previously the full prompt text was assembled in
-    // this file, which meant anyone opening DevTools could read MatchApp's
-    // exact AI instructions verbatim.)
-    const country = localStorage.getItem('match_user_country') || '';
-    const age = localStorage.getItem('match_user_age') || '';
+// Builds the same prompt the Edge Function builds, used ONLY as a compatibility
+// fallback when the deployed function is an older version that doesn't yet
+// understand mode:'discover'. Keeping this here means Ask AI works whether or
+// not the latest Edge Function has been redeployed.
+function buildLegacyDiscoverPrompt(question, langName, country, age) {
+    const audioIntent = detectAudioIntent(question);
+    let personal = '';
+    if (country) personal += ` The viewer is in ${country}; prefer titles genuinely available there.`;
+    if (age) personal += ` The viewer is ${age} years old; keep suggestions age-appropriate.`;
 
-    const { data, error } = await window.supabaseClient.functions.invoke('gemini-proxy', {
-        body: { mode: 'discover', question, lang: window.MATCH_LANG || 'en', country, age }
-    });
-    if (error || !data) throw new Error('AI unavailable');
+    return `You are the friendly, knowledgeable AI concierge inside MatchApp, a streaming discovery app. ` +
+        `A user just asked you: "${question}"\n\n` +
+        `Respond exactly like a real, warm, well-informed person would in a chat — not a search engine. ` +
+        `Write 2-4 natural sentences that directly answer what they asked, using your own knowledge of movies, ` +
+        `TV series, documentaries, K-dramas, anime, telenovelas, podcasts, music and audiobooks. ` +
+        `Be specific and genuinely helpful, the way you'd explain it to a friend.${personal}\n\n` +
+        (audioIntent
+            ? `This question is about audio content (podcasts, music, playlists, or audiobooks) — only suggest audio titles.`
+            : `This question is about something to watch — only suggest movies, series, documentaries or similar visual titles, not podcasts or music, unless the user explicitly asked for audio.`) +
+        `\n\nCRITICAL: Write your "answer" field in ${langName}, matching the language the user asked in. ` +
+        `Then list 3 to ${DISCOVER_MAX} real, existing titles that back up your answer, best match first. ` +
+        `Output valid JSON ONLY, no markdown fences, no text outside the JSON: ` +
+        `{"answer":"Your natural 2-4 sentence conversational reply in ${langName}.","results":[{"title":"Exact Title","year":"YYYY","type":"movie|series|documentary|podcast|music","platform":"Where to watch or listen","synopsis":"One or two sentences, in ${langName}."}]}`;
+}
+
+const LANG_NAMES_DISCOVER = {
+    'en': 'English', 'pt-BR': 'Brazilian Portuguese', 'es': 'Spanish', 'fr': 'French',
+    'de': 'German', 'it': 'Italian', 'tr': 'Turkish', 'ru': 'Russian', 'ar': 'Arabic',
+    'hi': 'Hindi', 'id': 'Indonesian', 'ja': 'Japanese', 'ko': 'Korean', 'zh': 'Chinese'
+};
+
+function parseAIResponse(data) {
+    if (!data) throw new Error('AI unavailable');
     if (data.error) throw new Error(data.error);
     if (!data.candidates || !data.candidates[0]) throw new Error('AI unavailable');
-
     const raw = data.candidates[0].content.parts[0].text;
     const s = raw.indexOf('{'), e = raw.lastIndexOf('}');
     if (s === -1 || e === -1) throw new Error('Bad AI format');
@@ -71,6 +87,44 @@ async function askAIConversational(question) {
     parsed.results = parsed.results || [];
     parsed._live = true;
     return parsed;
+}
+
+async function askAIConversational(question, history) {
+    if (!window.supabaseClient) throw new Error('No backend');
+
+    // The prompt engineering lives in the gemini-proxy Edge Function, so the
+    // client normally just sends structured params. But if that function
+    // hasn't been redeployed yet, it returns a 400 for mode:'discover' —
+    // which used to cascade into the useless keyword-search fallback and the
+    // "couldn't find a confident match" message. We now detect that and retry
+    // with the legacy {prompt} shape, which every deployed version accepts.
+    const country = localStorage.getItem('match_user_country') || '';
+    const age = localStorage.getItem('match_user_age') || '';
+    const lang = window.MATCH_LANG || 'en';
+
+    // Attempt 1 — current contract (server-side prompt building).
+    try {
+        const { data, error } = await window.supabaseClient.functions.invoke('gemini-proxy', {
+            body: { mode: 'discover', question, lang, country, age, history: history || [] }
+        });
+        if (!error && data && !data.error) return parseAIResponse(data);
+    } catch (e) { /* fall through to legacy attempt */ }
+
+    // Attempt 2 — legacy contract, for an Edge Function that predates mode:'discover'.
+    const langName = LANG_NAMES_DISCOVER[lang] || 'English';
+    let prompt = buildLegacyDiscoverPrompt(question, langName, country, age);
+
+    // Carry prior turns so follow-up questions stay in context.
+    if (history && history.length) {
+        const transcript = history.map(h => `${h.role === 'user' ? 'User' : 'You'}: ${h.text}`).join('\n');
+        prompt = `Here is the conversation so far:\n${transcript}\n\n${prompt}\n\n` +
+            `IMPORTANT: This is a follow-up in an ongoing conversation. Take the earlier turns into account ` +
+            `and do not repeat titles you already recommended above unless the user asks about them specifically.`;
+    }
+
+    const { data, error } = await window.supabaseClient.functions.invoke('gemini-proxy', { body: { prompt } });
+    if (error) throw new Error('AI unavailable');
+    return parseAIResponse(data);
 }
 
 /* ---------- Keyless fallback (intent-aware — the actual bug fix) ---------- */
@@ -279,74 +333,235 @@ window.saveDiscoverItem = function (idx) {
 };
 
 /* ---------- Boot ---------- */
-async function runDiscovery() {
-    const q = getQueryParam('q').trim();
-    const qEcho = document.getElementById('discover-query');
-    const answerEl = document.getElementById('discover-answer');
-    const answerWrap = document.getElementById('discover-answer-wrap');
-    const speakBtn = document.getElementById('discover-speak-btn');
+/* ============================================================
+   CONVERSATIONAL CHAT ENGINE
+   Ask AI is now a real multi-turn conversation rather than a
+   one-shot search. Each thread is saved to localStorage so a user
+   can come back and keep going, and each *turn* consumes one from
+   the daily allowance (3 free / 5 registered+complete profile /
+   10 VIP) — the same accounting the match engine uses.
+   ============================================================ */
+
+const CHAT_STORE_KEY = 'match_chatThreads';
+const CHAT_MAX_THREADS = 20;
+
+let currentThread = null;   // { id, title, turns: [{role, text, results, ts}], createdAt, updatedAt }
+
+function loadThreads() {
+    try { return JSON.parse(localStorage.getItem(CHAT_STORE_KEY) || '[]'); }
+    catch (e) { return []; }
+}
+function saveThreads(threads) {
+    try {
+        localStorage.setItem(CHAT_STORE_KEY, JSON.stringify(threads.slice(0, CHAT_MAX_THREADS)));
+    } catch (e) { /* quota exceeded — non-fatal, chat still works this session */ }
+}
+function persistCurrentThread() {
+    if (!currentThread || !currentThread.turns.length) return;
+    const threads = loadThreads().filter(t => t.id !== currentThread.id);
+    threads.unshift(currentThread);
+    saveThreads(threads);
+    renderThreadList();
+}
+function newThreadId() { return 't' + Date.now() + Math.random().toString(36).slice(2, 7); }
+
+window.startNewChat = function () {
+    currentThread = null;
+    const log = document.getElementById('chat-log');
+    if (log) log.innerHTML = '';
+    const empty = document.getElementById('discover-empty');
+    if (empty) empty.style.display = 'none';
+    const input = document.getElementById('discover-new-input');
+    if (input) { input.value = ''; input.focus(); }
+    history.replaceState(null, '', '/discover.html');
+    document.title = 'Talk to Our AI Concierge — MatchApp';
+    renderThreadList();
+};
+
+window.openThread = function (id) {
+    const t = loadThreads().find(x => x.id === id);
+    if (!t) return;
+    currentThread = t;
+    const log = document.getElementById('chat-log');
+    if (log) log.innerHTML = '';
+    DISCOVER_ITEMS = [];
+    t.turns.forEach(turn => {
+        if (turn.role === 'user') appendUserBubble(turn.text);
+        else appendAssistantBubble(turn.text, turn.results || [], { instant: true });
+    });
+    renderThreadList();
+    const log2 = document.getElementById('chat-log');
+    if (log2) log2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
+window.deleteThread = function (id, ev) {
+    if (ev) ev.stopPropagation();
+    saveThreads(loadThreads().filter(t => t.id !== id));
+    if (currentThread && currentThread.id === id) window.startNewChat();
+    else renderThreadList();
+};
+
+function renderThreadList() {
+    const host = document.getElementById('chat-history-list');
+    if (!host) return;
+    const threads = loadThreads();
+    if (!threads.length) {
+        host.innerHTML = `<p class="chat-history-empty">${typeof t === 'function' ? t('chat.noHistory') : 'No saved conversations yet.'}</p>`;
+        return;
+    }
+    host.innerHTML = threads.map(th => `
+        <div class="chat-thread-item ${currentThread && currentThread.id === th.id ? 'active' : ''}" onclick="openThread('${th.id}')">
+            <span class="chat-thread-title">${(th.title || 'Conversation').replace(/</g, '&lt;').slice(0, 60)}</span>
+            <button class="chat-thread-del" onclick="deleteThread('${th.id}', event)" aria-label="Delete conversation">✕</button>
+        </div>`).join('');
+}
+
+/* ---------- Bubble rendering ---------- */
+function appendUserBubble(text) {
+    const log = document.getElementById('chat-log');
+    if (!log) return;
+    const div = document.createElement('div');
+    div.className = 'chat-bubble chat-user';
+    div.textContent = text;
+    log.appendChild(div);
+    return div;
+}
+
+function appendAssistantBubble(text, results, opts) {
+    const log = document.getElementById('chat-log');
+    if (!log) return null;
+    const wrap = document.createElement('div');
+    wrap.className = 'chat-bubble chat-assistant';
+
+    const row = document.createElement('div');
+    row.className = 'chat-answer-row';
+    const p = document.createElement('p');
+    p.className = 'chat-answer-text';
+    row.appendChild(p);
+
+    const speak = document.createElement('button');
+    speak.className = 'discover-speak';
+    speak.title = 'Read aloud';
+    speak.setAttribute('aria-label', 'Read answer aloud');
+    speak.textContent = '🔊';
+    speak.onclick = () => window.readAloud(text, speak);
+    row.appendChild(speak);
+
+    wrap.appendChild(row);
+
+    const grid = document.createElement('div');
+    grid.className = 'chat-results-grid';
+    wrap.appendChild(grid);
+
+    log.appendChild(wrap);
+
+    if (opts && opts.instant) p.textContent = text;
+    return { wrap, textEl: p, grid, speakBtn: speak };
+}
+
+async function renderResultsInto(grid, items, baseIndex) {
+    if (!items || !items.length) return;
+    grid.innerHTML = items.map((it, i) => discoverCardHTML(it, baseIndex + i)).join('');
+    grid.style.display = 'grid';
+    await Promise.all(items.map((it, i) => hydrateDiscoverCard(it, baseIndex + i)));
+}
+
+/* ---------- The main ask flow ---------- */
+async function askAndRender(question) {
+    if (!question || !question.trim()) return;
+    question = question.trim();
+
+    const loadEl = document.getElementById('discover-loading');
+    const emptyEl = document.getElementById('discover-empty');
+    if (emptyEl) emptyEl.style.display = 'none';
+
+    // Every turn costs one from the daily allowance, same as a match.
+    if (typeof checkDailyLimit === 'function' && !(await checkDailyLimit())) {
+        return;
+    }
+
+    if (!currentThread) {
+        currentThread = { id: newThreadId(), title: question.slice(0, 60), turns: [], createdAt: Date.now(), updatedAt: Date.now() };
+    }
+
+    appendUserBubble(question);
+    currentThread.turns.push({ role: 'user', text: question, ts: Date.now() });
+
+    // Auto-scroll to the loading animation so the user sees work happening.
+    if (loadEl) {
+        loadEl.style.display = 'block';
+        setTimeout(() => loadEl.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
+    }
+
+    const input = document.getElementById('discover-new-input');
+    if (input) input.value = '';
+
+    // Pass prior turns so follow-ups keep context.
+    const history = currentThread.turns
+        .slice(0, -1)
+        .map(t => ({ role: t.role, text: t.text }));
+
+    let payload, source = 'ai';
+    try { payload = await askAIConversational(question, history); }
+    catch (e) { payload = await fallbackSearch(question); source = 'fallback'; }
+
+    if (typeof gtag === 'function') {
+        gtag('event', 'ai_search', { search_term: question, source: source, results: (payload.results || []).length });
+    }
+
+    if (loadEl) loadEl.style.display = 'none';
+
     const offlineBadge = document.getElementById('discover-offline-badge');
-    const gridEl = document.getElementById('discover-grid');
+    if (offlineBadge) offlineBadge.style.display = payload._live ? 'none' : 'inline-flex';
+
+    const bubble = appendAssistantBubble(payload.answer, payload.results || [], { instant: false });
+
+    // Auto-scroll to the response before the typewriter starts.
+    if (bubble && bubble.wrap) {
+        setTimeout(() => bubble.wrap.scrollIntoView({ behavior: 'smooth', block: 'center' }), 60);
+    }
+
+    if (bubble) {
+        await typewriterReveal(bubble.textEl, payload.answer, 14);
+        if (localStorage.getItem('match_voice_autoread') === 'true') {
+            window.readAloud(payload.answer, bubble.speakBtn);
+        }
+    }
+
+    const baseIndex = DISCOVER_ITEMS.length;
+    const newItems = payload.results || [];
+    DISCOVER_ITEMS = DISCOVER_ITEMS.concat(newItems);
+    if (bubble && newItems.length) await renderResultsInto(bubble.grid, newItems, baseIndex);
+
+    currentThread.turns.push({ role: 'assistant', text: payload.answer, results: newItems, ts: Date.now() });
+    currentThread.updatedAt = Date.now();
+    persistCurrentThread();
+
+    // Keep the follow-up box in view so continuing the conversation is obvious.
+    const row = document.querySelector('.newsearch-row');
+    if (row) setTimeout(() => row.scrollIntoView({ behavior: 'smooth', block: 'center' }), 400);
+}
+
+window.newDiscoverSearch = function () {
+    const el = document.getElementById('discover-new-input');
+    if (el && el.value.trim()) askAndRender(el.value.trim());
+};
+
+/* ---------- Boot ---------- */
+async function runDiscovery() {
+    renderThreadList();
+    const q = getQueryParam('q').trim();
     const loadEl = document.getElementById('discover-loading');
     const emptyEl = document.getElementById('discover-empty');
 
-    if (qEcho) qEcho.textContent = q ? `“${q}”` : '';
     if (!q) {
         if (loadEl) loadEl.style.display = 'none';
         if (emptyEl) emptyEl.style.display = 'block';
         return;
     }
-    document.title = `${q} — MatchApp AI Search`;
-
-    // Discovery consumes a match from the daily allowance, same as a normal match.
-    if (typeof checkDailyLimit === 'function' && !(await checkDailyLimit())) {
-        if (loadEl) loadEl.style.display = 'none';
-        return;
-    }
-
-    let payload, source = 'ai';
-    try { payload = await askAIConversational(q); }
-    catch (e) { payload = await fallbackSearch(q); source = 'fallback'; }
-
-    if (typeof gtag === 'function') {
-        gtag('event', 'ai_search', { search_term: q, source: source, results: (payload.results || []).length });
-    }
-
+    document.title = `${q} — MatchApp AI Concierge`;
     if (loadEl) loadEl.style.display = 'none';
-
-    DISCOVER_ITEMS = payload.results || [];
-
-    if (offlineBadge) offlineBadge.style.display = payload._live ? 'none' : 'inline-flex';
-
-    if (answerEl && payload.answer) {
-        if (answerWrap) answerWrap.style.display = 'block';
-        await typewriterReveal(answerEl, payload.answer, 14);
-        if (speakBtn) {
-            speakBtn.style.display = 'inline-flex';
-            speakBtn.onclick = () => window.readAloud(payload.answer, speakBtn);
-            // Respect the user's "always read aloud" preference from profile settings.
-            if (localStorage.getItem('match_voice_autoread') === 'true') {
-                window.readAloud(payload.answer, speakBtn);
-            }
-        }
-    }
-
-    if (!DISCOVER_ITEMS.length) {
-        if (emptyEl) emptyEl.style.display = 'block';
-        return;
-    }
-    if (gridEl) {
-        gridEl.innerHTML = DISCOVER_ITEMS.map((it, i) => discoverCardHTML(it, i)).join('');
-        gridEl.style.display = 'grid';
-    }
-    await Promise.all(DISCOVER_ITEMS.map((it, i) => hydrateDiscoverCard(it, i)));
+    await askAndRender(q);
 }
-
-window.newDiscoverSearch = function () {
-    const el = document.getElementById('discover-new-input');
-    if (el && el.value.trim()) {
-        window.location.href = '/discover.html?q=' + encodeURIComponent(el.value.trim());
-    }
-};
 
 document.addEventListener('DOMContentLoaded', () => { setTimeout(runDiscovery, 350); });

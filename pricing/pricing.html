@@ -77,6 +77,21 @@
             }
           },
           "description": "Best value: unlimited AI Matches daily, zero ads permanently, instant 4-second VIP routing, billed once a year at a discount to monthly."
+        },
+        {
+          "@type": "Offer",
+          "name": "Business",
+          "price": "49.00",
+          "priceCurrency": "USD",
+          "priceSpecification": {
+            "@type": "UnitPriceSpecification",
+            "referenceQuantity": {
+              "@type": "QuantitativeValue",
+              "value": "1",
+              "unitCode": "MON"
+            }
+          },
+          "description": "For teams and brands: 50 AI Concierge sessions daily, up to 5 team seats, priority support and early access to new features."
         }
       ]
     }
@@ -230,6 +245,22 @@
                             <li>✔️ <strong>Zero Ads</strong> permanently</li>
                         </ul>
                         <button id="btn-vip_annual" onclick="processCheckout('vip_annual')" class="gold-btn" style="width: 100%; font-size: 16px; padding: 14px; background: linear-gradient(90deg,#FFD700,#FFA500);">Go Annual ($39.99/yr)</button>
+                    </article>
+
+                    <!-- BUSINESS PLAN -->
+                    <article class="premium-card" style="border: 2px solid #6B3FA0; background: rgba(107,63,160,0.08); position: relative;">
+                        <div style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: linear-gradient(90deg,#6B3FA0,#A376B6); color: #fff; font-size: 11px; font-weight: 900; padding: 5px 16px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 12px rgba(107,63,160,0.6); white-space: nowrap;">💼 For Teams &amp; Brands</div>
+                        <h3 style="color: #A376B6; font-size: 22px; margin-bottom: 5px;">Business</h3>
+                        <div class="price-badge">$49 <span>/ month</span></div>
+                        <ul style="color: #bbb; font-size: 13px; line-height: 1.8; margin-bottom: 25px; padding-left: 18px;">
+                            <li>✔️ <strong>50 AI sessions daily</strong> (5× VIP)</li>
+                            <li>✔️ Up to <strong>5 team seats</strong> on one account</li>
+                            <li>✔️ Everything in VIP, for every seat</li>
+                            <li>✔️ Priority support — same-day replies</li>
+                            <li>✔️ Early access to new AI Concierge features</li>
+                        </ul>
+                        <button id="btn-business" onclick="processCheckout('business')" class="gold-btn" style="width: 100%; font-size: 16px; padding: 14px; background: linear-gradient(90deg,#6B3FA0,#A376B6); color:#fff;">Get Business ($49/mo)</button>
+                        <p style="color:#8f88a5; font-size:11px; margin:12px 0 0 0; text-align:center;">Need more than 5 seats? <a href="mailto:support@matchapp.cc" style="color:var(--gold);">Talk to us</a></p>
                     </article>
 
                 </div>

@@ -52,7 +52,7 @@ function detectAudioIntent(q: string): boolean {
 }
 
 // Builds the AI Concierge's actual conversational prompt server-side.
-function buildDiscoverPrompt(question: string, langCode: string, country: string, age: string): string {
+function buildDiscoverPrompt(question: string, langCode: string, country: string, age: string, history?: Array<{role: string, text: string}>): string {
   const lang = LANG_NAMES[langCode] || "English";
   const audioIntent = detectAudioIntent(question);
 
@@ -60,7 +60,21 @@ function buildDiscoverPrompt(question: string, langCode: string, country: string
   if (country) personal += ` The viewer is in ${country}; prefer titles genuinely available there.`;
   if (age) personal += ` The viewer is ${age} years old; keep suggestions age-appropriate.`;
 
+  // Prior turns, so follow-ups ("what about something funnier?") make sense.
+  let context = "";
+  if (history && history.length) {
+    const transcript = history
+      .slice(-8) // keep the last few turns; enough for context without bloating the prompt
+      .map((h) => `${h.role === "user" ? "User" : "You"}: ${h.text}`)
+      .join("\n");
+    context =
+      `Here is the conversation so far:\n${transcript}\n\n` +
+      `This is a follow-up in that ongoing conversation — take the earlier turns into account, ` +
+      `and don't repeat titles you already recommended unless the user asks about them specifically.\n\n`;
+  }
+
   return (
+    context +
     `You are the friendly, knowledgeable AI concierge inside MatchApp, a streaming discovery app. ` +
     `A user just asked you: "${question}"\n\n` +
     `Respond exactly like a real, warm, well-informed person would in a chat — not a search engine. ` +
@@ -72,6 +86,8 @@ function buildDiscoverPrompt(question: string, langCode: string, country: string
       : `This question is about something to watch — only suggest movies, series, documentaries or similar visual titles, not podcasts or music, unless the user explicitly asked for audio.`) +
     `\n\nCRITICAL: Write your "answer" field in ${lang}, matching the language the user asked in. ` +
     `Then list 3 to ${DISCOVER_MAX} real, existing titles that back up your answer, best match first. ` +
+    `If the question is conversational rather than a request for titles, still answer warmly and you may ` +
+    `return an empty results array.\n` +
     `Output valid JSON ONLY, no markdown fences, no text outside the JSON: ` +
     `{"answer":"Your natural 2-4 sentence conversational reply in ${lang}.","results":[{"title":"Exact Title","year":"YYYY","type":"movie|series|documentary|podcast|music","platform":"Where to watch or listen","synopsis":"One or two sentences, in ${lang}."}]}`
   );
@@ -100,7 +116,8 @@ Deno.serve(async (req: Request) => {
         body.question,
         typeof body.lang === "string" ? body.lang : "en",
         typeof body.country === "string" ? body.country : "",
-        typeof body.age === "string" || typeof body.age === "number" ? String(body.age) : ""
+        typeof body.age === "string" || typeof body.age === "number" ? String(body.age) : "",
+        Array.isArray(body.history) ? body.history : []
       );
     } else if (typeof body?.prompt === "string") {
       // Legacy path: the main questionnaire match engine still sends a

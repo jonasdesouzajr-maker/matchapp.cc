@@ -7,7 +7,7 @@
     
     <title>MatchApp — Your AI Concierge for Entertainment | Talk or Type to Find What to Watch Tonight</title>
     <meta name="description" content="MatchApp is your AI Concierge for entertainment — a voice-enabled AI consultant that matches you to the perfect movie, series, K-drama, anime, novela, micro-drama, podcast or Spotify playlist. Speak or type your mood in any language and it links you straight to where it streams. Netflix, Prime Video, Max, Disney+, Apple TV+, Globoplay, Crunchyroll, ReelShort, Spotify and 20+ more. Free to start.">
-    <meta name="keywords" content="AI streaming concierge, premium AI streaming service, AI powered movie recommendations, personalized streaming recommendations, what to watch tonight, what should I watch, where to watch movies online, find a movie by mood, best series to binge 2026, AI TV show recommender, streaming search engine, cross platform streaming search, movie matchmaker AI, best AI recommendation engine for streaming, K-drama recommendations, anime to watch, vertical micro drama, ReelShort, DramaBox, novelas brasileiras, telenovelas, Spotify playlist finder, Spotify singles, best podcasts, Netflix what to watch, Max series, Prime Video hidden gems, Disney Plus recommendations, movie finder by star sign, age appropriate shows, streaming guide by country, what to stream near me, what's trending on Netflix, Netflix top 10 this week, The Whisper Man Netflix, Death of the Pastor's Wife, Beauty in Black Netflix, Outer Banks new season, Love Is Blind UK, gospel movies to watch, Christian movies streaming, The Chosen series, faith based movies 2026, gospel music playlist Spotify, Christian podcasts, Kirk Franklin gospel, Maverick City Music, Angel Studios movies, Pure Flix Christian streaming, ask AI what to watch, AI movie search engine, AI concierge for entertainment, voice search streaming app, talk to AI about movies, voice assistant for streaming, AI entertainment consultant, speak to find a movie, voice activated movie finder, AI concierge service entertainment industry, contact matchapp support, matchapp customer service, matchapp instagram">
+    <meta name="keywords" content="AI streaming concierge, premium AI streaming service, AI powered movie recommendations, personalized streaming recommendations, what to watch tonight, what should I watch, where to watch movies online, find a movie by mood, best series to binge 2026, AI TV show recommender, streaming search engine, cross platform streaming search, movie matchmaker AI, best AI recommendation engine for streaming, K-drama recommendations, anime to watch, vertical micro drama, ReelShort, DramaBox, novelas brasileiras, telenovelas, Spotify playlist finder, Spotify singles, best podcasts, Netflix what to watch, Max series, Prime Video hidden gems, Disney Plus recommendations, movie finder by star sign, age appropriate shows, streaming guide by country, what to stream near me, what's trending on Netflix, Netflix top 10 this week, The Whisper Man Netflix, Death of the Pastor's Wife, Beauty in Black Netflix, Outer Banks new season, Love Is Blind UK, gospel movies to watch, Christian movies streaming, The Chosen series, faith based movies 2026, gospel music playlist Spotify, Christian podcasts, Kirk Franklin gospel, Maverick City Music, Angel Studios movies, Pure Flix Christian streaming, ask AI what to watch, AI movie search engine, AI concierge for entertainment, voice search streaming app, talk to AI about movies, voice assistant for streaming, AI entertainment consultant, speak to find a movie, voice activated movie finder, AI concierge service entertainment industry, contact matchapp support, matchapp customer service, matchapp instagram, American Horror Story 13, AHS 13 premiere date, American Horror Story season 13 release date, when does American Horror Story 13 come out, how to watch American Horror Story 13, AHS 13 cast, American Horror Story 13 Ariana Grande, AHS Coven sequel, watch AHS 13 on Hulu, AHS 13 FX September 2026, American Horror Story 13 Disney Plus international, AHS 13 episode schedule">
     <meta name="robots" content="index, follow, max-image-preview:large">
     <meta name="author" content="MatchApp">
     <link rel="canonical" href="https://matchapp.cc/">
@@ -178,6 +178,33 @@
       ]
     }
     </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TVSeason",
+      "name": "American Horror Story: 13",
+      "seasonNumber": 13,
+      "numberOfEpisodes": 13,
+      "datePublished": "2026-09-24",
+      "partOfSeries": { "@type": "TVSeries", "name": "American Horror Story" },
+      "productionCompany": { "@type": "Organization", "name": "20th Television" },
+      "creator": [
+        { "@type": "Person", "name": "Ryan Murphy" },
+        { "@type": "Person", "name": "Brad Falchuk" }
+      ],
+      "actor": [
+        { "@type": "Person", "name": "Jessica Lange" },
+        { "@type": "Person", "name": "Sarah Paulson" },
+        { "@type": "Person", "name": "Evan Peters" },
+        { "@type": "Person", "name": "Angela Bassett" },
+        { "@type": "Person", "name": "Kathy Bates" },
+        { "@type": "Person", "name": "Emma Roberts" },
+        { "@type": "Person", "name": "Ariana Grande" }
+      ],
+      "description": "The 13th season of American Horror Story premieres September 24, 2026 at 9/8c on FX and Hulu, streaming internationally on Disney+. A 13-episode all-star season reuniting the Coven cast.",
+      "url": "https://matchapp.cc/"
+    }
+    </script>
     <!-- HREFLANG: tells search engines which language version to serve -->
     <link rel="alternate" hreflang="x-default" href="https://matchapp.cc/">
     <link rel="alternate" hreflang="en" href="https://matchapp.cc/?lang=en">
@@ -196,7 +223,7 @@
     <link rel="alternate" hreflang="zh" href="https://matchapp.cc/?lang=zh">
 
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=112"></script>
+    <script defer src="/i18n.js?v=113"></script>
 
     <!-- GOOGLE ANALYTICS (GTAG) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
@@ -252,6 +279,54 @@
         @keyframes marqueeScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
         .ad-banner-container { text-align: center; margin-bottom: 30px; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 15px; border: 1px dashed rgba(255,255,255,0.2); min-height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+        /* ===== SPOTLIGHT (upcoming premiere) ===== */
+        .spotlight-card { position: relative; overflow: hidden; border: 2px solid var(--gold) !important; padding: 0 !important; }
+        .spotlight-glow { position: absolute; inset: -50%; background: conic-gradient(from 0deg, transparent 0deg, rgba(229,193,88,0.16) 60deg, rgba(163,118,182,0.14) 120deg, transparent 180deg); animation: spotlightSweep 9s linear infinite; pointer-events: none; }
+        @keyframes spotlightSweep { to { transform: rotate(360deg); } }
+        .spotlight-inner { position: relative; display: flex; gap: 26px; padding: 26px; align-items: center; }
+        .spotlight-poster { position: relative; flex-shrink: 0; width: 190px; height: 285px; border-radius: 14px; overflow: hidden; border: 2px solid var(--gold); cursor: pointer; transition: 0.35s cubic-bezier(0.34,1.56,0.64,1); background: var(--royal-deep); box-shadow: 0 12px 40px rgba(0,0,0,0.7); }
+        .spotlight-poster:hover { transform: scale(1.04) rotate(-1deg); box-shadow: 0 18px 52px rgba(229,193,88,0.45); }
+        .spotlight-poster img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .spotlight-ribbon { position: absolute; top: 12px; left: -34px; transform: rotate(-45deg); background: linear-gradient(135deg, #d32f2f, #8b0000); color: #fff; font-size: 9.5px; font-weight: 900; letter-spacing: 0.7px; padding: 5px 40px; box-shadow: 0 3px 10px rgba(0,0,0,0.6); animation: ribbonPulse 2.4s ease-in-out infinite; }
+        @keyframes ribbonPulse { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.35); } }
+        .spotlight-body { flex: 1; min-width: 0; }
+        .spotlight-eyebrow { display: inline-block; color: var(--gold); font-size: 11.5px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.4px; margin-bottom: 8px; }
+        .spotlight-title { font-size: 30px; font-weight: 900; margin: 0 0 10px 0; line-height: 1.15; background: linear-gradient(100deg, #fff 20%, var(--gold-glow) 45%, #d32f2f 70%, #fff 90%); background-size: 250% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: textShimmer 6s linear infinite; }
+        .spotlight-desc { color: #cfc7e0; font-size: 14.5px; line-height: 1.65; margin: 0 0 16px 0; }
+        .spotlight-meta { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 16px; }
+        .spotlight-chip { background: rgba(107,63,160,0.3); border: 1px solid rgba(229,193,88,0.4); color: #e5deed; font-size: 12.5px; padding: 7px 14px; border-radius: 20px; font-weight: 600; }
+        .spotlight-chip strong { color: var(--gold-glow); }
+        .spotlight-countdown { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+        .countdown-unit { background: rgba(0,0,0,0.55); border: 1px solid var(--gold); border-radius: 11px; padding: 9px 15px; text-align: center; min-width: 62px; animation: countdownTick 1s ease-in-out infinite alternate; }
+        @keyframes countdownTick { from { box-shadow: 0 0 0 rgba(229,193,88,0); } to { box-shadow: 0 0 14px rgba(229,193,88,0.28); } }
+        .countdown-num { display: block; font-size: 22px; font-weight: 900; color: var(--gold-glow); line-height: 1; }
+        .countdown-label { display: block; font-size: 9.5px; color: #9d95b0; text-transform: uppercase; letter-spacing: 0.9px; margin-top: 4px; }
+        .countdown-live { color: #ff5252; font-weight: 900; font-size: 17px; text-transform: uppercase; letter-spacing: 1px; animation: ribbonPulse 1.4s ease-in-out infinite; }
+        .spotlight-actions { display: flex; gap: 11px; flex-wrap: wrap; }
+        .spotlight-save { width: auto !important; padding: 13px 24px !important; font-size: 14px !important; }
+        .spotlight-save.saved { background: #25D366 !important; color: #fff !important; }
+        .spotlight-ask { background: transparent; border: 1px solid rgba(229,193,88,0.5); color: var(--gold-glow); padding: 13px 22px; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.25s; font-family: inherit; }
+        .spotlight-ask:hover { background: rgba(229,193,88,0.15); border-color: var(--gold); }
+        @media (max-width: 700px) {
+            .spotlight-inner { flex-direction: column; text-align: center; padding: 22px 18px; }
+            .spotlight-poster { width: 160px; height: 240px; }
+            .spotlight-title { font-size: 24px; }
+            .spotlight-meta, .spotlight-countdown, .spotlight-actions { justify-content: center; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .spotlight-glow, .spotlight-ribbon, .spotlight-title, .countdown-unit, .countdown-live { animation: none !important; }
+            .spotlight-title { color: var(--gold); -webkit-text-fill-color: var(--gold); }
+        }
+
+        /* ===== PROFILE COMPLETION NUDGE ===== */
+        .profile-nudge { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 4000; display: flex; align-items: center; gap: 14px; background: linear-gradient(135deg, rgba(32,24,52,0.98), rgba(20,19,26,0.98)); border: 1px solid var(--gold); border-radius: 14px; padding: 13px 18px; box-shadow: 0 12px 40px rgba(0,0,0,0.8); max-width: 92vw; animation: nudgeIn 0.5s cubic-bezier(0.22,1,0.36,1); }
+        @keyframes nudgeIn { from { opacity:0; transform: translate(-50%, 20px); } to { opacity:1; transform: translate(-50%, 0); } }
+        .profile-nudge span { color: #ddd6ec; font-size: 13.5px; }
+        .profile-nudge-btn { background: var(--gold); color: #14131A; padding: 9px 16px; border-radius: 9px; font-size: 12.5px; font-weight: 900; text-decoration: none; white-space: nowrap; }
+        .profile-nudge-x { background: none; border: none; color: #8f88a5; font-size: 16px; cursor: pointer; padding: 2px 4px; }
+        .profile-nudge-x:hover { color: var(--gold); }
+        @media (max-width: 560px) { .profile-nudge { flex-wrap: wrap; justify-content: center; text-align: center; } }
 
         /* ===== "FIND MY MATCH" CTA — unmistakable highlight on arrival ===== */
         #questionnaire-box.cta-highlight { animation: ctaPulse 1.6s ease-out; }
@@ -640,6 +715,38 @@
                         <script src="https://www.highperformanceformat.com/0ffd8484dc13e2d5967d0d70f61fc753/invoke.js"></script>
                     </div>
                 </div>
+
+                <!-- SPOTLIGHT: upcoming major release -->
+                <article id="spotlight-ahs13" class="premium-card spotlight-card">
+                    <div class="spotlight-glow" aria-hidden="true"></div>
+                    <div class="spotlight-inner">
+                        <div class="spotlight-poster" onclick="saveSpotlightTitle()" role="button" tabindex="0"
+                             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();saveSpotlightTitle();}"
+                             aria-label="Save American Horror Story: 13 to Watch Later">
+                            <img id="spotlight-poster-img" src="" alt="American Horror Story: 13 poster" loading="lazy">
+                            <div class="spotlight-ribbon" data-i18n="spotlight.ribbon">COMING THIS MONTH</div>
+                        </div>
+                        <div class="spotlight-body">
+                            <span class="spotlight-eyebrow" data-i18n="spotlight.eyebrow">🔥 Most Anticipated Premiere</span>
+                            <h2 class="spotlight-title">American Horror Story: 13</h2>
+                            <p class="spotlight-desc" data-i18n="spotlight.desc">The Coven rises again. Jessica Lange, Sarah Paulson, Evan Peters, Angela Bassett and Kathy Bates return for a 13-episode all-star season — plus Ariana Grande's franchise debut.</p>
+
+                            <div class="spotlight-meta">
+                                <span class="spotlight-chip">📅 <strong>Sept 24, 2026</strong></span>
+                                <span class="spotlight-chip">🕘 9/8c</span>
+                                <span class="spotlight-chip">📺 FX &amp; Hulu</span>
+                                <span class="spotlight-chip">🌍 Disney+ <span data-i18n="spotlight.intl">(international)</span></span>
+                            </div>
+
+                            <div id="spotlight-countdown" class="spotlight-countdown" aria-live="polite"></div>
+
+                            <div class="spotlight-actions">
+                                <button onclick="saveSpotlightTitle()" class="gold-btn spotlight-save" id="spotlight-save-btn" data-i18n="spotlight.save">⭐ Save to Watch Later</button>
+                                <button onclick="askAI('Tell me about American Horror Story 13 and what to watch before it premieres')" class="spotlight-ask" data-i18n="spotlight.ask">🤖 Ask our AI about it</button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
 
                 <article id="search-box" class="premium-card">
                     <h2 style="color: var(--gold); margin: 0 0 8px 0; font-size: 26px; text-align: center; text-transform: uppercase; font-weight: 900;" data-i18n="search.heading">Search or Ask Anything</h2>
@@ -1074,6 +1181,9 @@
                     what to watch tonight · best shows to watch right now · where to stream movies online ·
                     AI streaming concierge · premium AI streaming service · ask AI what to watch ·
                     AI concierge for entertainment · AI entertainment consultant · voice search streaming app ·
+                    American Horror Story 13 premiere date · AHS 13 September 24 2026 · how to watch American Horror Story 13 ·
+                    American Horror Story 13 cast Ariana Grande · AHS Coven sequel 2026 · watch AHS 13 on Hulu and FX ·
+                    American Horror Story 13 Disney+ international · AHS 13 episode release schedule ·
                     talk to AI about movies · speak to find a movie · voice activated movie finder ·
                     AI concierge service entertainment industry ·
                     find a show about a topic · natural language movie search · semantic streaming search ·
@@ -1226,9 +1336,9 @@
         </div>
     </div>
 
-    <script src="/app.js?v=112"></script>
-    <script src="/share.js?v=112"></script>
-    <script src="/voice-input.js?v=112"></script>
+    <script src="/app.js?v=113"></script>
+    <script src="/share.js?v=113"></script>
+    <script src="/voice-input.js?v=113"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initVoiceInput('specific-search-input', 'mic-btn-index', () => smartSearch());

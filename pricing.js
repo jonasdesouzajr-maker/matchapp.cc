@@ -13,6 +13,12 @@ const STRIPE_LINK_AD_FREE = "https://buy.stripe.com/fZu4gz6nEaDHbpY7k0gEg01";
 const STRIPE_LINK_VIP_MONTHLY = "https://buy.stripe.com/fZu3cvbHY13779I47OgEg03";
 const STRIPE_LINK_VIP_ANNUAL = "https://buy.stripe.com/7sY28reUa137dy65bSgEg02";
 
+// ⚠️ REPLACE THIS with the real Payment Link once you create the Business
+// product in Stripe (see the setup steps in the message accompanying this
+// change). Until then, the Business button routes to email so no one hits
+// a dead checkout page.
+const STRIPE_LINK_BUSINESS = "PASTE_YOUR_BUSINESS_PAYMENT_LINK_HERE";
+
 window.processCheckout = async function(planType) {
     if (!isUserLoggedIn || !supabaseClient) {
         alert("💎 Please create a free account or log in first so we can securely link this VIP pass to your profile!");
@@ -44,6 +50,17 @@ window.processCheckout = async function(planType) {
                 checkoutUrl = `${STRIPE_LINK_VIP_MONTHLY}?client_reference_id=${userId}`;
             } else if (planType === 'vip_annual') {
                 checkoutUrl = `${STRIPE_LINK_VIP_ANNUAL}?client_reference_id=${userId}`;
+            } else if (planType === 'business') {
+                // Graceful behaviour before the Stripe link exists: send them to
+                // sales instead of a broken checkout.
+                if (!STRIPE_LINK_BUSINESS || STRIPE_LINK_BUSINESS.startsWith('PASTE_')) {
+                    window.location.href = 'mailto:support@matchapp.cc?subject=' +
+                        encodeURIComponent('MatchApp Business plan enquiry') +
+                        '&body=' + encodeURIComponent("Hi MatchApp team,\n\nI'd like to know more about the Business plan.\n\nCompany:\nExpected monthly volume:\n\nThanks!");
+                    if (btn) { btn.innerText = originalText; btn.disabled = false; btn.style.opacity = "1"; }
+                    return;
+                }
+                checkoutUrl = `${STRIPE_LINK_BUSINESS}?client_reference_id=${userId}`;
             }
 
             // Route user directly to Stripe Checkout

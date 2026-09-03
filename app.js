@@ -482,6 +482,81 @@ window.scrollToQuestionnaire = function() {
     }, 450); // let the smooth scroll settle before drawing attention to it
 };
 
+// ----------------------------------------------------
+// PROFILE HYDRATION AFTER LOGIN
+// Pulls whatever Google gave us (name, avatar) into the profiles row and
+// into localStorage so the profile page is pre-filled, then works out what
+// is still missing. Google never provides country, date of birth or star
+// sign, so those always need the user to fill them in — and until they do,
+// the account stays on the 3-session tier rather than 5.
+// ----------------------------------------------------
+const REQUIRED_PROFILE_FIELDS = ['full_name', 'country', 'dob', 'star_sign', 'age']; // avatar_url deliberately optional
+
+async function hydrateProfileFromAuth(user) {
+    if (!supabaseClient || !user) return;
+    try {
+        const meta = user.user_metadata || {};
+        const googleName = meta.full_name || meta.name || '';
+        const googleAvatar = meta.avatar_url || meta.picture || '';
+
+        // Read the existing row first — never overwrite something the user
+        // has already filled in themselves with Google's version.
+        const { data: existing } = await supabaseClient
+            .from('profiles').select('*').eq('id', user.id).single();
+
+        const patch = {};
+        if (googleName && !(existing && existing.full_name)) patch.full_name = googleName;
+        if (googleAvatar && !(existing && existing.avatar_url)) patch.avatar_url = googleAvatar;
+
+        if (Object.keys(patch).length) {
+            await supabaseClient.from('profiles').update(patch).eq('id', user.id);
+        }
+
+        const merged = Object.assign({}, existing || {}, patch);
+
+        // Mirror into localStorage so the profile page and the AI prompts
+        // (country/age personalization) can use it immediately.
+        if (merged.full_name) localStorage.setItem('match_user_name', merged.full_name);
+        if (merged.country)   localStorage.setItem('match_user_country', merged.country);
+        if (merged.dob)       localStorage.setItem('match_user_dob', merged.dob);
+        if (merged.star_sign) localStorage.setItem('match_user_sign', merged.star_sign);
+        if (merged.age != null) localStorage.setItem('match_user_age', String(merged.age));
+        if (merged.avatar_url) localStorage.setItem('match_user_avatar', merged.avatar_url);
+        if (user.email) localStorage.setItem('match_user_email', user.email);
+
+        const missing = REQUIRED_PROFILE_FIELDS.filter(f => {
+            const v = merged[f];
+            return v === null || v === undefined || String(v).trim() === '';
+        });
+        window.profileMissingFields = missing;
+
+        if (missing.length) promptProfileCompletion(missing);
+        return missing;
+    } catch (e) {
+        console.warn('Profile hydration skipped:', e.message || e);
+        return null;
+    }
+}
+window.hydrateProfileFromAuth = hydrateProfileFromAuth;
+
+// Non-blocking nudge — explains exactly what unlocking the extra sessions needs.
+function promptProfileCompletion(missing) {
+    if (document.getElementById('profile-nudge')) return; // already shown this session
+    if (window.location.pathname.includes('/profile/')) return; // they're already there
+
+    const bar = document.createElement('div');
+    bar.id = 'profile-nudge';
+    bar.className = 'profile-nudge';
+    const label = (window.t && t('profile.nudge')) ||
+        'Finish your profile to unlock 5 daily AI sessions instead of 3.';
+    const cta = (window.t && t('profile.nudgeCta')) || 'Complete profile';
+    bar.innerHTML = `<span>👤 ${label}</span>
+        <a href="/profile/profile.html" class="profile-nudge-btn">${cta}</a>
+        <button class="profile-nudge-x" aria-label="Dismiss">✕</button>`;
+    document.body.appendChild(bar);
+    bar.querySelector('.profile-nudge-x').onclick = () => bar.remove();
+}
+
 if (supabaseClient) {
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
         if (session && session.user) {
@@ -493,7 +568,9 @@ if (supabaseClient) {
             if (regBtn) regBtn.style.display = 'none';
             if (outBtn) outBtn.style.display = 'inline-block';
             if (profTab) profTab.style.display = 'inline-flex';
-            // Pull the authoritative server-side quota for this account.
+            // Pull Google's data into our own profile row, then refresh quota
+            // (which now depends on whether that profile is complete).
+            await hydrateProfileFromAuth(session.user);
             if (window.refreshQuotaStatus) window.refreshQuotaStatus();
         } else {
             isUserLoggedIn = false;
@@ -589,6 +666,7 @@ const CONTENT_CATALOG = [
     // across platforms so a platform-specific filter has more than one option ----
     { title: "Divorced at the Wedding Day", synopsis: "A bride is humiliated and divorced at the altar, then returns transformed — richer, sharper, and done playing nice.", platform: "DramaBox", cats: ["vertical micro-drama"], moods: ["dark and gritty","intense and thrilling"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["teen PG-13","any"] },
     { title: "The Double Life of a Billionaire's Daughter", synopsis: "Raised in secret away from her family's empire, a young woman is pulled back into a world of corporate warfare and inheritance schemes.", platform: "ReelShort", cats: ["vertical micro-drama"], moods: ["intense and thrilling","dark and gritty"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["teen PG-13","any"] },
+    { title: "American Horror Story: 13", synopsis: "The Coven rises again in a 13-episode all-star season. Jessica Lange, Sarah Paulson, Evan Peters, Angela Bassett and Kathy Bates return, joined by Ariana Grande in her franchise debut. Premieres September 24, 2026 on FX and Hulu.", platform: "Hulu", cats: ["series","limited series"], moods: ["scary","dark and gritty","intense and thrilling"], vibes: ["fast-paced binge-worthy","prestige and critically acclaimed","award winning"], ratings: ["mature adults only R rated","any"] },
     { title: "Second Chance Mafia Wife", synopsis: "A marriage of convenience to a mafia heir spirals into real danger — and real feelings — as old enemies resurface.", platform: "ShortMax", cats: ["vertical micro-drama"], moods: ["intense and thrilling","romantic"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["mature adults only R rated","any"] }
 ];
 
@@ -1424,3 +1502,99 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, { passive: true });
 });
+// ----------------------------------------------------
+// SPOTLIGHT — upcoming premiere countdown + save
+// Dates verified against FX/Variety/TVGuide announcements:
+// American Horror Story: 13 premieres Thu Sept 24 2026, 9/8c ET,
+// on FX and Hulu; internationally on Disney+.
+// ----------------------------------------------------
+const SPOTLIGHT = {
+    title: 'American Horror Story: 13',
+    // 9pm ET = 01:00 UTC the following day
+    premiereUTC: Date.UTC(2026, 8, 25, 1, 0, 0), // month is 0-indexed: 8 = September
+    platform: 'Hulu',
+    synopsis: "The Coven rises again. Jessica Lange, Sarah Paulson, Evan Peters, Angela Bassett and Kathy Bates return for a 13-episode all-star season — plus Ariana Grande's franchise debut.",
+    streamUrl: 'https://www.hulu.com/series/american-horror-story-fbf9ee3c-a5f0-4d1c-9de5-fb1f0e63dcbc'
+};
+
+function renderSpotlightCountdown() {
+    const el = document.getElementById('spotlight-countdown');
+    if (!el) return;
+    const diff = SPOTLIGHT.premiereUTC - Date.now();
+
+    if (diff <= 0) {
+        el.innerHTML = `<span class="countdown-live">${window.t ? t('spotlight.outNow') : '🔴 Out now — stream it tonight'}</span>`;
+        return;
+    }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    const L = {
+        d: window.t ? t('spotlight.days') : 'Days',
+        h: window.t ? t('spotlight.hours') : 'Hrs',
+        m: window.t ? t('spotlight.mins') : 'Min',
+        s: window.t ? t('spotlight.secs') : 'Sec'
+    };
+    el.innerHTML =
+        `<div class="countdown-unit"><span class="countdown-num">${d}</span><span class="countdown-label">${L.d}</span></div>` +
+        `<div class="countdown-unit"><span class="countdown-num">${String(h).padStart(2,'0')}</span><span class="countdown-label">${L.h}</span></div>` +
+        `<div class="countdown-unit"><span class="countdown-num">${String(m).padStart(2,'0')}</span><span class="countdown-label">${L.m}</span></div>` +
+        `<div class="countdown-unit"><span class="countdown-num">${String(s).padStart(2,'0')}</span><span class="countdown-label">${L.s}</span></div>`;
+}
+
+window.saveSpotlightTitle = function () {
+    let list = [];
+    try { list = JSON.parse(localStorage.getItem('match_savedList') || '[]'); } catch (e) {}
+    const btn = document.getElementById('spotlight-save-btn');
+
+    if (list.some(i => (i.title || i) === SPOTLIGHT.title)) {
+        if (window.showToast) showToast(`"${SPOTLIGHT.title}" is already in your Watch Later.`);
+        return;
+    }
+    list.unshift({
+        title: SPOTLIGHT.title,
+        posterUrl: document.getElementById('spotlight-poster-img')?.src || '',
+        platform: SPOTLIGHT.platform,
+        streamUrl: SPOTLIGHT.streamUrl,
+        isAudio: false,
+        addedAt: Date.now()
+    });
+    localStorage.setItem('match_savedList', JSON.stringify(list));
+    if (btn) { btn.textContent = window.t ? t('spotlight.saved') : '✓ Saved to Watch Later'; btn.classList.add('saved'); }
+    if (window.showToast) showToast(`⭐ Saved "${SPOTLIGHT.title}" — we'll be here when it drops.`);
+    if (typeof confetti === 'function') confetti({ particleCount: 70, spread: 60, origin: { y: 0.4 }, colors: ['#E5C158','#d32f2f','#ffffff'] });
+    if (typeof gtag === 'function') gtag('event', 'save_watch_later', { title: SPOTLIGHT.title, source: 'spotlight' });
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    const img = document.getElementById('spotlight-poster-img');
+    if (img) {
+        // Real artwork where available, branded local cover if not — never blank,
+        // and never an unrelated image (same guarantee as the match results).
+        getRichMetadata(SPOTLIGHT.title, 'series').then(meta => {
+            if (meta && meta.artwork) {
+                img.onerror = function () { this.onerror = null; this.src = generateLocalPosterSVG(SPOTLIGHT.title); };
+                img.src = meta.artwork;
+            } else {
+                img.src = generateLocalPosterSVG(SPOTLIGHT.title);
+            }
+        }).catch(() => { img.src = generateLocalPosterSVG(SPOTLIGHT.title); });
+    }
+
+    if (document.getElementById('spotlight-countdown')) {
+        renderSpotlightCountdown();
+        setInterval(renderSpotlightCountdown, 1000);
+    }
+
+    // Reflect already-saved state on load.
+    try {
+        const list = JSON.parse(localStorage.getItem('match_savedList') || '[]');
+        if (list.some(i => (i.title || i) === SPOTLIGHT.title)) {
+            const btn = document.getElementById('spotlight-save-btn');
+            if (btn) { btn.textContent = window.t ? t('spotlight.saved') : '✓ Saved to Watch Later'; btn.classList.add('saved'); }
+        }
+    } catch (e) {}
+});
+
+document.addEventListener('matchapp:langchange', renderSpotlightCountdown);
