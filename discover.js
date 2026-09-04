@@ -44,37 +44,6 @@ function detectAudioIntent(q) {
 
 /* ---------- AI conversational answer ---------- */
 
-// Builds the same prompt the Edge Function builds, used ONLY as a compatibility
-// fallback when the deployed function is an older version that doesn't yet
-// understand mode:'discover'. Keeping this here means Ask AI works whether or
-// not the latest Edge Function has been redeployed.
-function buildLegacyDiscoverPrompt(question, langName, country, age) {
-    const audioIntent = detectAudioIntent(question);
-    let personal = '';
-    if (country) personal += ` The viewer is in ${country}; prefer titles genuinely available there.`;
-    if (age) personal += ` The viewer is ${age} years old; keep suggestions age-appropriate.`;
-
-    return `You are the friendly, knowledgeable AI concierge inside MatchApp, a streaming discovery app. ` +
-        `A user just asked you: "${question}"\n\n` +
-        `Respond exactly like a real, warm, well-informed person would in a chat — not a search engine. ` +
-        `Write 2-4 natural sentences that directly answer what they asked, using your own knowledge of movies, ` +
-        `TV series, documentaries, K-dramas, anime, telenovelas, podcasts, music and audiobooks. ` +
-        `Be specific and genuinely helpful, the way you'd explain it to a friend.${personal}\n\n` +
-        (audioIntent
-            ? `This question is about audio content (podcasts, music, playlists, or audiobooks) — only suggest audio titles.`
-            : `This question is about something to watch — only suggest movies, series, documentaries or similar visual titles, not podcasts or music, unless the user explicitly asked for audio.`) +
-        `\n\nCRITICAL: Write your "answer" field in ${langName}, matching the language the user asked in. ` +
-        `Then list 3 to ${DISCOVER_MAX} real, existing titles that back up your answer, best match first. ` +
-        `Output valid JSON ONLY, no markdown fences, no text outside the JSON: ` +
-        `{"answer":"Your natural 2-4 sentence conversational reply in ${langName}.","results":[{"title":"Exact Title","year":"YYYY","type":"movie|series|documentary|podcast|music","platform":"Where to watch or listen","synopsis":"One or two sentences, in ${langName}."}]}`;
-}
-
-const LANG_NAMES_DISCOVER = {
-    'en': 'English', 'pt-BR': 'Brazilian Portuguese', 'es': 'Spanish', 'fr': 'French',
-    'de': 'German', 'it': 'Italian', 'tr': 'Turkish', 'ru': 'Russian', 'ar': 'Arabic',
-    'hi': 'Hindi', 'id': 'Indonesian', 'ja': 'Japanese', 'ko': 'Korean', 'zh': 'Chinese'
-};
-
 // Attempts to salvage JSON that was cut off mid-object (the classic symptom of
 // a model hitting its token ceiling). Closes any unterminated string, then any
 // still-open brackets, in the right order. Returns null if it's beyond saving.
@@ -138,53 +107,41 @@ async function askAIConversational(question, history) {
     if (!window.supabaseClient) throw new Error('No backend');
 
     // The prompt engineering lives in the gemini-proxy Edge Function, so the
-    // client normally just sends structured params. But if that function
-    // hasn't been redeployed yet, it returns a 400 for mode:'discover' —
-    // which used to cascade into the useless keyword-search fallback and the
-    // "couldn't find a confident match" message. We now detect that and retry
-    // with the legacy {prompt} shape, which every deployed version accepts.
+    // client sends structured params rather than a pre-built prompt string.
     const country = localStorage.getItem('match_user_country') || '';
     const age = localStorage.getItem('match_user_age') || '';
     const lang = window.MATCH_LANG || 'en';
+    const body = { mode: 'discover', question, lang, country, age, history: history || [] };
 
-    // Attempt 1 — current contract (server-side prompt building).
-    let firstError = null;
-    try {
-        const { data, error } = await window.supabaseClient.functions.invoke('gemini-proxy', {
-            body: { mode: 'discover', question, lang, country, age, history: history || [] }
-        });
-        if (!error && data && !data.error) return parseAIResponse(data);
-        firstError = (error && error.message) || (data && data.error) || 'unknown';
-    } catch (e) { firstError = e.message || String(e); }
-
-    console.warn('[MatchApp AI] discover-mode attempt failed:', firstError,
-        '\n→ Retrying with the legacy prompt format (this is expected if the Edge Function has not been redeployed).');
-
-    // Attempt 2 — legacy contract, for an Edge Function that predates mode:'discover'.
-    const langName = LANG_NAMES_DISCOVER[lang] || 'English';
-    let prompt = buildLegacyDiscoverPrompt(question, langName, country, age);
-
-    // Carry prior turns so follow-up questions stay in context.
-    if (history && history.length) {
-        const transcript = history.map(h => `${h.role === 'user' ? 'User' : 'You'}: ${h.text}`).join('\n');
-        prompt = `Here is the conversation so far:\n${transcript}\n\n${prompt}\n\n` +
-            `IMPORTANT: This is a follow-up in an ongoing conversation. Take the earlier turns into account ` +
-            `and do not repeat titles you already recommended above unless the user asks about them specifically.`;
+    // Two attempts of the SAME contract, not a fallback to a different one.
+    // This used to retry with a bare {prompt} request on failure — but that
+    // exact wire shape is ALSO what the specific-title-search flow sends
+    // (app.js's fetchGeminiData), for a genuinely different purpose, expecting
+    // a different response schema. The Edge Function can't tell the two
+    // callers apart from an identical bare {prompt}, so a transient failure
+    // on attempt 1 could get the WRONG schema forced onto attempt 2 —
+    // Gemini structurally constrained into {title,synopsis,platform} while
+    // being asked a conversational question, producing exactly the kind of
+    // mismatched, wrong-shaped result that's confusing to look at. Retrying
+    // the identical, correct contract removes that collision entirely.
+    for (let attempt = 1; attempt <= 2; attempt++) {
+        try {
+            const { data, error } = await window.supabaseClient.functions.invoke('gemini-proxy', { body });
+            if (!error && data && !data.error) return parseAIResponse(data);
+            if (attempt === 1) {
+                console.warn('[MatchApp AI] Attempt 1 failed, retrying once:', (error && error.message) || (data && data.error) || 'unknown');
+                continue;
+            }
+            const detail = (error && error.message) || (data && data.error) || 'unknown';
+            console.error('[MatchApp AI] Both attempts failed:', detail,
+                '\n→ Run the diagnostic to see exactly why: open /ai-check.html on this site.');
+            throw new Error('AI unavailable: ' + detail);
+        } catch (e) {
+            if (attempt === 2) throw e;
+            console.warn('[MatchApp AI] Attempt 1 threw, retrying once:', e.message || e);
+        }
     }
-
-    const { data, error } = await window.supabaseClient.functions.invoke('gemini-proxy', { body: { prompt } });
-    if (error) {
-        const detail = error.message || String(error);
-        console.error('[MatchApp AI] Both attempts failed. Legacy attempt error:', detail,
-            '\n→ Run the diagnostic to see exactly why: open /ai-check.html on this site.');
-        throw new Error('AI unavailable: ' + detail);
-    }
-    if (data && data.error) {
-        console.error('[MatchApp AI] Edge Function returned an error:', data.error, data.detail || '',
-            '\n→ Run the diagnostic: open /ai-check.html on this site.');
-        throw new Error('AI unavailable: ' + data.error);
-    }
-    return parseAIResponse(data);
+    throw new Error('AI unavailable');
 }
 
 /* ---------- Keyless fallback (intent-aware — the actual bug fix) ---------- */
@@ -321,7 +278,7 @@ function discoverCardHTML(item, idx) {
         <div class="discover-body">
             <h3>${safe}</h3>
             ${meta ? `<div class="discover-meta">${meta}</div>` : ''}
-            <p>${(item.synopsis || '').replace(/</g, '&lt;')}</p>
+            <p>${((typeof window.sanitizeDisplayText === 'function' ? window.sanitizeDisplayText(item.synopsis, ['synopsis']) : item.synopsis) || '').replace(/</g, '&lt;')}</p>
             <div class="discover-actions">
                 <a id="dl-${idx}" class="gold-btn discover-play" href="#" target="_blank" rel="noopener">${watchLabel}</a>
                 <button class="discover-save" onclick="saveDiscoverItem(${idx})" id="ds-${idx}">${saveLabel}</button>
@@ -581,6 +538,13 @@ async function askAndRender(question) {
     let payload, source = 'ai';
     try { payload = await askAIConversational(question, history); }
     catch (e) { payload = await fallbackSearch(question); source = 'fallback'; }
+
+    // Same unconditional safety net as the match engine: no matter which
+    // upstream path produced this, raw JSON-looking text can never reach
+    // the chat bubble.
+    if (typeof window.sanitizeDisplayText === 'function' && payload && payload.answer) {
+        payload.answer = window.sanitizeDisplayText(payload.answer, ['answer', 'synopsis', 'text']);
+    }
 
     if (typeof gtag === 'function') {
         gtag('event', 'ai_search', { search_term: question, source: source, results: (payload.results || []).length });

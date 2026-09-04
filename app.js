@@ -199,9 +199,46 @@ const COVER_CACHE = {};
 // meant that if that service was slow, blocked by an ad-blocker, or down, the
 // "never fail" cover path failed — leaving a genuinely blank poster. The local
 // SVG generator has no network dependency at all.
+// ----------------------------------------------------
+// DISPLAY SANITIZER — the last line of defense before text reaches the screen.
+// No matter which upstream path a piece of text came from (Gemini directly,
+// a retry, a malformed edge-function response, anything future code might
+// add), this guarantees a user can never see raw '{"key": "value"}' text in
+// a title or synopsis. If a string looks like an undigested JSON object, it
+// tries to parse it and pull out the field that was actually meant to be
+// shown, in priority order; if that fails, it strips the JSON punctuation
+// entirely rather than displaying it verbatim.
+// ----------------------------------------------------
+function sanitizeDisplayText(text, preferredKeys) {
+    if (typeof text !== 'string') return text == null ? '' : String(text);
+    const trimmed = text.trim();
+
+    // Fast path: doesn't look like a raw object dump, nothing to do. Does NOT
+    // require a trailing '}' — a response cut off mid-object (no closing
+    // brace at all) is exactly the realistic case this needs to catch too.
+    const looksLikeJson = trimmed.startsWith('{') && /"[a-zA-Z_]+"\s*:/.test(trimmed);
+    if (!looksLikeJson) return text;
+
+    try {
+        const parsed = JSON.parse(trimmed);
+        for (const key of (preferredKeys || ['synopsis', 'answer', 'text', 'title', 'description'])) {
+            if (typeof parsed[key] === 'string' && parsed[key].trim()) return parsed[key].trim();
+        }
+        // Parsed fine but none of the expected fields were present — join
+        // whatever string values it does have rather than showing braces.
+        const anyStrings = Object.values(parsed).filter(v => typeof v === 'string' && v.trim());
+        if (anyStrings.length) return anyStrings.join(' — ');
+    } catch (e) { /* wasn't valid JSON after all — fall through to stripping */ }
+
+    // Last resort: strip JSON punctuation so at least no braces/quotes show,
+    // rather than ever rendering the raw structure to a user.
+    return trimmed.replace(/^\{|\}$/g, '').replace(/"([a-zA-Z_]+)"\s*:\s*/g, '').replace(/["{}]/g, '').replace(/,\s*/g, ' — ').trim();
+}
+
 function generatedCover(title) {
     return generateLocalPosterSVG(title);
 }
+window.sanitizeDisplayText = sanitizeDisplayText;
 
 function upgradeArtwork(url) {
     if (!url) return null;
@@ -1327,8 +1364,8 @@ async function renderResult(selected, isSpecificSearch) {
     window.playPremiumSound();
     if (typeof confetti !== 'undefined') confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#E5C158', '#FFF', '#8A2BE2', '#E50914'] });
 
-    document.getElementById('res-title').innerText = selected.title; 
-    document.getElementById('res-synopsis').innerText = selected.synopsis;
+    document.getElementById('res-title').innerText = sanitizeDisplayText(selected.title, ['title']);
+    document.getElementById('res-synopsis').innerText = sanitizeDisplayText(selected.synopsis, ['synopsis', 'answer', 'description']);
     document.getElementById('res-platform-badge').innerText =
         (selected.platform && selected.platform !== 'any') ? selected.platform : (window.t ? t('res.multiplatform') : 'Multiple Platforms');
 
