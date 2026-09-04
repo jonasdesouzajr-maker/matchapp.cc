@@ -184,6 +184,13 @@ window.openShareSheet = async function() {
     const title = window.globalMatchTitle;
     if (!title) { if (window.showToast) showToast('Get a match first, then share it!', true); return; }
 
+    // Content-safety gate, checked here too (not just at the button) so this
+    // can never be bypassed by calling the function directly.
+    if (window.currentMatchShareRestricted) {
+        if (window.getAnotherMatchInstead) window.getAnotherMatchInstead();
+        return;
+    }
+
     const modal = document.getElementById('share-modal');
     const preview = document.getElementById('share-preview');
     const statusEl = document.getElementById('share-reward-status');

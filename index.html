@@ -265,7 +265,7 @@
     <link rel="alternate" hreflang="zh" href="https://matchapp.cc/?lang=zh">
 
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=121"></script>
+    <script defer src="/i18n.js?v=122"></script>
 
     <!-- GOOGLE ANALYTICS (GTAG) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
@@ -553,6 +553,9 @@
         .share-cta { flex:1; min-width:100%; margin-top:10px; background: linear-gradient(135deg, #E1306C, #6B3FA0, #E5C158); background-size:200% auto; color:#fff; border:none; padding:16px; border-radius:14px; font-weight:900; font-size:15px; cursor:pointer; text-transform:uppercase; letter-spacing:0.5px; box-shadow:0 8px 26px rgba(225,48,108,0.42); animation: shareGlow 4s ease infinite; }
         @keyframes shareGlow { 0%,100% { background-position:0% center; } 50% { background-position:100% center; } }
         .share-cta:hover { transform:translateY(-2px); }
+        .share-cta.share-restricted { background: rgba(70,70,80,0.55); animation: none; box-shadow: none; border: 1px solid rgba(255,255,255,0.15); text-transform: none; letter-spacing: normal; font-size: 13.5px; font-weight: 700; }
+        .share-cta.share-restricted:hover { transform: translateY(-2px); background: rgba(90,90,100,0.6); }
+        @media (prefers-reduced-motion: reduce) { .share-cta.share-restricted:hover { transform: none; } }
 
         .share-sheet { position:relative; max-width:470px; width:100%; margin:auto; animation: fadeIn 0.45s cubic-bezier(0.22,1,0.36,1); }
         .share-close { position:absolute; top:14px; right:16px; background:none; border:none; color:#8f88a5; font-size:22px; cursor:pointer; line-height:1; }
@@ -781,7 +784,7 @@
                         <div class="spotlight-poster" onclick="saveSpotlightTitle()" role="button" tabindex="0"
                              onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();saveSpotlightTitle();}"
                              aria-label="Save American Horror Story: 13 to Watch Later">
-                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=121" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
+                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=122" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
                             <div class="spotlight-ribbon" data-i18n="spotlight.ribbon">COMING THIS MONTH</div>
                         </div>
                         <div class="spotlight-body">
@@ -1122,7 +1125,7 @@
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
                         <button id="btn-watch-later" onclick="recordAction('save')" style="background: rgba(229,193,88,0.12); border: 2px solid var(--gold); color: var(--gold-glow); padding: 18px 10px; border-radius: 14px; cursor: pointer; font-size: 16px; font-weight: 900; text-transform: uppercase; transition: 0.3s;" onmouseover="this.style.background='rgba(229,193,88,0.28)'" onmouseout="this.style.background='rgba(229,193,88,0.12)'" data-i18n="res.watchlater">⭐ Watch Later</button>
                         <button id="btn-seen-it" onclick="recordAction('seen')" style="background: rgba(255,255,255,0.06); border: 2px solid rgba(255,255,255,0.35); color: #fff; padding: 18px 10px; border-radius: 14px; cursor: pointer; font-size: 16px; font-weight: 900; text-transform: uppercase; transition: 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.16)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'" data-i18n="res.seenit">👁️ I've Seen It</button>
-                        <button id="btn-share-match" onclick="openShareSheet()" class="share-cta">📢 Share &amp; Earn +1 Match</button>
+                        <button id="btn-share-match" onclick="openShareSheet()" class="share-cta" data-i18n="res.shareCta">📢 Share &amp; Earn +1 Match</button>
                     </div>
 
                     <!-- RATING ACTIONS -->
@@ -1387,9 +1390,9 @@
         </div>
     </div>
 
-    <script src="/app.js?v=121"></script>
-    <script src="/share.js?v=121"></script>
-    <script src="/voice-input.js?v=121"></script>
+    <script src="/app.js?v=122"></script>
+    <script src="/share.js?v=122"></script>
+    <script src="/voice-input.js?v=122"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initVoiceInput('specific-search-input', 'mic-btn-index', () => smartSearch());

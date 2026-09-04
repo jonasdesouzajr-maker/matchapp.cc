@@ -235,6 +235,73 @@ function sanitizeDisplayText(text, preferredKeys) {
     return trimmed.replace(/^\{|\}$/g, '').replace(/"([a-zA-Z_]+)"\s*:\s*/g, '').replace(/["{}]/g, '').replace(/,\s*/g, ' — ').trim();
 }
 
+// ----------------------------------------------------
+// SHARE RESTRICTION — content safety gate
+// Sharing a match generates a branded promotional image/caption that goes
+// out onto social platforms under MatchApp's own name. Titles centered on
+// extreme violence, drug use, or abuse carry real risk there — most social
+// platforms' community standards restrict this kind of content even when
+// it's just a recommendation card, and MatchApp doesn't control what a user
+// writes alongside the share. Rather than risk that, sharing is simply
+// turned off for these titles, and the user is offered a fresh match from
+// their normal daily allowance instead — no share, no bonus, just a new pick.
+//
+// Two layers: (1) an explicit flag on curated catalog entries, set by
+// judgment call — not "has a mature rating" (which includes plenty of
+// intense-but-fine content) but "actually centers on this". (2) a keyword
+// scan of the synopsis for anything NOT in the catalog — AI-chat and live
+// iTunes results, where there's no hand-reviewed flag to check.
+// ----------------------------------------------------
+const SHARE_RESTRICTED_KEYWORDS = [
+    'graphic violence', 'graphic gore', 'gore', 'torture', 'massacre', 'mutilat',
+    'drug addiction', 'drug abuse', 'heroin', 'cocaine', 'overdose', 'cartel',
+    'child abuse', 'sexual abuse', 'domestic abuse', 'domestic violence', 'trafficking',
+    'rape', 'assault', 'self-harm', 'suicide'
+];
+
+function isShareRestrictedTitle(title, synopsis) {
+    if (typeof CONTENT_CATALOG !== 'undefined') {
+        const entry = CONTENT_CATALOG.find(e => e.title === title);
+        if (entry) return !!entry.shareRestricted; // catalog entries are authoritative — trust the flag either way
+    }
+    // Not in our catalog (AI chat / live discovery) — fall back to scanning
+    // whatever description text we have.
+    const text = (synopsis || '').toLowerCase();
+    return SHARE_RESTRICTED_KEYWORDS.some(kw => text.includes(kw));
+}
+window.isShareRestrictedTitle = isShareRestrictedTitle;
+
+// Swaps the share button between its normal state and a "not shareable"
+// state. Kept deliberately separate from the Not-For-Me/dislike flow below —
+// a restricted title isn't blacklisted or removed from Watch Later, since
+// the user may still want to watch it. It just doesn't get a public share.
+function updateShareButtonState() {
+    const btn = document.getElementById('btn-share-match');
+    if (!btn) return;
+    if (window.currentMatchShareRestricted) {
+        btn.classList.add('share-restricted');
+        btn.onclick = () => window.getAnotherMatchInstead();
+        btn.innerHTML = (window.t ? t('share.restricted') : '🔒 Not shareable — tap for another match');
+    } else {
+        btn.classList.remove('share-restricted');
+        btn.onclick = () => window.openShareSheet();
+        btn.innerHTML = (window.t ? t('res.shareCta') : '📢 Share &amp; Earn +1 Match');
+    }
+}
+window.updateShareButtonState = updateShareButtonState;
+
+// A fresh match, consumed from the normal daily allowance like any other —
+// no bonus, no penalty, just "give me something I can actually share if I
+// want to." Does NOT touch dislikedList/savedList, unlike Not For Me.
+window.getAnotherMatchInstead = function() {
+    if (window.showToast) showToast(window.t ? t('share.gettingAnother') : 'Getting you a shareable match instead…');
+    const resultBox = document.getElementById('result-box');
+    if (resultBox) resultBox.style.display = 'none';
+    if (typeof window.triggerMatch === 'function') {
+        window.triggerMatch(window.lastMatchWasSpecificSearch === true ? true : false);
+    }
+};
+
 function generatedCover(title) {
     return generateLocalPosterSVG(title);
 }
@@ -805,42 +872,42 @@ const CONTENT_CATALOG = [
     { title: "Shogun", synopsis: "A political thriller set in feudal Japan following a shipwrecked English sailor caught in a power struggle.", platform: "Hulu", cats: ["series","limited series"], moods: ["intense and thrilling","epic and adventurous"], vibes: ["prestige and critically acclaimed","slow burn"], ratings: ["teen PG-13","mature adults only R rated","any"] },
     { title: "Dune: Part Two", synopsis: "Paul Atreides unites with the Fremen to seek revenge against the conspirators who destroyed his family.", platform: "Max", cats: ["movie"], moods: ["epic and adventurous","intense and thrilling"], vibes: ["prestige and critically acclaimed","fast-paced binge-worthy"], ratings: ["teen PG-13","any"] },
     { title: "Deadpool & Wolverine", synopsis: "A fast, foul-mouthed superhero team-up across the Marvel multiverse.", platform: "Disney+", cats: ["movie"], moods: ["funny","intense and thrilling"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["mature adults only R rated","any"] },
-    { title: "House of the Dragon", synopsis: "Two centuries before Game of Thrones, the Targaryen dynasty tears itself apart in civil war.", platform: "Max", cats: ["series"], moods: ["dark and gritty","epic and adventurous"], vibes: ["prestige and critically acclaimed","long running series"], ratings: ["mature adults only R rated","any"] },
+    { title: "House of the Dragon", synopsis: "Two centuries before Game of Thrones, the Targaryen dynasty tears itself apart in civil war.", platform: "Max", cats: ["series"], moods: ["dark and gritty","epic and adventurous"], vibes: ["prestige and critically acclaimed","long running series"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
     { title: "Queen of Tears", synopsis: "A K-drama about a wealthy heiress and her husband navigating love, betrayal and a terminal illness twist.", platform: "Viki", cats: ["K-drama","series"], moods: ["romantic","heartbreaking"], vibes: ["slow burn","long running series"], ratings: ["teen PG-13","any"] },
     { title: "Crash Landing on You", synopsis: "A South Korean heiress paraglides into North Korea and falls for the officer who hides her.", platform: "Netflix", cats: ["K-drama","series"], moods: ["romantic","light and feel-good"], vibes: ["slow burn","fast-paced binge-worthy"], ratings: ["teen PG-13","any"] },
-    { title: "Jujutsu Kaisen", synopsis: "A boy swallows a cursed talisman and joins a secret school to battle supernatural threats.", platform: "Crunchyroll", cats: ["anime"], moods: ["intense and thrilling","dark and gritty"], vibes: ["fast-paced binge-worthy","long running series"], ratings: ["teen PG-13","any"] },
+    { title: "Jujutsu Kaisen", synopsis: "A boy swallows a cursed talisman and joins a secret school to battle supernatural threats.", platform: "Crunchyroll", cats: ["anime"], moods: ["intense and thrilling","dark and gritty"], vibes: ["fast-paced binge-worthy","long running series"], ratings: ["teen PG-13","any"] , shareRestricted: true },
     { title: "Frieren: Beyond Journey's End", synopsis: "An elven mage reflects on mortality and friendship long after her adventuring party has aged and passed.", platform: "Crunchyroll", cats: ["anime"], moods: ["cozy comfort watch","heartbreaking"], vibes: ["slow burn","award winning"], ratings: ["all ages family friendly","any"] },
     { title: "A Vida Secreta do Meu Marido Bilionário", synopsis: "A Brazilian vertical novela about a woman who discovers her husband is secretly a billionaire tycoon.", platform: "ReelShort", cats: ["vertical micro-drama","novela brasileira"], moods: ["romantic","intense and thrilling"], vibes: ["guilty pleasure","one sitting short watch"], ratings: ["teen PG-13","any"] },
     { title: "CEO's Contract Bride", synopsis: "A gripping vertical micro-drama romance between a ruthless CEO and the woman forced into a marriage of convenience.", platform: "DramaBox", cats: ["vertical micro-drama"], moods: ["romantic","guilty pleasure"], vibes: ["one sitting short watch","fast-paced binge-worthy"], ratings: ["teen PG-13","any"] },
     { title: "Vale Tudo", synopsis: "A classic Brazilian telenovela about family rivalry, ambition and moral compromise in Rio de Janeiro.", platform: "Globoplay", cats: ["novela brasileira","telenovela"], moods: ["dark and gritty","intense and thrilling"], vibes: ["long running series","award winning"], ratings: ["mature adults only R rated","any"] },
-    { title: "The Joe Rogan Experience", synopsis: "Long-form conversations spanning comedy, science, MMA and culture.", platform: "Spotify", cats: ["podcast"], moods: ["funny","inspiring"], vibes: ["easy background watch","long running series"], ratings: ["mature adults only R rated","any"] },
+    { title: "The Joe Rogan Experience", synopsis: "Long-form conversations spanning comedy, science, MMA and culture.", platform: "Spotify", cats: ["podcast"], moods: ["funny","inspiring"], vibes: ["easy background watch","long running series"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
     { title: "SmartLess", synopsis: "Three friends surprise each other with a mystery guest for freewheeling, funny conversation.", platform: "Spotify", cats: ["podcast"], moods: ["funny","light and feel-good"], vibes: ["easy background watch"], ratings: ["all ages family friendly","any"] },
-    { title: "Baby Reindeer", synopsis: "A darkly comic true story about a struggling comedian stalked by a woman he shows a moment of kindness.", platform: "Netflix", cats: ["limited series","series"], moods: ["dark and gritty","heartbreaking"], vibes: ["award winning","prestige and critically acclaimed"], ratings: ["mature adults only R rated","any"] },
-    { title: "Fallout", synopsis: "Generations after a nuclear apocalypse, surface dwellers and vault dwellers collide in a darkly funny wasteland.", platform: "Prime Video", cats: ["series"], moods: ["dark and gritty","funny"], vibes: ["fast-paced binge-worthy","award winning"], ratings: ["mature adults only R rated","any"] },
+    { title: "Baby Reindeer", synopsis: "A darkly comic true story about a struggling comedian stalked by a woman he shows a moment of kindness.", platform: "Netflix", cats: ["limited series","series"], moods: ["dark and gritty","heartbreaking"], vibes: ["award winning","prestige and critically acclaimed"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
+    { title: "Fallout", synopsis: "Generations after a nuclear apocalypse, surface dwellers and vault dwellers collide in a darkly funny wasteland.", platform: "Prime Video", cats: ["series"], moods: ["dark and gritty","funny"], vibes: ["fast-paced binge-worthy","award winning"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
     { title: "Bluey", synopsis: "An imaginative six-year-old Blue Heeler pup and her family turn everyday life into playful adventure.", platform: "Disney+", cats: ["kids","series"], moods: ["light and feel-good","cozy comfort watch"], vibes: ["easy background watch","award winning"], ratings: ["all ages family friendly","kids","any"] },
     { title: "Moana 2", synopsis: "Moana sets sail on a new ocean adventure alongside Maui to reconnect with scattered island peoples.", platform: "Disney+", cats: ["movie","kids"], moods: ["epic and adventurous","inspiring"], vibes: ["fast-paced binge-worthy"], ratings: ["all ages family friendly","kids","any"] },
     { title: "Nimona", synopsis: "A knight framed for a crime teams up with a shapeshifting teen to clear his name in a sci-fi/medieval kingdom.", platform: "Netflix", cats: ["movie","kids","anime"], moods: ["funny","inspiring"], vibes: ["fast-paced binge-worthy"], ratings: ["all ages family friendly","teen PG-13","any"] },
     { title: "Cosmos: Possible Worlds", synopsis: "A documentary journey through space, time and the origins of scientific discovery.", platform: "Netflix", cats: ["documentary"], moods: ["inspiring","mind-bending"], vibes: ["easy background watch","award winning"], ratings: ["all ages family friendly","any"] },
     { title: "Chef's Table", synopsis: "An intimate documentary series profiling the world's most creative chefs and their craft.", platform: "Netflix", cats: ["documentary"], moods: ["inspiring","cozy comfort watch"], vibes: ["easy background watch","hidden gem underrated"], ratings: ["all ages family friendly","any"] },
-    { title: "John Mulaney: Baby J", synopsis: "A stand-up special turning the comedian's very public struggles into sharp, self-deprecating comedy.", platform: "Netflix", cats: ["stand-up comedy special"], moods: ["funny"], vibes: ["one sitting short watch","award winning"], ratings: ["mature adults only R rated","any"] },
+    { title: "John Mulaney: Baby J", synopsis: "A stand-up special turning the comedian's very public struggles into sharp, self-deprecating comedy.", platform: "Netflix", cats: ["stand-up comedy special"], moods: ["funny"], vibes: ["one sitting short watch","award winning"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
     { title: "Love Is Blind", synopsis: "Singles date and get engaged sight unseen, meeting face-to-face only after saying yes.", platform: "Netflix", cats: ["reality show"], moods: ["romantic","funny"], vibes: ["guilty pleasure","fast-paced binge-worthy"], ratings: ["teen PG-13","any"] },
     { title: "Alcarràs", synopsis: "A Catalan farming family faces their final harvest as their land is sold for solar panels.", platform: "MUBI", cats: ["European cinema","movie"], moods: ["heartbreaking","nostalgic"], vibes: ["slow burn","hidden gem underrated"], ratings: ["all ages family friendly","any"] },
     { title: "RRR", synopsis: "Two revolutionaries in colonial India form an epic, action-packed friendship in this Tollywood blockbuster.", platform: "Netflix", cats: ["Bollywood","movie"], moods: ["epic and adventurous","intense and thrilling"], vibes: ["fast-paced binge-worthy","award winning"], ratings: ["teen PG-13","any"] },
     { title: "Business Proposal", synopsis: "A woman goes on a blind date pretending to be someone else — and it turns out to be her own CEO.", platform: "Viki", cats: ["K-drama","series"], moods: ["light and feel-good","romantic"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["teen PG-13","any"] },
-    { title: "Rebel Moon", synopsis: "A peaceful colony on the edge of the galaxy sends a warrior to recruit fighters against a tyrannical regime.", platform: "Netflix", cats: ["movie"], moods: ["epic and adventurous","intense and thrilling"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["mature adults only R rated","any"] },
+    { title: "Rebel Moon", synopsis: "A peaceful colony on the edge of the galaxy sends a warrior to recruit fighters against a tyrannical regime.", platform: "Netflix", cats: ["movie"], moods: ["epic and adventurous","intense and thrilling"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
     { title: "Midnight Diner", synopsis: "A quiet late-night Tokyo diner serves comfort food and even more comforting stories to its regulars.", platform: "Netflix", cats: ["J-drama","series"], moods: ["cozy comfort watch","nostalgic"], vibes: ["easy background watch","hidden gem underrated"], ratings: ["all ages family friendly","any"] },
-    { title: "Kingdom", synopsis: "A Korean crown prince investigates a mysterious plague that turns the dead into the undead.", platform: "Netflix", cats: ["K-drama","series"], moods: ["scary","dark and gritty"], vibes: ["fast-paced binge-worthy","hidden gem underrated"], ratings: ["mature adults only R rated","any"] },
-    { title: "Emilia Pérez", synopsis: "A Mexican cartel leader seeks a secret gender transition, told as a genre-defying musical thriller.", platform: "Netflix", cats: ["movie","European cinema"], moods: ["mind-bending","intense and thrilling"], vibes: ["prestige and critically acclaimed","award winning"], ratings: ["mature adults only R rated","any"] },
+    { title: "Kingdom", synopsis: "A Korean crown prince investigates a mysterious plague that turns the dead into the undead.", platform: "Netflix", cats: ["K-drama","series"], moods: ["scary","dark and gritty"], vibes: ["fast-paced binge-worthy","hidden gem underrated"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
+    { title: "Emilia Pérez", synopsis: "A Mexican cartel leader seeks a secret gender transition, told as a genre-defying musical thriller.", platform: "Netflix", cats: ["movie","European cinema"], moods: ["mind-bending","intense and thrilling"], vibes: ["prestige and critically acclaimed","award winning"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
 
     // ---- Trending on Netflix right now (Sept 2026) ----
-    { title: "The Whisper Man", synopsis: "A father and son move to a small town where children have been vanishing for years, and old whispers won't stay buried.", platform: "Netflix", cats: ["movie"], moods: ["scary","dark and gritty"], vibes: ["fast-paced binge-worthy","prestige and critically acclaimed"], ratings: ["mature adults only R rated","any"] },
+    { title: "The Whisper Man", synopsis: "A father and son move to a small town where children have been vanishing for years, and old whispers won't stay buried.", platform: "Netflix", cats: ["movie"], moods: ["scary","dark and gritty"], vibes: ["fast-paced binge-worthy","prestige and critically acclaimed"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
     { title: "The Secret Woman", synopsis: "A woman's carefully hidden double life unravels when her two worlds are forced to collide.", platform: "Netflix", cats: ["movie"], moods: ["intense and thrilling","dark and gritty"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["mature adults only R rated","any"] },
-    { title: "Facing El Chapo", synopsis: "A documentary built from firsthand accounts of those who lived inside the world of the infamous cartel kingpin.", platform: "Netflix", cats: ["documentary"], moods: ["intense and thrilling","dark and gritty"], vibes: ["prestige and critically acclaimed","based on a true story"], ratings: ["mature adults only R rated","any"] },
+    { title: "Facing El Chapo", synopsis: "A documentary built from firsthand accounts of those who lived inside the world of the infamous cartel kingpin.", platform: "Netflix", cats: ["documentary"], moods: ["intense and thrilling","dark and gritty"], vibes: ["prestige and critically acclaimed","based on a true story"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
     { title: "Alpha", synopsis: "A prehistoric coming-of-age survival story about a young hunter who befriends an injured wolf.", platform: "Netflix", cats: ["movie"], moods: ["epic and adventurous","heartbreaking"], vibes: ["award winning","based on a true story"], ratings: ["all ages family friendly","teen PG-13","any"] },
-    { title: "Death of the Pastor's Wife", synopsis: "A true-crime drama unraveling the mysterious death that shook a small church community.", platform: "Netflix", cats: ["series","limited series"], moods: ["dark and gritty","mind-bending"], vibes: ["fast-paced binge-worthy","based on a true story"], ratings: ["mature adults only R rated","any"] },
-    { title: "Beauty in Black", synopsis: "Tyler Perry's soapy thriller about two women whose lives collide around a glamorous cosmetics empire built on secrets.", platform: "Netflix", cats: ["series"], moods: ["dark and gritty","intense and thrilling"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["mature adults only R rated","any"] },
+    { title: "Death of the Pastor's Wife", synopsis: "A true-crime drama unraveling the mysterious death that shook a small church community.", platform: "Netflix", cats: ["series","limited series"], moods: ["dark and gritty","mind-bending"], vibes: ["fast-paced binge-worthy","based on a true story"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
+    { title: "Beauty in Black", synopsis: "Tyler Perry's soapy thriller about two women whose lives collide around a glamorous cosmetics empire built on secrets.", platform: "Netflix", cats: ["series"], moods: ["dark and gritty","intense and thrilling"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
     { title: "Outer Banks", synopsis: "A group of teenage treasure hunters chase a generations-old mystery across the Carolina coast.", platform: "Netflix", cats: ["series"], moods: ["epic and adventurous","intense and thrilling"], vibes: ["fast-paced binge-worthy","long running series"], ratings: ["teen PG-13","any"] },
-    { title: "Blood Sacrifice", synopsis: "A supernatural thriller following a family who discovers their new home demands a terrifying price.", platform: "Netflix", cats: ["series"], moods: ["scary","dark and gritty"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["mature adults only R rated","any"] },
+    { title: "Blood Sacrifice", synopsis: "A supernatural thriller following a family who discovers their new home demands a terrifying price.", platform: "Netflix", cats: ["series"], moods: ["scary","dark and gritty"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
     { title: "Love Is Blind: UK", synopsis: "British singles date and get engaged sight unseen, meeting face-to-face only after saying yes.", platform: "Netflix", cats: ["reality show"], moods: ["romantic","funny"], vibes: ["guilty pleasure","fast-paced binge-worthy"], ratings: ["teen PG-13","any"] },
     { title: "Mousetrap", synopsis: "An adaptation of the classic whodunit where seven strangers snowed into a country house realize a killer is among them.", platform: "Netflix", cats: ["series","limited series"], moods: ["mind-bending","intense and thrilling"], vibes: ["prestige and critically acclaimed","based on a true story"], ratings: ["teen PG-13","any"] },
 
@@ -855,7 +922,7 @@ const CONTENT_CATALOG = [
     { title: "Kirk Franklin: Gospel Essentials", synopsis: "A career-spanning playlist from one of gospel music's most influential voices, blending choir-driven praise with contemporary production.", platform: "Spotify", cats: ["music album","Spotify playlist"], moods: ["inspiring","light and feel-good","gospel and faith"], vibes: ["easy background watch","award winning"], ratings: ["all ages family friendly","any"] },
     { title: "Maverick City Music: Worship Sessions", synopsis: "Live, choir-backed worship recordings from the Grammy-winning collective redefining modern gospel and praise music.", platform: "Spotify", cats: ["Spotify playlist","music album"], moods: ["inspiring","cozy comfort watch","gospel and faith"], vibes: ["easy background watch","award winning"], ratings: ["all ages family friendly","any"] },
     { title: "The Gospel of Luke", synopsis: "A word-for-word cinematic telling of the Gospel of Luke, following the ministry of Jesus from birth to resurrection.", platform: "Angel Studios", cats: ["movie","documentary"], moods: ["inspiring","gospel and faith"], vibes: ["prestige and critically acclaimed","based on a true story"], ratings: ["all ages family friendly","any"] },
-    { title: "Sound of Freedom", synopsis: "A former federal agent risks everything to rescue children from traffickers, in this faith-driven true story that became a surprise box-office phenomenon.", platform: "Angel Studios", cats: ["movie"], moods: ["intense and thrilling","inspiring","gospel and faith"], vibes: ["based on a true story","award winning"], ratings: ["teen PG-13","any"] },
+    { title: "Sound of Freedom", synopsis: "A former federal agent risks everything to rescue children from traffickers, in this faith-driven true story that became a surprise box-office phenomenon.", platform: "Angel Studios", cats: ["movie"], moods: ["intense and thrilling","inspiring","gospel and faith"], vibes: ["based on a true story","award winning"], ratings: ["teen PG-13","any"] , shareRestricted: true },
     { title: "CeCe Winans: Believe for It", synopsis: "The Grammy-winning gospel album blending traditional choir arrangements with modern worship production.", platform: "Apple Music", cats: ["music album"], moods: ["inspiring","gospel and faith"], vibes: ["easy background watch","award winning"], ratings: ["all ages family friendly","any"] },
 
     // ---- Globoplay's own vertical micro-drama line (real, launched 2025-2026 —
@@ -867,8 +934,8 @@ const CONTENT_CATALOG = [
     // across platforms so a platform-specific filter has more than one option ----
     { title: "Divorced at the Wedding Day", synopsis: "A bride is humiliated and divorced at the altar, then returns transformed — richer, sharper, and done playing nice.", platform: "DramaBox", cats: ["vertical micro-drama"], moods: ["dark and gritty","intense and thrilling"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["teen PG-13","any"] },
     { title: "The Double Life of a Billionaire's Daughter", synopsis: "Raised in secret away from her family's empire, a young woman is pulled back into a world of corporate warfare and inheritance schemes.", platform: "ReelShort", cats: ["vertical micro-drama"], moods: ["intense and thrilling","dark and gritty"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["teen PG-13","any"] },
-    { title: "American Horror Story: 13", synopsis: "The Coven rises again in a 13-episode all-star season. Jessica Lange, Sarah Paulson, Evan Peters, Angela Bassett and Kathy Bates return, joined by Ariana Grande in her franchise debut. Premieres September 24, 2026 on FX and Hulu.", platform: "Hulu", cats: ["series","limited series"], moods: ["scary","dark and gritty","intense and thrilling"], vibes: ["fast-paced binge-worthy","prestige and critically acclaimed","award winning"], ratings: ["mature adults only R rated","any"] },
-    { title: "Second Chance Mafia Wife", synopsis: "A marriage of convenience to a mafia heir spirals into real danger — and real feelings — as old enemies resurface.", platform: "ShortMax", cats: ["vertical micro-drama"], moods: ["intense and thrilling","romantic"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["mature adults only R rated","any"] }
+    { title: "American Horror Story: 13", synopsis: "The Coven rises again in a 13-episode all-star season. Jessica Lange, Sarah Paulson, Evan Peters, Angela Bassett and Kathy Bates return, joined by Ariana Grande in her franchise debut. Premieres September 24, 2026 on FX and Hulu.", platform: "Hulu", cats: ["series","limited series"], moods: ["scary","dark and gritty","intense and thrilling"], vibes: ["fast-paced binge-worthy","prestige and critically acclaimed","award winning"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
+    { title: "Second Chance Mafia Wife", synopsis: "A marriage of convenience to a mafia heir spirals into real danger — and real feelings — as old enemies resurface.", platform: "ShortMax", cats: ["vertical micro-drama"], moods: ["intense and thrilling","romantic"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["mature adults only R rated","any"] , shareRestricted: true }
 ];
 
 // Titles genuinely rooted in gospel/faith content, for quick lookup by other
@@ -1179,6 +1246,7 @@ function pickFromCatalog(cat, plat, mood, vibe, rating) {
 
 window.triggerMatch = async function(isSpecificSearch = false) {
     if (!(await checkDailyLimit())) return;
+    window.lastMatchWasSpecificSearch = isSpecificSearch;
     
     const loadBox = document.getElementById('loading-box'); 
     const qBox = document.getElementById('questionnaire-box'); 
@@ -1429,6 +1497,12 @@ async function renderResult(selected, isSpecificSearch) {
     window.globalMatchTitle = globalMatchTitle;
     window.globalMatchPoster = globalMatchPoster;
     window.globalPlatform = globalPlatform;
+
+    // Content-safety gate: some titles simply shouldn't go out in a branded
+    // social share under MatchApp's name. Swap the share button into a
+    // "get another match instead" state rather than opening the share sheet.
+    window.currentMatchShareRestricted = isShareRestrictedTitle(selected.title, selected.synopsis);
+    updateShareButtonState();
 
     posterEl.style.display = 'block';
     posterEl.classList.remove('fade-in'); void posterEl.offsetWidth; posterEl.classList.add('fade-in');
