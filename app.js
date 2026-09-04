@@ -657,6 +657,19 @@ window.selectMarqueeItem = function(titleName) {
 };
 
 window.openAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'flex'; };
+
+// Anyone redirected here from the retired register.html (old bookmarks,
+// external links) lands straight in the sign-up flow rather than a blank
+// homepage with no obvious next step.
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        if (new URLSearchParams(window.location.search).get('openAuth') === '1') {
+            window.openAuthModal();
+            if (typeof window.switchAuthTab === 'function') window.switchAuthTab('signup');
+            history.replaceState(null, '', '/index.html'); // clean the URL so a refresh doesn't reopen it
+        }
+    } catch (e) {}
+});
 window.closeAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'none'; };
 window.switchAuthTab = function(tab) {
     ['login', 'signup'].forEach(t => { document.getElementById(`tab-${t}`)?.classList.remove('active'); document.getElementById(`form-${t}`)?.classList.remove('active'); });
