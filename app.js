@@ -219,13 +219,37 @@ function significantWords(s) {
 }
 function isRelevantMatch(query, resultName) {
     const qWords = significantWords(query);
-    const rWords = new Set(significantWords(resultName));
+    const rWordsArr = significantWords(resultName);
+    const rWords = new Set(rWordsArr);
     if (!qWords.length) return true; // nothing meaningful to compare against — don't block
+
     const overlap = qWords.filter(w => rWords.has(w)).length;
-    // At least one real shared word, or the majority for short queries — either
-    // is enough to reject something like "12min: Book Summaries" for a query
-    // like "The Prohibition Queens' Double Life" (zero shared significant words).
-    return overlap > 0;
+
+    // The threshold scales with how many significant words the query has.
+    // A single shared word is only convincing evidence when the query itself
+    // is essentially one word — for anything longer, requiring just one match
+    // lets short, common words (a Portuguese/Spanish "vale", "amor", "vida")
+    // falsely accept a completely different title that happens to share it.
+    // This is what let "Vale Tudo" match TVMaze's unrelated "Vale a Pena Ver
+    // de Novo" — both share "vale" and nothing else.
+    let required;
+    if (qWords.length <= 2) required = qWords.length;             // 1–2 words: all must match
+    else required = Math.ceil(qWords.length * 0.6);               // 3+ words: at least 60%
+
+    if (overlap < required) return false;
+
+    // A bag-of-words check can't tell "Beauty in Black" from "Black Beauty" —
+    // same two words, opposite order, two genuinely different real titles.
+    // For exactly two significant words, also require they appear in the same
+    // relative order in the result, closing that specific false-positive class
+    // without the cost of full semantic matching.
+    if (qWords.length === 2) {
+        const i0 = rWordsArr.indexOf(qWords[0]);
+        const i1 = rWordsArr.indexOf(qWords[1]);
+        if (i0 === -1 || i1 === -1 || i0 > i1) return false;
+    }
+
+    return true;
 }
 
 async function itunesLookup(title, media) {
@@ -321,29 +345,43 @@ async function getRealCoverImage(title) {
 
     const cacheAndReturn = (url) => { COVER_CACHE[title] = url; return url; };
 
-    // 1. Offline Dictionary (fast path for known hero titles)
-    const matchKey = Object.keys(OFFLINE_COVERS).find(k => title.toLowerCase().includes(k.toLowerCase()) || k.toLowerCase().includes(title.toLowerCase()));
-    if (matchKey) return cacheAndReturn(OFFLINE_COVERS[matchKey]);
+    // 1. Offline Dictionary — exact match only (case-insensitive). The previous
+    //    version used title.includes(key) in either direction, so a title that
+    //    merely CONTAINED a hero title's name as a substring — or vice versa —
+    //    would silently take that cover. A telenovela or any title sharing a
+    //    common word with "Shogun" or "The Bear" could have been hijacked here.
+    const exactKey = Object.keys(OFFLINE_COVERS).find(k => k.toLowerCase() === title.toLowerCase());
+    if (exactKey) return cacheAndReturn(OFFLINE_COVERS[exactKey]);
 
-    // 2. iTunes across several media types (movies, TV, podcasts, music).
-    //    Podcast/music included so Spotify + podcast matches also get real art.
+    // 2. iTunes across several media types — itunesLookup already runs every
+    //    result through isRelevantMatch(), so nothing unrelated gets this far.
     for (const media of ['movie', 'tvShow', 'podcast', 'music']) {
         const art = await itunesLookup(title, media);
         if (art) return cacheAndReturn(art);
     }
 
-    // 3. TVMaze (strong for international + K-drama series)
+    // 3. TVMaze (strong for international + K-drama series).
+    //    THIS WAS THE ACTUAL BUG: TVMaze's singlesearch endpoint returns its
+    //    single best guess for almost any non-garbage query — it essentially
+    //    never comes back empty — and this call had no check that the result
+    //    it returned had anything to do with what was searched. Telenovelas
+    //    and other regionally-specific titles are exactly the case where
+    //    iTunes (step 2) correctly finds nothing, control reaches this TVMaze
+    //    call, and it confidently hands back an unrelated show's poster. Same
+    //    isRelevantMatch() guard as the iTunes path now applies here too.
     try {
         const tvRes = await fetch(`https://api.tvmaze.com/singlesearch/shows?q=${encodeURIComponent(title)}`);
         if (tvRes.ok) {
             const tvData = await tvRes.json();
-            if (tvData && tvData.image && (tvData.image.original || tvData.image.medium)) {
-                return cacheAndReturn(tvData.image.original || tvData.image.medium);
+            const img = tvData && tvData.image && (tvData.image.original || tvData.image.medium);
+            if (img && isRelevantMatch(title, tvData.name || '')) {
+                return cacheAndReturn(img);
             }
         }
     } catch(e) {}
 
-    // 4. ABSOLUTE FALLBACK: Dynamic Text Image Generator (Impossible to fail)
+    // 4. ABSOLUTE FALLBACK: local branded SVG (no network, cannot fail, and
+    //    critically — cannot ever show the wrong title's artwork).
     return cacheAndReturn(generatedCover(title));
 }
 
@@ -375,6 +413,29 @@ function getVerifiedPoster(title) {
     }
     return null;
 }
+
+// Categories where a SEPARATE live lookup (searching iTunes/TVMaze for a
+// title we already know from our own curated catalog) carries real mismatch
+// risk, because coverage of this content on those catalogs is inconsistent
+// and searches often land on an unrelated regional title instead of nothing.
+// This is what actually caused telenovela covers to come back wrong even
+// after the relevance guard was added — the guard rejects clearly unrelated
+// results, but a same-language title sharing one common word (as happened
+// with "Vale Tudo") could still slip through before that guard was tightened.
+// Safest policy for these categories: catalog-sourced titles skip the lookup
+// entirely and go straight to a verified poster or the branded local cover —
+// never a second-guessed live search.
+const HIGH_MISMATCH_RISK_CATEGORIES = new Set([
+    'vertical micro-drama', 'novela brasileira', 'telenovela',
+    'c-drama', 'j-drama', 'turkish dizi', 'bollywood', 'nollywood'
+]);
+
+function isHighRiskCategory(categoryHint, title) {
+    const hint = (categoryHint || '').toLowerCase();
+    if (HIGH_MISMATCH_RISK_CATEGORIES.has(hint)) return true;
+    return typeof VERTICAL_DRAMA_TITLES !== 'undefined' && VERTICAL_DRAMA_TITLES.includes(title);
+}
+window.isHighRiskCategory = isHighRiskCategory;
 
 function generateLocalPosterSVG(title) {
     const raw = (title || 'MatchApp').trim();
@@ -451,9 +512,14 @@ async function hydrateMarqueeCovers() {
             return;
         }
 
-        // App-exclusive vertical dramas aren't in any public catalog, so a
-        // lookup would return something unrelated. Keep the branded cover.
-        if (typeof VERTICAL_DRAMA_TITLES !== 'undefined' && VERTICAL_DRAMA_TITLES.includes(title)) return;
+        // App-exclusive vertical dramas and other high-mismatch-risk regional
+        // categories (telenovelas, C-drama, J-drama, Turkish dizi, Bollywood,
+        // Nollywood) aren't reliably indexed on iTunes/TVMaze — a lookup risks
+        // returning an unrelated title's art rather than nothing. If this
+        // title is in our own catalog, use ITS tagged categories to decide.
+        const catalogEntry = (typeof CONTENT_CATALOG !== 'undefined') && CONTENT_CATALOG.find(e => e.title === title);
+        const riskyByCatalog = catalogEntry && catalogEntry.cats.some(c => isHighRiskCategory(c, title));
+        if (riskyByCatalog || (typeof VERTICAL_DRAMA_TITLES !== 'undefined' && VERTICAL_DRAMA_TITLES.includes(title))) return;
 
         try {
             const meta = await getRichMetadata(title, 'series');
@@ -1245,8 +1311,12 @@ async function renderResult(selected, isSpecificSearch) {
     // iTunes and TVMaze will correctly find nothing, but only after several
     // wasted network round-trips. Skip straight to the branded local cover,
     // which always shows the correct title text with zero network dependency.
-    const isVerticalDrama = categoryHint.toLowerCase() === 'vertical micro-drama' ||
-        (typeof VERTICAL_DRAMA_TITLES !== 'undefined' && VERTICAL_DRAMA_TITLES.includes(selected.title));
+    // Only skip the lookup when there's no already-trustworthy _meta. Live
+    // discovery results carry artwork from the SAME iTunes record the title
+    // itself came from, so by construction they can't mismatch — that's
+    // categorically different from a catalog title needing a fresh, separate
+    // search, which is where the real risk lives.
+    const skipLiveLookup = !selected._meta && isHighRiskCategory(categoryHint, selected.title);
 
     // Hand-verified art wins over everything — no lookup can beat a known-correct
     // image, and for unreleased/app-exclusive titles a lookup actively returns
@@ -1256,12 +1326,12 @@ async function renderResult(selected, isSpecificSearch) {
     // The discovery engine already carries artwork/preview/store data — reuse it
     // instead of making a second network round-trip for the same title.
     let meta = selected._meta || null;
-    if (!meta && !isVerticalDrama && !verified) meta = await getRichMetadata(selected.title, categoryHint);
+    if (!meta && !skipLiveLookup && !verified) meta = await getRichMetadata(selected.title, categoryHint);
 
     let realCover;
     if (verified) {
         realCover = verified;
-    } else if (isVerticalDrama && !(meta && meta.artwork)) {
+    } else if (skipLiveLookup && !(meta && meta.artwork)) {
         realCover = generateLocalPosterSVG(selected.title);
     } else {
         realCover = (meta && meta.artwork) ? meta.artwork : await getRealCoverImage(selected.title);
@@ -1311,54 +1381,28 @@ async function renderResult(selected, isSpecificSearch) {
     applyAudioModeLabels(audioPick);
 
     // ----------------------------------------------------
-    // TRAILER / PREVIEW
-    // NOTE: YouTube removed the `listType=search` embed (it 404s since Nov 2020),
-    // which is why trailers previously rendered "unavailable". Getting a real
-    // YouTube video ID requires the paid YouTube Data API, so instead we play the
-    // keyless iTunes preview clip when one exists, and otherwise show a clean
-    // link card rather than a broken player.
+    // TRAILER — always a link to YouTube, never an embedded player.
+    // An embedded clip used to play here, sourced from the SAME iTunes
+    // record used for the cover art. When that record was mismatched (the
+    // core bug just fixed above), the "trailer" played the WRONG title's
+    // clip too — compounding the damage rather than just showing a bad
+    // poster. A YouTube search link carries none of that risk: it always
+    // opens, and lets the user's own eyes confirm it's the right title,
+    // which a small embedded thumbnail never really achieved anyway.
     // ----------------------------------------------------
     const trailerContainer = document.getElementById('res-trailer-container');
-    const previewVideo = document.getElementById('res-preview-video');
-    const previewAudio = document.getElementById('res-preview-audio');
-    const previewFallback = document.getElementById('res-preview-fallback');
-    const storeBadge = document.getElementById('res-store-badge');
     const ytLink = document.getElementById('yt-trailer-link');
+    const ytLabel = ytLink ? ytLink.querySelector('span') : null;
 
     trailerContainer.style.display = 'block';
-    previewVideo.style.display = 'none';
-    previewAudio.style.display = 'none';
-    previewFallback.style.display = 'none';
-    storeBadge.style.display = 'none';
-    previewVideo.removeAttribute('src');
-    previewAudio.removeAttribute('src');
 
-    // A visual match must never render a spoken-audio preview — if no true video
-    // preview exists we show the YouTube trailer card instead.
     const wantsAudio = isAudioCategory(categoryHint);
-    const hasVideo = isVideoPreview(meta);
-
-    if (hasVideo) {
-        previewVideo.src = meta.preview;
-        previewVideo.poster = realCover;
-        previewVideo.style.display = 'block';
-    } else if (wantsAudio && meta && meta.preview) {
-        previewAudio.src = meta.preview;
-        previewAudio.style.display = 'block';
-    } else {
-        previewFallback.style.display = 'block';
+    const queryTerm = wantsAudio ? `${selected.title} official audio` : `${selected.title} official trailer`;
+    ytLink.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(queryTerm)}`;
+    if (ytLabel) {
+        const key = wantsAudio ? 'res.listenyt' : 'res.watchtrailer';
+        ytLabel.textContent = window.t ? t(key) : (wantsAudio ? 'Listen on YouTube' : 'Watch Trailer on YouTube');
     }
-
-    // Apple's API terms require previews to sit alongside a link to the store item.
-    if (meta && meta.storeUrl && meta.preview) {
-        storeBadge.href = meta.storeUrl;
-        storeBadge.style.display = 'inline-block';
-    }
-
-    const ytQuery = `https://www.youtube.com/results?search_query=${encodeURIComponent(selected.title + " official trailer")}`;
-    ytLink.href = ytQuery;
-    const ytLinkAlt = document.getElementById('yt-trailer-link-alt');
-    if (ytLinkAlt) ytLinkAlt.href = ytQuery;
 
     updateActionButtonStates();
 }

@@ -343,12 +343,29 @@ async function hydrateDiscoverCard(item, idx) {
     if (!meta && typeof getRichMetadata === 'function') {
         meta = await getRichMetadata(item.title, item.type || '');
     }
+    // getRealCoverImage's TVMaze fallback is now relevance-guarded the same
+    // way iTunes is (see app.js), so it's safe to try here as a second
+    // attempt — this only widens real-cover coverage, it can't reintroduce
+    // the mismatch risk that used to exist there.
+    let fallbackArtwork = null;
+    if (!(meta && meta.artwork) && typeof getRealCoverImage === 'function') {
+        fallbackArtwork = await getRealCoverImage(item.title);
+        // generatedCover()/the local SVG generator is the guaranteed-safe
+        // last resort inside getRealCoverImage itself — no need to re-check
+        // relevance on its own output.
+    }
     if (meta && meta.artwork) {
         img.onerror = function () {
             this.onerror = null;
             if (typeof generateLocalPosterSVG === 'function') this.src = generateLocalPosterSVG(item.title);
         };
         img.src = meta.artwork;
+    } else if (fallbackArtwork) {
+        img.onerror = function () {
+            this.onerror = null;
+            if (typeof generateLocalPosterSVG === 'function') this.src = generateLocalPosterSVG(item.title);
+        };
+        img.src = fallbackArtwork;
     }
     item._resolved = meta;
 
