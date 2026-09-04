@@ -1215,12 +1215,42 @@ window.triggerMatch = async function(isSpecificSearch = false) {
 
     let matchResult = null;
     if (isSpecificSearch) {
-        try {
-            matchResult = await fetchGeminiData(promptText);
-            if (!matchResult || !matchResult.title) throw new Error("Empty AI result");
-        } catch (err) {
-            const input = document.getElementById('specific-search-input');
-            matchResult = { title: input.value.trim(), synopsis: "Here's your title — tap Stream Now to find it on your platform of choice.", platform: "Web" };
+        const typedTitle = (document.getElementById('specific-search-input')?.value || '').trim();
+
+        // Check our own verified catalog FIRST. "Então É Amor?" is a real
+        // entry we've hand-curated with the correct title, platform and
+        // synopsis — but the code used to skip straight past that and ask
+        // Gemini to guess instead, which is exactly how a user searching
+        // for that title got back "Rosa e Vicente" on a platform called
+        // "Micro-drama vertical" (not a real service — Gemini describing
+        // the FORMAT because it didn't actually know a real platform).
+        // Same principle already applied to the questionnaire flow: never
+        // let free-form AI invent facts we already have verified ourselves.
+        let catalogHit = CONTENT_CATALOG.find(e => e.title.toLowerCase() === typedTitle.toLowerCase());
+        if (!catalogHit) catalogHit = CONTENT_CATALOG.find(e => isRelevantMatch(typedTitle, e.title));
+
+        if (catalogHit) {
+            matchResult = { title: catalogHit.title, synopsis: catalogHit.synopsis, platform: catalogHit.platform, platformVerified: true };
+        } else {
+            try {
+                matchResult = await fetchGeminiData(promptText);
+                if (!matchResult || typeof matchResult.title !== 'string' || !matchResult.title.trim()) {
+                    throw new Error("Empty AI result");
+                }
+                // Defensive coercion: whatever Gemini returns must be plain,
+                // safe strings before it ever reaches the DOM. If a field came
+                // back as something other than a string (an object, an array,
+                // anything malformed), stringifying it here is what would have
+                // put raw JSON-looking text into the synopsis on screen —
+                // catching it here means that can never happen silently.
+                matchResult = {
+                    title: String(matchResult.title).trim(),
+                    synopsis: matchResult.synopsis ? String(matchResult.synopsis).trim() : '',
+                    platform: matchResult.platform ? String(matchResult.platform).trim() : 'any'
+                };
+            } catch (err) {
+                matchResult = { title: typedTitle, synopsis: "Here's your title — tap Stream Now to find it on your platform of choice.", platform: "Web" };
+            }
         }
     } else {
         let cat = document.getElementById('q-category')?.value || 'any';
@@ -1342,6 +1372,16 @@ async function renderResult(selected, isSpecificSearch) {
     globalMatchTitle = selected.title;
     globalMatchPoster = realCover;
     globalPlatform = selected.platform;
+    // THE ACTUAL SHARE BUG: `let globalMatchTitle` at top level never creates
+    // `window.globalMatchTitle` — only `var` does that. share.js has always
+    // read `window.globalMatchTitle` (correctly, since it's a separate file
+    // and can't see this module's local variable via closure), so it was
+    // permanently undefined no matter how many real matches were on screen —
+    // "Get a match first" showed up even with a match clearly displayed.
+    // Explicit mirroring, same pattern already used for isVIP/isUserLoggedIn.
+    window.globalMatchTitle = globalMatchTitle;
+    window.globalMatchPoster = globalMatchPoster;
+    window.globalPlatform = globalPlatform;
 
     posterEl.style.display = 'block';
     posterEl.classList.remove('fade-in'); void posterEl.offsetWidth; posterEl.classList.add('fade-in');
