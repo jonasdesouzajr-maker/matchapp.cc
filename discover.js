@@ -289,6 +289,16 @@ function discoverCardHTML(item, idx) {
 
 let DISCOVER_ITEMS = [];
 
+// Platforms where iTunes/TVMaze coverage is unreliable enough that a live
+// lookup is more likely to return something WRONG than nothing at all —
+// this is what "A Gata Comeu" (Globoplay) exposed: the AI chat path had none
+// of the protections app.js's main match render already had (verified
+// poster registry, category/platform-based skip), so a Globoplay title
+// could still trigger a live search that came back with an unrelated
+// result. Checking the platform Gemini itself returned is a reliable,
+// already-available signal — no guesswork needed.
+const HIGH_RISK_PLATFORMS_DISCOVER = new Set(['globoplay', 'reelshort', 'dramabox', 'shortmax', 'pure flix', 'angel studios']);
+
 async function hydrateDiscoverCard(item, idx) {
     const img = document.getElementById('dp-' + idx);
     const link = document.getElementById('dl-' + idx);
@@ -296,34 +306,47 @@ async function hydrateDiscoverCard(item, idx) {
 
     img.src = (typeof generateLocalPosterSVG === 'function') ? generateLocalPosterSVG(item.title) : '';
 
+    // Hand-verified art (parity with app.js's render path) always wins —
+    // no lookup can beat a known-correct image.
+    const verified = (typeof getVerifiedPoster === 'function') ? getVerifiedPoster(item.title) : null;
+
+    // AI-chat titles come from Gemini's free-form knowledge, not our curated
+    // catalog, so they're inherently less trustworthy than a match-engine
+    // result — meaning the bar for "risk a live lookup at all" should be
+    // LOWER here, not the same. If the platform Gemini named is one where
+    // external catalogs have unreliable coverage, or the category-check
+    // flags it, skip every live lookup entirely rather than gambling on the
+    // relevance guard catching a bad result.
+    const platformIsHighRisk = item.platform && HIGH_RISK_PLATFORMS_DISCOVER.has(String(item.platform).toLowerCase());
+    const categoryIsHighRisk = (typeof isHighRiskCategory === 'function') && isHighRiskCategory(item.type, item.title);
+    const skipLiveLookup = platformIsHighRisk || categoryIsHighRisk;
+
     let meta = item._meta || null;
-    if (!meta && typeof getRichMetadata === 'function') {
+    if (!meta && !skipLiveLookup && !verified && typeof getRichMetadata === 'function') {
         meta = await getRichMetadata(item.title, item.type || '');
     }
-    // getRealCoverImage's TVMaze fallback is now relevance-guarded the same
-    // way iTunes is (see app.js), so it's safe to try here as a second
-    // attempt — this only widens real-cover coverage, it can't reintroduce
-    // the mismatch risk that used to exist there.
-    let fallbackArtwork = null;
-    if (!(meta && meta.artwork) && typeof getRealCoverImage === 'function') {
-        fallbackArtwork = await getRealCoverImage(item.title);
-        // generatedCover()/the local SVG generator is the guaranteed-safe
-        // last resort inside getRealCoverImage itself — no need to re-check
-        // relevance on its own output.
-    }
-    if (meta && meta.artwork) {
+    // The TVMaze secondary attempt is deliberately NOT used for AI-chat
+    // results at all (unlike the main match render, which does use it for
+    // catalog-sourced titles). A curated catalog entry's title is something
+    // we wrote and know precisely; an AI-chat title is Gemini's free-form
+    // best guess — stacking a second, looser lookup on top of that is where
+    // the remaining risk lived, for a real-cover gain that isn't worth it
+    // here.
+
+    if (verified) {
+        img.onerror = function () { this.onerror = null; if (typeof generateLocalPosterSVG === 'function') this.src = generateLocalPosterSVG(item.title); };
+        img.src = verified;
+    } else if (meta && meta.artwork) {
         img.onerror = function () {
             this.onerror = null;
             if (typeof generateLocalPosterSVG === 'function') this.src = generateLocalPosterSVG(item.title);
         };
         img.src = meta.artwork;
-    } else if (fallbackArtwork) {
-        img.onerror = function () {
-            this.onerror = null;
-            if (typeof generateLocalPosterSVG === 'function') this.src = generateLocalPosterSVG(item.title);
-        };
-        img.src = fallbackArtwork;
     }
+    // If none of the above applied, the branded local SVG placeholder set at
+    // the top of this function is what stays showing — always correct,
+    // since it's generated directly from item.title with no external
+    // dependency that could substitute the wrong title's art.
     item._resolved = meta;
 
     if (link) {

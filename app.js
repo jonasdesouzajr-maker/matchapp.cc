@@ -250,7 +250,15 @@ function upgradeArtwork(url) {
 // the code trusted data.results[0] no matter how unrelated it was to the
 // query. This requires the returned name to genuinely share a significant
 // word with what was searched before its artwork gets used.
-const STOPWORDS = new Set(['the','a','an','of','and','or','in','on','at','to','for','with','my','her','his','their','is']);
+const STOPWORDS = new Set([
+    'the','a','an','of','and','or','in','on','at','to','for','with','my','her','his','their','is',
+    // Portuguese/Spanish function words — many of MatchApp's titles are in
+    // these languages, so filtering only English stopwords understated how
+    // "significant" a shared word like "sua" (your) or "para" (for) really was.
+    'um','uma','de','da','do','das','dos','que','se','sua','seu','suas','seus','para','por','com',
+    'em','no','na','nos','nas','este','esta','isso','essa','esse','sem','mais','muito','como',
+    'el','la','los','las','un','una','del','con','por','pero','muy','este','esta','ese','esa'
+]);
 function significantWords(s) {
     return (s || '').toLowerCase().replace(/['’]/g, '').split(/[^a-z0-9À-ÿ]+/i).filter(w => w.length > 2 && !STOPWORDS.has(w));
 }
@@ -556,7 +564,8 @@ async function hydrateMarqueeCovers() {
         // title is in our own catalog, use ITS tagged categories to decide.
         const catalogEntry = (typeof CONTENT_CATALOG !== 'undefined') && CONTENT_CATALOG.find(e => e.title === title);
         const riskyByCatalog = catalogEntry && catalogEntry.cats.some(c => isHighRiskCategory(c, title));
-        if (riskyByCatalog || (typeof VERTICAL_DRAMA_TITLES !== 'undefined' && VERTICAL_DRAMA_TITLES.includes(title))) return;
+        const riskyByPlatform = catalogEntry && ['globoplay','reelshort','dramabox','shortmax','pure flix','angel studios'].includes(String(catalogEntry.platform).toLowerCase());
+        if (riskyByCatalog || riskyByPlatform || (typeof VERTICAL_DRAMA_TITLES !== 'undefined' && VERTICAL_DRAMA_TITLES.includes(title))) return;
 
         try {
             const meta = await getRichMetadata(title, 'series');
@@ -1383,7 +1392,8 @@ async function renderResult(selected, isSpecificSearch) {
     // itself came from, so by construction they can't mismatch — that's
     // categorically different from a catalog title needing a fresh, separate
     // search, which is where the real risk lives.
-    const skipLiveLookup = !selected._meta && isHighRiskCategory(categoryHint, selected.title);
+    const platformIsHighRisk = selected.platform && ['globoplay','reelshort','dramabox','shortmax','pure flix','angel studios'].includes(String(selected.platform).toLowerCase());
+    const skipLiveLookup = !selected._meta && (isHighRiskCategory(categoryHint, selected.title) || platformIsHighRisk);
 
     // Hand-verified art wins over everything — no lookup can beat a known-correct
     // image, and for unreleased/app-exclusive titles a lookup actively returns
