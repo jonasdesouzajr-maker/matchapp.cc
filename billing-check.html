@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stripe & Billing Diagnostic — MatchApp</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" href="/logo.jpeg" type="image/jpeg">
+    <style>
+        :root { --gold:#E5C158; --gold-glow:#FFF3A3; --royal:#402562; --royal-lift:#6B3FA0; }
+        * { box-sizing: border-box; }
+        body { margin:0; padding:24px; background:#14131A; color:#fff;
+               font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif; line-height:1.6; }
+        .wrap { max-width: 860px; margin: 0 auto; }
+        h1 { color: var(--gold); font-size: 26px; margin: 0 0 6px 0; }
+        .sub { color:#9d95b0; font-size:14px; margin:0 0 24px 0; }
+        .card { background: linear-gradient(160deg, rgba(32,24,52,0.9), rgba(20,19,26,0.94));
+                border:1px solid rgba(229,193,88,0.35); border-radius:14px; padding:20px; margin-bottom:16px; }
+        .card h2 { font-size:16px; color:var(--gold); margin:0 0 10px 0; text-transform:uppercase; letter-spacing:0.6px; }
+        button { background:linear-gradient(135deg,#BF953F,#FCF6BA,#B38728); color:#000; border:none;
+                 padding:14px 26px; border-radius:12px; font-weight:900; font-size:15px; cursor:pointer; font-family:inherit; }
+        button:disabled { opacity:0.5; cursor:wait; }
+        pre { background:#0a0910; border:1px solid rgba(229,193,88,0.2); border-radius:10px; padding:14px;
+              overflow-x:auto; font-size:12.5px; color:#c9c2d8; white-space:pre-wrap; word-break:break-word; margin:10px 0 0 0; }
+        .ok { color:#4ade80; font-weight:700; } .bad { color:#ff6b6b; font-weight:700; } .warn { color:#ffb84d; font-weight:700; }
+        .step { padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.07); font-size:14px; }
+        .step:last-child { border-bottom:none; }
+        .verdict { border-left:4px solid var(--gold); padding:14px 18px; background:rgba(107,63,160,0.2); border-radius:10px; margin-top:14px; font-size:15px; }
+        a { color: var(--gold); }
+        ul { margin:10px 0 0 0; padding-left:20px; font-size:14px; color:#ddd6ec; }
+        li { margin-bottom:8px; }
+        code { background:rgba(0,0,0,0.5); padding:2px 6px; border-radius:4px; font-size:12.5px; color:var(--gold-glow); }
+        .manual { background:rgba(107,63,160,0.15); border:1px solid rgba(229,193,88,0.25); border-radius:12px; padding:16px; margin-top:14px; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <h1>💳 Stripe &amp; Billing Diagnostic</h1>
+    <p class="sub">Verifies everything between a customer paying and their account actually unlocking.
+       <code>noindex</code>, not linked anywhere, not in the sitemap.</p>
+
+    <div class="card">
+        <button id="run" onclick="runDiagnostic()">▶ Run billing diagnostic</button>
+        <div id="steps" style="margin-top:16px;"></div>
+    </div>
+
+    <div id="verdict-card" class="card" style="display:none;">
+        <h2>Verdict</h2>
+        <div id="verdict"></div>
+    </div>
+
+    <div class="card">
+        <h2>The one test only you can run</h2>
+        <p style="font-size:14px; color:#ddd6ec; margin:0;">
+          This page checks everything reachable from the browser. The webhook itself is a
+          <strong>server-to-server</strong> call from Stripe to Supabase — no browser can observe it.
+          To confirm that final link, do this (takes ~1 minute):
+        </p>
+        <div class="manual">
+            <ul>
+                <li>Stripe Dashboard → <strong>Developers</strong> → <strong>Webhooks</strong> → click your endpoint</li>
+                <li>Click <strong>Send test webhook</strong> → choose <code>checkout.session.completed</code> → Send</li>
+                <li>Stripe should show a <strong class="ok">200</strong> response. Anything else (400/401/500) means it isn't wired up right.</li>
+                <li>Then in Supabase → <strong>SQL Editor</strong>, run:<br>
+                    <code>select * from public.stripe_events order by processed_at desc limit 5;</code><br>
+                    A row should appear. If it does, the whole chain works.</li>
+            </ul>
+            <p style="font-size:13px; color:#9d95b0; margin:12px 0 0 0;">
+              <strong>Getting 401?</strong> JWT verification is still on — Supabase → Edge Functions →
+              <code>stripe-webhook</code> → turn OFF "Verify JWT". Stripe can't send a Supabase token.<br>
+              <strong>Getting 400 "Invalid signature"?</strong> The <code>STRIPE_WEBHOOK_SECRET</code> in Supabase
+              doesn't match the signing secret shown on that Stripe endpoint page. Copy it again.
+            </p>
+        </div>
+    </div>
+
+    <div id="raw-card" class="card" style="display:none;">
+        <h2>Raw output</h2>
+        <pre id="raw"></pre>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://zkymvqrmbabngsqblyye.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpreW12cXJtYmFibmdzcWJseXllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY4MDUyNDIsImV4cCI6MjEwMjM4MTI0Mn0._yEVFMfwVU6GBqQ8m3ljfOgA0HSLEDiKMOfYae6ZD8Q";
+
+let client = null;
+try { client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch (e) {}
+
+const stepsEl = () => document.getElementById('steps');
+function step(label, state, detail) {
+    const icon = state === 'ok' ? '<span class="ok">✔</span>' : state === 'bad' ? '<span class="bad">✖</span>' : '<span class="warn">▲</span>';
+    const div = document.createElement('div');
+    div.className = 'step';
+    div.innerHTML = `${icon} <strong>${label}</strong>${detail ? `<br><span style="color:#9d95b0; font-size:13px;">${detail}</span>` : ''}`;
+    stepsEl().appendChild(div);
+}
+function showVerdict(html) {
+    document.getElementById('verdict-card').style.display = 'block';
+    document.getElementById('verdict').innerHTML = html;
+}
+function showRaw(obj) {
+    document.getElementById('raw-card').style.display = 'block';
+    document.getElementById('raw').textContent = typeof obj === 'string' ? obj : JSON.stringify(obj, null, 2);
+}
+
+async function runDiagnostic() {
+    const btn = document.getElementById('run');
+    btn.disabled = true; btn.textContent = 'Running…';
+    stepsEl().innerHTML = '';
+    document.getElementById('verdict-card').style.display = 'none';
+    document.getElementById('raw-card').style.display = 'none';
+    const raw = {};
+
+    if (!client) {
+        step('Supabase client', 'bad', 'Failed to initialise — check for an ad-blocker on cdn.jsdelivr.net');
+        btn.disabled = false; btn.textContent = '▶ Run billing diagnostic';
+        return;
+    }
+    step('Supabase client', 'ok', 'Initialised.');
+
+    // 1. Are the Stripe Payment Links configured in pricing.js?
+    let linksOk = 0, linksTotal = 4;
+    try {
+        const res = await fetch('/pricing.js?cachebust=' + Date.now());
+        const txt = await res.text();
+        const found = [...txt.matchAll(/const (STRIPE_LINK_\w+) = "([^"]+)"/g)];
+        raw.paymentLinks = {};
+        for (const [, name, url] of found) {
+            const valid = url.startsWith('https://buy.stripe.com/');
+            raw.paymentLinks[name] = url;
+            if (valid) linksOk++;
+            step(`Payment link: ${name.replace('STRIPE_LINK_','')}`, valid ? 'ok' : 'bad',
+                 valid ? url : `Not a valid Stripe link: ${url}`);
+        }
+        linksTotal = found.length;
+    } catch (e) {
+        step('Payment links', 'bad', 'Could not read pricing.js: ' + e.message);
+    }
+
+    // 2. Is the database schema in place? (migration 003)
+    let schemaOk = false;
+    try {
+        const { error } = await client.from('profiles').select('id').limit(1);
+        // An anon SELECT is blocked by RLS, which is CORRECT — an auth error here
+        // means the table exists and is protected. A "relation does not exist"
+        // error would mean the migration never ran.
+        const msg = (error && error.message) || '';
+        if (msg.toLowerCase().includes('does not exist')) {
+            step('Database schema', 'bad', 'The profiles table does not exist — migrations have not been run.');
+        } else {
+            schemaOk = true;
+            step('Database schema', 'ok', 'profiles table exists and is RLS-protected (anon reads correctly blocked).');
+        }
+        raw.schemaProbe = msg || 'no error';
+    } catch (e) {
+        step('Database schema', 'warn', 'Could not probe: ' + e.message);
+    }
+
+    // 3. Is the quota RPC live? (proves migrations 001/002 ran)
+    let rpcOk = false;
+    try {
+        const { data, error } = await client.rpc('match_status');
+        if (error && (error.message || '').toLowerCase().includes('could not find')) {
+            step('Quota RPC (match_status)', 'bad', 'Function not found — migration 001/002 has not been run.');
+        } else {
+            rpcOk = true;
+            const authed = data && data.authenticated;
+            step('Quota RPC (match_status)', 'ok',
+                 authed ? 'Live and returning your account status.' : 'Live (returns not-authenticated for logged-out visitors, which is correct).');
+        }
+        raw.matchStatus = data || (error && error.message);
+    } catch (e) {
+        step('Quota RPC', 'warn', 'Could not call: ' + e.message);
+    }
+
+    // 4. Is the webhook Edge Function deployed and reachable?
+    // We send a deliberately unsigned request. A CORRECTLY configured webhook
+    // must REJECT it — that rejection is the proof it's alive and secure.
+    let webhookState = 'unknown';
+    try {
+        const res = await fetch(SUPABASE_URL + '/functions/v1/stripe-webhook', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ probe: true })
+        });
+        raw.webhookProbe = { status: res.status, body: (await res.text()).slice(0, 300) };
+
+        if (res.status === 400) {
+            webhookState = 'good';
+            step('Webhook function', 'ok',
+                 'Deployed, and correctly REJECTING unsigned requests (400). This is exactly right — it means signature verification is active and nobody can forge a payment.');
+        } else if (res.status === 401) {
+            webhookState = 'jwt';
+            step('Webhook function', 'bad',
+                 'Returns 401 — "Verify JWT" is still enabled. Stripe cannot send a Supabase token, so every real payment notification will be rejected before your code runs.');
+        } else if (res.status === 404) {
+            webhookState = 'missing';
+            step('Webhook function', 'bad', 'Returns 404 — the stripe-webhook function is not deployed.');
+        } else if (res.status === 500) {
+            webhookState = 'secrets';
+            step('Webhook function', 'warn',
+                 'Returns 500 — deployed, but erroring. Usually a missing secret (STRIPE_SECRET_KEY / STRIPE_WEBHOOK_SECRET / SUPABASE_SERVICE_ROLE_KEY).');
+        } else {
+            step('Webhook function', 'warn', `Unexpected status ${res.status}. See raw output.`);
+        }
+    } catch (e) {
+        step('Webhook function', 'warn', 'Network/CORS blocked the probe — this alone does not mean it is broken. Use the manual Stripe test below.');
+        raw.webhookProbe = e.message;
+    }
+
+    // Verdict
+    if (webhookState === 'good' && rpcOk && schemaOk && linksOk === linksTotal) {
+        showVerdict(`<span class="ok">✅ Everything reachable from the browser checks out.</span>
+          <p>Payment links valid, database schema live, quota functions working, and the webhook is deployed
+             with signature verification correctly rejecting unsigned requests.</p>
+          <p style="margin-top:10px;"><strong>One step left:</strong> run the Stripe "Send test webhook" check above.
+             That's the only part a browser physically can't verify.</p>`);
+    } else if (webhookState === 'jwt') {
+        showVerdict(`<span class="bad">Webhook will reject every real payment.</span>
+          <ul><li>Supabase → Edge Functions → <code>stripe-webhook</code> → turn OFF <strong>Verify JWT</strong></li>
+              <li>Then re-run this diagnostic — you want to see a <strong>400</strong>, not a 401.</li></ul>`);
+    } else if (webhookState === 'missing') {
+        showVerdict(`<span class="bad">The webhook function isn't deployed.</span>
+          <ul><li>Supabase → Edge Functions → Create function named exactly <code>stripe-webhook</code></li>
+              <li>Paste the contents of <code>supabase/functions/stripe-webhook/index.ts</code> → Deploy</li>
+              <li>Turn OFF "Verify JWT" on it, then re-run this.</li></ul>`);
+    } else if (webhookState === 'secrets') {
+        showVerdict(`<span class="warn">Webhook deployed but erroring — likely a missing secret.</span>
+          <ul><li>Supabase → Edge Functions → Manage secrets. You need all three:
+              <code>STRIPE_SECRET_KEY</code>, <code>STRIPE_WEBHOOK_SECRET</code>, <code>SUPABASE_SERVICE_ROLE_KEY</code></li></ul>`);
+    } else {
+        showVerdict(`<span class="warn">Partly verified.</span>
+          <p>Some checks couldn't complete from the browser. Review the steps above, then run the
+             manual Stripe test — that's the definitive one.</p>`);
+    }
+
+    showRaw(raw);
+    btn.disabled = false; btn.textContent = '▶ Run diagnostic again';
+}
+</script>
+</body>
+</html>

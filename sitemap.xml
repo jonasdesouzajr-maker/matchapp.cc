@@ -7,7 +7,7 @@
                             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
     <url>
         <loc>https://matchapp.cc/</loc>
-        <lastmod>2026-09-04T10:47:13-03:00</lastmod>
+        <lastmod>2026-09-04T15:39:02-03:00</lastmod>
         <changefreq>always</changefreq>
         <priority>1.0</priority>
         <xhtml:link rel="alternate" hreflang="en" href="https://matchapp.cc/?lang=en"/>
@@ -32,13 +32,13 @@
     </url>
     <url>
         <loc>https://matchapp.cc/pricing/pricing.html</loc>
-        <lastmod>2026-09-04T10:47:13-03:00</lastmod>
+        <lastmod>2026-09-04T15:39:02-03:00</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://matchapp.cc/discover.html</loc>
-        <lastmod>2026-09-04T10:47:13-03:00</lastmod>
+        <lastmod>2026-09-04T15:39:02-03:00</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.95</priority>
         <image:image>
@@ -49,13 +49,13 @@
     </url>
     <url>
         <loc>https://matchapp.cc/privacy.html</loc>
-        <lastmod>2026-09-04T10:47:13-03:00</lastmod>
+        <lastmod>2026-09-04T15:39:02-03:00</lastmod>
         <changefreq>yearly</changefreq>
         <priority>0.3</priority>
     </url>
     <url>
         <loc>https://matchapp.cc/terms.html</loc>
-        <lastmod>2026-09-04T10:47:13-03:00</lastmod>
+        <lastmod>2026-09-04T15:39:02-03:00</lastmod>
         <changefreq>yearly</changefreq>
         <priority>0.3</priority>
     </url>
