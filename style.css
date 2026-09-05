@@ -54,13 +54,6 @@ body.ad-free-mode .ad-placement, body.ad-free-mode .sidebar-ad { display: none !
 .ad-label { font-size: 9px; color: #888; display: block; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
 .ad-placement { background: rgba(0,0,0,0.4); border-radius: 16px; padding: 12px; margin: 15px 0; width: 100%; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
 
-/* Adsterra Mobile Scaling Magic */
-.adsterra-top-wrapper, .adsterra-bot-wrapper { display: flex; justify-content: center; align-items: center; width: 100%; }
-@media (max-width: 768px) {
-    .adsterra-top-wrapper { transform: scale(0.42); transform-origin: center top; height: 40px; margin-bottom: -15px; }
-    .adsterra-bot-wrapper { transform: scale(0.9); transform-origin: center top; }
-}
-
 /* 💎 HEADER & UI */
 .chrome-banner { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: linear-gradient(135deg, rgba(17,60,207,0.9), rgba(43,90,245,0.95)); border: 1px solid rgba(255,255,255,0.25); border-radius: 20px; padding: 10px 16px; margin-bottom: 20px; backdrop-filter: blur(15px); }
 .chrome-text { font-size: 13px; color: #fff; font-weight: 600; flex: 1; }
