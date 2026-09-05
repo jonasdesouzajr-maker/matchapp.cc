@@ -1074,9 +1074,9 @@ const PLATFORMS = {
 
     "ReelShort":      { group: "Vertical Micro-Drama Apps", audio: false, countries: ['*'], cats: ["vertical micro-drama","short film"], url: "https://www.reelshort.com", search: t => `https://www.reelshort.com/search?keyword=${encodeURIComponent(t)}` },
     "DramaBox":       { group: "Vertical Micro-Drama Apps", audio: false, countries: ['*'], cats: ["vertical micro-drama","short film"], url: "https://www.dramaboxapp.com", search: t => `https://www.dramaboxapp.com/search?q=${encodeURIComponent(t)}` },
-    "ShortMax":       { group: "Vertical Micro-Drama Apps", audio: false, countries: ['*'], cats: ["vertical micro-drama","short film"], url: "https://www.shortmax.com", search: t => `https://www.shortmax.com` },
-    "GoodShort":      { group: "Vertical Micro-Drama Apps", audio: false, countries: ['*'], cats: ["vertical micro-drama","short film"], url: "https://www.goodshort.com", search: t => `https://www.goodshort.com` },
-    "FlexTV":         { group: "Vertical Micro-Drama Apps", audio: false, countries: ['*'], cats: ["vertical micro-drama","short film"], url: "https://www.flextv.cc", search: t => `https://www.flextv.cc` },
+    "ShortMax":       { group: "Vertical Micro-Drama Apps", audio: false, countries: ['*'], cats: ["vertical micro-drama","short film"], url: "https://www.shortmax.com", searchable: false, search: t => `https://www.shortmax.com` },
+    "GoodShort":      { group: "Vertical Micro-Drama Apps", audio: false, countries: ['*'], cats: ["vertical micro-drama","short film"], url: "https://www.goodshort.com", searchable: false, search: t => `https://www.goodshort.com` },
+    "FlexTV":         { group: "Vertical Micro-Drama Apps", audio: false, countries: ['*'], cats: ["vertical micro-drama","short film"], url: "https://www.flextv.cc", searchable: false, search: t => `https://www.flextv.cc` },
 
     "Globoplay":      { group: "Brazil", audio: false, countries: ['Brazil','Brasil','Portugal'], cats: ["novela brasileira","telenovela","series","movie","documentary","reality show","kids","vertical micro-drama"], url: "https://globoplay.globo.com", search: t => `https://globoplay.globo.com/busca/?q=${encodeURIComponent(t)}` },
     "Viki":           { group: "Regional & Local", audio: false, countries: ['*'], cats: ["K-drama","C-drama","J-drama","series","movie","Turkish dizi"], url: "https://www.viki.com", search: t => `https://www.viki.com/search?q=${encodeURIComponent(t)}` },
@@ -1650,19 +1650,25 @@ async function renderResult(selected, isSpecificSearch) {
     else if (selected.platform && selected.platform !== 'any' && pfEntry) directBtn.innerText = `▶ Watch on ${selected.platform}`;
     else directBtn.innerText = window.t ? t('res.findwhere') : '▶ Find Where To Stream';
 
-    // SAFETY NET for the search-URL case. Native apps often swallow the ?q=
-    // parameter on handoff, dropping the user on a blank search screen. We
-    // can't fix how their app parses the link, but we can make it a one-tap
-    // recovery: put the exact title on the clipboard as they leave, so it's
-    // already there to paste. Skipped when we have a verified direct link,
-    // since nothing needs typing in that case.
+    // SAFETY NET for every link that isn't a verified per-title deep link.
+    // Two distinct failure modes are handled here:
+    //   1. Search URL exists, but the native app drops the ?q= on handoff and
+    //      opens a blank search screen (confirmed with Netflix).
+    //   2. The platform exposes no URL-based search at all — ShortMax,
+    //      GoodShort and FlexTV search entirely client-side, so any link can
+    //      only ever land on their homepage.
+    // We can't change how a third-party app parses a link, but we can make it
+    // a paste instead of retyping the title from memory.
     const usesSearchUrl = !selected.watchUrl;
+    const pfSearchable = !pfEntry || pfEntry.searchable !== false;
     directBtn.onclick = usesSearchUrl ? function() {
         try {
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(selected.title);
                 if (window.showToast) {
-                    showToast(`📋 "${selected.title}" copied — paste it if the app's search opens empty.`);
+                    showToast(pfSearchable
+                        ? `📋 "${selected.title}" copied — paste it if the app's search opens empty.`
+                        : `📋 "${selected.title}" copied — ${selected.platform} has no direct search link, so paste it into the app's search box.`);
                 }
             }
         } catch (e) { /* clipboard blocked; the link still opens normally */ }
