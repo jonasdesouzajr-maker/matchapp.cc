@@ -1652,31 +1652,49 @@ async function renderLiveActivity() {
     const el = document.getElementById('live-activity');
     if (!el) return;
 
-    // Always render the honest baseline immediately, so the strip is never blank.
+    // Always render the honest baseline immediately — never blank.
     el.innerHTML = productFactsLine();
 
-    // Then upgrade to REAL usage numbers if the activity_stats() RPC exists
-    // (migration 004). If it isn't deployed yet, the baseline simply stays.
+    // Don't attempt the RPC at all if Supabase isn't initialised.
     if (!supabaseClient) return;
+
+    // activity_stats() only exists after migration 004 is deployed.
+    // Calling a nonexistent RPC throws a network-level error in the browser
+    // console even when caught (the SDK routes it through api.supabase.com).
+    // Guard: only call it once we've seen it succeed at least once this session,
+    // OR fall back to a health check that costs one tiny request first.
+    // Simplest safe approach: try once, gate future calls on success.
+    if (!renderLiveActivity._confirmed && !renderLiveActivity._attempted) {
+        renderLiveActivity._attempted = true;
+        try {
+            const { data, error } = await supabaseClient.rpc('activity_stats');
+            if (error) return; // migration not deployed — stay on baseline, no console noise
+            renderLiveActivity._confirmed = true;
+            _applyActivityStats(el, data);
+        } catch (e) { /* migration not deployed yet; baseline stays */ }
+        return;
+    }
+
+    if (!renderLiveActivity._confirmed) return; // previous attempt failed — don't retry
+
     try {
         const { data, error } = await supabaseClient.rpc('activity_stats');
-        if (error || !data) return;
+        if (!error && data) _applyActivityStats(el, data);
+    } catch (e) { /* network blip — keep whatever's showing */ }
+}
 
-        const total = Number(data.matches_total || 0);
-        const week = Number(data.matches_7d || 0);
-        const members = Number(data.members_total || 0);
-        const fmt = n => n.toLocaleString(window.MATCH_LANG || navigator.language || 'en');
+function _applyActivityStats(el, data) {
+    const total   = Number(data.matches_total || 0);
+    const week    = Number(data.matches_7d    || 0);
+    const members = Number(data.members_total || 0);
+    const fmt = n => n.toLocaleString(window.MATCH_LANG || navigator.language || 'en');
 
-        // Only surface a number once it's actually meaningful. Showing
-        // "3 matches this week" would undersell the product more than the
-        // product facts do — but it must never be inflated to compensate.
-        const bits = [];
-        if (week >= 25) bits.push(`<strong>${fmt(week)}</strong> matches made this week`);
-        else if (total >= 50) bits.push(`<strong>${fmt(total)}</strong> matches made`);
-        if (members >= 25) bits.push(`<strong>${fmt(members)}</strong> members`);
+    const bits = [];
+    if (week   >= 25) bits.push(`<strong>${fmt(week)}</strong> matches made this week`);
+    else if (total >= 50) bits.push(`<strong>${fmt(total)}</strong> matches made`);
+    if (members >= 25) bits.push(`<strong>${fmt(members)}</strong> members`);
 
-        if (bits.length) el.innerHTML = bits.join(' · ');
-    } catch (e) { /* keep the honest baseline */ }
+    if (bits.length) el.innerHTML = bits.join(' · ');
 }
 
 function initLiveStrip() {
