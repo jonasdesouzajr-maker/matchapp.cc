@@ -772,11 +772,26 @@ window.doLogout = async function() { if (supabaseClient) { await supabaseClient.
 window.scrollToQuestionnaire = function() {
     const box = document.getElementById('questionnaire-box');
     if (!box) return;
-    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // 'center' was wrong here: the questionnaire is taller than a phone
+    // viewport, so centring it scrolled the "Curate Your Perfect Match"
+    // heading off the top and dropped the user into the middle of the form.
+    // 'start' + the scroll-margin-top rule lands the heading just below the
+    // sticky header instead.
+    box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
     setTimeout(() => {
         box.classList.add('cta-highlight');
-        const firstField = document.getElementById('q-category');
-        if (firstField) firstField.focus({ preventScroll: true });
+
+        // Focusing a <select> on a touch device opens the native option
+        // picker immediately, covering the form the user was just sent to.
+        // Only auto-focus where there's a real keyboard.
+        const isTouch = window.matchMedia && window.matchMedia('(hover: none), (pointer: coarse)').matches;
+        if (!isTouch) {
+            const firstField = document.getElementById('q-category');
+            if (firstField) firstField.focus({ preventScroll: true });
+        }
+
         setTimeout(() => box.classList.remove('cta-highlight'), 1600);
     }, 450); // let the smooth scroll settle before drawing attention to it
 };
