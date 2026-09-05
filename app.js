@@ -377,12 +377,24 @@ async function itunesLookup(title, media) {
 // ----------------------------------------------------
 const META_CACHE = {};
 
+// Wraps fetch with a hard deadline. Neither itunesRichLookup's nor the TVMaze
+// fetch below ever had a timeout — a slow or hung response left renderResult's
+// await chain permanently pending, which keeps posterEl hidden, the share
+// button unlinked, and the direct-link button stale, forever. This is very
+// likely the actual cause behind "images gone from matches" reports: not a
+// missing image so much as a render that never got to finish painting one.
+function fetchWithTimeout(url, ms = 3500) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), ms);
+    return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(timer));
+}
+
 async function itunesRichLookup(title, media) {
     if (!title) return null;
     const cacheKey = `${title}::${media}`;
     if (META_CACHE[cacheKey] !== undefined) return META_CACHE[cacheKey];
     try {
-        const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(title)}&media=${media}&limit=1`);
+        const res = await fetchWithTimeout(`https://itunes.apple.com/search?term=${encodeURIComponent(title)}&media=${media}&limit=1`);
         if (res.ok) {
             const data = await res.json();
             if (data.results && data.results.length > 0) {
@@ -436,9 +448,15 @@ async function getRichMetadata(title, categoryHint) {
         order = ['movie', 'tvShow', 'shortFilm', 'musicVideo'];
     }
 
+    // Every media type is fetched concurrently (each individually time-bounded
+    // by fetchWithTimeout) instead of one at a time -- the decision logic below
+    // still walks the results in the exact same priority order as before, so
+    // which one wins is unchanged; only the worst-case wait time drops, from
+    // up to 4x a single timeout down to about 1x.
+    const results = await Promise.all(order.map(media => itunesRichLookup(title, media)));
+
     let bestArtworkOnly = null;
-    for (const media of order) {
-        const meta = await itunesRichLookup(title, media);
+    for (const meta of results) {
         if (!meta) continue;
         if (wantsAudio) { if (meta.artwork || meta.preview) return meta; }
         else {
@@ -467,10 +485,10 @@ async function getRealCoverImage(title) {
 
     // 2. iTunes across several media types — itunesLookup already runs every
     //    result through isRelevantMatch(), so nothing unrelated gets this far.
-    for (const media of ['movie', 'tvShow', 'podcast', 'music']) {
-        const art = await itunesLookup(title, media);
-        if (art) return cacheAndReturn(art);
-    }
+    //    Fetched concurrently (bounded by fetchWithTimeout per-call) instead of
+    //    sequentially; the first truthy result in this same order still wins.
+    const arts = await Promise.all(['movie', 'tvShow', 'podcast', 'music'].map(media => itunesLookup(title, media)));
+    for (const art of arts) { if (art) return cacheAndReturn(art); }
 
     // 3. TVMaze (strong for international + K-drama series).
     //    THIS WAS THE ACTUAL BUG: TVMaze's singlesearch endpoint returns its
@@ -482,7 +500,7 @@ async function getRealCoverImage(title) {
     //    call, and it confidently hands back an unrelated show's poster. Same
     //    isRelevantMatch() guard as the iTunes path now applies here too.
     try {
-        const tvRes = await fetch(`https://api.tvmaze.com/singlesearch/shows?q=${encodeURIComponent(title)}`);
+        const tvRes = await fetchWithTimeout(`https://api.tvmaze.com/singlesearch/shows?q=${encodeURIComponent(title)}`);
         if (tvRes.ok) {
             const tvData = await tvRes.json();
             const img = tvData && tvData.image && (tvData.image.original || tvData.image.medium);
@@ -1580,6 +1598,17 @@ async function renderResult(selected, isSpecificSearch) {
 
     updateActionButtonStates();
 }
+
+// ----------------------------------------------------
+// #ROCKINRIO 2026 — AI PLAYLIST MATCH SHORTCUT
+// ----------------------------------------------------
+window.triggerRockInRioMatch = function() {
+    const input = document.getElementById('specific-search-input');
+    if (input) input.value = "Rock in Rio 2026 Rio de Janeiro festival playlist highlights";
+    const searchBox = document.getElementById('search-box');
+    if (searchBox) searchBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    window.triggerMatch(true);
+};
 
 // ----------------------------------------------------
 // WATCH LATER / SEEN IT ENGINE
