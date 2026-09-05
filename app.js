@@ -941,7 +941,7 @@ const CONTENT_CATALOG = [
     { title: "RRR", synopsis: "Two revolutionaries in colonial India form an epic, action-packed friendship in this Tollywood blockbuster.", platform: "Netflix", cats: ["Bollywood","movie"], moods: ["epic and adventurous","intense and thrilling"], vibes: ["fast-paced binge-worthy","award winning"], ratings: ["teen PG-13","any"] },
     { title: "Business Proposal", synopsis: "A woman goes on a blind date pretending to be someone else — and it turns out to be her own CEO.", platform: "Viki", cats: ["K-drama","series"], moods: ["light and feel-good","romantic"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["teen PG-13","any"] },
     { title: "Rebel Moon", synopsis: "A peaceful colony on the edge of the galaxy sends a warrior to recruit fighters against a tyrannical regime.", platform: "Netflix", cats: ["movie"], moods: ["epic and adventurous","intense and thrilling"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
-    { title: "Midnight Diner", synopsis: "A quiet late-night Tokyo diner serves comfort food and even more comforting stories to its regulars.", platform: "Netflix", cats: ["J-drama","series"], moods: ["cozy comfort watch","nostalgic"], vibes: ["easy background watch","hidden gem underrated"], ratings: ["all ages family friendly","any"] },
+    { title: "Midnight Diner: Tokyo Stories", synopsis: "A quiet late-night Tokyo diner serves comfort food and even more comforting stories to its regulars.", platform: "Netflix", watchUrl: "https://www.netflix.com/title/80113037", cats: ["J-drama","series"], moods: ["cozy comfort watch","nostalgic"], vibes: ["easy background watch","hidden gem underrated"], ratings: ["all ages family friendly","any"] },
     { title: "Kingdom", synopsis: "A Korean crown prince investigates a mysterious plague that turns the dead into the undead.", platform: "Netflix", cats: ["K-drama","series"], moods: ["scary","dark and gritty"], vibes: ["fast-paced binge-worthy","hidden gem underrated"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
     { title: "Emilia Pérez", synopsis: "A Mexican cartel leader seeks a secret gender transition, told as a genre-defying musical thriller.", platform: "Netflix", cats: ["movie","European cinema"], moods: ["mind-bending","intense and thrilling"], vibes: ["prestige and critically acclaimed","award winning"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
 
@@ -1339,14 +1339,14 @@ function pickFromCatalog(cat, plat, mood, vibe, rating) {
             // Only ever display the user's requested platform when this tier
             // actually filtered on it — never invent/echo it back otherwise.
             const platformVerified = plat === 'any' || tier.platformHonored;
-            return { title: pick.title, synopsis: pick.synopsis, platform: pick.platform, platformVerified, source: 'catalog' };
+            return { title: pick.title, synopsis: pick.synopsis, platform: pick.platform, platformVerified, watchUrl: pick.watchUrl || null, source: 'catalog' };
         }
     }
     // Absolute last resort: any catalog title not shown in the last 6 results.
     // No platform request could be honored here, by definition.
     const anyFresh = CONTENT_CATALOG.filter(e => !seenRecently.has(e.title));
     const pick = (anyFresh.length ? anyFresh : CONTENT_CATALOG)[Math.floor(Math.random() * (anyFresh.length ? anyFresh.length : CONTENT_CATALOG.length))];
-    return { title: pick.title, synopsis: pick.synopsis, platform: pick.platform, platformVerified: (plat === 'any'), source: 'catalog' };
+    return { title: pick.title, synopsis: pick.synopsis, platform: pick.platform, platformVerified: (plat === 'any'), watchUrl: pick.watchUrl || null, source: 'catalog' };
 }
 
 window.triggerMatch = async function(isSpecificSearch = false) {
@@ -1631,7 +1631,14 @@ async function renderResult(selected, isSpecificSearch) {
     const pfEntry = PLATFORMS[selected.platform];
     const audioPick = catIsAudio || (pfEntry && pfEntry.audio);
 
-    if (selected.platform && selected.platform !== 'any' && pfEntry) {
+    // A verified per-title deep link always wins over a platform search.
+    // Netflix (and most apps) reliably honour /title/<id> universal links, but
+    // frequently drop the ?q= parameter when a search URL hands off to the
+    // native app — the app opens on an EMPTY search screen and the user
+    // assumes the title doesn't exist. Direct links avoid that entirely.
+    if (selected.watchUrl) {
+        directBtn.href = selected.watchUrl;
+    } else if (selected.platform && selected.platform !== 'any' && pfEntry) {
         directBtn.href = platformSearchUrl(selected.platform, selected.title);
     } else if (audioPick) {
         directBtn.href = `https://open.spotify.com/search/${encodeURIComponent(selected.title)}`;
@@ -1642,6 +1649,24 @@ async function renderResult(selected, isSpecificSearch) {
     if (audioPick) directBtn.innerText = window.t ? t('res.listennow') : '🎧 Listen Now';
     else if (selected.platform && selected.platform !== 'any' && pfEntry) directBtn.innerText = `▶ Watch on ${selected.platform}`;
     else directBtn.innerText = window.t ? t('res.findwhere') : '▶ Find Where To Stream';
+
+    // SAFETY NET for the search-URL case. Native apps often swallow the ?q=
+    // parameter on handoff, dropping the user on a blank search screen. We
+    // can't fix how their app parses the link, but we can make it a one-tap
+    // recovery: put the exact title on the clipboard as they leave, so it's
+    // already there to paste. Skipped when we have a verified direct link,
+    // since nothing needs typing in that case.
+    const usesSearchUrl = !selected.watchUrl;
+    directBtn.onclick = usesSearchUrl ? function() {
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(selected.title);
+                if (window.showToast) {
+                    showToast(`📋 "${selected.title}" copied — paste it if the app's search opens empty.`);
+                }
+            }
+        } catch (e) { /* clipboard blocked; the link still opens normally */ }
+    } : null;
 
     // Keep the save/seen buttons worded for the medium being shown.
     applyAudioModeLabels(audioPick);
