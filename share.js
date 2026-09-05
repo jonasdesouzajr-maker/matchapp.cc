@@ -194,6 +194,19 @@ window.openShareSheet = async function() {
     const modal = document.getElementById('share-modal');
     const preview = document.getElementById('share-preview');
     const statusEl = document.getElementById('share-reward-status');
+
+    // Restore the normal share state — a previous share may have swapped the
+    // sheet over to the reward screen, which would otherwise persist and leave
+    // the platform buttons hidden the next time this opens.
+    const sheet = document.querySelector('#share-modal .share-sheet');
+    const rewardScreen = document.getElementById('share-reward-screen');
+    if (rewardScreen) rewardScreen.style.display = 'none';
+    if (sheet) {
+        sheet.querySelectorAll('.share-native, .share-grid, .share-utils, .share-how, .share-sub').forEach(el => { el.style.display = ''; });
+    }
+    if (preview) preview.style.display = '';
+    if (statusEl) statusEl.style.display = '';
+
     if (modal) modal.style.display = 'flex';
     if (preview) preview.innerHTML = '<div class="share-spinner"></div>';
 
@@ -250,11 +263,15 @@ window.shareNative = async function() {
             await navigator.share({ title: 'My MatchApp pick', text, url: SHARE_URL });
             return afterShare('native');
         }
-        window.downloadShareCard();
-        if (window.showToast) showToast('Image saved — attach it to your post!');
+        // No native share support. Previously this silently downloaded the card to
+        // the user's device — writing a file nobody asked for. Copy the caption
+        // instead and point at the explicit Save Image button if they want the asset.
+        await window.copyShareText(true);
+        if (window.showToast) showToast('📋 Caption copied — pick a platform below, or tap Save Image for the card.');
     } catch (e) { /* user dismissed the sheet */ }
 };
 
+// Only ever runs from the explicit "Save Image" button — never automatically.
 window.downloadShareCard = function() {
     const canvas = window._shareCanvas;
     if (!canvas) return;
@@ -262,14 +279,14 @@ window.downloadShareCard = function() {
     a.download = `matchapp-${(window.globalMatchTitle || 'match').replace(/[^a-z0-9]/gi, '-').toLowerCase()}.png`;
     a.href = canvas.toDataURL('image/png');
     a.click();
-    afterShare('download');
+    if (window.showToast) showToast('⬇️ Card saved to your device.');
 };
 
-window.copyShareText = async function() {
+window.copyShareText = async function(silent) {
     try {
         await navigator.clipboard.writeText(shareText() + '\n' + SHARE_URL);
-        if (window.showToast) showToast('📋 Caption + link copied!');
-        afterShare('copy');
+        if (!silent && window.showToast) showToast('📋 Caption + link copied!');
+        if (!silent) afterShare('copy');
     } catch (e) { if (window.showToast) showToast('Could not copy — select the text manually.', true); }
 };
 
@@ -286,11 +303,12 @@ window.shareTo = function(network) {
         linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
         pinterest:`https://pinterest.com/pin/create/button/?url=${url}&description=${text}`
     };
-    // Instagram and TikTok have no web share intent — give the user the asset instead.
+    // Instagram and TikTok have no web share intent. Copy the caption and let the
+    // user decide whether they want the image — no silent download to their device.
     if (network === 'instagram' || network === 'tiktok') {
-        window.downloadShareCard();
-        window.copyShareText();
-        if (window.showToast) showToast(`📸 Card saved + caption copied — paste it into ${network === 'instagram' ? 'Instagram' : 'TikTok'}!`);
+        window.copyShareText(true);
+        if (window.showToast) showToast(`📋 Caption copied — paste it into ${network === 'instagram' ? 'Instagram' : 'TikTok'}. Tap Save Image if you want the card too.`);
+        afterShare(network);
         return;
     }
     if (map[network]) {
@@ -300,6 +318,51 @@ window.shareTo = function(network) {
 };
 
 let _rewardedThisCard = false;
+
+// Post-share success state: swaps the sheet's body for a clear confirmation and
+// a single obvious next action, instead of asking the user to close the modal
+// and go hunting for the match button themselves.
+function showRewardScreen(left) {
+    const sheet = document.querySelector('#share-modal .share-sheet');
+    if (!sheet) return;
+
+    ['share-preview', 'share-reward-status', 'share-claim-note'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+    sheet.querySelectorAll('.share-native, .share-grid, .share-utils, .share-how, .share-sub').forEach(el => { el.style.display = 'none'; });
+
+    let panel = document.getElementById('share-reward-screen');
+    if (!panel) {
+        panel = document.createElement('div');
+        panel.id = 'share-reward-screen';
+        panel.className = 'share-reward-screen';
+        sheet.appendChild(panel);
+    }
+    const leftLine = (typeof left === 'number')
+        ? `<p class="srs-sub">${left} of ${SHARE_MAX_REWARDS} bonus matches left in this 6-hour window.</p>`
+        : '';
+    panel.innerHTML = `
+        <div class="srs-icon">🎁</div>
+        <h3 class="srs-title">Bonus Match Unlocked!</h3>
+        <p class="srs-body">Thanks for sharing. Your extra match is ready — a fresh pick with different characteristics.</p>
+        ${leftLine}
+        <button onclick="matchAgainFromShare()" class="gold-btn srs-cta">⚡ Match Again</button>
+        <button onclick="closeShareSheet()" class="srs-secondary">Maybe later</button>
+    `;
+    panel.style.display = 'block';
+}
+
+// Closes the sheet and immediately runs the bonus match the user just earned.
+window.matchAgainFromShare = function() {
+    window.closeShareSheet();
+    if (typeof window.getAnotherMatchInstead === 'function') {
+        window.getAnotherMatchInstead();
+    } else if (typeof window.triggerMatch === 'function') {
+        window.triggerMatch(window.lastMatchWasSpecificSearch === true);
+    }
+};
+
 async function afterShare(network) {
     if (typeof gtag === 'function') gtag('event', 'share', { method: network, content_type: 'match', item_id: window.globalMatchTitle || '' });
     if (_rewardedThisCard) return;
@@ -311,8 +374,7 @@ async function afterShare(network) {
         if (statusEl) statusEl.innerHTML = `🎉 <strong>Bonus match unlocked!</strong> ${result.left} of ${SHARE_MAX_REWARDS} left this window.`;
         if (window.showToast) showToast('🎁 Thanks for sharing! +1 bonus match unlocked.');
         if (typeof confetti === 'function') confetti({ particleCount: 130, spread: 88, origin: { y: 0.65 }, colors: ['#E5C158', '#FFF3A3', '#A376B6', '#ffffff'] });
-        const note = document.getElementById('share-claim-note');
-        if (note) note.style.display = 'block';
+        showRewardScreen(result.left);
     } else if (statusEl) {
         const mins = result.resetIn ? Math.ceil(result.resetIn / 60) : null;
         const when = mins ? (mins >= 60 ? `${Math.floor(mins/60)}h ${mins%60}m` : `${mins}m`) : nextRewardResetText();
