@@ -606,9 +606,50 @@ async function askAndRender(question) {
     if (row) setTimeout(() => row.scrollIntoView({ behavior: 'smooth', block: 'center' }), 400);
 }
 
+/* ---------- Auto-growing composer ----------
+   The ask field is a textarea now, so it has to be resized manually: reset to
+   auto first (otherwise it can only ever grow, never shrink back), then match
+   the content height up to the CSS max, after which it scrolls. Exposed on
+   window so voice dictation can trigger a resize as words stream in. */
+window.autoGrowComposer = function () {
+    const el = document.getElementById('discover-new-input');
+    if (!el) return;
+    el.style.height = 'auto';
+    const max = 190;
+    const next = Math.min(el.scrollHeight, max);
+    el.style.height = next + 'px';
+    const wrap = el.closest('.composer');
+    if (wrap) wrap.classList.toggle('is-tall', el.scrollHeight > max);
+};
+
+function initComposer() {
+    const el = document.getElementById('discover-new-input');
+    if (!el) return;
+
+    el.addEventListener('input', window.autoGrowComposer);
+
+    el.addEventListener('keydown', (e) => {
+        // Enter sends, Shift+Enter makes a new line. IME composition must be
+        // left alone or Enter would submit mid-word in Japanese, Korean and
+        // Chinese input, where Enter is how you accept a candidate.
+        if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
+            e.preventDefault();
+            window.newDiscoverSearch();
+        }
+    });
+
+    window.autoGrowComposer();
+}
+document.addEventListener('DOMContentLoaded', initComposer);
+
 window.newDiscoverSearch = function () {
     const el = document.getElementById('discover-new-input');
-    if (el && el.value.trim()) askAndRender(el.value.trim());
+    if (el && el.value.trim()) {
+        askAndRender(el.value.trim());
+        // Collapse back to one line once the question is sent.
+        el.value = '';
+        window.autoGrowComposer();
+    }
 };
 
 /* ---------- Boot ---------- */

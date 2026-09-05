@@ -73,6 +73,7 @@ function initVoiceInput(inputId, micBtnId, onFinalTranscript) {
             listening = true;
             micBtn.classList.add('mic-listening');
             input.value = '';
+            if (window.autoGrowComposer) window.autoGrowComposer();
             input.placeholder = tr('voice.listening', '🎙️ Listening... speak now');
         };
 
@@ -84,6 +85,8 @@ function initVoiceInput(inputId, micBtnId, onFinalTranscript) {
                 else interim += transcript;
             }
             input.value = final || interim;
+            // Keep the composer growing in real time as speech streams in.
+            if (window.autoGrowComposer) window.autoGrowComposer();
             if (final.trim()) {
                 stopListening();
                 if (onFinalTranscript) onFinalTranscript(final.trim());

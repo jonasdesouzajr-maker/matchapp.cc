@@ -1780,6 +1780,32 @@ function initLiveStrip() {
 document.addEventListener('DOMContentLoaded', initLiveStrip);
 
 // ----------------------------------------------------
+// SPOTLIGHT POSTER HYDRATION
+// The AHS card shipped with a hand-made text-only JPEG, which looks like a
+// placeholder next to real poster art. American Horror Story is a genuine
+// series, so it resolves through the same TVMaze/iTunes chain every other
+// title in this app uses — no special-casing, no scraping, and the artwork
+// stays hosted by the provider. The local JPEG paints instantly and stays
+// put if the lookup finds nothing, so this can only ever improve the card.
+// ----------------------------------------------------
+async function hydrateSpotlightPoster() {
+    const img = document.getElementById('spotlight-poster-img');
+    if (!img) return;
+    try {
+        const real = await getRealCoverImage('American Horror Story');
+        // Only swap for genuine artwork — never downgrade to the generated
+        // text placeholder, which would look worse than what we already have.
+        if (real && !real.includes('placehold.co') && !real.startsWith('data:')) {
+            const probe = new Image();
+            probe.onload = () => { img.src = real; };
+            probe.onerror = () => { /* keep the local poster */ };
+            probe.src = real;
+        }
+    } catch (e) { /* keep the local poster */ }
+}
+document.addEventListener('DOMContentLoaded', hydrateSpotlightPoster);
+
+// ----------------------------------------------------
 // #ROCKINRIO 2026 — AI PLAYLIST MATCH SHORTCUT
 // ----------------------------------------------------
 window.triggerRockInRioMatch = function() {

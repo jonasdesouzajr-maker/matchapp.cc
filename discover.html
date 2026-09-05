@@ -42,7 +42,7 @@
     <meta name="twitter:image" content="https://matchapp.cc/og-image.jpg">
     <link rel="icon" href="/logo.jpeg" type="image/jpeg">
 
-    <script defer src="/i18n.js?v=128"></script>
+    <script defer src="/i18n.js?v=129"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -51,7 +51,7 @@
     </script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
 
-    <link rel="stylesheet" href="/style.css?v=128">
+    <link rel="stylesheet" href="/style.css?v=129">
     <style>
         :root { --gold: #E5C158; --gold-deep: #B8912F; --gold-glow: #FFF3A3; --ink: #14131A; --royal-deep: #130734; --royal: #402562; --royal-lift: #6B3FA0; --royal-glow: #A376B6; --bg-dark: #14131A; --card-bg: rgba(26, 22, 38, 0.90); }
         body { background: var(--bg-dark); color: #fff; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
@@ -72,7 +72,30 @@
         .discover-speak.speaking { background: var(--gold); color: #14131A; animation: speakPulse 1s ease-in-out infinite; }
         @keyframes speakPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(229,193,88,0.6); } 50% { box-shadow: 0 0 0 10px rgba(229,193,88,0); } }
 
-        .newsearch-row { display: flex; gap: 12px; margin-top: 22px; flex-wrap: wrap; }
+        .newsearch-row { display: flex; gap: 12px; margin-top: 22px; flex-wrap: wrap; align-items: flex-end; }
+
+        /* ===== AUTO-GROWING COMPOSER =====
+           A single-line input hid everything past ~40 characters, which is
+           punishing when the whole point is asking a full question — and worse
+           with voice, where dictation can run several sentences long. This
+           grows with the content instead, up to a scrollable cap. */
+        .composer { flex: 1; min-width: 220px; display: flex; align-items: flex-end; gap: 8px;
+                    background: rgba(0,0,0,0.6); border: 1px solid var(--gold); border-radius: 16px;
+                    padding: 6px 8px 6px 14px; transition: box-shadow 0.25s, border-color 0.25s; }
+        .composer:focus-within { box-shadow: 0 0 22px rgba(229,193,88,0.4); border-color: var(--gold-glow); }
+        .composer textarea { flex: 1; background: transparent; border: none; color: #fff; font-size: 16px;
+                             font-family: inherit; line-height: 1.55; padding: 11px 0; margin: 0;
+                             resize: none; overflow-y: hidden; max-height: 190px; min-height: 24px; }
+        .composer textarea:focus { outline: none; }
+        .composer textarea::placeholder { color: #8d84a5; }
+        .composer.is-tall textarea { overflow-y: auto; }
+        .composer .mic-btn { flex-shrink: 0; margin-bottom: 2px; }
+        .composer-hint { color: #7c7391; font-size: 11.5px; margin: 7px 2px 0 2px; }
+        .composer-send { width: auto; padding: 16px 26px; flex-shrink: 0; }
+        @media (max-width: 620px) {
+            .composer-send { width: 100%; }
+            .composer { min-width: 100%; }
+        }
         .newsearch-row input { flex: 1; min-width: 220px; padding: 16px; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.6); color: #fff; font-size: 16px; }
         .newsearch-row input:focus { outline: none; box-shadow: 0 0 20px rgba(229,193,88,0.4); }
         .concierge-tagline { color: #a89cc4; font-size: 13.5px; font-style: italic; margin: 0 0 4px 0; }
@@ -207,9 +230,14 @@
             <div id="chat-log" class="chat-log"></div>
 
             <div class="newsearch-row">
-                <input type="text" id="discover-new-input" placeholder="Ask anything — e.g. Is there a series about Doctors Without Borders?" data-i18n-placeholder="discover.placeholder" onkeydown="if(event.key==='Enter') newDiscoverSearch()">
-                <button id="mic-btn-discover" class="mic-btn" type="button" aria-label="Speak your question" title="Speak your question" style="display:none;">🎙️</button>
-                <button onclick="newDiscoverSearch()" class="gold-btn" style="width:auto; padding:16px 26px;" data-i18n="discover.ask">🔍 Ask AI</button>
+                <div class="composer">
+                    <textarea id="discover-new-input" rows="1"
+                              placeholder="Ask anything — e.g. Is there a series about Doctors Without Borders?"
+                              data-i18n-placeholder="discover.placeholder"
+                              aria-label="Ask the AI Concierge"></textarea>
+                    <button id="mic-btn-discover" class="mic-btn" type="button" aria-label="Speak your question" title="Speak your question" style="display:none;">🎙️</button>
+                </div>
+                <button onclick="newDiscoverSearch()" class="gold-btn composer-send" data-i18n="discover.ask">🔍 Ask AI</button>
             </div>
             <button onclick="startNewChat()" class="chat-newchat-btn" data-i18n="chat.newChat">✨ Start a new conversation</button>
         </section>
@@ -241,9 +269,9 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="/app.js?v=128"></script>
-    <script src="/discover.js?v=128"></script>
-    <script src="/voice-input.js?v=128"></script>
+    <script src="/app.js?v=129"></script>
+    <script src="/discover.js?v=129"></script>
+    <script src="/voice-input.js?v=129"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initVoiceInput('discover-new-input', 'mic-btn-discover', () => newDiscoverSearch());
