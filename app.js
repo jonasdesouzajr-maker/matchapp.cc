@@ -769,6 +769,24 @@ window.doLogout = async function() { if (supabaseClient) { await supabaseClient.
 // not just a scroll that might be a no-op if the form was already in view.
 // A brief highlight pulse + auto-focusing the first field makes the outcome
 // unambiguous no matter where the click happened from.
+// "Match Again" from the result card. Deliberately does NOT re-roll silently:
+// the point is to let the user change what they're asking for, so it takes them
+// back to the criteria form with their previous answers still selected, ready
+// to adjust. The quota is spent when they actually run the match, not here —
+// so landing on the form and changing their mind costs them nothing.
+window.matchAgainNewCriteria = function() {
+    // A previous direct title search would otherwise hijack the next match and
+    // ignore the questionnaire entirely, which is the opposite of what this
+    // button promises.
+    const specific = document.getElementById('specific-search-input');
+    if (specific) specific.value = '';
+
+    const resultBox = document.getElementById('result-box');
+    if (resultBox) resultBox.style.display = 'none';
+
+    window.scrollToQuestionnaire();
+};
+
 window.scrollToQuestionnaire = function() {
     const box = document.getElementById('questionnaire-box');
     if (!box) return;
