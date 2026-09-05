@@ -1600,6 +1600,94 @@ async function renderResult(selected, isSpecificSearch) {
 }
 
 // ----------------------------------------------------
+// LIVE STATUS STRIP
+// Shows the visitor's REAL local date/time plus REAL activity numbers.
+//
+// Deliberately not fabricated. A made-up "1,847 people matching right now"
+// counter is (a) misleading advertising under Brazil's CDC Art. 37 and the
+// EU UCPD, (b) a deceptive-content risk against the AdSense policies this
+// site depends on for revenue, and (c) trivially caught by any visitor who
+// reloads twice. Everything below is either measured live from Supabase or
+// a verifiable fact about the product.
+// ----------------------------------------------------
+function startLiveClock() {
+    const el = document.getElementById('live-clock');
+    if (!el) return;
+
+    const render = () => {
+        const now = new Date();
+        // Uses the visitor's own locale + timezone automatically.
+        const lang = (window.MATCH_LANG || navigator.language || 'en');
+        let stamp;
+        try {
+            stamp = new Intl.DateTimeFormat(lang, {
+                weekday: 'short', day: 'numeric', month: 'short',
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            }).format(now);
+        } catch (e) {
+            stamp = now.toLocaleString();
+        }
+        el.textContent = stamp;
+    };
+
+    render();
+    setInterval(render, 1000);
+}
+
+// Verifiable product facts — used when live numbers aren't available yet.
+// Counted from the real data structures in this file, not hardcoded guesses.
+function productFactsLine() {
+    const titles = (typeof CONTENT_CATALOG !== 'undefined') ? CONTENT_CATALOG.length : 0;
+    const platforms = (typeof PLATFORMS !== 'undefined') ? Object.keys(PLATFORMS).length : 0;
+    const langs = (typeof I18N_LANGS !== 'undefined') ? Object.keys(I18N_LANGS).length : 14;
+
+    const parts = [];
+    if (platforms) parts.push(`<strong>${platforms}</strong> streaming platforms searched`);
+    if (titles) parts.push(`<strong>${titles}</strong> curated titles`);
+    if (langs) parts.push(`<strong>${langs}</strong> languages`);
+    return parts.join(' · ');
+}
+
+async function renderLiveActivity() {
+    const el = document.getElementById('live-activity');
+    if (!el) return;
+
+    // Always render the honest baseline immediately, so the strip is never blank.
+    el.innerHTML = productFactsLine();
+
+    // Then upgrade to REAL usage numbers if the activity_stats() RPC exists
+    // (migration 004). If it isn't deployed yet, the baseline simply stays.
+    if (!supabaseClient) return;
+    try {
+        const { data, error } = await supabaseClient.rpc('activity_stats');
+        if (error || !data) return;
+
+        const total = Number(data.matches_total || 0);
+        const week = Number(data.matches_7d || 0);
+        const members = Number(data.members_total || 0);
+        const fmt = n => n.toLocaleString(window.MATCH_LANG || navigator.language || 'en');
+
+        // Only surface a number once it's actually meaningful. Showing
+        // "3 matches this week" would undersell the product more than the
+        // product facts do — but it must never be inflated to compensate.
+        const bits = [];
+        if (week >= 25) bits.push(`<strong>${fmt(week)}</strong> matches made this week`);
+        else if (total >= 50) bits.push(`<strong>${fmt(total)}</strong> matches made`);
+        if (members >= 25) bits.push(`<strong>${fmt(members)}</strong> members`);
+
+        if (bits.length) el.innerHTML = bits.join(' · ');
+    } catch (e) { /* keep the honest baseline */ }
+}
+
+function initLiveStrip() {
+    startLiveClock();
+    renderLiveActivity();
+    // Refresh real counts periodically without hammering the API.
+    setInterval(renderLiveActivity, 90000);
+}
+document.addEventListener('DOMContentLoaded', initLiveStrip);
+
+// ----------------------------------------------------
 // #ROCKINRIO 2026 — AI PLAYLIST MATCH SHORTCUT
 // ----------------------------------------------------
 window.triggerRockInRioMatch = function() {

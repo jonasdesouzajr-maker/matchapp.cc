@@ -4,6 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#14131A">
+
+    <!-- RESOURCE HINTS: cuts DNS+TLS setup off the critical path.
+         Core Web Vitals (LCP) is a confirmed ranking factor, so this is
+         technical SEO as much as it is a speed win. preconnect is reserved
+         for origins needed immediately; everything else is dns-prefetch,
+         which is far cheaper and avoids wasting connections. -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://zkymvqrmbabngsqblyye.supabase.co" crossorigin>
+    <link rel="dns-prefetch" href="https://itunes.apple.com">
+    <link rel="dns-prefetch" href="https://api.tvmaze.com">
+    <link rel="dns-prefetch" href="https://is1-ssl.mzstatic.com">
+    <link rel="dns-prefetch" href="https://static.tvmaze.com">
+    <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     
     <title>MatchApp — Your AI Concierge for Entertainment | Talk or Type to Find What to Watch Tonight</title>
     <meta name="description" content="MatchApp is your AI Concierge for entertainment — a voice-enabled AI consultant that matches you to the perfect movie, series, K-drama, anime, novela, micro-drama, podcast or Spotify playlist. Speak or type your mood in any language and it links you straight to where it streams. Netflix, Prime Video, Max, Disney+, Apple TV+, Globoplay, Crunchyroll, ReelShort, Spotify and 20+ more. Free to start.">
@@ -81,9 +95,11 @@
       "@type": "WebPage",
       "url": "https://matchapp.cc/",
       "name": "MatchApp — Your AI Concierge for Entertainment",
+      "dateModified": "2026-09-05",
+      "inLanguage": ["en","pt-BR","es","fr","de","it","tr","ru","ar","hi","id","ja","ko","zh"],
       "speakable": {
         "@type": "SpeakableSpecification",
-        "cssSelector": [".concierge-section h2", ".concierge-section p", "#spotlight-ahs13 .spotlight-desc"]
+        "cssSelector": [".concierge-section h2", ".concierge-section p", "#spotlight-ahs13 .spotlight-desc", "#rock-in-rio-hub .spotlight-desc"]
       }
     }
     </script>
@@ -185,6 +201,21 @@
           "@type": "Question",
           "name": "Does MatchApp have a Rock in Rio 2026 playlist?",
           "acceptedAnswer": { "@type": "Answer", "text": "Yes. MatchApp's #RockInRio 2026 spotlight links to Spotify pages for the full lineup playing Cidade do Rock in Rio de Janeiro from September 4-7 and 11-13, 2026, including Foo Fighters, Elton John, Maroon 5, Twenty One Pilots, Calvin Harris, Stray Kids, Avenged Sevenfold and Brazilian acts like Gilberto Gil, Capital Inicial and Sepultura. You can also ask the AI Concierge for a Rock in Rio playlist match directly on the homepage." }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I find something to watch when I can't decide?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Decision fatigue usually comes from too many open options, not too few. MatchApp narrows it to one recommendation at a time: you pick a format, mood and vibe (or just describe what you feel like in your own words), and it returns a single title with a direct streaming link rather than another endless grid to scroll. If it misses, mark it 'Not For Me' and the AI excludes it and everything like it from your next match." }
+        },
+        {
+          "@type": "Question",
+          "name": "What can I watch that's appropriate for my kids?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Set the Age Appropriateness selector to All Ages, Kids, Tween or Teen and MatchApp constrains every recommendation to that rating band. If you've saved your birthdate to your profile, it also uses your age to keep results appropriate by default without you selecting anything." }
+        },
+        {
+          "@type": "Question",
+          "name": "Where can I watch Brazilian novelas and telenovelas online?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Globoplay carries the largest catalogue of Brazilian novelas, with additional telenovela libraries on Netflix, Prime Video and regional services. MatchApp searches across all of them and returns a direct link to the platform actually streaming the title in your country, so you don't have to check each service separately." }
         }
       ]
     }
@@ -301,7 +332,7 @@
     <link rel="alternate" hreflang="zh" href="https://matchapp.cc/?lang=zh">
 
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=123"></script>
+    <script defer src="/i18n.js?v=124"></script>
 
     <!-- GOOGLE ANALYTICS (GTAG) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
@@ -396,6 +427,16 @@
             .spotlight-glow, .spotlight-ribbon, .spotlight-title, .countdown-unit, .countdown-live { animation: none !important; }
             .spotlight-title { color: var(--gold); -webkit-text-fill-color: var(--gold); }
         }
+
+        /* ===== LIVE STATUS STRIP ===== */
+        .live-strip { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px; padding: 7px 14px; background: rgba(19,7,52,0.55); border-bottom: 1px solid rgba(229,193,88,0.22); font-size: 12px; color: #b9b1cc; letter-spacing: 0.2px; }
+        .live-strip-item { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+        .live-strip-sep { color: rgba(229,193,88,0.45); }
+        .live-strip strong { color: var(--gold-glow); font-weight: 800; }
+        .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #25D366; box-shadow: 0 0 8px rgba(37,211,102,0.9); animation: livePulse 2s ease-in-out infinite; flex-shrink: 0; }
+        @keyframes livePulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.45; transform: scale(0.82); } }
+        @media (max-width: 600px) { .live-strip { font-size: 11px; gap: 7px; padding: 6px 10px; } }
+        @media (prefers-reduced-motion: reduce) { .live-dot { animation: none !important; } }
 
         /* ===== #ROCKINRIO ARTIST PILLS (extends spotlight-body) ===== */
         .rir-group-h { color: var(--gold); font-size: 12.5px; text-transform: uppercase; letter-spacing: 1px; margin: 20px 0 12px 0; font-weight: 900; }
@@ -735,6 +776,16 @@
         </nav>
     </header>
 
+    <!-- LIVE STATUS STRIP: visitor's real local date/time + genuine activity stats -->
+    <div id="live-status-strip" class="live-strip" role="status" aria-live="polite">
+        <span class="live-strip-item">
+            <span class="live-dot" aria-hidden="true"></span>
+            <span id="live-clock">&nbsp;</span>
+        </span>
+        <span class="live-strip-sep" aria-hidden="true">·</span>
+        <span class="live-strip-item" id="live-activity">&nbsp;</span>
+    </div>
+
     <main class="page-wrapper" style="flex: 1; position: relative;">
         <div class="main-layout">
             <!-- STICKY ADSENSE SIDEBAR AD LEFT -->
@@ -833,7 +884,7 @@
                         <div class="spotlight-poster" onclick="saveSpotlightTitle()" role="button" tabindex="0"
                              onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();saveSpotlightTitle();}"
                              aria-label="Save American Horror Story: 13 to Watch Later">
-                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=123" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
+                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=124" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
                             <div class="spotlight-ribbon" data-i18n="spotlight.ribbon">COMING THIS MONTH</div>
                         </div>
                         <div class="spotlight-body">
@@ -1527,9 +1578,9 @@
         </div>
     </div>
 
-    <script src="/app.js?v=123"></script>
-    <script src="/share.js?v=123"></script>
-    <script src="/voice-input.js?v=123"></script>
+    <script src="/app.js?v=124"></script>
+    <script src="/share.js?v=124"></script>
+    <script src="/voice-input.js?v=124"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initVoiceInput('specific-search-input', 'mic-btn-index', () => smartSearch());
