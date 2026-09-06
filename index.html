@@ -37,13 +37,11 @@
          existing /matchappindexnowkey2026.txt automation already notifies both. For direct
          dashboard verification (optional, unlocks Bing/Yandex Search Console-style reporting),
          replace the placeholder content below with the real code from each webmaster tool. -->
-    <!-- Bing Webmaster verification. Get the real code from
-         bingwebmastertools.com -> Add site -> "HTML Meta Tag", then paste it as:
-         <meta name="msvalidate.01" content="YOUR-32-CHAR-CODE">
-         Left as a comment rather than a placeholder: a live tag reading
-         "REPLACE-WITH-..." fails verification anyway and is visible to
-         anyone who views source. NOTE: this is NOT the IndexNow key and it
-         is NOT an OAuth client id/secret — those are different credentials. -->
+    <!-- Bing Webmaster: verified by importing the property from Google Search
+         Console, so no msvalidate.01 meta tag is required here. Do not add one
+         "to be safe" — it would be redundant, and a wrong value is worse than
+         no value. Yandex is verified separately via the yandex-verification
+         tag below plus yandex_0948bb9f3d3a868d.html at the site root. -->
     <meta name="yandex-verification" content="0948bb9f3d3a868d">
 
     <!-- OPEN GRAPH / SOCIAL -->
