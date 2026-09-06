@@ -19,8 +19,8 @@
     <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
     <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     
-    <title>MatchApp — Your AI Concierge for Entertainment | Talk or Type to Find What to Watch Tonight</title>
-    <meta name="description" content="MatchApp is your AI Concierge for entertainment — a voice-enabled AI consultant that matches you to the perfect movie, series, K-drama, anime, novela, micro-drama, podcast or Spotify playlist. Speak or type your mood in any language and it links you straight to where it streams. Netflix, Prime Video, Max, Disney+, Apple TV+, Globoplay, Crunchyroll, ReelShort, Spotify and 20+ more. Free to start.">
+    <title>What To Watch Tonight | MatchApp AI Streaming Concierge</title>
+    <meta name="description" content="Not sure what to watch? Tell MatchApp your mood and get one perfect movie, series, K-drama, anime or novela — plus exactly where to stream it. Free.">
     <meta name="keywords" content="AI streaming concierge, premium AI streaming service, AI powered movie recommendations, personalized streaming recommendations, what to watch tonight, what should I watch, where to watch movies online, find a movie by mood, best series to binge 2026, AI TV show recommender, streaming search engine, cross platform streaming search, movie matchmaker AI, best AI recommendation engine for streaming, K-drama recommendations, anime to watch, vertical micro drama, ReelShort, DramaBox, novelas brasileiras, telenovelas, Spotify playlist finder, Spotify singles, best podcasts, Netflix what to watch, Max series, Prime Video hidden gems, Disney Plus recommendations, movie finder by star sign, age appropriate shows, streaming guide by country, what to stream near me, what's trending on Netflix, Netflix top 10 this week, The Whisper Man Netflix, Death of the Pastor's Wife, Beauty in Black Netflix, Outer Banks new season, Love Is Blind UK, gospel movies to watch, Christian movies streaming, The Chosen series, faith based movies 2026, gospel music playlist Spotify, Christian podcasts, Kirk Franklin gospel, Maverick City Music, Angel Studios movies, Pure Flix Christian streaming, ask AI what to watch, AI movie search engine, AI concierge for entertainment, voice search streaming app, talk to AI about movies, voice assistant for streaming, AI entertainment consultant, speak to find a movie, voice activated movie finder, AI concierge service entertainment industry, contact matchapp support, matchapp customer service, matchapp instagram, American Horror Story 13, AHS 13 premiere date, American Horror Story season 13 release date, when does American Horror Story 13 come out, how to watch American Horror Story 13, AHS 13 cast, American Horror Story 13 Ariana Grande, AHS Coven sequel, watch AHS 13 on Hulu, AHS 13 FX September 2026, American Horror Story 13 Disney Plus international, AHS 13 episode schedule, Rock in Rio 2026, Rock in Rio lineup 2026, Rock in Rio Rio de Janeiro, #RockInRio, Rock in Rio Spotify playlist, Foo Fighters Rock in Rio, Elton John Rock in Rio final show, Rock in Rio datas 2026, Cidade do Rock Parque Olímpico, Oktoberfest Petrópolis 2026, Oktoberfest Itaipava, eventos Rio de Janeiro setembro, movie stills database, MovieStillsDB, best YouTube channels, funny YouTube channels, YouTube channel recommendations, what to watch on YouTube, YouTube Shorts, educational YouTube channels, YouTube channels for kids, melhores canais do YouTube">
     <meta name="robots" content="index, follow, max-image-preview:large">
     <meta name="author" content="MatchApp">
@@ -388,7 +388,7 @@
     <link rel="alternate" hreflang="zh" href="https://matchapp.cc/?lang=zh">
 
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=141"></script>
+    <script defer src="/i18n.js?v=142"></script>
 
     <!-- GOOGLE ANALYTICS (GTAG) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
@@ -401,7 +401,7 @@
     <!-- GOOGLE ADSENSE SCRIPT ENGINE -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
 
-    <link rel="stylesheet" href="/style.css?v=141">
+    <link rel="stylesheet" href="/style.css?v=142">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -853,6 +853,17 @@
             .qc-label { font-size: 7.5px; }
         }
 
+        /* ===== HOMEPAGE H1 ===== */
+        .home-hero { text-align: center; padding: 4px 10px 22px 10px; }
+        .home-h1 { color: var(--gold-glow); font-size: 30px; font-weight: 900; text-transform: uppercase;
+                   letter-spacing: 0.5px; margin: 0 0 10px 0; line-height: 1.15; }
+        .home-h1-sub { color: #bdb2d4; font-size: 14.5px; line-height: 1.7; margin: 0 auto; max-width: 620px; }
+        @media (max-width: 560px) {
+            .home-hero { padding: 2px 6px 18px 6px; }
+            .home-h1 { font-size: 23px; }
+            .home-h1-sub { font-size: 13px; }
+        }
+
         /* ===== EVENTS RAIL =====
            Same scroll mechanics as the trending rail, but taller cards since
            an event needs dates and a venue, not just a title. */
@@ -1060,7 +1071,15 @@
             </aside>
 
             <section class="container">
-                
+
+                <!-- Primary H1. The homepage had none at all, which left Google
+                     without its strongest on-page topical signal. Visible and
+                     genuinely descriptive rather than hidden. -->
+                <header class="home-hero">
+                    <h1 class="home-h1" data-i18n="home.h1">What Should I Watch Tonight?</h1>
+                    <p class="home-h1-sub" data-i18n="home.h1sub">Tell MatchApp your mood and get one perfect pick — movies, series, K-dramas, anime, novelas, micro-dramas, podcasts and YouTube — plus exactly where to stream it.</p>
+                </header>
+
                 <div class="marquee-wrapper">
                     <h4 style="color: var(--gold); font-size: 15px; text-transform: uppercase; text-align: center; margin: 0 0 15px 0; letter-spacing: 2px;" data-i18n="marquee.title">🔥 Most Watched Right Now — Tap Any Title</h4>
                     <button class="marquee-arrow marquee-arrow--left" onclick="marqueeNudge(-1)" aria-label="Scroll trending titles left">‹</button>
@@ -1267,7 +1286,7 @@
                         <div class="spotlight-poster" onclick="saveSpotlightTitle()" role="button" tabindex="0"
                              onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();saveSpotlightTitle();}"
                              aria-label="Save American Horror Story: 13 to Watch Later">
-                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=141" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
+                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=142" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
                             <div class="spotlight-ribbon" data-i18n="spotlight.ribbon">COMING THIS MONTH</div>
                         </div>
                         <div class="spotlight-body">
@@ -1935,10 +1954,10 @@
         </div>
     </div>
 
-    <script src="/app.js?v=141"></script>
-    <script src="/taste.js?v=141"></script>
-    <script src="/share.js?v=141"></script>
-    <script src="/voice-input.js?v=141"></script>
+    <script src="/app.js?v=142"></script>
+    <script src="/taste.js?v=142"></script>
+    <script src="/share.js?v=142"></script>
+    <script src="/voice-input.js?v=142"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initVoiceInput('specific-search-input', 'mic-btn-index', () => smartSearch());
