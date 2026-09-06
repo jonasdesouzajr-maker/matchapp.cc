@@ -604,9 +604,34 @@ function t(key, lang) {
 }
 window.t = t;
 
+/**
+ * Keeps <link rel="canonical"> consistent with the ?lang= URL actually being
+ * viewed.
+ *
+ * Why this is necessary: every page ships a static canonical pointing at the
+ * clean URL. Once ?lang= URLs became crawlable, Google would fetch
+ * /?lang=pt-BR, read canonical="https://matchapp.cc/", conclude the Portuguese
+ * variant is just a duplicate of the English one, and drop it — silently
+ * cancelling the whole hreflang cluster. An hreflang alternate has to be
+ * self-canonical to be treated as a real alternate, so when a valid ?lang= is
+ * present the canonical is rewritten to match it. With no ?lang= the clean URL
+ * stays canonical, which is exactly the x-default.
+ */
+function syncCanonicalToLang() {
+    try {
+        const link = document.querySelector('link[rel="canonical"]');
+        if (!link) return;
+        const qp = new URLSearchParams(window.location.search).get('lang');
+        if (!qp || !I18N[qp]) return;             // no/unknown lang → leave clean canonical
+        const base = link.href.split('?')[0].split('#')[0];
+        link.setAttribute('href', base + '?lang=' + qp);
+    } catch (e) { /* canonical stays as authored */ }
+}
+
 function applyTranslations(lang) {
     const meta = I18N_LANGS[lang] || I18N_LANGS['en'];
     window.MATCH_LANG = lang;
+    syncCanonicalToLang();
 
     document.documentElement.setAttribute('lang', lang);
     document.documentElement.setAttribute('dir', meta.dir);
