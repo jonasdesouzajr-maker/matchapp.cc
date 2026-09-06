@@ -18,7 +18,7 @@
       gtag('set', 'ads_data_redaction', true); gtag('set', 'url_passthrough', true);
     </script>
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=142"></script>
+    <script defer src="/i18n.js?v=143"></script>
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
     <script>gtag('js', new Date()); gtag('config', 'G-2ECND229RR');</script>
@@ -116,7 +116,7 @@
     }
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=142">
+    <link rel="stylesheet" href="/style.css?v=143">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
 
@@ -152,14 +152,17 @@
         .stream-flags { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; opacity: 0.35; }
         .sf-item { position: absolute; font-size: 14vw; font-weight: 900; color: #fff; white-space: nowrap; opacity: 0.8; text-shadow: 0 0 20px currentColor, 0 0 40px currentColor; }
         .brand-netflix { color: #E50914; } .brand-prime { color: #00A8E1; } .brand-max { color: #8A2BE2; } .brand-disney { color: #113CCF; }
-        @keyframes flyPath1 { 0% { transform: translateX(-100%) rotate(-5deg); } 100% { transform: translateX(100vw) rotate(5deg); } }
-        @keyframes flyPath2 { 0% { transform: translateX(100vw) rotate(5deg); } 100% { transform: translateX(-100%) rotate(-5deg); } }
 
         .seo-footer { background: rgba(10,5,5,0.95); border-top: 2px solid var(--gold); padding: 30px 20px; text-align: center; margin-top: auto; width: 100%; }
         .seo-footer h4 { color: var(--gold); font-size: 18px; margin-bottom: 15px; text-transform: uppercase; }
         .streaming-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
         .streaming-links a { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 13px; transition: 0.3s; display: flex; align-items: center; gap: 6px; }
         .streaming-links a:hover { border-color: var(--gold); background: rgba(212,175,55,0.1); transform: scale(1.05); }
+
+        /* Respect an OS-level request for less motion. */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+        }
     </style>
 </head>
 <body style="display: flex; flex-direction: column; min-height: 100vh;">
@@ -176,7 +179,7 @@
     
     <header class="app-header fade-in">
         <a href="/index.html" class="header-brand-area" aria-label="MatchApp Home">
-            <picture><source srcset="/logo.jpeg" type="image/jpeg"><img src="/logo.jpeg" alt="Logo" class="brand-logo" loading="lazy"></picture>
+            <picture><source srcset="/logo.jpeg" type="image/jpeg"><img width="60" height="60" src="/logo.jpeg" alt="Logo" class="brand-logo" loading="lazy"></picture>
             <div><span class="app-title-main">MatchApp</span><span class="app-title-sub">Streaming Concierge</span></div>
         </a>
         <nav id="header-auth-area" style="display: flex; gap: 10px; align-items: center; justify-content: flex-end;">
