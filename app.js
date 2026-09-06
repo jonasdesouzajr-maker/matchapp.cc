@@ -691,6 +691,74 @@ window.selectMarqueeItem = function(titleName) {
     setTimeout(() => { window.triggerMatch(true); }, 320);
 };
 
+// ----------------------------------------------------
+// EVENT STATE — derived from the real date, never hardcoded.
+//
+// Rock in Rio and Oktoberfest both end 13 Sept. With the badge text baked into
+// the HTML, the site would have gone on announcing "● LIVE" for two finished
+// festivals from the 14th onwards — which is exactly the kind of quiet staleness
+// that makes a recommendation site look abandoned. States are now computed from
+// data-start / data-end on every load, and finished events sort to the back of
+// the rail instead of leading it.
+// ----------------------------------------------------
+function eventStateFor(startStr, endStr, now) {
+    // Parse as local dates; an event is "live" through the whole of its end day.
+    const start = new Date(startStr + 'T00:00:00');
+    const end = new Date(endStr + 'T23:59:59');
+    if (isNaN(start) || isNaN(end)) return null;
+    if (now < start) return 'upcoming';
+    if (now > end) return 'ended';
+    return 'live';
+}
+
+function refreshEventStates() {
+    const now = new Date();
+
+    document.querySelectorAll('.event-card[data-start]').forEach(card => {
+        const state = eventStateFor(card.dataset.start, card.dataset.end, now);
+        if (!state) return;
+        const badge = card.querySelector('.event-badge');
+        if (!badge) return;
+
+        badge.classList.remove('event-live', 'event-soon', 'event-ended');
+        card.classList.remove('is-ended');
+
+        if (state === 'live') {
+            badge.classList.add('event-live');
+            badge.textContent = window.t ? t('event.live') : '● LIVE';
+        } else if (state === 'upcoming') {
+            badge.classList.add('event-soon');
+            const days = Math.ceil((new Date(card.dataset.start + 'T00:00:00') - now) / 86400000);
+            badge.textContent = (days > 0 && days <= 30)
+                ? (window.t ? t('event.inDays').replace('{d}', days) : `IN ${days}D`)
+                : (window.t ? t('event.soon') : 'SOON');
+        } else {
+            badge.classList.add('event-ended');
+            badge.textContent = window.t ? t('event.ended') : 'ENDED';
+            card.classList.add('is-ended');
+        }
+    });
+
+    // Push finished events to the end of the rail so live ones lead.
+    const track = document.getElementById('events-track');
+    if (track) {
+        Array.from(track.querySelectorAll('.event-card.is-ended'))
+             .forEach(c => track.appendChild(c));
+    }
+
+    // Same treatment for the Rock in Rio spotlight ribbon.
+    const ribbon = document.getElementById('rir-ribbon');
+    if (ribbon) {
+        const st = eventStateFor(ribbon.dataset.start, ribbon.dataset.end, now);
+        if (st === 'live') ribbon.textContent = window.t ? t('event.liveNow') : 'LIVE NOW';
+        else if (st === 'upcoming') ribbon.textContent = window.t ? t('event.soon') : 'SOON';
+        else { ribbon.textContent = window.t ? t('event.ended') : 'ENDED'; ribbon.classList.add('ribbon-ended'); }
+    }
+}
+document.addEventListener('DOMContentLoaded', () => setTimeout(refreshEventStates, 150));
+// Re-evaluate if a tab is left open across midnight.
+setInterval(refreshEventStates, 60 * 60 * 1000);
+
 // Tapping an event card runs a real AI lookup for that event — songs to play
 // before Rock in Rio, German folk for Oktoberfest, what to watch before AHS 13.
 // Goes through the direct-search path, so it consumes one match via
@@ -930,6 +998,11 @@ window.doLogout = async function() { if (supabaseClient) { await supabaseClient.
 // ----------------------------------------------------
 const UPGRADE_RIBBON_KEY = 'match_upgradeRibbonDismissed';
 const UPGRADE_RIBBON_DAYS = 7;
+// Hard stop. The copy says "this week", which stops being true fast, and a
+// banner nobody remembered to remove is worse than no banner. Move this date
+// forward while the build-out continues; after it, the ribbon simply never
+// renders again regardless of dismissal state.
+const UPGRADE_RIBBON_UNTIL = '2026-10-31';
 
 window.dismissUpgradeRibbon = function() {
     const el = document.getElementById('upgrade-ribbon');
@@ -940,6 +1013,12 @@ window.dismissUpgradeRibbon = function() {
 function initUpgradeRibbon() {
     const el = document.getElementById('upgrade-ribbon');
     if (!el) return;
+
+    if (new Date() > new Date(UPGRADE_RIBBON_UNTIL + 'T23:59:59')) {
+        el.style.display = 'none';
+        return;
+    }
+
     try {
         const at = parseInt(localStorage.getItem(UPGRADE_RIBBON_KEY) || '0', 10);
         if (at && (Date.now() - at) < UPGRADE_RIBBON_DAYS * 86400000) {
