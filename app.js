@@ -769,22 +769,75 @@ window.doLogout = async function() { if (supabaseClient) { await supabaseClient.
 // not just a scroll that might be a no-op if the form was already in view.
 // A brief highlight pulse + auto-focusing the first field makes the outcome
 // unambiguous no matter where the click happened from.
-// "Match Again" from the result card. Deliberately does NOT re-roll silently:
-// the point is to let the user change what they're asking for, so it takes them
-// back to the criteria form with their previous answers still selected, ready
-// to adjust. The quota is spent when they actually run the match, not here —
-// so landing on the form and changing their mind costs them nothing.
+// ----------------------------------------------------
+// UPGRADE RIBBON
+// Dismissal is remembered for 7 days rather than forever: the notice stays
+// useful across an active build period, but a returning user isn't nagged on
+// every visit. Stored locally, so it costs no request.
+// ----------------------------------------------------
+const UPGRADE_RIBBON_KEY = 'match_upgradeRibbonDismissed';
+const UPGRADE_RIBBON_DAYS = 7;
+
+window.dismissUpgradeRibbon = function() {
+    const el = document.getElementById('upgrade-ribbon');
+    if (el) el.style.display = 'none';
+    try { localStorage.setItem(UPGRADE_RIBBON_KEY, String(Date.now())); } catch (e) {}
+};
+
+function initUpgradeRibbon() {
+    const el = document.getElementById('upgrade-ribbon');
+    if (!el) return;
+    try {
+        const at = parseInt(localStorage.getItem(UPGRADE_RIBBON_KEY) || '0', 10);
+        if (at && (Date.now() - at) < UPGRADE_RIBBON_DAYS * 86400000) {
+            el.style.display = 'none';
+        }
+    } catch (e) { /* storage blocked — just show it */ }
+}
+document.addEventListener('DOMContentLoaded', initUpgradeRibbon);
+
+// "Match Again" from the result card.
+//
+// This previously set the result card to display:none before scrolling, which
+// was the bug: it yanked a very tall element (and the button being tapped)
+// out of the layout, the browser clamped scrollY mid-reflow, and the smooth
+// scroll that followed got cancelled — so the button looked completely dead.
+// The old card now stays put until a new match replaces it.
+//
+// On quota: this button does not consume anything by itself, and shouldn't —
+// it only moves the user to the form. The match is charged when they actually
+// press "Find My Match", which routes through triggerMatch() -> checkDailyLimit()
+// -> the server-side consume_match RPC. So every rematch does cost a match,
+// it's just charged at the point the AI actually runs rather than for scrolling.
 window.matchAgainNewCriteria = function() {
-    // A previous direct title search would otherwise hijack the next match and
-    // ignore the questionnaire entirely, which is the opposite of what this
-    // button promises.
+    // A leftover direct title search would hijack the next run and bypass the
+    // questionnaire entirely, which is the opposite of what this button promises.
     const specific = document.getElementById('specific-search-input');
     if (specific) specific.value = '';
 
-    const resultBox = document.getElementById('result-box');
-    if (resultBox) resultBox.style.display = 'none';
+    const box = document.getElementById('questionnaire-box');
+    if (!box) return;
 
-    window.scrollToQuestionnaire();
+    // Explicit position maths rather than scrollIntoView: the sticky header
+    // overlaps the top of the page, and this guarantees a real scroll even if
+    // smooth-scroll behaviour is unavailable or interrupted.
+    const headerH = (document.querySelector('.app-header') || {}).offsetHeight || 80;
+    const top = box.getBoundingClientRect().top + window.pageYOffset - headerH - 12;
+
+    try {
+        window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+    } catch (e) {
+        window.scrollTo(0, Math.max(0, top)); // older browsers: no options object
+    }
+
+    // Make it unmistakable that the tap registered, even if the page barely
+    // moved because the form was already near the viewport.
+    box.classList.add('cta-highlight');
+    setTimeout(() => box.classList.remove('cta-highlight'), 1600);
+
+    if (window.showToast) {
+        showToast(window.t ? t('res.matchagaintoast') : '🔄 Set your new criteria, then tap Find My Match.');
+    }
 };
 
 window.scrollToQuestionnaire = function() {
@@ -1336,6 +1389,19 @@ function pickFromCatalog(cat, plat, mood, vibe, rating) {
     const excluded = new Set([...seenList, ...dislikedList].map(i => i.title || i));
     const seenRecently = new Set(recentTitles);
 
+    // FAITH CONTENT GATING.
+    // All 12 faith titles are also tagged "inspiring", which is the single most
+    // common mood in the catalogue — so picking "inspiring" made roughly 4 in 10
+    // candidates gospel titles, and they dominated generic pools too. Faith
+    // content is intentional here (Pure Flix and Angel Studios are supported
+    // platforms), so the fix isn't to remove it: it's to surface it when the
+    // user actually signalled interest rather than by default.
+    const FAITH_PLATFORMS = ['Pure Flix', 'Angel Studios'];
+    const wantsFaith = mood === 'gospel and faith'
+        || FAITH_PLATFORMS.includes(plat)
+        || (cat && String(cat).toLowerCase().includes('faith'));
+    const isFaithTitle = (e) => e.moods.includes('gospel and faith');
+
     // Tiered relaxation: try a full match first, then progressively relax filters
     // rather than ever falling back to one hardcoded title. Tier 0 is the only
     // tier where the platform constraint is actually honored — every other tier
@@ -1350,6 +1416,14 @@ function pickFromCatalog(cat, plat, mood, vibe, rating) {
 
     for (const tier of tiers) {
         let pool = CONTENT_CATALOG.filter(e => tier.test(e) && !excluded.has(e.title));
+
+        // Hold faith titles back unless asked for — but never at the cost of
+        // returning nothing, so a pool that is entirely faith content still works.
+        if (!wantsFaith) {
+            const nonFaith = pool.filter(e => !isFaithTitle(e));
+            if (nonFaith.length > 0) pool = nonFaith;
+        }
+
         let freshPool = pool.filter(e => !seenRecently.has(e.title));
         if (freshPool.length > 0) pool = freshPool;
         if (pool.length > 0) {
@@ -1362,8 +1436,22 @@ function pickFromCatalog(cat, plat, mood, vibe, rating) {
     }
     // Absolute last resort: any catalog title not shown in the last 6 results.
     // No platform request could be honored here, by definition.
-    const anyFresh = CONTENT_CATALOG.filter(e => !seenRecently.has(e.title));
-    const pick = (anyFresh.length ? anyFresh : CONTENT_CATALOG)[Math.floor(Math.random() * (anyFresh.length ? anyFresh.length : CONTENT_CATALOG.length))];
+    //
+    // BUG FIX: this path used to ignore `excluded` entirely, so a title the
+    // user had explicitly marked "Not For Me" (or already seen) could come
+    // straight back the moment the earlier tiers ran dry — which is exactly
+    // what made rejections feel like they were being ignored. Rejections are
+    // now respected here too, and only dropped if honouring them would leave
+    // literally nothing to show.
+    let lastPool = CONTENT_CATALOG.filter(e => !excluded.has(e.title));
+    if (!wantsFaith) {
+        const nonFaith = lastPool.filter(e => !isFaithTitle(e));
+        if (nonFaith.length > 0) lastPool = nonFaith;
+    }
+    if (lastPool.length === 0) lastPool = CONTENT_CATALOG; // everything rejected; nothing else to offer
+    const lastFresh = lastPool.filter(e => !seenRecently.has(e.title));
+    const finalPool = lastFresh.length ? lastFresh : lastPool;
+    const pick = finalPool[Math.floor(Math.random() * finalPool.length)];
     return { title: pick.title, synopsis: pick.synopsis, platform: pick.platform, platformVerified: (plat === 'any'), watchUrl: pick.watchUrl || null, source: 'catalog' };
 }
 
