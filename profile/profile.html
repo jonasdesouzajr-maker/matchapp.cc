@@ -19,7 +19,7 @@
     <!-- GOOGLE ADSENSE SCRIPT ENGINE -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
     
-    <link rel="stylesheet" href="/style.css?v=136">
+    <link rel="stylesheet" href="/style.css?v=137">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --gold: #E5C158; --gold-deep: #B8912F; --gold-glow: #FFF3A3; --ink: #14131A; --royal-deep: #130734; --royal: #402562; --royal-lift: #6B3FA0; --royal-glow: #A376B6; --bg-dark: #14131A; --card-bg: rgba(26, 22, 38, 0.90); }
@@ -60,6 +60,35 @@
         .identity-label { color: #999; font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: bold; }
         .identity-value { color: #fff; font-size: 19px; font-weight: 900; word-break: break-word; }
         .identity-hint { color: var(--gold); font-size: 11px; font-style: italic; margin-top: 4px; line-height: 1.5; }
+
+        /* ===== TASTE DNA ===== */
+        .taste-card { background: linear-gradient(150deg, rgba(107,63,160,0.24), rgba(20,19,26,0.96)); border: 2px solid rgba(229,193,88,0.55); border-radius: 22px; padding: 30px; margin-bottom: 30px; box-shadow: 0 12px 45px rgba(0,0,0,0.5); }
+        .taste-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 20px; }
+        .taste-header h3 { color: var(--gold-glow); margin: 0 0 5px 0; font-size: 23px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; }
+        .taste-sub { color: #a99cc4; font-size: 12.5px; margin: 0; line-height: 1.55; }
+        .taste-confidence { background: rgba(37,211,102,0.14); border: 1px solid rgba(37,211,102,0.5); color: #7ff0a8; font-size: 10.5px; font-weight: 900; padding: 6px 13px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; white-space: nowrap; flex-shrink: 0; }
+
+        .taste-empty { text-align: center; padding: 22px 10px; }
+        .taste-empty-icon { font-size: 42px; display: block; margin-bottom: 12px; }
+        .taste-empty p { color: #fff; font-size: 15px; margin: 0 0 8px 0; }
+        .taste-empty-sub { color: #a99cc4 !important; font-size: 13px !important; line-height: 1.7; max-width: 420px; margin: 0 auto 20px auto !important; }
+        .taste-empty-cta { display: inline-block; width: auto !important; padding: 14px 26px !important; font-size: 15px !important; text-decoration: none; }
+
+        .taste-headline { color: #fff; font-size: 19px; font-weight: 900; margin: 0 0 22px 0; padding: 14px; background: rgba(0,0,0,0.4); border-left: 3px solid var(--gold); border-radius: 8px; }
+        .taste-section { margin-bottom: 20px; }
+        .taste-label { display: block; color: #8f85a8; font-size: 10.5px; text-transform: uppercase; letter-spacing: 1.3px; font-weight: bold; margin-bottom: 10px; }
+        .taste-bars { display: flex; flex-direction: column; gap: 9px; }
+        .taste-bar-row { display: flex; align-items: center; gap: 11px; }
+        .taste-bar-name { color: #ddd; font-size: 12.5px; width: 40%; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .taste-bar-track { flex: 1; height: 9px; background: rgba(255,255,255,0.08); border-radius: 6px; overflow: hidden; }
+        .taste-bar-fill { height: 100%; background: linear-gradient(90deg, var(--gold), #FFF3A3); border-radius: 6px; }
+        .taste-bar-pct { color: var(--gold-glow); font-size: 12px; font-weight: 900; width: 38px; text-align: right; flex-shrink: 0; }
+        .taste-split { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        @media (max-width: 560px) { .taste-split { grid-template-columns: 1fr; gap: 0; } .taste-card { padding: 22px 18px; } }
+        .taste-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+        .taste-chips span { background: rgba(229,193,88,0.13); border: 1px solid rgba(229,193,88,0.45); color: var(--gold-glow); font-size: 11.5px; font-weight: bold; padding: 6px 12px; border-radius: 16px; }
+        .taste-chips--neg span { background: rgba(255,82,82,0.1); border-color: rgba(255,82,82,0.45); color: #ffb3b3; }
+        .taste-footnote { color: #7c7391; font-size: 11px; margin: 4px 0 0 0; line-height: 1.6; border-top: 1px solid rgba(255,255,255,0.09); padding-top: 14px; }
 
         /* ===== PORTFOLIO TABS ===== */
         .portfolio-tabs { display: flex; gap: 12px; margin-bottom: 22px; flex-wrap: wrap; }
@@ -238,6 +267,53 @@
                 <!-- ============================================ -->
                 <!-- DUAL PORTFOLIOS: WATCH LATER + SEEN IT       -->
                 <!-- ============================================ -->
+                <!-- ============================================ -->
+                <!-- TASTE DNA                                     -->
+                <!-- ============================================ -->
+                <div id="taste-dna-card" class="taste-card">
+                    <div class="taste-header">
+                        <div>
+                            <h3>🧬 Your Taste DNA</h3>
+                            <p class="taste-sub">Built from what you save, watch and reject. It sharpens every match.</p>
+                        </div>
+                        <span class="taste-confidence" id="taste-confidence">—</span>
+                    </div>
+
+                    <div id="taste-empty" class="taste-empty" style="display:none;">
+                        <span class="taste-empty-icon">🌱</span>
+                        <p><strong>Your DNA is still forming.</strong></p>
+                        <p class="taste-empty-sub" id="taste-empty-sub">Save a few titles, mark what you've seen, and tap Loved It or Not For Me. We'll start reading your taste from there — no guessing before then.</p>
+                        <a href="/index.html" class="gold-btn taste-empty-cta">⚡ Go Match Something</a>
+                    </div>
+
+                    <div id="taste-body" style="display:none;">
+                        <p class="taste-headline" id="taste-headline"></p>
+
+                        <div class="taste-section">
+                            <span class="taste-label">Your moods</span>
+                            <div id="taste-moods" class="taste-bars"></div>
+                        </div>
+
+                        <div class="taste-split">
+                            <div class="taste-section">
+                                <span class="taste-label">You watch</span>
+                                <div id="taste-cats" class="taste-chips"></div>
+                            </div>
+                            <div class="taste-section">
+                                <span class="taste-label">Mostly on</span>
+                                <div id="taste-platforms" class="taste-chips"></div>
+                            </div>
+                        </div>
+
+                        <div class="taste-section" id="taste-avoids-wrap" style="display:none;">
+                            <span class="taste-label">You tend to skip</span>
+                            <div id="taste-avoids" class="taste-chips taste-chips--neg"></div>
+                        </div>
+
+                        <p class="taste-footnote" id="taste-footnote"></p>
+                    </div>
+                </div>
+
                 <div class="portfolio-tabs">
                     <button id="tab-watchlater" class="portfolio-tab active" onclick="switchPortfolioTab('watchlater')">⭐ Watch Later <span id="count-watchlater" class="tab-count">0</span></button>
                     <button id="tab-seenit" class="portfolio-tab" onclick="switchPortfolioTab('seenit')">👁️ Seen It <span id="count-seenit" class="tab-count">0</span></button>
@@ -265,8 +341,9 @@
         </section>
     </main>
 
-    <script src="/i18n.js?v=136"></script>
-    <script src="/app.js?v=136"></script>
-    <script src="/profile.js?v=136"></script>
+    <script src="/i18n.js?v=137"></script>
+    <script src="/app.js?v=137"></script>
+    <script src="/taste.js?v=137"></script>
+    <script src="/profile.js?v=137"></script>
 </body>
 </html>

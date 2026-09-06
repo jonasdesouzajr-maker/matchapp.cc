@@ -299,6 +299,72 @@ function buildPosterCard(item, accent) {
     `;
 }
 
+window.renderTasteDNA = function () {
+    const card = document.getElementById('taste-dna-card');
+    if (!card) return;
+
+    const emptyEl = document.getElementById('taste-empty');
+    const bodyEl  = document.getElementById('taste-body');
+    const confEl  = document.getElementById('taste-confidence');
+    if (typeof window.computeTasteDNA !== 'function') { card.style.display = 'none'; return; }
+
+    const dna = window.computeTasteDNA();
+
+    if (!dna || !dna.ready) {
+        if (emptyEl) emptyEl.style.display = 'block';
+        if (bodyEl) bodyEl.style.display = 'none';
+        if (confEl) confEl.textContent = 'Not enough data yet';
+        const sub = document.getElementById('taste-empty-sub');
+        if (sub && dna && dna.known > 0) {
+            const left = Math.max(0, (dna.needed || 4) - dna.known);
+            sub.textContent = `You're ${left} title${left === 1 ? '' : 's'} away. Save what interests you, mark what you've seen, and tap Loved It or Not For Me — we won't guess at your taste before we actually know it.`;
+        }
+        return;
+    }
+
+    if (emptyEl) emptyEl.style.display = 'none';
+    if (bodyEl) bodyEl.style.display = 'block';
+    if (confEl) confEl.textContent = dna.confidence + ' signal';
+
+    const head = document.getElementById('taste-headline');
+    if (head) head.textContent = dna.headline;
+
+    const pretty = (s) => String(s || '').replace(/\b\w/g, c => c.toUpperCase());
+
+    const bars = document.getElementById('taste-moods');
+    if (bars) {
+        bars.innerHTML = (dna.moods || []).map(m => `
+            <div class="taste-bar-row">
+                <span class="taste-bar-name">${pretty(m.key)}</span>
+                <span class="taste-bar-track"><span class="taste-bar-fill" style="width:${m.pct}%"></span></span>
+                <span class="taste-bar-pct">${m.pct}%</span>
+            </div>`).join('');
+    }
+
+    const chips = (id, arr) => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = (arr || []).map(x => `<span>${pretty(x.key || x)}</span>`).join('');
+    };
+    chips('taste-cats', dna.cats);
+    chips('taste-platforms', dna.platforms);
+
+    const avoidWrap = document.getElementById('taste-avoids-wrap');
+    if (avoidWrap) {
+        if (dna.avoids && dna.avoids.length) {
+            avoidWrap.style.display = 'block';
+            chips('taste-avoids', dna.avoids);
+        } else {
+            avoidWrap.style.display = 'none';
+        }
+    }
+
+    const note = document.getElementById('taste-footnote');
+    if (note) {
+        note.textContent = `Read from ${dna.known} title${dna.known === 1 ? '' : 's'} you've reacted to. `
+            + `When you leave a filter on "Any", we lean on this — but anything you pick explicitly always wins.`;
+    }
+};
+
 window.renderProfileGrids = function() {
     const savedListData = JSON.parse(localStorage.getItem('match_savedList') || '[]');
     const seenListData = JSON.parse(localStorage.getItem('match_seenList') || '[]');
@@ -327,6 +393,9 @@ window.renderProfileGrids = function() {
     setCount('count-watchlater', watchLater.length);
     setCount('count-seenit', seenVisual.length);
     setCount('count-audio', audioItems.length);
+
+    // Taste DNA reads the same lists, so refresh it on the same cycle.
+    if (typeof window.renderTasteDNA === 'function') window.renderTasteDNA();
 };
 
 // ----------------------------------------------------

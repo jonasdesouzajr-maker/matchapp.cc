@@ -1445,6 +1445,13 @@ function pickFromCatalog(cat, plat, mood, vibe, rating) {
 
         let freshPool = pool.filter(e => !seenRecently.has(e.title));
         if (freshPool.length > 0) pool = freshPool;
+
+        // TASTE DNA tie-break. Only narrows when the user left a filter on
+        // 'any' — an explicit choice always wins over inferred history, since
+        // what someone just told you they want beats what they liked last week.
+        if (typeof window.tasteBiasPool === 'function') {
+            try { pool = window.tasteBiasPool(pool, cat, mood) || pool; } catch (e) {}
+        }
         if (pool.length > 0) {
             const pick = pool[Math.floor(Math.random() * pool.length)];
             // Only ever display the user's requested platform when this tier
