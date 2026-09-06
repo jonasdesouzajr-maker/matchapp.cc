@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#14131A">
+
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://zkymvqrmbabngsqblyye.supabase.co" crossorigin>
+    <link rel="dns-prefetch" href="https://itunes.apple.com">
+    <link rel="dns-prefetch" href="https://api.tvmaze.com">
+
+    <title>Match Together | Find Something You BOTH Want To Watch — MatchApp</title>
+    <meta name="description" content="Can't agree on what to watch? Match Together lets two people each pick their mood, format and platform — then finds the one title you both actually want. Free, no signup needed to join.">
+    <meta name="keywords" content="what should we watch, couples movie picker, what to watch with friends, cant agree on what to watch, movie night decider, pick a movie together, shared watchlist, group movie chooser, o que assistir a dois, filme para o casal">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="https://matchapp.cc/together.html">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="MatchApp">
+    <meta property="og:url" content="https://matchapp.cc/together.html">
+    <meta property="og:title" content="Match Together — Find something you BOTH want to watch">
+    <meta property="og:description" content="Two people, two sets of tastes, one agreed pick. Send a link, both choose, get one title you'll both actually watch.">
+    <meta property="og:image" content="https://matchapp.cc/logo.jpeg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Match Together — MatchApp">
+    <meta name="twitter:description" content="Can't agree on what to watch? Send a link, both pick, get one answer.">
+    <meta name="twitter:image" content="https://matchapp.cc/logo.jpeg">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "MatchApp — Match Together",
+      "url": "https://matchapp.cc/together.html",
+      "applicationCategory": "EntertainmentApplication",
+      "operatingSystem": "All",
+      "description": "Shared decision tool for two or more people to agree on what to watch. Each person picks their own mood, format and platform; MatchApp returns a single title that fits everyone.",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How do I decide what to watch with someone else?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Use MatchApp's Match Together. One person starts a session and shares the link, each person picks their own mood, format and platform independently, and MatchApp finds a single title that satisfies both sets of preferences instead of forcing a compromise. No account is needed to join." }
+        },
+        {
+          "@type": "Question",
+          "name": "Does the other person need a MatchApp account?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. Anyone can join a Match Together session from the shared link without signing up. Only the person starting the session uses one of their daily matches." }
+        },
+        {
+          "@type": "Question",
+          "name": "What happens if we pick completely different things?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Where you agree, MatchApp honours it. Where you disagree, it widens that filter rather than siding with one person, so the result is something neither of you objects to. Age ratings are the exception: the strictest setting anyone chose always wins, so a family-friendly choice is never overridden." }
+        }
+      ]
+    }
+    </script>
+
+    <link rel="stylesheet" href="/style.css?v=136">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="/logo.jpeg">
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-2ECND229RR');
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
+
+    <style>
+        .tg-wrap { max-width: 720px; margin: 0 auto; padding: 0 16px 70px 16px; }
+        .tg-hero { text-align: center; padding: 34px 0 18px 0; }
+        .tg-eyebrow { display:inline-block; background:linear-gradient(90deg,#FFD700,#FFA500); color:#000; font-size:11px; font-weight:900; padding:6px 16px; border-radius:20px; text-transform:uppercase; letter-spacing:1px; margin-bottom:16px; }
+        .tg-h1 { color: var(--gold-glow); font-size: 34px; font-weight: 900; text-transform: uppercase; margin: 0 0 12px 0; letter-spacing: 1px; line-height: 1.15; }
+        .tg-lede { color:#bdb2d4; font-size:15px; line-height:1.75; margin:0 auto 6px auto; max-width:520px; }
+
+        .tg-how { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:26px 0 8px 0; }
+        .tg-how-step { background:rgba(0,0,0,0.45); border:1px solid rgba(229,193,88,0.28); border-radius:14px; padding:16px 12px; text-align:center; }
+        .tg-how-num { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; background:var(--gold); color:#14131A; font-weight:900; font-size:13px; margin-bottom:9px; }
+        .tg-how-text { color:#c9c0dd; font-size:12px; line-height:1.55; }
+        @media (max-width:560px) { .tg-how { grid-template-columns:1fr; } .tg-how-step { display:flex; align-items:center; gap:12px; text-align:left; padding:13px; } .tg-how-num { margin-bottom:0; flex-shrink:0; } }
+
+        .tg-card { background: var(--card-bg, rgba(20,19,26,0.92)); border:2px solid var(--gold); border-radius:22px; padding:28px; margin-top:22px; box-shadow:0 14px 50px rgba(0,0,0,0.55); }
+        .tg-card h2 { color:var(--gold-glow); font-size:22px; font-weight:900; text-transform:uppercase; margin:0 0 8px 0; }
+        .tg-card p.tg-sub { color:#a99cc4; font-size:13.5px; line-height:1.65; margin:0 0 22px 0; }
+
+        .tg-field { margin-bottom:16px; }
+        .tg-field label { display:block; color:#ccc; font-size:12.5px; font-weight:bold; text-transform:uppercase; letter-spacing:0.7px; margin-bottom:7px; }
+        .tg-field select, .tg-field input { width:100%; padding:15px 14px; border-radius:12px; border:1px solid rgba(255,255,255,0.2); background:#000; color:#fff; font-size:16px; font-family:inherit; box-sizing:border-box; }
+        .tg-field select:focus, .tg-field input:focus { outline:none; border-color:var(--gold); box-shadow:0 0 18px rgba(229,193,88,0.3); }
+        .tg-grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+        @media (max-width:600px) { .tg-grid2 { grid-template-columns:1fr; gap:0; } }
+
+        .tg-btn { width:100%; display:flex; align-items:center; justify-content:center; gap:10px; padding:18px; font-size:17px; font-weight:900; text-transform:uppercase; border-radius:14px; cursor:pointer; border:none; font-family:inherit; margin-top:8px; }
+        .tg-btn-gold { background:linear-gradient(90deg,#FFD700,#FFA500); color:#14131A; }
+        .tg-btn-ghost { background:rgba(107,63,160,0.3); border:2px solid #6B3FA0; color:#fff; }
+
+        .tg-share-box { background:rgba(0,0,0,0.5); border:1px dashed rgba(229,193,88,0.5); border-radius:14px; padding:18px; margin:18px 0; }
+        .tg-code { font-size:30px; font-weight:900; color:var(--gold-glow); letter-spacing:5px; text-align:center; margin:6px 0 14px 0; font-family:monospace; }
+        .tg-link-row { display:flex; gap:8px; }
+        .tg-link-row input { flex:1; min-width:0; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.18); background:#000; color:#bdb2d4; font-size:12px; }
+        .tg-icon-btn { background:rgba(229,193,88,0.16); border:1px solid var(--gold); color:var(--gold-glow); border-radius:10px; padding:0 15px; cursor:pointer; font-size:16px; }
+        .tg-share-apps { display:flex; gap:10px; margin-top:12px; }
+        .tg-share-apps a, .tg-share-apps button { flex:1; text-align:center; padding:12px; border-radius:10px; text-decoration:none; font-size:13px; font-weight:bold; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.05); color:#eee; cursor:pointer; font-family:inherit; }
+        .tg-share-apps a:hover, .tg-share-apps button:hover { border-color:var(--gold); color:var(--gold-glow); }
+
+        .tg-people { margin:18px 0; }
+        .tg-person { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.14); border-radius:12px; padding:12px 14px; margin-bottom:9px; }
+        .tg-person-dot { width:9px; height:9px; border-radius:50%; background:#25D366; box-shadow:0 0 9px rgba(37,211,102,0.85); flex-shrink:0; }
+        .tg-person-name { color:#fff; font-weight:bold; font-size:14.5px; flex:1; }
+        .tg-person-tag { color:var(--gold); font-size:10px; text-transform:uppercase; letter-spacing:1px; font-weight:900; }
+
+        .tg-spinner { width:38px; height:38px; border:3px solid rgba(229,193,88,0.25); border-top-color:var(--gold); border-radius:50%; animation:tgSpin 0.9s linear infinite; margin:16px auto; }
+        @keyframes tgSpin { to { transform:rotate(360deg); } }
+        @media (prefers-reduced-motion: reduce) { .tg-spinner { animation:none; } }
+
+        .tg-result-poster { width:100%; max-width:300px; border-radius:16px; border:3px solid var(--gold); box-shadow:0 14px 45px rgba(229,193,88,0.35); display:block; margin:0 auto 20px auto; }
+        .tg-result-who { text-align:center; color:var(--gold); font-size:12.5px; text-transform:uppercase; letter-spacing:1.4px; font-weight:900; margin-bottom:10px; }
+        .tg-result-title { color:#fff; font-size:29px; font-weight:900; text-align:center; margin:0 0 10px 0; line-height:1.2; }
+        .tg-result-platform { display:inline-block; background:rgba(229,193,88,0.18); border:1px solid var(--gold); color:var(--gold-glow); font-size:11.5px; font-weight:900; padding:5px 14px; border-radius:20px; text-transform:uppercase; margin-bottom:14px; }
+        .tg-result-synopsis { color:#c9c0dd; font-size:14.5px; line-height:1.75; text-align:center; margin:0 0 16px 0; }
+        .tg-result-agreed { background:rgba(37,211,102,0.1); border:1px solid rgba(37,211,102,0.45); color:#9beeb8; border-radius:12px; padding:12px; font-size:12.5px; text-align:center; margin-bottom:20px; }
+        .tg-result-agreed strong { color:#d6ffe4; }
+
+        .tg-err { background:rgba(255,82,82,0.12); border:1px solid rgba(255,82,82,0.55); color:#ffb3b3; border-radius:14px; padding:20px; text-align:center; font-size:14.5px; }
+        .tg-back { display:block; text-align:center; margin-top:22px; color:#8f85a8; font-size:13px; text-decoration:none; }
+        .tg-back:hover { color:var(--gold); }
+        .tg-ad { text-align:center; margin:26px 0; background:rgba(0,0,0,0.4); border-radius:14px; padding:12px; border:1px dashed rgba(255,255,255,0.14); }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <a href="/index.html" class="header-brand-area" aria-label="MatchApp Home" style="display:flex; align-items:center; gap:12px; text-decoration:none;">
+            <img src="/logo.jpeg" alt="MatchApp" style="height:42px; width:42px; border-radius:10px; border:2px solid var(--gold);">
+            <span style="color:var(--gold-glow); font-weight:900; font-size:19px; letter-spacing:0.5px;">MatchApp</span>
+        </a>
+        <nav style="display:flex; gap:10px; align-items:center;">
+            <a href="/index.html" class="secondary-btn" aria-label="Home" style="padding:8px 12px; font-size:12px; text-decoration:none;">🏠 Home</a>
+            <a href="/pricing/pricing.html" class="secondary-btn" style="padding:8px 12px; font-size:12px; text-decoration:none;">💎 VIP</a>
+        </nav>
+    </header>
+
+    <main class="tg-wrap">
+        <section class="tg-hero">
+            <span class="tg-eyebrow">🍿 New — Match Together</span>
+            <h1 class="tg-h1">Find something you<br>BOTH want to watch</h1>
+            <p class="tg-lede">Two people. Two sets of tastes. One answer. Each of you picks what you're in the mood for, and MatchApp finds the title that actually works for both — instead of whoever argues hardest.</p>
+        </section>
+
+        <div class="tg-how">
+            <div class="tg-how-step"><span class="tg-how-num">1</span><div class="tg-how-text">Pick your mood, format and platform</div></div>
+            <div class="tg-how-step"><span class="tg-how-num">2</span><div class="tg-how-text">Send the link to whoever you're watching with</div></div>
+            <div class="tg-how-step"><span class="tg-how-num">3</span><div class="tg-how-text">They pick theirs — you both get one agreed title</div></div>
+        </div>
+
+        <!-- STEP: START -->
+        <section id="tg-step-start" class="tg-card" style="display:none;">
+            <h2>Start a session</h2>
+            <p class="tg-sub">You'll choose your preferences, then get a link to send. Whoever you send it to doesn't need an account.</p>
+            <button onclick="tgBeginHost()" class="tg-btn tg-btn-gold">🍿 Start Matching Together</button>
+            <a href="/index.html" class="tg-back">← Just match on my own instead</a>
+        </section>
+
+        <!-- STEP: PREFERENCES -->
+        <section id="tg-step-prefs" class="tg-card" style="display:none;">
+            <h2 id="tg-prefs-heading">What are you in the mood for?</h2>
+            <p class="tg-sub" id="tg-prefs-sub">Pick your side of it. Your friend picks theirs, and we find the overlap.</p>
+
+            <div class="tg-field">
+                <label for="tg-name">Your name</label>
+                <input type="text" id="tg-name" maxlength="24" placeholder="So they know it's you" autocomplete="given-name">
+            </div>
+
+            <div class="tg-grid2">
+                <div class="tg-field">
+                    <label for="tg-category">Category / Format</label>
+                    <select id="tg-category">
+                            <option value="any">Surprise Me</option>
+                                                            <optgroup label="Film &amp; Television">
+                                                                <option value="movie">Movies / Blockbusters</option>
+                                                                <option value="series">TV Series</option>
+                                                                <option value="limited series">Limited &amp; Mini Series</option>
+                                                                <option value="documentary">Documentaries</option>
+                                                                <option value="stand-up comedy special">Stand-Up Comedy</option>
+                                                                <option value="reality show">Reality TV</option>
+                                                            </optgroup>
+                                                            <optgroup label="Vertical &amp; Short Form">
+                                                                <option value="vertical micro-drama">Vertical Micro-Dramas</option>
+                                                                <option value="short film">Short Films</option>
+                                                            </optgroup>
+                                                            <optgroup label="International">
+                                                                <option value="K-drama">K-Drama (Korean)</option>
+                                                                <option value="anime">Anime</option>
+                                                                <option value="novela brasileira">Novelas Brasileiras</option>
+                                                                <option value="telenovela">Telenovelas (Latin America)</option>
+                                                                <option value="C-drama">C-Drama (Chinese)</option>
+                                                                <option value="J-drama">J-Drama (Japanese)</option>
+                                                                <option value="Turkish dizi">Turkish Dizi</option>
+                                                                <option value="Bollywood">Bollywood / Indian Cinema</option>
+                                                                <option value="Nollywood">Nollywood (Nigerian)</option>
+                                                                <option value="European cinema">European Cinema</option>
+                                                            </optgroup>
+                                                            <optgroup label="YouTube">
+                                                                <option value="YouTube channel">YouTube Channels</option>
+                                                                <option value="YouTube Shorts">YouTube Shorts</option>
+                                                            </optgroup>
+                                                            <optgroup label="Audio, Music &amp; Spotify">
+                                                                <option value="podcast">Podcasts</option>
+                                                                <option value="Spotify playlist">Spotify Playlists</option>
+                                                                <option value="Spotify single">Spotify Singles &amp; New Releases</option>
+                                                                <option value="music album">Music Albums</option>
+                                                                <option value="audiobook">Audiobooks</option>
+                                                            </optgroup>
+                    </select>
+                </div>
+                <div class="tg-field">
+                    <label for="tg-platform">Platform</label>
+                    <select id="tg-platform">
+                            <option value="any">Any Platform</option>
+                                                            <optgroup label="Global Giants">
+                                                                <option value="Netflix">Netflix</option>
+                                                                <option value="Prime Video">Prime Video</option>
+                                                                <option value="Disney+">Disney+</option>
+                                                                <option value="Max">Max (HBO)</option>
+                                                                <option value="Apple TV+">Apple TV+</option>
+                                                                <option value="Paramount+">Paramount+</option>
+                                                                <option value="Hulu">Hulu</option>
+                                                                <option value="Peacock">Peacock</option>
+                                                            </optgroup>
+                                                            <optgroup label="Vertical Micro-Drama Apps">
+                                                                <option value="ReelShort">ReelShort</option>
+                                                                <option value="DramaBox">DramaBox</option>
+                                                                <option value="ShortMax">ShortMax</option>
+                                                                <option value="GoodShort">GoodShort</option>
+                                                                <option value="FlexTV">FlexTV</option>
+                                                            </optgroup>
+                                                            <optgroup label="Brazil">
+                                                                <option value="Globoplay">Globoplay</option>
+                                                            </optgroup>
+                                                            <optgroup label="Regional &amp; Local">
+                                                                <option value="Viki">Rakuten Viki (K-Drama)</option>
+                                                                <option value="Crunchyroll">Crunchyroll (Anime)</option>
+                                                                <option value="Hotstar">JioHotstar (India)</option>
+                                                                <option value="iQIYI">iQIYI (Asia)</option>
+                                                                <option value="WeTV">WeTV (Asia)</option>
+                                                                <option value="Viu">Viu (Asia / MENA)</option>
+                                                                <option value="MUBI">MUBI (Arthouse)</option>
+                                                            </optgroup>
+                                                            <optgroup label="Audio">
+                                                                <option value="Spotify">Spotify</option>
+                                                                <option value="Apple Music">Apple Music</option>
+                                                                <option value="Apple Podcasts">Apple Podcasts</option>
+                                                                <option value="YouTube Music">YouTube Music</option>
+                                                                <option value="Audible">Audible</option>
+                                                            </optgroup>
+                                                            <optgroup label="Free / Ad-Supported">
+                                                                <option value="YouTube">YouTube</option>
+                                                                <option value="Tubi">Tubi</option>
+                                                                <option value="Pluto TV">Pluto TV</option>
+                                                                <option value="Roku Channel">The Roku Channel</option>
+                                                            </optgroup>
+                    </select>
+                </div>
+                <div class="tg-field">
+                    <label for="tg-mood">Mood</label>
+                    <select id="tg-mood">
+                            <option value="any">Any Mood</option>
+                                                            <option value="intense and thrilling">Intense &amp; Thrilling</option>
+                                                            <option value="light and feel-good">Light &amp; Feel-Good</option>
+                                                            <option value="romantic">Romantic &amp; Swoony</option>
+                                                            <option value="heartbreaking">Emotional &amp; Heartbreaking</option>
+                                                            <option value="funny">Laugh Out Loud</option>
+                                                            <option value="scary">Scary &amp; Unsettling</option>
+                                                            <option value="mind-bending">Mind-Bending &amp; Twisty</option>
+                                                            <option value="inspiring">Inspiring &amp; Uplifting</option>
+                                                            <option value="cozy comfort watch">Cozy Comfort Watch</option>
+                                                            <option value="dark and gritty">Dark &amp; Gritty</option>
+                                                            <option value="epic and adventurous">Epic &amp; Adventurous</option>
+                                                            <option value="nostalgic">Nostalgic Throwback</option>
+                                                            <option value="gospel and faith">Gospel &amp; Faith</option>
+                    </select>
+                </div>
+                <div class="tg-field">
+                    <label for="tg-vibe">Vibe / Pacing</label>
+                    <select id="tg-vibe">
+                            <option value="any">Any Vibe</option>
+                                                            <option value="fast-paced binge-worthy">Fast-Paced Binge</option>
+                                                            <option value="slow burn">Slow Burn</option>
+                                                            <option value="easy background watch">Easy Background Watch</option>
+                                                            <option value="prestige and critically acclaimed">Prestige &amp; Acclaimed</option>
+                                                            <option value="guilty pleasure">Guilty Pleasure</option>
+                                                            <option value="hidden gem underrated">Hidden Gem</option>
+                                                            <option value="award winning">Award Winning</option>
+                                                            <option value="based on a true story">Based on a True Story</option>
+                                                            <option value="one sitting short watch">Quick One-Sitting Watch</option>
+                                                            <option value="long running series">Long-Running Series</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="tg-field">
+                <label for="tg-rating">Age Appropriateness</label>
+                <select id="tg-rating">
+                        <option value="any">Use My Profile Age</option>
+                                                            <option value="all ages family friendly">All Ages / Family Friendly</option>
+                                                            <option value="kids">Kids (G / TV-Y)</option>
+                                                            <option value="tween PG">Tween (PG)</option>
+                                                            <option value="teen PG-13">Teen (PG-13 / TV-14)</option>
+                                                            <option value="mature adults only R rated">Mature (R / TV-MA)</option>
+                </select>
+                <p style="color:#7c7391; font-size:11.5px; margin:7px 2px 0 2px;">If anyone in the session picks a stricter rating, that one wins — so a family-friendly choice is never overridden.</p>
+            </div>
+
+            <button id="tg-create-btn" onclick="tgCreateSession()" class="tg-btn tg-btn-gold">🔗 Create My Link</button>
+            <button id="tg-join-btn" onclick="tgJoinSession()" class="tg-btn tg-btn-gold" style="display:none;">✅ Submit My Picks</button>
+        </section>
+
+        <!-- STEP: WAITING -->
+        <section id="tg-step-waiting" class="tg-card" style="display:none;">
+            <h2>Send this to your person</h2>
+            <p class="tg-sub">They open it, pick what they're in the mood for, and you'll both see the same result here. No signup needed on their side.</p>
+
+            <div class="tg-share-box">
+                <div class="tg-code" id="tg-share-code">— — — —</div>
+                <div class="tg-link-row">
+                    <input type="text" id="tg-share-link" readonly aria-label="Share link">
+                    <button class="tg-icon-btn" onclick="tgCopyLink()" title="Copy link" aria-label="Copy link">📋</button>
+                </div>
+                <div class="tg-share-apps">
+                    <a id="tg-share-whatsapp" href="#" target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
+                    <a id="tg-share-telegram" href="#" target="_blank" rel="noopener noreferrer">✈️ Telegram</a>
+                    <button onclick="tgShareNative()">📤 Share</button>
+                </div>
+            </div>
+
+            <div class="tg-people">
+                <p style="color:#a99cc4; font-size:12px; text-transform:uppercase; letter-spacing:1.2px; font-weight:bold; margin:0 0 10px 0;">
+                    In this session (<span id="tg-participant-count">1</span>)
+                </p>
+                <div id="tg-participants"></div>
+            </div>
+
+            <div class="tg-spinner"></div>
+            <p id="tg-waiting-note" style="text-align:center; color:#8f85a8; font-size:13px;">Waiting for them to join…</p>
+            <button id="tg-refresh-btn" onclick="tgManualRefresh()" class="tg-btn tg-btn-ghost" style="display:none;">🔄 Check again</button>
+        </section>
+
+        <!-- STEP: RESULT -->
+        <section id="tg-step-result" class="tg-card" style="display:none;">
+            <p class="tg-result-who" id="tg-result-who"></p>
+            <img id="tg-result-poster" class="tg-result-poster" alt="Cover art" src="">
+            <h2 class="tg-result-title" id="tg-result-title"></h2>
+            <div style="text-align:center;"><span class="tg-result-platform" id="tg-result-platform"></span></div>
+            <p class="tg-result-synopsis" id="tg-result-synopsis"></p>
+            <div class="tg-result-agreed" id="tg-result-agreed"></div>
+            <a id="tg-result-link" href="#" target="_blank" rel="noopener noreferrer" class="tg-btn tg-btn-gold" style="text-decoration:none;">▶ Watch Now</a>
+            <a href="/together.html" class="tg-back">🔄 Start another session</a>
+            <a href="/index.html" class="tg-back">← Back to solo matching</a>
+        </section>
+
+        <!-- STEP: ERROR -->
+        <section id="tg-step-error" class="tg-card" style="display:none;">
+            <div class="tg-err" id="tg-error-text"></div>
+            <a href="/together.html" class="tg-back">🔄 Start a new session</a>
+            <a href="/index.html" class="tg-back">← Back to MatchApp</a>
+        </section>
+
+        <div class="tg-ad">
+            <span style="font-size:10px; color:#888; display:block; margin-bottom:5px;">SPONSORED</span>
+            <ins class="adsbygoogle" style="display:block; min-height:90px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+    </main>
+
+    <script src="/app.js?v=136"></script>
+    <script src="/i18n.js?v=136"></script>
+    <script src="/together.js?v=136"></script>
+</body>
+</html>

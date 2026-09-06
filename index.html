@@ -337,7 +337,7 @@
     <link rel="alternate" hreflang="zh" href="https://matchapp.cc/?lang=zh">
 
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=135"></script>
+    <script defer src="/i18n.js?v=136"></script>
 
     <!-- GOOGLE ANALYTICS (GTAG) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
@@ -350,7 +350,7 @@
     <!-- GOOGLE ADSENSE SCRIPT ENGINE -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
 
-    <link rel="stylesheet" href="/style.css?v=135">
+    <link rel="stylesheet" href="/style.css?v=136">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -788,6 +788,25 @@
             .qc-label { font-size: 7.5px; }
         }
 
+        /* ===== MATCH TOGETHER ENTRY ===== */
+        .tg-entry { display:flex; align-items:center; gap:15px; text-decoration:none;
+                    background:linear-gradient(135deg, rgba(107,63,160,0.4), rgba(229,193,88,0.12));
+                    border:2px solid rgba(229,193,88,0.6); border-radius:18px; padding:18px 20px;
+                    margin-bottom:22px; transition:0.25s; }
+        .tg-entry:hover { border-color:var(--gold); transform:translateY(-2px); box-shadow:0 12px 34px rgba(0,0,0,0.5); }
+        .tg-entry-icon { font-size:32px; flex-shrink:0; }
+        .tg-entry-body { display:flex; flex-direction:column; gap:4px; flex:1; min-width:0; }
+        .tg-entry-body strong { color:var(--gold-glow); font-size:16px; font-weight:900; text-transform:uppercase; letter-spacing:0.4px; }
+        .tg-entry-body small { color:#bdb2d4; font-size:12.5px; line-height:1.55; }
+        .tg-entry-arrow { color:var(--gold); font-size:22px; flex-shrink:0; }
+        @media (max-width:560px) {
+            .tg-entry { padding:15px 14px; gap:12px; }
+            .tg-entry-icon { font-size:26px; }
+            .tg-entry-body strong { font-size:14.5px; }
+            .tg-entry-body small { font-size:11.5px; }
+            .tg-entry-arrow { display:none; }
+        }
+
         /* ===== MATCH AGAIN (result card footer) =====
            Two paths side by side. Neither is gold: Stream Now is the primary
            action on this card and a gold button here would compete with it. */
@@ -1112,7 +1131,7 @@
                         <div class="spotlight-poster" onclick="saveSpotlightTitle()" role="button" tabindex="0"
                              onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();saveSpotlightTitle();}"
                              aria-label="Save American Horror Story: 13 to Watch Later">
-                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=135" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
+                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=136" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
                             <div class="spotlight-ribbon" data-i18n="spotlight.ribbon">COMING THIS MONTH</div>
                         </div>
                         <div class="spotlight-body">
@@ -1137,6 +1156,16 @@
                     </div>
                 </article>
 
+
+                <!-- MATCH TOGETHER ENTRY -->
+                <a href="/together.html" class="tg-entry">
+                    <span class="tg-entry-icon">🍿</span>
+                    <span class="tg-entry-body">
+                        <strong>Watching with someone? Match Together</strong>
+                        <small>You both pick — we find the one title you'll actually agree on. They don't need an account.</small>
+                    </span>
+                    <span class="tg-entry-arrow">→</span>
+                </a>
 
                 <article id="search-box" class="premium-card">
                     <h2 style="color: var(--gold); margin: 0 0 8px 0; font-size: 26px; text-align: center; text-transform: uppercase; font-weight: 900;" data-i18n="search.heading">Search or Ask Anything</h2>
@@ -1651,12 +1680,14 @@
                     Foo Fighters Rock in Rio setlist · Elton John último show no Brasil · Rock in Rio Cidade do Rock ·
                     quem vai tocar no Rock in Rio 2026 · Rock in Rio ingressos · #RockInRio playlist oficial ·
                     movie stills database · find movie screencaps online · high resolution film stills archive ·
-                    best YouTube channels to watch · funny YouTube channels · science YouTube channels · what YouTube channel should I watch · best educational YouTube channels · YouTube channels for kids · melhores canais do YouTube · canais engraçados no YouTube · best video essay channels · YouTube Shorts to watch · cooking channels on YouTube · history channels on YouTube · true crime YouTube channels · relaxing YouTube channels to fall asleep to · YouTube channels like Kurzgesagt · what to watch on YouTube tonight
+                    best YouTube channels to watch · funny YouTube channels · science YouTube channels · what YouTube channel should I watch · best educational YouTube channels · YouTube channels for kids · melhores canais do YouTube · canais engraçados no YouTube · best video essay channels · YouTube Shorts to watch · cooking channels on YouTube · history channels on YouTube · true crime YouTube channels · relaxing YouTube channels to fall asleep to · YouTube channels like Kurzgesagt · what to watch on YouTube tonight ·
+                    what should we watch tonight · what to watch with your partner · cant agree on what to watch · movie night decider · pick a movie together · o que assistir a dois · filme para assistir com o namorado
                 </p>
             </div>
 
             <div class="seo-footer-links">
                 <a href="/index.html">Home</a>
+                <a href="/together.html">Match Together</a>
                 <a href="/pricing/pricing.html">VIP &amp; Pricing</a>
                 <a href="/profile/profile.html">My Profile</a>
                 <a href="/privacy.html">Privacy Policy</a>
@@ -1766,9 +1797,9 @@
         </div>
     </div>
 
-    <script src="/app.js?v=135"></script>
-    <script src="/share.js?v=135"></script>
-    <script src="/voice-input.js?v=135"></script>
+    <script src="/app.js?v=136"></script>
+    <script src="/share.js?v=136"></script>
+    <script src="/voice-input.js?v=136"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initVoiceInput('specific-search-input', 'mic-btn-index', () => smartSearch());
