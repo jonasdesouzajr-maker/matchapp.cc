@@ -675,15 +675,139 @@ async function hydrateMarqueeCovers() {
 }
 document.addEventListener('DOMContentLoaded', hydrateMarqueeCovers);
 
+// Clicking a trending title now goes straight to the full result — streaming
+// link, synopsis, platform, cover — instead of just typing the name into the
+// search box and leaving the user to press another button. It runs the same
+// direct-search path, so it consumes one match via checkDailyLimit() ->
+// consume_match, exactly like any other AI lookup.
 window.selectMarqueeItem = function(titleName) {
     const searchInput = document.getElementById('specific-search-input');
+    if (searchInput) searchInput.value = titleName;
+
     const searchBox = document.getElementById('search-box');
-    if (searchInput && searchBox) { 
-        searchInput.value = titleName; 
-        searchBox.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
-        searchInput.focus(); 
-    }
+    if (searchBox) searchBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // Let the scroll settle so the loading sequence is actually on screen.
+    setTimeout(() => { window.triggerMatch(true); }, 320);
 };
+
+// ----------------------------------------------------
+// TRENDING RAIL
+// Auto-advances, but can be dragged or swiped in either direction to go back
+// to titles that already passed. Loops seamlessly by duplicating the strip and
+// wrapping scrollLeft at the halfway point.
+// ----------------------------------------------------
+(function () {
+    let vp, track, autoTimer;
+    let paused = false;
+    let dragging = false, startX = 0, startScroll = 0, moved = 0;
+
+    const AUTO_PX = 0.55;     // px per tick — slow enough to read
+    const TICK_MS = 16;
+    const DRAG_THRESHOLD = 6; // beyond this, treat as a drag and swallow the click
+
+    function halfWidth() { return track ? track.scrollWidth / 2 : 0; }
+
+    function wrap() {
+        const half = halfWidth();
+        if (half <= 0) return;
+        if (vp.scrollLeft >= half) vp.scrollLeft -= half;
+        else if (vp.scrollLeft <= 0) vp.scrollLeft += half;
+    }
+
+    function tick() {
+        if (paused || dragging || !vp) return;
+        vp.scrollLeft += AUTO_PX;
+        wrap();
+    }
+
+    window.marqueeNudge = function (dir) {
+        if (!vp) return;
+        vp.scrollBy({ left: dir * 320, behavior: 'smooth' });
+        // Pause briefly so auto-scroll doesn't fight the user's intent.
+        paused = true;
+        clearTimeout(vp._resumeTimer);
+        vp._resumeTimer = setTimeout(() => { paused = false; wrap(); }, 2200);
+    };
+
+    function initRail() {
+        vp = document.getElementById('marquee-viewport');
+        track = document.getElementById('marquee-track');
+        if (!vp || !track) return;
+
+        // Duplicate the strip once so the loop has somewhere to wrap to.
+        // Cloned tiles are hidden from assistive tech to avoid a duplicate
+        // reading of the same titles.
+        if (!track.dataset.cloned) {
+            const clone = track.cloneNode(true);
+            clone.removeAttribute('id');
+            Array.from(clone.children).forEach(c => {
+                c.setAttribute('aria-hidden', 'true');
+                c.setAttribute('tabindex', '-1');
+            });
+            while (clone.firstChild) track.appendChild(clone.firstChild);
+            track.dataset.cloned = '1';
+
+            // Cloning happens while hydrateMarqueeCovers() is still resolving,
+            // so the copies would otherwise keep whatever empty src they were
+            // cloned with. Re-running is cheap: COVER_CACHE means already
+            // fetched titles resolve without touching the network again.
+            if (typeof hydrateMarqueeCovers === 'function') {
+                setTimeout(() => { hydrateMarqueeCovers().catch(() => {}); }, 400);
+            }
+        }
+
+        // Respect people who've asked the OS for less motion.
+        const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!reduced) autoTimer = setInterval(tick, TICK_MS);
+
+        vp.addEventListener('mouseenter', () => { paused = true; });
+        vp.addEventListener('mouseleave', () => { paused = false; });
+
+        // Pointer drag (mouse + pen). Touch uses native momentum scrolling,
+        // which feels better than anything reimplemented here.
+        vp.addEventListener('pointerdown', (e) => {
+            if (e.pointerType === 'touch') { paused = true; return; }
+            dragging = true; moved = 0;
+            startX = e.clientX;
+            startScroll = vp.scrollLeft;
+            vp.classList.add('is-dragging');
+            vp.setPointerCapture && vp.setPointerCapture(e.pointerId);
+        });
+        vp.addEventListener('pointermove', (e) => {
+            if (!dragging) return;
+            const dx = e.clientX - startX;
+            moved = Math.max(moved, Math.abs(dx));
+            vp.scrollLeft = startScroll - dx;
+            wrap();
+        });
+        const endDrag = (e) => {
+            if (e && e.pointerType === 'touch') { setTimeout(() => { paused = false; }, 1200); }
+            if (!dragging) return;
+            dragging = false;
+            vp.classList.remove('is-dragging');
+        };
+        vp.addEventListener('pointerup', endDrag);
+        vp.addEventListener('pointercancel', endDrag);
+        vp.addEventListener('pointerleave', endDrag);
+
+        // A drag that ends over a tile must not also open that tile.
+        vp.addEventListener('click', (e) => {
+            if (moved > DRAG_THRESHOLD) { e.preventDefault(); e.stopPropagation(); moved = 0; }
+        }, true);
+
+        // Manual wheel/trackpad scrolling should also pause the auto-advance.
+        vp.addEventListener('scroll', () => { wrap(); }, { passive: true });
+
+        // Stop burning CPU while the tab is hidden.
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) { clearInterval(autoTimer); autoTimer = null; }
+            else if (!autoTimer && !reduced) autoTimer = setInterval(tick, TICK_MS);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => setTimeout(initRail, 120));
+})();
 
 window.openAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'flex'; };
 
