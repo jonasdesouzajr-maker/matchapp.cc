@@ -691,6 +691,20 @@ window.selectMarqueeItem = function(titleName) {
     setTimeout(() => { window.triggerMatch(true); }, 320);
 };
 
+// Tapping an event card runs a real AI lookup for that event — songs to play
+// before Rock in Rio, German folk for Oktoberfest, what to watch before AHS 13.
+// Goes through the direct-search path, so it consumes one match via
+// checkDailyLimit() -> consume_match, exactly like any other AI request.
+window.eventMatch = function (query) {
+    const input = document.getElementById('specific-search-input');
+    if (input) input.value = query;
+
+    const searchBox = document.getElementById('search-box');
+    if (searchBox) searchBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    setTimeout(() => { window.triggerMatch(true); }, 320);
+};
+
 // ----------------------------------------------------
 // TRENDING RAIL
 // Auto-advances, but can be dragged or swiped in either direction to go back
@@ -698,42 +712,43 @@ window.selectMarqueeItem = function(titleName) {
 // wrapping scrollLeft at the halfway point.
 // ----------------------------------------------------
 (function () {
-    let vp, track, autoTimer;
-    let paused = false;
-    let dragging = false, startX = 0, startScroll = 0, moved = 0;
 
     const AUTO_PX = 0.55;     // px per tick — slow enough to read
     const TICK_MS = 16;
     const DRAG_THRESHOLD = 6; // beyond this, treat as a drag and swallow the click
 
-    function halfWidth() { return track ? track.scrollWidth / 2 : 0; }
-
-    function wrap() {
-        const half = halfWidth();
-        if (half <= 0) return;
-        if (vp.scrollLeft >= half) vp.scrollLeft -= half;
-        else if (vp.scrollLeft <= 0) vp.scrollLeft += half;
-    }
-
-    function tick() {
-        if (paused || dragging || !vp) return;
-        vp.scrollLeft += AUTO_PX;
-        wrap();
-    }
-
-    window.marqueeNudge = function (dir) {
-        if (!vp) return;
-        vp.scrollBy({ left: dir * 320, behavior: 'smooth' });
-        // Pause briefly so auto-scroll doesn't fight the user's intent.
-        paused = true;
-        clearTimeout(vp._resumeTimer);
-        vp._resumeTimer = setTimeout(() => { paused = false; wrap(); }, 2200);
+    // Nudge works on any rail by id, so both rails share one implementation.
+    window.railNudge = function (vpId, dir) {
+        const el = document.getElementById(vpId);
+        if (!el) return;
+        el.scrollBy({ left: dir * 320, behavior: 'smooth' });
+        el._paused = true;
+        clearTimeout(el._resumeTimer);
+        el._resumeTimer = setTimeout(() => { el._paused = false; }, 2200);
     };
+    // Back-compat for the trending rail's existing arrow handlers.
+    window.marqueeNudge = function (dir) { window.railNudge('marquee-viewport', dir); };
 
-    function initRail() {
-        vp = document.getElementById('marquee-viewport');
-        track = document.getElementById('marquee-track');
+    function initRail(vpId, trackId) {
+        const vp = document.getElementById(vpId);
+        const track = document.getElementById(trackId);
         if (!vp || !track) return;
+        let paused = false, dragging = false, startX = 0, startScroll = 0, moved = 0, autoTimer = null;
+
+        // Scoped per rail so two rails can't clobber each other's scroll state.
+        const wrap = () => {
+            const half = track.scrollWidth / 2;
+            if (half <= 0) return;
+            if (vp.scrollLeft >= half) vp.scrollLeft -= half;
+            else if (vp.scrollLeft <= 0) vp.scrollLeft += half;
+        };
+        const tick = () => {
+            // railNudge() sets _paused on the element itself, since it has no
+            // access to this closure.
+            if (paused || dragging || vp._paused) return;
+            vp.scrollLeft += AUTO_PX;
+            wrap();
+        };
 
         // Duplicate the strip once so the loop has somewhere to wrap to.
         // Cloned tiles are hidden from assistive tech to avoid a duplicate
@@ -806,7 +821,10 @@ window.selectMarqueeItem = function(titleName) {
         });
     }
 
-    document.addEventListener('DOMContentLoaded', () => setTimeout(initRail, 120));
+    document.addEventListener('DOMContentLoaded', () => setTimeout(() => {
+        initRail('marquee-viewport', 'marquee-track');
+        initRail('events-viewport', 'events-track');
+    }, 120));
 })();
 
 window.openAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'flex'; };
