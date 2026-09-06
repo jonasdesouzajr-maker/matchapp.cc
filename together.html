@@ -16,6 +16,22 @@
     <meta name="robots" content="index, follow, max-image-preview:large">
     <link rel="canonical" href="https://matchapp.cc/together.html">
 
+    <link rel="alternate" hreflang="x-default" href="https://matchapp.cc/together.html">
+    <link rel="alternate" hreflang="en" href="https://matchapp.cc/together.html?lang=en">
+    <link rel="alternate" hreflang="pt-BR" href="https://matchapp.cc/together.html?lang=pt-BR">
+    <link rel="alternate" hreflang="es" href="https://matchapp.cc/together.html?lang=es">
+    <link rel="alternate" hreflang="fr" href="https://matchapp.cc/together.html?lang=fr">
+    <link rel="alternate" hreflang="de" href="https://matchapp.cc/together.html?lang=de">
+    <link rel="alternate" hreflang="it" href="https://matchapp.cc/together.html?lang=it">
+    <link rel="alternate" hreflang="tr" href="https://matchapp.cc/together.html?lang=tr">
+    <link rel="alternate" hreflang="ru" href="https://matchapp.cc/together.html?lang=ru">
+    <link rel="alternate" hreflang="ar" href="https://matchapp.cc/together.html?lang=ar">
+    <link rel="alternate" hreflang="hi" href="https://matchapp.cc/together.html?lang=hi">
+    <link rel="alternate" hreflang="id" href="https://matchapp.cc/together.html?lang=id">
+    <link rel="alternate" hreflang="ja" href="https://matchapp.cc/together.html?lang=ja">
+    <link rel="alternate" hreflang="ko" href="https://matchapp.cc/together.html?lang=ko">
+    <link rel="alternate" hreflang="zh" href="https://matchapp.cc/together.html?lang=zh">
+
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="MatchApp">
     <meta property="og:url" content="https://matchapp.cc/together.html">
@@ -63,7 +79,7 @@
     }
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=138">
+    <link rel="stylesheet" href="/style.css?v=139">
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" href="/logo.jpeg">
 
@@ -153,32 +169,32 @@
 
     <main class="tg-wrap">
         <section class="tg-hero">
-            <span class="tg-eyebrow">🍿 New — Match Together</span>
-            <h1 class="tg-h1">Find something you<br>BOTH want to watch</h1>
-            <p class="tg-lede">Two people. Two sets of tastes. One answer. Each of you picks what you're in the mood for, and MatchApp finds the title that actually works for both — instead of whoever argues hardest.</p>
+            <span class="tg-eyebrow" data-i18n="tg.eyebrow">🍿 New — Match Together</span>
+            <h1 class="tg-h1" data-i18n-html="tg.h1">Find something you<br>BOTH want to watch</h1>
+            <p class="tg-lede" data-i18n="tg.lede">Two people. Two sets of tastes. One answer. Each of you picks what you're in the mood for, and MatchApp finds the title that actually works for both — instead of whoever argues hardest.</p>
         </section>
 
         <div class="tg-how">
-            <div class="tg-how-step"><span class="tg-how-num">1</span><div class="tg-how-text">Pick your mood, format and platform</div></div>
-            <div class="tg-how-step"><span class="tg-how-num">2</span><div class="tg-how-text">Send the link to whoever you're watching with</div></div>
-            <div class="tg-how-step"><span class="tg-how-num">3</span><div class="tg-how-text">They pick theirs — you both get one agreed title</div></div>
+            <div class="tg-how-step"><span class="tg-how-num">1</span><div class="tg-how-text" data-i18n="tg.step1">Pick your mood, format and platform</div></div>
+            <div class="tg-how-step"><span class="tg-how-num">2</span><div class="tg-how-text" data-i18n="tg.step2">Send the link to whoever you're watching with</div></div>
+            <div class="tg-how-step"><span class="tg-how-num">3</span><div class="tg-how-text" data-i18n="tg.step3">They pick theirs — you both get one agreed title</div></div>
         </div>
 
         <!-- STEP: START -->
         <section id="tg-step-start" class="tg-card" style="display:none;">
-            <h2>Start a session</h2>
-            <p class="tg-sub">You'll choose your preferences, then get a link to send. Whoever you send it to doesn't need an account.</p>
-            <button onclick="tgBeginHost()" class="tg-btn tg-btn-gold">🍿 Start Matching Together</button>
+            <h2 data-i18n="tg.startTitle">Start a session</h2>
+            <p class="tg-sub" data-i18n="tg.startSub">You'll choose your preferences, then get a link to send. Whoever you send it to doesn't need an account.</p>
+            <button onclick="tgBeginHost()" class="tg-btn tg-btn-gold" data-i18n="tg.startBtn">🍿 Start Matching Together</button>
             <a href="/index.html" class="tg-back">← Just match on my own instead</a>
         </section>
 
         <!-- STEP: PREFERENCES -->
         <section id="tg-step-prefs" class="tg-card" style="display:none;">
-            <h2 id="tg-prefs-heading">What are you in the mood for?</h2>
+            <h2 id="tg-prefs-heading" data-i18n="tg.prefsTitle">What are you in the mood for?</h2>
             <p class="tg-sub" id="tg-prefs-sub">Pick your side of it. Your friend picks theirs, and we find the overlap.</p>
 
             <div class="tg-field">
-                <label for="tg-name">Your name</label>
+                <label for="tg-name" data-i18n="tg.nameLabel">Your name</label>
                 <input type="text" id="tg-name" maxlength="24" placeholder="So they know it's you" autocomplete="given-name">
             </div>
 
@@ -322,14 +338,14 @@
                 <p style="color:#7c7391; font-size:11.5px; margin:7px 2px 0 2px;">If anyone in the session picks a stricter rating, that one wins — so a family-friendly choice is never overridden.</p>
             </div>
 
-            <button id="tg-create-btn" onclick="tgCreateSession()" class="tg-btn tg-btn-gold">🔗 Create My Link</button>
-            <button id="tg-join-btn" onclick="tgJoinSession()" class="tg-btn tg-btn-gold" style="display:none;">✅ Submit My Picks</button>
+            <button id="tg-create-btn" onclick="tgCreateSession()" class="tg-btn tg-btn-gold" data-i18n="tg.createBtn">🔗 Create My Link</button>
+            <button id="tg-join-btn" onclick="tgJoinSession()" class="tg-btn tg-btn-gold" style="display:none;" data-i18n="tg.joinBtn">✅ Submit My Picks</button>
         </section>
 
         <!-- STEP: WAITING -->
         <section id="tg-step-waiting" class="tg-card" style="display:none;">
-            <h2>Send this to your person</h2>
-            <p class="tg-sub">They open it, pick what they're in the mood for, and you'll both see the same result here. No signup needed on their side.</p>
+            <h2 data-i18n="tg.waitTitle">Send this to your person</h2>
+            <p class="tg-sub" data-i18n="tg.waitSub">They open it, pick what they're in the mood for, and you'll both see the same result here. No signup needed on their side.</p>
 
             <div class="tg-share-box">
                 <div class="tg-code" id="tg-share-code">— — — —</div>
@@ -352,7 +368,7 @@
             </div>
 
             <div class="tg-spinner"></div>
-            <p id="tg-waiting-note" style="text-align:center; color:#8f85a8; font-size:13px;">Waiting for them to join…</p>
+            <p id="tg-waiting-note" data-i18n="tg.waitNote" style="text-align:center; color:#8f85a8; font-size:13px;">Waiting for them to join…</p>
             <button id="tg-refresh-btn" onclick="tgManualRefresh()" class="tg-btn tg-btn-ghost" style="display:none;">🔄 Check again</button>
         </section>
 
@@ -383,8 +399,8 @@
         </div>
     </main>
 
-    <script src="/app.js?v=138"></script>
-    <script src="/i18n.js?v=138"></script>
-    <script src="/together.js?v=138"></script>
+    <script src="/app.js?v=139"></script>
+    <script src="/i18n.js?v=139"></script>
+    <script src="/together.js?v=139"></script>
 </body>
 </html>
