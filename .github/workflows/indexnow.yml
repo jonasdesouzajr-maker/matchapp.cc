@@ -1,9 +1,21 @@
 name: Automated IndexNow SEO Ping
 
+# Notifies Bing and Yandex when content changes.
+#
+# Google is deliberately NOT pinged here: Google deprecated its sitemap ping
+# endpoint in June 2023 and it now returns 404. Google's supported routes are
+# the Sitemap line in robots.txt (already in place) and Search Console, which
+# needs an authenticated human. Adding a Google ping would only generate
+# failing requests.
+
 on:
   schedule:
-    - cron: '0 8 * * *' # Runs automatically every day at 8:00 AM UTC
-  workflow_dispatch:     # Allows manual test runs from the GitHub Actions dashboard
+    - cron: '0 8 * * *' # Daily at 08:00 UTC
+  push:
+    branches: [main]
+    paths:
+      - 'sitemap.xml'   # also fire the moment the sitemap actually changes
+  workflow_dispatch:    # manual runs from the Actions dashboard
 
 jobs:
   submit-indexnow:
@@ -12,18 +24,35 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Broadcast URLs to IndexNow (Bing & Yandex)
+      - name: Broadcast sitemap URLs to IndexNow (Bing & Yandex)
         env:
           INDEX_KEY: ${{ secrets.INDEX_NOW_KEY }}
         run: |
           node -e '
           const https = require("https");
-          
-          const urls = [
-            "https://matchapp.cc/",
-            "https://matchapp.cc/profile/profile.html",
-            "https://matchapp.cc/pricing/pricing.html"
-          ];
+          const fs = require("fs");
+
+          if (!process.env.INDEX_KEY) {
+            console.error("INDEX_NOW_KEY secret is not set — aborting.");
+            process.exit(1);
+          }
+
+          // Read the URL list straight from sitemap.xml rather than hardcoding
+          // it. The previous version listed three URLs by hand, which had
+          // silently drifted: four sitemap pages (discover, privacy, terms and
+          // together) were never being submitted at all, while
+          // profile/profile.html WAS being submitted despite carrying noindex.
+          // Parsing the sitemap means this can never fall out of sync again.
+          const xml = fs.readFileSync("sitemap.xml", "utf8");
+          const urls = [...xml.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/g)].map(m => m[1]);
+
+          if (urls.length === 0) {
+            console.error("No <loc> entries found in sitemap.xml — aborting.");
+            process.exit(1);
+          }
+
+          console.log("Submitting " + urls.length + " URLs:");
+          urls.forEach(u => console.log("  " + u));
 
           const payload = JSON.stringify({
             host: "matchapp.cc",
@@ -37,26 +66,30 @@ jobs:
             path: "/indexnow",
             method: "POST",
             headers: {
-              "Content-Type": "application/json",
+              "Content-Type": "application/json; charset=utf-8",
               "Content-Length": Buffer.byteLength(payload)
             }
           };
 
           const req = https.request(options, (res) => {
-            console.log(`IndexNow Response Status: ${res.statusCode}`);
-            res.on("data", (chunk) => {
-              process.stdout.write(chunk);
+            console.log("IndexNow response status: " + res.statusCode);
+            let body = "";
+            res.on("data", (c) => { body += c; });
+            res.on("end", () => {
+              if (body) console.log("Response body: " + body);
+              // 200 and 202 both mean accepted. Anything else is a real failure
+              // and should fail the job loudly rather than pass silently.
+              if (res.statusCode === 200 || res.statusCode === 202) {
+                console.log("Submitted successfully.");
+              } else {
+                console.error("IndexNow rejected the submission.");
+                process.exit(1);
+              }
             });
-            if (res.statusCode >= 200 && res.statusCode < 300) {
-              console.log("\nSuccessfully indexed by IndexNow network!");
-            } else {
-              console.error("\nIndexNow submission returned non-success status.");
-              process.exit(1);
-            }
           });
 
           req.on("error", (e) => {
-            console.error(`IndexNow Request Error: ${e.message}`);
+            console.error("Request failed: " + e.message);
             process.exit(1);
           });
 
