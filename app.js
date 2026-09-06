@@ -796,48 +796,56 @@ function initUpgradeRibbon() {
 }
 document.addEventListener('DOMContentLoaded', initUpgradeRibbon);
 
-// "Match Again" from the result card.
+// "Match Again" — two paths.
 //
-// This previously set the result card to display:none before scrolling, which
-// was the bug: it yanked a very tall element (and the button being tapped)
-// out of the layout, the browser clamped scrollY mid-reflow, and the smooth
-// scroll that followed got cancelled — so the button looked completely dead.
-// The old card now stays put until a new match replaces it.
-//
-// On quota: this button does not consume anything by itself, and shouldn't —
-// it only moves the user to the form. The match is charged when they actually
-// press "Find My Match", which routes through triggerMatch() -> checkDailyLimit()
-// -> the server-side consume_match RPC. So every rematch does cost a match,
-// it's just charged at the point the AI actually runs rather than for scrolling.
+// Scroll note: this used window.scrollTo(), which silently did nothing here.
+// body carries overflow-x:hidden, which in several browsers promotes body to
+// the scrolling element instead of documentElement — so window.scrollTo has no
+// target to move. scrollIntoView() resolves against whatever the real scrolling
+// ancestor is, which is why every other scroll in this file works. Combined
+// with the #questionnaire-box scroll-margin-top rule, it also clears the
+// sticky header without manual maths.
+function goToQuestionnaire() {
+    const box = document.getElementById('questionnaire-box');
+    if (!box) return false;
+
+    try {
+        box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (e) {
+        box.scrollIntoView(true); // older browsers: no options object
+    }
+
+    // Visible acknowledgement even if the form was already on screen.
+    box.classList.add('cta-highlight');
+    setTimeout(() => box.classList.remove('cta-highlight'), 1600);
+    return true;
+}
+
+// Path A: change the criteria first.
 window.matchAgainNewCriteria = function() {
     // A leftover direct title search would hijack the next run and bypass the
     // questionnaire entirely, which is the opposite of what this button promises.
     const specific = document.getElementById('specific-search-input');
     if (specific) specific.value = '';
 
-    const box = document.getElementById('questionnaire-box');
-    if (!box) return;
-
-    // Explicit position maths rather than scrollIntoView: the sticky header
-    // overlaps the top of the page, and this guarantees a real scroll even if
-    // smooth-scroll behaviour is unavailable or interrupted.
-    const headerH = (document.querySelector('.app-header') || {}).offsetHeight || 80;
-    const top = box.getBoundingClientRect().top + window.pageYOffset - headerH - 12;
-
-    try {
-        window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
-    } catch (e) {
-        window.scrollTo(0, Math.max(0, top)); // older browsers: no options object
-    }
-
-    // Make it unmistakable that the tap registered, even if the page barely
-    // moved because the form was already near the viewport.
-    box.classList.add('cta-highlight');
-    setTimeout(() => box.classList.remove('cta-highlight'), 1600);
+    if (!goToQuestionnaire()) return;
 
     if (window.showToast) {
         showToast(window.t ? t('res.matchagaintoast') : '🔄 Set your new criteria, then tap Find My Match.');
     }
+};
+
+// Path B: keep the same criteria and go straight to a fresh match.
+// This spends a match immediately — triggerMatch() runs checkDailyLimit(),
+// which calls the server-side consume_match RPC before anything is generated.
+window.matchAgainSameCriteria = function() {
+    const specific = document.getElementById('specific-search-input');
+    if (specific) specific.value = '';   // questionnaire drives this, not a typed title
+
+    // Scroll to the form so the loading sequence is actually visible; without
+    // this the user sits on the old result card watching nothing happen.
+    goToQuestionnaire();
+    setTimeout(() => { window.triggerMatch(false); }, 350);
 };
 
 window.scrollToQuestionnaire = function() {
