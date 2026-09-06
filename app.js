@@ -51,17 +51,28 @@ let recentTitles = JSON.parse(localStorage.getItem('match_recentTitles') || '[]'
 // ----------------------------------------------------
 let lastQuotaStatus = null;
 
+const ANON_DAILY_LIMIT = 3;
+
 function anonLimitCheck() {
     const todayStr = new Date().toLocaleDateString();
     const lastDate = localStorage.getItem('match_lastDate');
     let dailyCount = parseInt(localStorage.getItem('match_dailyCount') || '0');
     if (lastDate !== todayStr) { dailyCount = 0; localStorage.setItem('match_lastDate', todayStr); }
 
-    if (dailyCount >= 3) {
+    if (dailyCount >= ANON_DAILY_LIMIT) {
+        // Anonymous visitors previously got no quota status at all, so the
+        // remaining-matches counter simply never appeared for them — which is
+        // the majority of first-time traffic. Populate it here too.
+        lastQuotaStatus = { allowed: false, used: dailyCount, limit: ANON_DAILY_LIMIT, remaining: 0, anon: true };
+        updateQuotaBadge(lastQuotaStatus);
         showQuotaMessage('anon');
         return false;
     }
-    localStorage.setItem('match_dailyCount', (dailyCount + 1).toString());
+
+    const used = dailyCount + 1;
+    localStorage.setItem('match_dailyCount', used.toString());
+    lastQuotaStatus = { allowed: true, used, limit: ANON_DAILY_LIMIT, remaining: ANON_DAILY_LIMIT - used, anon: true };
+    updateQuotaBadge(lastQuotaStatus);
     return true;
 }
 
@@ -1651,10 +1662,44 @@ window.triggerMatch = async function(isSpecificSearch = false) {
 // ----------------------------------------------------
 // THE RENDER ENGINE (Bulletproof Image Swap & YouTube Box)
 // ----------------------------------------------------
+// ----------------------------------------------------
+// REMAINING-MATCHES CORNER COUNTER
+// Rendered on the result card after each reveal. Reads lastQuotaStatus, which
+// is now populated for anonymous visitors as well as signed-in users, so this
+// works for first-time traffic rather than only for accounts.
+// ----------------------------------------------------
+function renderQuotaCorner() {
+    const el = document.getElementById('result-quota-corner');
+    const numEl = document.getElementById('result-quota-num');
+    const labelEl = document.getElementById('result-quota-label');
+    if (!el || !numEl || !labelEl) return;
+
+    const s = lastQuotaStatus;
+    // If quota state is genuinely unknown (RPC failed, mid-signup), show
+    // nothing rather than invent a number the server might contradict.
+    if (!s || typeof s.remaining !== 'number') { el.style.display = 'none'; return; }
+
+    const left = Math.max(0, s.remaining);
+    el.classList.remove('qc-low', 'qc-out', 'qc-unlimited');
+
+    numEl.textContent = left;
+    labelEl.textContent = left === 1
+        ? (window.t ? t('quota.oneleft') : 'match left')
+        : (window.t ? t('quota.left') : 'left today');
+
+    if (left === 0) el.classList.add('qc-out');
+    else if (left === 1) el.classList.add('qc-low');
+
+    el.title = `${s.used || 0} of ${s.limit || '?'} daily matches used`;
+    el.style.display = 'flex';
+}
+
 async function renderResult(selected, isSpecificSearch) {
     const loadBox = document.getElementById('loading-box'); const resultBox = document.getElementById('result-box');
     if (loadBox) loadBox.style.display = 'none';
     resultBox.style.display = 'block'; resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    renderQuotaCorner();
 
     // TRIGGER PREMIUM FX
     window.playPremiumSound();
