@@ -418,7 +418,7 @@
     <link rel="alternate" hreflang="zh" href="https://matchapp.cc/?lang=zh">
 
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=145"></script>
+    <script defer src="/i18n.js?v=146"></script>
 
     <!-- GOOGLE ANALYTICS (GTAG) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
@@ -431,7 +431,7 @@
     <!-- GOOGLE ADSENSE SCRIPT ENGINE -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
 
-    <link rel="stylesheet" href="/style.css?v=145">
+    <link rel="stylesheet" href="/style.css?v=146">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -1193,7 +1193,7 @@
 
                 <!-- TOP BANNER — Google AdSense responsive (Adsterra removed: served popunders) -->
                 <div class="ad-banner-container premium-ad-frame">
-                    <span style="font-size: 10px; color: #888; display: block; margin-bottom: 5px;">SPONSORED CONTENT</span>
+                    <span style="font-size: 10px; color: #888; display: block; margin-bottom: 5px;" data-i18n="ad.sponsoredContent">SPONSORED CONTENT</span>
                     <ins class="adsbygoogle" style="display:block; min-height:90px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
                     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                 </div>
@@ -1214,7 +1214,7 @@
                                 <span class="event-badge event-live">● LIVE</span>
                                 <div class="event-meta">
                                     <strong>Rock in Rio 2026</strong>
-                                    <small>Sept 4–7 &amp; 11–13 · Cidade do Rock, Rio</small>
+                                    <small data-i18n="ev.rirMeta">Sept 4–7 &amp; 11–13 · Cidade do Rock, Rio</small>
                                 </div>
                             </div>
 
@@ -1223,7 +1223,7 @@
                                 <span class="event-badge event-live">● LIVE</span>
                                 <div class="event-meta">
                                     <strong>Oktoberfest Petrópolis</strong>
-                                    <small>Sept 4–7 &amp; 11–13 · Itaipava · Free entry</small>
+                                    <small data-i18n="ev.oktMeta">Sept 4–7 &amp; 11–13 · Itaipava · Free entry</small>
                                 </div>
                             </div>
 
@@ -1232,7 +1232,7 @@
                                 <span class="event-badge event-soon">SOON</span>
                                 <div class="event-meta">
                                     <strong>American Horror Story 13</strong>
-                                    <small>Premieres Sept 24 · FX &amp; Hulu</small>
+                                    <small data-i18n="ev.ahsMeta">Premieres Sept 24 · FX &amp; Hulu</small>
                                 </div>
                             </div>
 
@@ -1253,7 +1253,7 @@
                             <div class="spotlight-ribbon" id="rir-ribbon" data-start="2026-09-04" data-end="2026-09-13">LIVE NOW</div>
                         </div>
                         <div class="spotlight-body">
-                            <span class="spotlight-eyebrow">🔥 Trending Now in Rio de Janeiro</span>
+                            <span class="spotlight-eyebrow" data-i18n="ev.rirEyebrow">🔥 Trending Now in Rio de Janeiro</span>
                             <h2 class="spotlight-title">#RockInRio 2026</h2>
                             <p class="spotlight-desc">
                                 The 11th edition is underway at Cidade do Rock, headlined by Foo Fighters, Elton John's
@@ -1322,7 +1322,7 @@
                         <div class="spotlight-poster" onclick="saveSpotlightTitle()" role="button" tabindex="0"
                              onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();saveSpotlightTitle();}"
                              aria-label="Save American Horror Story: 13 to Watch Later">
-                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=145" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
+                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=146" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
                             <div class="spotlight-ribbon" data-i18n="spotlight.ribbon">COMING THIS MONTH</div>
                         </div>
                         <div class="spotlight-body">
@@ -1990,10 +1990,10 @@
         </div>
     </div>
 
-    <script src="/app.js?v=145"></script>
-    <script src="/taste.js?v=145"></script>
-    <script src="/share.js?v=145"></script>
-    <script src="/voice-input.js?v=145"></script>
+    <script src="/app.js?v=146"></script>
+    <script src="/taste.js?v=146"></script>
+    <script src="/share.js?v=146"></script>
+    <script src="/voice-input.js?v=146"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initVoiceInput('specific-search-input', 'mic-btn-index', () => smartSearch());

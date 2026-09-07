@@ -79,7 +79,7 @@
     }
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=145">
+    <link rel="stylesheet" href="/style.css?v=146">
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" href="/logo.jpeg">
 
@@ -162,8 +162,8 @@
             <span style="color:var(--gold-glow); font-weight:900; font-size:19px; letter-spacing:0.5px;">MatchApp</span>
         </a>
         <nav style="display:flex; gap:10px; align-items:center;">
-            <a href="/index.html" class="secondary-btn" aria-label="Home" style="padding:8px 12px; font-size:12px; text-decoration:none;">🏠 Home</a>
-            <a href="/pricing/pricing.html" class="secondary-btn" style="padding:8px 12px; font-size:12px; text-decoration:none;">💎 VIP</a>
+            <a href="/index.html" class="secondary-btn" aria-label="Home" data-i18n="nav.home" style="padding:8px 12px; font-size:12px; text-decoration:none;">🏠 Home</a>
+            <a href="/pricing/pricing.html" class="secondary-btn" data-i18n="nav.vip" style="padding:8px 12px; font-size:12px; text-decoration:none;">💎 VIP</a>
         </nav>
     </header>
 
@@ -185,157 +185,157 @@
             <h2 data-i18n="tg.startTitle">Start a session</h2>
             <p class="tg-sub" data-i18n="tg.startSub">You'll choose your preferences, then get a link to send. Whoever you send it to doesn't need an account.</p>
             <button onclick="tgBeginHost()" class="tg-btn tg-btn-gold" data-i18n="tg.startBtn">🍿 Start Matching Together</button>
-            <a href="/index.html" class="tg-back">← Just match on my own instead</a>
+            <a href="/index.html" class="tg-back" data-i18n="tg.soloInstead">← Just match on my own instead</a>
         </section>
 
         <!-- STEP: PREFERENCES -->
         <section id="tg-step-prefs" class="tg-card" style="display:none;">
             <h2 id="tg-prefs-heading" data-i18n="tg.prefsTitle">What are you in the mood for?</h2>
-            <p class="tg-sub" id="tg-prefs-sub">Pick your side of it. Your friend picks theirs, and we find the overlap.</p>
+            <p class="tg-sub" id="tg-prefs-sub" data-i18n="tg.prefsSub">Pick your side of it. Your friend picks theirs, and we find the overlap.</p>
 
             <div class="tg-field">
                 <label for="tg-name" data-i18n="tg.nameLabel">Your name</label>
-                <input type="text" id="tg-name" maxlength="24" placeholder="So they know it's you" autocomplete="given-name">
+                <input type="text" id="tg-name" maxlength="24" placeholder="So they know it's you" data-i18n-placeholder="tg.namePlaceholder" autocomplete="given-name">
             </div>
 
             <div class="tg-grid2">
                 <div class="tg-field">
-                    <label for="tg-category">Category / Format</label>
+                    <label for="tg-category" data-i18n="q.category">Category / Format</label>
                     <select id="tg-category">
-                            <option value="any">Surprise Me</option>
-                                                            <optgroup label="Film &amp; Television">
-                                                                <option value="movie">Movies / Blockbusters</option>
-                                                                <option value="series">TV Series</option>
-                                                                <option value="limited series">Limited &amp; Mini Series</option>
-                                                                <option value="documentary">Documentaries</option>
-                                                                <option value="stand-up comedy special">Stand-Up Comedy</option>
-                                                                <option value="reality show">Reality TV</option>
-                                                            </optgroup>
-                                                            <optgroup label="Vertical &amp; Short Form">
-                                                                <option value="vertical micro-drama">Vertical Micro-Dramas</option>
-                                                                <option value="short film">Short Films</option>
-                                                            </optgroup>
-                                                            <optgroup label="International">
-                                                                <option value="K-drama">K-Drama (Korean)</option>
-                                                                <option value="anime">Anime</option>
-                                                                <option value="novela brasileira">Novelas Brasileiras</option>
-                                                                <option value="telenovela">Telenovelas (Latin America)</option>
-                                                                <option value="C-drama">C-Drama (Chinese)</option>
-                                                                <option value="J-drama">J-Drama (Japanese)</option>
-                                                                <option value="Turkish dizi">Turkish Dizi</option>
-                                                                <option value="Bollywood">Bollywood / Indian Cinema</option>
-                                                                <option value="Nollywood">Nollywood (Nigerian)</option>
-                                                                <option value="European cinema">European Cinema</option>
-                                                            </optgroup>
-                                                            <optgroup label="YouTube">
-                                                                <option value="YouTube channel">YouTube Channels</option>
-                                                                <option value="YouTube Shorts">YouTube Shorts</option>
-                                                            </optgroup>
-                                                            <optgroup label="Audio, Music &amp; Spotify">
-                                                                <option value="podcast">Podcasts</option>
-                                                                <option value="Spotify playlist">Spotify Playlists</option>
-                                                                <option value="Spotify single">Spotify Singles &amp; New Releases</option>
-                                                                <option value="music album">Music Albums</option>
-                                                                <option value="audiobook">Audiobooks</option>
-                                                            </optgroup>
-                    </select>
+                                <option value="any" data-i18n="opt.surprise">Surprise Me</option>
+                                <optgroup label="Film &amp; Television" data-i18n-label="optgrp.filmtv">
+                                    <option value="movie" data-i18n="cat.movie">Movies / Blockbusters</option>
+                                    <option value="series" data-i18n="cat.series">TV Series</option>
+                                    <option value="limited series" data-i18n="cat.limitedseries">Limited &amp; Mini Series</option>
+                                    <option value="documentary" data-i18n="cat.documentary">Documentaries</option>
+                                    <option value="stand-up comedy special" data-i18n="cat.standup">Stand-Up Comedy</option>
+                                    <option value="reality show" data-i18n="cat.reality">Reality TV</option>
+                                </optgroup>
+                                <optgroup label="Vertical &amp; Short Form" data-i18n-label="optgrp.vertical">
+                                    <option value="vertical micro-drama" data-i18n="cat.microdrama">Vertical Micro-Dramas</option>
+                                    <option value="short film" data-i18n="cat.shortfilm">Short Films</option>
+                                </optgroup>
+                                <optgroup label="International" data-i18n-label="optgrp.international">
+                                    <option value="K-drama" data-i18n="cat.kdrama">K-Drama (Korean)</option>
+                                    <option value="anime" data-i18n="cat.anime">Anime</option>
+                                    <option value="novela brasileira" data-i18n="cat.novela">Novelas Brasileiras</option>
+                                    <option value="telenovela" data-i18n="cat.telenovela">Telenovelas (Latin America)</option>
+                                    <option value="C-drama" data-i18n="cat.cdrama">C-Drama (Chinese)</option>
+                                    <option value="J-drama" data-i18n="cat.jdrama">J-Drama (Japanese)</option>
+                                    <option value="Turkish dizi" data-i18n="cat.dizi">Turkish Dizi</option>
+                                    <option value="Bollywood" data-i18n="cat.bollywood">Bollywood / Indian Cinema</option>
+                                    <option value="Nollywood" data-i18n="cat.nollywood">Nollywood (Nigerian)</option>
+                                    <option value="European cinema" data-i18n="cat.euro">European Cinema</option>
+                                </optgroup>
+                                <optgroup label="YouTube" data-i18n-label="optgrp.youtube">
+                                    <option value="YouTube channel" data-i18n="cat.ytchannel">YouTube Channels</option>
+                                    <option value="YouTube Shorts" data-i18n="cat.ytshorts">YouTube Shorts</option>
+                                </optgroup>
+                                <optgroup label="Audio, Music &amp; Spotify" data-i18n-label="optgrp.audio">
+                                    <option value="podcast" data-i18n="cat.podcast">Podcasts</option>
+                                    <option value="Spotify playlist" data-i18n="cat.playlist">Spotify Playlists</option>
+                                    <option value="Spotify single" data-i18n="cat.single">Spotify Singles &amp; New Releases</option>
+                                    <option value="music album" data-i18n="cat.album">Music Albums</option>
+                                    <option value="audiobook" data-i18n="cat.audiobook">Audiobooks</option>
+                                </optgroup>
+                            </select>
                 </div>
                 <div class="tg-field">
-                    <label for="tg-platform">Platform</label>
+                    <label for="tg-platform" data-i18n="q.platform">Platform</label>
                     <select id="tg-platform">
-                            <option value="any">Any Platform</option>
-                                                            <optgroup label="Global Giants">
-                                                                <option value="Netflix">Netflix</option>
-                                                                <option value="Prime Video">Prime Video</option>
-                                                                <option value="Disney+">Disney+</option>
-                                                                <option value="Max">Max (HBO)</option>
-                                                                <option value="Apple TV+">Apple TV+</option>
-                                                                <option value="Paramount+">Paramount+</option>
-                                                                <option value="Hulu">Hulu</option>
-                                                                <option value="Peacock">Peacock</option>
-                                                            </optgroup>
-                                                            <optgroup label="Vertical Micro-Drama Apps">
-                                                                <option value="ReelShort">ReelShort</option>
-                                                                <option value="DramaBox">DramaBox</option>
-                                                                <option value="ShortMax">ShortMax</option>
-                                                                <option value="GoodShort">GoodShort</option>
-                                                                <option value="FlexTV">FlexTV</option>
-                                                            </optgroup>
-                                                            <optgroup label="Brazil">
-                                                                <option value="Globoplay">Globoplay</option>
-                                                            </optgroup>
-                                                            <optgroup label="Regional &amp; Local">
-                                                                <option value="Viki">Rakuten Viki (K-Drama)</option>
-                                                                <option value="Crunchyroll">Crunchyroll (Anime)</option>
-                                                                <option value="Hotstar">JioHotstar (India)</option>
-                                                                <option value="iQIYI">iQIYI (Asia)</option>
-                                                                <option value="WeTV">WeTV (Asia)</option>
-                                                                <option value="Viu">Viu (Asia / MENA)</option>
-                                                                <option value="MUBI">MUBI (Arthouse)</option>
-                                                            </optgroup>
-                                                            <optgroup label="Audio">
-                                                                <option value="Spotify">Spotify</option>
-                                                                <option value="Apple Music">Apple Music</option>
-                                                                <option value="Apple Podcasts">Apple Podcasts</option>
-                                                                <option value="YouTube Music">YouTube Music</option>
-                                                                <option value="Audible">Audible</option>
-                                                            </optgroup>
-                                                            <optgroup label="Free / Ad-Supported">
-                                                                <option value="YouTube">YouTube</option>
-                                                                <option value="Tubi">Tubi</option>
-                                                                <option value="Pluto TV">Pluto TV</option>
-                                                                <option value="Roku Channel">The Roku Channel</option>
-                                                            </optgroup>
-                    </select>
+                                <option value="any" data-i18n="opt.anyplatform">Any Platform</option>
+                                <optgroup label="Global Giants" data-i18n-label="optgrp.global">
+                                    <option value="Netflix">Netflix</option>
+                                    <option value="Prime Video">Prime Video</option>
+                                    <option value="Disney+">Disney+</option>
+                                    <option value="Max">Max (HBO)</option>
+                                    <option value="Apple TV+">Apple TV+</option>
+                                    <option value="Paramount+">Paramount+</option>
+                                    <option value="Hulu">Hulu</option>
+                                    <option value="Peacock">Peacock</option>
+                                </optgroup>
+                                <optgroup label="Vertical Micro-Drama Apps" data-i18n-label="optgrp.microapps">
+                                    <option value="ReelShort">ReelShort</option>
+                                    <option value="DramaBox">DramaBox</option>
+                                    <option value="ShortMax">ShortMax</option>
+                                    <option value="GoodShort">GoodShort</option>
+                                    <option value="FlexTV">FlexTV</option>
+                                </optgroup>
+                                <optgroup label="Brazil" data-i18n-label="optgrp.brazil">
+                                    <option value="Globoplay">Globoplay</option>
+                                </optgroup>
+                                <optgroup label="Regional &amp; Local" data-i18n-label="optgrp.regional">
+                                    <option value="Viki">Rakuten Viki (K-Drama)</option>
+                                    <option value="Crunchyroll">Crunchyroll (Anime)</option>
+                                    <option value="Hotstar">JioHotstar (India)</option>
+                                    <option value="iQIYI">iQIYI (Asia)</option>
+                                    <option value="WeTV">WeTV (Asia)</option>
+                                    <option value="Viu">Viu (Asia / MENA)</option>
+                                    <option value="MUBI">MUBI (Arthouse)</option>
+                                </optgroup>
+                                <optgroup label="Audio" data-i18n-label="optgrp.audiogrp">
+                                    <option value="Spotify">Spotify</option>
+                                    <option value="Apple Music">Apple Music</option>
+                                    <option value="Apple Podcasts">Apple Podcasts</option>
+                                    <option value="YouTube Music">YouTube Music</option>
+                                    <option value="Audible">Audible</option>
+                                </optgroup>
+                                <optgroup label="Free / Ad-Supported" data-i18n-label="optgrp.free">
+                                    <option value="YouTube">YouTube</option>
+                                    <option value="Tubi">Tubi</option>
+                                    <option value="Pluto TV">Pluto TV</option>
+                                    <option value="Roku Channel">The Roku Channel</option>
+                                </optgroup>
+                            </select>
                 </div>
                 <div class="tg-field">
-                    <label for="tg-mood">Mood</label>
+                    <label for="tg-mood" data-i18n="q.mood">Mood</label>
                     <select id="tg-mood">
-                            <option value="any">Any Mood</option>
-                                                            <option value="intense and thrilling">Intense &amp; Thrilling</option>
-                                                            <option value="light and feel-good">Light &amp; Feel-Good</option>
-                                                            <option value="romantic">Romantic &amp; Swoony</option>
-                                                            <option value="heartbreaking">Emotional &amp; Heartbreaking</option>
-                                                            <option value="funny">Laugh Out Loud</option>
-                                                            <option value="scary">Scary &amp; Unsettling</option>
-                                                            <option value="mind-bending">Mind-Bending &amp; Twisty</option>
-                                                            <option value="inspiring">Inspiring &amp; Uplifting</option>
-                                                            <option value="cozy comfort watch">Cozy Comfort Watch</option>
-                                                            <option value="dark and gritty">Dark &amp; Gritty</option>
-                                                            <option value="epic and adventurous">Epic &amp; Adventurous</option>
-                                                            <option value="nostalgic">Nostalgic Throwback</option>
-                                                            <option value="gospel and faith">Gospel &amp; Faith</option>
-                    </select>
+                                <option value="any" data-i18n="opt.anymood">Any Mood</option>
+                                <option value="intense and thrilling" data-i18n="mood.intense">Intense &amp; Thrilling</option>
+                                <option value="light and feel-good" data-i18n="mood.light">Light &amp; Feel-Good</option>
+                                <option value="romantic" data-i18n="mood.romantic">Romantic &amp; Swoony</option>
+                                <option value="heartbreaking" data-i18n="mood.heartbreak">Emotional &amp; Heartbreaking</option>
+                                <option value="funny" data-i18n="mood.funny">Laugh Out Loud</option>
+                                <option value="scary" data-i18n="mood.scary">Scary &amp; Unsettling</option>
+                                <option value="mind-bending" data-i18n="mood.mindbending">Mind-Bending &amp; Twisty</option>
+                                <option value="inspiring" data-i18n="mood.inspiring">Inspiring &amp; Uplifting</option>
+                                <option value="cozy comfort watch" data-i18n="mood.cozy">Cozy Comfort Watch</option>
+                                <option value="dark and gritty" data-i18n="mood.dark">Dark &amp; Gritty</option>
+                                <option value="epic and adventurous" data-i18n="mood.epic">Epic &amp; Adventurous</option>
+                                <option value="nostalgic" data-i18n="mood.nostalgic">Nostalgic Throwback</option>
+                                <option value="gospel and faith" data-i18n="mood.gospel">Gospel &amp; Faith</option>
+                            </select>
                 </div>
                 <div class="tg-field">
-                    <label for="tg-vibe">Vibe / Pacing</label>
+                    <label for="tg-vibe" data-i18n="q.vibe">Vibe / Pacing</label>
                     <select id="tg-vibe">
-                            <option value="any">Any Vibe</option>
-                                                            <option value="fast-paced binge-worthy">Fast-Paced Binge</option>
-                                                            <option value="slow burn">Slow Burn</option>
-                                                            <option value="easy background watch">Easy Background Watch</option>
-                                                            <option value="prestige and critically acclaimed">Prestige &amp; Acclaimed</option>
-                                                            <option value="guilty pleasure">Guilty Pleasure</option>
-                                                            <option value="hidden gem underrated">Hidden Gem</option>
-                                                            <option value="award winning">Award Winning</option>
-                                                            <option value="based on a true story">Based on a True Story</option>
-                                                            <option value="one sitting short watch">Quick One-Sitting Watch</option>
-                                                            <option value="long running series">Long-Running Series</option>
-                    </select>
+                                <option value="any" data-i18n="opt.anyvibe">Any Vibe</option>
+                                <option value="fast-paced binge-worthy" data-i18n="vibe.fastpaced">Fast-Paced Binge</option>
+                                <option value="slow burn" data-i18n="vibe.slowburn">Slow Burn</option>
+                                <option value="easy background watch" data-i18n="vibe.easybg">Easy Background Watch</option>
+                                <option value="prestige and critically acclaimed" data-i18n="vibe.prestige">Prestige &amp; Acclaimed</option>
+                                <option value="guilty pleasure" data-i18n="vibe.guilty">Guilty Pleasure</option>
+                                <option value="hidden gem underrated" data-i18n="vibe.hiddengem">Hidden Gem</option>
+                                <option value="award winning" data-i18n="vibe.award">Award Winning</option>
+                                <option value="based on a true story" data-i18n="vibe.truestory">Based on a True Story</option>
+                                <option value="one sitting short watch" data-i18n="vibe.quickwatch">Quick One-Sitting Watch</option>
+                                <option value="long running series" data-i18n="vibe.longrunning">Long-Running Series</option>
+                            </select>
                 </div>
             </div>
 
             <div class="tg-field">
-                <label for="tg-rating">Age Appropriateness</label>
+                <label for="tg-rating" data-i18n="q.rating">Age Appropriateness</label>
                 <select id="tg-rating">
-                        <option value="any">Use My Profile Age</option>
-                                                            <option value="all ages family friendly">All Ages / Family Friendly</option>
-                                                            <option value="kids">Kids (G / TV-Y)</option>
-                                                            <option value="tween PG">Tween (PG)</option>
-                                                            <option value="teen PG-13">Teen (PG-13 / TV-14)</option>
-                                                            <option value="mature adults only R rated">Mature (R / TV-MA)</option>
-                </select>
-                <p style="color:#7c7391; font-size:11.5px; margin:7px 2px 0 2px;">If anyone in the session picks a stricter rating, that one wins — so a family-friendly choice is never overridden.</p>
+                                <option value="any" data-i18n="rating.anyprofile">Use My Profile Age</option>
+                                <option value="all ages family friendly" data-i18n="rating.allages">All Ages / Family Friendly</option>
+                                <option value="kids" data-i18n="rating.kids">Kids (G / TV-Y)</option>
+                                <option value="tween PG" data-i18n="rating.tween">Tween (PG)</option>
+                                <option value="teen PG-13" data-i18n="rating.teen">Teen (PG-13 / TV-14)</option>
+                                <option value="mature adults only R rated" data-i18n="rating.mature">Mature (R / TV-MA)</option>
+                            </select>
+                <p style="color:#7c7391; font-size:11.5px; margin:7px 2px 0 2px;" data-i18n="tg.ratingNote">If anyone in the session picks a stricter rating, that one wins — so a family-friendly choice is never overridden.</p>
             </div>
 
             <button id="tg-create-btn" onclick="tgCreateSession()" class="tg-btn tg-btn-gold" data-i18n="tg.createBtn">🔗 Create My Link</button>
@@ -354,22 +354,22 @@
                     <button class="tg-icon-btn" onclick="tgCopyLink()" title="Copy link" aria-label="Copy link">📋</button>
                 </div>
                 <div class="tg-share-apps">
-                    <a id="tg-share-whatsapp" href="#" target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
-                    <a id="tg-share-telegram" href="#" target="_blank" rel="noopener noreferrer">✈️ Telegram</a>
-                    <button onclick="tgShareNative()">📤 Share</button>
+                    <a id="tg-share-whatsapp" href="#" target="_blank" rel="noopener noreferrer" data-i18n="tg.whatsapp">💬 WhatsApp</a>
+                    <a id="tg-share-telegram" href="#" target="_blank" rel="noopener noreferrer" data-i18n="tg.telegram">✈️ Telegram</a>
+                    <button onclick="tgShareNative()" data-i18n="tg.shareBtn">📤 Share</button>
                 </div>
             </div>
 
             <div class="tg-people">
                 <p style="color:#a99cc4; font-size:12px; text-transform:uppercase; letter-spacing:1.2px; font-weight:bold; margin:0 0 10px 0;">
-                    In this session (<span id="tg-participant-count">1</span>)
+                    <span data-i18n="tg.inSession">In this session</span> (<span id="tg-participant-count">1</span>)
                 </p>
                 <div id="tg-participants"></div>
             </div>
 
             <div class="tg-spinner"></div>
             <p id="tg-waiting-note" data-i18n="tg.waitNote" style="text-align:center; color:#8f85a8; font-size:13px;">Waiting for them to join…</p>
-            <button id="tg-refresh-btn" onclick="tgManualRefresh()" class="tg-btn tg-btn-ghost" style="display:none;">🔄 Check again</button>
+            <button id="tg-refresh-btn" onclick="tgManualRefresh()" class="tg-btn tg-btn-ghost" data-i18n="tg.checkAgain" style="display:none;">🔄 Check again</button>
         </section>
 
         <!-- STEP: RESULT -->
@@ -380,27 +380,27 @@
             <div style="text-align:center;"><span class="tg-result-platform" id="tg-result-platform"></span></div>
             <p class="tg-result-synopsis" id="tg-result-synopsis"></p>
             <div class="tg-result-agreed" id="tg-result-agreed"></div>
-            <a id="tg-result-link" href="#" target="_blank" rel="noopener noreferrer" class="tg-btn tg-btn-gold" style="text-decoration:none;">▶ Watch Now</a>
-            <a href="/together.html" class="tg-back">🔄 Start another session</a>
-            <a href="/index.html" class="tg-back">← Back to solo matching</a>
+            <a id="tg-result-link" href="#" target="_blank" rel="noopener noreferrer" class="tg-btn tg-btn-gold" data-i18n="tg.watchNow" style="text-decoration:none;">▶ Watch Now</a>
+            <a href="/together.html" class="tg-back" data-i18n="tg.another">🔄 Start another session</a>
+            <a href="/index.html" class="tg-back" data-i18n="tg.backSolo">← Back to solo matching</a>
         </section>
 
         <!-- STEP: ERROR -->
         <section id="tg-step-error" class="tg-card" style="display:none;">
             <div class="tg-err" id="tg-error-text"></div>
-            <a href="/together.html" class="tg-back">🔄 Start a new session</a>
-            <a href="/index.html" class="tg-back">← Back to MatchApp</a>
+            <a href="/together.html" class="tg-back" data-i18n="tg.newSession">🔄 Start a new session</a>
+            <a href="/index.html" class="tg-back" data-i18n="tg.backApp">← Back to MatchApp</a>
         </section>
 
         <div class="tg-ad">
-            <span style="font-size:10px; color:#888; display:block; margin-bottom:5px;">SPONSORED</span>
+            <span style="font-size:10px; color:#888; display:block; margin-bottom:5px;" data-i18n="ad.sponsored">SPONSORED</span>
             <ins class="adsbygoogle" style="display:block; min-height:90px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
             <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </div>
     </main>
 
-    <script src="/app.js?v=145"></script>
-    <script src="/i18n.js?v=145"></script>
-    <script src="/together.js?v=145"></script>
+    <script src="/app.js?v=146"></script>
+    <script src="/i18n.js?v=146"></script>
+    <script src="/together.js?v=146"></script>
 </body>
 </html>

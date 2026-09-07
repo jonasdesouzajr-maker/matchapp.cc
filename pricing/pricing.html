@@ -18,7 +18,7 @@
       gtag('set', 'ads_data_redaction', true); gtag('set', 'url_passthrough', true);
     </script>
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=145"></script>
+    <script defer src="/i18n.js?v=146"></script>
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
     <script>gtag('js', new Date()); gtag('config', 'G-2ECND229RR');</script>
@@ -116,7 +116,7 @@
     }
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=145">
+    <link rel="stylesheet" href="/style.css?v=146">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
 
@@ -167,7 +167,7 @@
 </head>
 <body style="display: flex; flex-direction: column; min-height: 100vh;">
     
-    <div id="real-time-clock" class="real-time-clock fade-in">Loading Time...</div>
+    <div id="real-time-clock" class="real-time-clock fade-in" data-i18n="pr.loading">Loading Time...</div>
     <div class="luxury-bg"><div class="floating-orb orb-1"></div><div class="floating-orb orb-2"></div></div>
 
     <div class="stream-flags">
@@ -180,11 +180,11 @@
     <header class="app-header fade-in">
         <a href="/index.html" class="header-brand-area" aria-label="MatchApp Home">
             <picture><source srcset="/logo.jpeg" type="image/jpeg"><img width="60" height="60" src="/logo.jpeg" alt="Logo" class="brand-logo" loading="lazy"></picture>
-            <div><span class="app-title-main">MatchApp</span><span class="app-title-sub">Streaming Concierge</span></div>
+            <div><span class="app-title-main">MatchApp</span><span class="app-title-sub" data-i18n="pr.tagline">Streaming Concierge</span></div>
         </a>
         <nav id="header-auth-area" style="display: flex; gap: 10px; align-items: center; justify-content: flex-end;">
             <div id="lang-switcher-host"></div>
-            <a href="/index.html" class="secondary-btn" aria-label="Home Page" style="padding: 8px 12px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">🏠 Home</a>
+            <a href="/index.html" class="secondary-btn" aria-label="Home Page" style="padding: 8px 12px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;" data-i18n="nav.home">🏠 Home</a>
         </nav>
     </header>
 
@@ -193,8 +193,8 @@
 
             <section class="container" style="text-align: center;" aria-label="Pricing Plans">
                 <div class="chrome-banner fade-in">
-                    <div class="chrome-text"><strong>MatchApp relies on ads to stay free!</strong><br>For the absolute best performance, open us in Chrome.</div>
-                    <a href="intent://matchapp.cc/#Intent;scheme=https;package=com.android.chrome;end" class="chrome-btn">Open in Chrome</a>
+                    <div class="chrome-text"><strong data-i18n="pr.adsFree">MatchApp relies on ads to stay free!</strong><br>For the absolute best performance, open us in Chrome.</div>
+                    <a href="intent://matchapp.cc/#Intent;scheme=https;package=com.android.chrome;end" class="chrome-btn" data-i18n="pr.openChrome">Open in Chrome</a>
                 </div>
 
                 <div class="how-it-works-glow fade-in">
@@ -211,7 +211,7 @@
                     
                     <article class="premium-card">
                         <h3 style="color: var(--gold); font-size: 22px; margin-bottom: 5px;" data-i18n="pricing.adfree.name">Ad-Free Pass</h3>
-                        <div class="price-badge">$1.99 <span>/ one-time</span></div>
+                        <div class="price-badge">$1.99 <span data-i18n="pr.oneTime">/ one-time</span></div>
                         <ul style="color: #bbb; font-size: 13px; line-height: 1.8; margin-bottom: 25px; padding-left: 18px;">
                             <li data-i18n="pricing.adfree.f1">✔️ Remove all banner &amp; sidebar ads</li>
                             <li data-i18n="pricing.adfree.f2">✔️ Fast-track 4s matches</li>
@@ -222,10 +222,10 @@
 
                     <article class="premium-card">
                         <h3 style="color: var(--gold); font-size: 22px; margin-bottom: 5px;" data-i18n="pricing.vipm.name">VIP Monthly</h3>
-                        <div class="price-badge">$4.99 <span>/ month</span></div>
+                        <div class="price-badge">$4.99 <span data-i18n="pr.perMonth">/ month</span></div>
                         <ul style="color: #bbb; font-size: 13px; line-height: 1.8; margin-bottom: 25px; padding-left: 18px;">
-                            <li data-i18n-html="pricing.vipm.f1">✔️ <strong>Unlimited</strong> AI Matches Daily</li>
-                            <li data-i18n-html="pricing.vipm.f2">✔️ <strong>Zero Ads</strong> permanently</li>
+                            <li data-i18n-html="pricing.vipm.f1">✔️ <strong data-i18n="pr.unlimited">Unlimited</strong> AI Matches Daily</li>
+                            <li data-i18n-html="pricing.vipm.f2">✔️ <strong data-i18n="pr.zeroAds">Zero Ads</strong> permanently</li>
                             <li data-i18n="pricing.vip.f3">✔️ Instant 4-second VIP Routing</li>
                             <li data-i18n="pricing.vipm.f4">✔️ Prioritized Regional Content</li>
                         </ul>
@@ -235,7 +235,7 @@
                     <article class="premium-card" style="border: 2px solid var(--gold); background: rgba(212,175,55,0.05); position: relative;">
                         <div style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: linear-gradient(90deg,#FFD700,#FFA500); color: #000; font-size: 11px; font-weight: 900; padding: 5px 16px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 12px rgba(212,175,55,0.5); white-space: nowrap;">🏆 Best Value</div>
                         <h3 style="color: var(--gold-glow); font-size: 22px; margin-bottom: 5px;" data-i18n="pricing.vipa.name">VIP Annual Pass</h3>
-                        <div class="price-badge">$39.99 <span>/ year</span></div>
+                        <div class="price-badge">$39.99 <span data-i18n="pr.perYear">/ year</span></div>
                         <ul style="color: #bbb; font-size: 13px; line-height: 1.8; margin-bottom: 25px; padding-left: 18px;">
                             <li data-i18n="pricing.vipa.f1">✔️ Everything in VIP Monthly, all year</li>
                             <li data-i18n-html="pricing.vipa.f2">✔️ <strong>Save 33%</strong> vs. paying monthly</li>
