@@ -115,6 +115,17 @@ input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow
 .fade-in { animation: fadeIn 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards; }
 @keyframes fadeIn { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
 
+/* ⚡ JUMP TO MATCH — top-of-page shortcut past the marquee/events/spotlights */
+.jump-to-match-btn { display: flex; align-items: center; justify-content: center; gap: 10px;
+                     width: 100%; background: linear-gradient(90deg, rgba(229,193,88,0.16), rgba(107,63,160,0.28), rgba(229,193,88,0.16));
+                     border: 1px solid rgba(229,193,88,0.55); color: var(--gold-glow); font-weight: 800;
+                     font-size: 13.5px; letter-spacing: 0.3px; padding: 13px 16px; border-radius: 14px;
+                     cursor: pointer; font-family: inherit; margin-bottom: 14px; transition: 0.2s; }
+.jump-to-match-btn:hover { border-color: var(--gold); background: linear-gradient(90deg, rgba(229,193,88,0.26), rgba(107,63,160,0.4), rgba(229,193,88,0.26)); }
+.jump-arrow { display: inline-block; animation: jumpBounce 1.6s ease-in-out infinite; }
+@keyframes jumpBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+@media (prefers-reduced-motion: reduce) { .jump-arrow { animation: none; } }
+
 /* 📲 INSTALL & 🔊 SOUND TOGGLE — header buttons */
 .install-btn { background: rgba(229,193,88,0.14); border: 1px solid var(--gold); color: var(--gold-glow);
                padding: 8px 14px; border-radius: 12px; font-weight: 700; font-size: 12px; cursor: pointer;
