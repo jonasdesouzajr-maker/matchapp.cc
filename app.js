@@ -1434,18 +1434,18 @@ const CONTENT_CATALOG = [
     { title: "Mousetrap", synopsis: "An adaptation of the classic whodunit where seven strangers snowed into a country house realize a killer is among them.", platform: "Netflix", cats: ["series","limited series"], moods: ["mind-bending","intense and thrilling"], vibes: ["prestige and critically acclaimed","based on a true story"], ratings: ["teen PG-13","any"] },
 
     // ---- Gospel & Faith, spread across every relevant category ----
-    { title: "The Chosen", year: 2017, country: "United States", countryCode: "US", synopsis: "A multi-season drama portraying the life of Jesus Christ through the eyes of those who knew him — one of the most-watched faith series ever made.", platform: "Prime Video", cats: ["series","documentary"], moods: ["inspiring","heartbreaking","gospel and faith"], vibes: ["long running series","award winning","based on a true story"], ratings: ["all ages family friendly","any"] },
-    { title: "Voices of Fire", synopsis: "Bishop Ezekiel Williams and producer Pharrell Williams build an unconventional gospel choir from the ground up in this uplifting docuseries.", platform: "Netflix", cats: ["documentary","series"], moods: ["inspiring","light and feel-good","gospel and faith"], vibes: ["award winning","based on a true story"], ratings: ["all ages family friendly","any"] },
-    { title: "I Can Only Imagine", synopsis: "The true story behind MercyMe's chart-topping gospel anthem, following songwriter Bart Millard's journey through a broken childhood to redemption.", platform: "Netflix", cats: ["movie"], moods: ["heartbreaking","inspiring","gospel and faith"], vibes: ["based on a true story","award winning"], ratings: ["all ages family friendly","teen PG-13","any"] },
-    { title: "A Week Away", synopsis: "A teen in the foster system avoids juvenile hall by attending a lively Christian summer camp that changes his outlook on life.", platform: "Netflix", cats: ["movie"], moods: ["light and feel-good","inspiring","gospel and faith"], vibes: ["easy background watch","guilty pleasure"], ratings: ["all ages family friendly","any"] },
-    { title: "Faith in the Flames: The Nichole Jolly Story", synopsis: "A nurse in a wildfire-threatened town must choose between evacuating and staying to protect her patients, in this true-story faith drama.", platform: "Netflix", cats: ["movie"], moods: ["intense and thrilling","inspiring","gospel and faith"], vibes: ["based on a true story","award winning"], ratings: ["teen PG-13","any"] },
-    { title: "The Case for Christ", synopsis: "An atheist journalist sets out to disprove his wife's newfound Christian faith and uncovers evidence that changes his own life.", platform: "Pure Flix", cats: ["movie"], moods: ["inspiring","mind-bending","gospel and faith"], vibes: ["based on a true story","award winning"], ratings: ["all ages family friendly","any"] },
-    { title: "Crosswalk Talk", synopsis: "A podcast featuring candid conversations with Christian actors, musicians and directors about keeping faith central in Hollywood.", platform: "Spotify", cats: ["podcast"], moods: ["inspiring","gospel and faith"], vibes: ["easy background watch","long running series"], ratings: ["all ages family friendly","any"] },
-    { title: "Kirk Franklin: Gospel Essentials", synopsis: "A career-spanning playlist from one of gospel music's most influential voices, blending choir-driven praise with contemporary production.", platform: "Spotify", cats: ["music album","Spotify playlist"], moods: ["inspiring","light and feel-good","gospel and faith"], vibes: ["easy background watch","award winning"], ratings: ["all ages family friendly","any"] },
-    { title: "Maverick City Music: Worship Sessions", synopsis: "Live, choir-backed worship recordings from the Grammy-winning collective redefining modern gospel and praise music.", platform: "Spotify", cats: ["Spotify playlist","music album"], moods: ["inspiring","cozy comfort watch","gospel and faith"], vibes: ["easy background watch","award winning"], ratings: ["all ages family friendly","any"] },
-    { title: "The Gospel of Luke", synopsis: "A word-for-word cinematic telling of the Gospel of Luke, following the ministry of Jesus from birth to resurrection.", platform: "Angel Studios", cats: ["movie","documentary"], moods: ["inspiring","gospel and faith"], vibes: ["prestige and critically acclaimed","based on a true story"], ratings: ["all ages family friendly","any"] },
-    { title: "Sound of Freedom", synopsis: "A former federal agent risks everything to rescue children from traffickers, in this faith-driven true story that became a surprise box-office phenomenon.", platform: "Angel Studios", cats: ["movie"], moods: ["intense and thrilling","inspiring","gospel and faith"], vibes: ["based on a true story","award winning"], ratings: ["teen PG-13","any"] , shareRestricted: true },
-    { title: "CeCe Winans: Believe for It", synopsis: "The Grammy-winning gospel album blending traditional choir arrangements with modern worship production.", platform: "Apple Music", cats: ["music album"], moods: ["inspiring","gospel and faith"], vibes: ["easy background watch","award winning"], ratings: ["all ages family friendly","any"] },
+    { title: "The Chosen", year: 2017, country: "United States", countryCode: "US", synopsis: "A multi-season drama portraying the life of Jesus Christ through the eyes of those who knew him — one of the most-watched faith series ever made.", platform: "Prime Video", cats: ["Gospel & Faith"], moods: [], vibes: ["long running series","award winning","based on a true story"], ratings: ["all ages family friendly","any"] },
+    { title: "Voices of Fire", synopsis: "Bishop Ezekiel Williams and producer Pharrell Williams build an unconventional gospel choir from the ground up in this uplifting docuseries.", platform: "Netflix", cats: ["Gospel & Faith"], moods: [], vibes: ["award winning","based on a true story"], ratings: ["all ages family friendly","any"] },
+    { title: "I Can Only Imagine", synopsis: "The true story behind MercyMe's chart-topping gospel anthem, following songwriter Bart Millard's journey through a broken childhood to redemption.", platform: "Netflix", cats: ["Gospel & Faith"], moods: [], vibes: ["based on a true story","award winning"], ratings: ["all ages family friendly","teen PG-13","any"] },
+    { title: "A Week Away", synopsis: "A teen in the foster system avoids juvenile hall by attending a lively Christian summer camp that changes his outlook on life.", platform: "Netflix", cats: ["Gospel & Faith"], moods: [], vibes: ["easy background watch","guilty pleasure"], ratings: ["all ages family friendly","any"] },
+    { title: "Faith in the Flames: The Nichole Jolly Story", synopsis: "A nurse in a wildfire-threatened town must choose between evacuating and staying to protect her patients, in this true-story faith drama.", platform: "Netflix", cats: ["Gospel & Faith"], moods: [], vibes: ["based on a true story","award winning"], ratings: ["teen PG-13","any"] },
+    { title: "The Case for Christ", synopsis: "An atheist journalist sets out to disprove his wife's newfound Christian faith and uncovers evidence that changes his own life.", platform: "Pure Flix", cats: ["Gospel & Faith"], moods: [], vibes: ["based on a true story","award winning"], ratings: ["all ages family friendly","any"] },
+    { title: "Crosswalk Talk", synopsis: "A podcast featuring candid conversations with Christian actors, musicians and directors about keeping faith central in Hollywood.", platform: "Spotify", cats: ["Gospel & Faith"], moods: [], vibes: ["easy background watch","long running series"], ratings: ["all ages family friendly","any"] },
+    { title: "Kirk Franklin: Gospel Essentials", synopsis: "A career-spanning playlist from one of gospel music's most influential voices, blending choir-driven praise with contemporary production.", platform: "Spotify", cats: ["Gospel & Faith"], moods: [], vibes: ["easy background watch","award winning"], ratings: ["all ages family friendly","any"] },
+    { title: "Maverick City Music: Worship Sessions", synopsis: "Live, choir-backed worship recordings from the Grammy-winning collective redefining modern gospel and praise music.", platform: "Spotify", cats: ["Gospel & Faith"], moods: [], vibes: ["easy background watch","award winning"], ratings: ["all ages family friendly","any"] },
+    { title: "The Gospel of Luke", synopsis: "A word-for-word cinematic telling of the Gospel of Luke, following the ministry of Jesus from birth to resurrection.", platform: "Angel Studios", cats: ["Gospel & Faith"], moods: [], vibes: ["prestige and critically acclaimed","based on a true story"], ratings: ["all ages family friendly","any"] },
+    { title: "Sound of Freedom", synopsis: "A former federal agent risks everything to rescue children from traffickers, in this faith-driven true story that became a surprise box-office phenomenon.", platform: "Angel Studios", cats: ["Gospel & Faith"], moods: [], vibes: ["based on a true story","award winning"], ratings: ["teen PG-13","any"] , shareRestricted: true },
+    { title: "CeCe Winans: Believe for It", synopsis: "The Grammy-winning gospel album blending traditional choir arrangements with modern worship production.", platform: "Apple Music", cats: ["Gospel & Faith"], moods: [], vibes: ["easy background watch","award winning"], ratings: ["all ages family friendly","any"] },
 
     // ---- Globoplay's own vertical micro-drama line (real, launched 2025-2026 —
     // confirmed via Variety and Brazilian press, not invented) ----
@@ -1539,8 +1539,8 @@ const VERTICAL_DRAMA_TITLES = ["Então É Amor?","Quando o Coração Entra em Ca
 //   audio    : true = music/spoken audio service (drives Listen Later wording)
 // ----------------------------------------------------
 const PLATFORMS = {
-    "Netflix":        { group: "Global Giants", audio: false, countries: ['*'], cats: ["movie","series","limited series","documentary","stand-up comedy special","reality show","K-drama","anime","kids","short film","Bollywood","European cinema","telenovela","C-drama","J-drama","Turkish dizi"], url: "https://www.netflix.com", search: t => `https://www.netflix.com/search?q=${encodeURIComponent(t)}` },
-    "Prime Video":    { group: "Global Giants", audio: false, countries: ['*'], cats: ["movie","series","limited series","documentary","stand-up comedy special","reality show","anime","kids","Bollywood","European cinema","Nollywood"], url: "https://www.primevideo.com", search: t => `https://www.primevideo.com/search?phrase=${encodeURIComponent(t)}` },
+    "Netflix":        { group: "Global Giants", audio: false, countries: ['*'], cats: ["movie","series","limited series","documentary","stand-up comedy special","reality show","K-drama","anime","kids","short film","Bollywood","European cinema","telenovela","C-drama","J-drama","Turkish dizi","Gospel & Faith"], url: "https://www.netflix.com", search: t => `https://www.netflix.com/search?q=${encodeURIComponent(t)}` },
+    "Prime Video":    { group: "Global Giants", audio: false, countries: ['*'], cats: ["movie","series","limited series","documentary","stand-up comedy special","reality show","anime","kids","Bollywood","European cinema","Nollywood","Gospel & Faith"], url: "https://www.primevideo.com", search: t => `https://www.primevideo.com/search?phrase=${encodeURIComponent(t)}` },
     "Disney+":        { group: "Global Giants", audio: false, countries: ['*'], cats: ["movie","series","limited series","documentary","kids","anime"], url: "https://www.disneyplus.com", search: t => `https://www.disneyplus.com/search?q=${encodeURIComponent(t)}` },
     "Max":            { group: "Global Giants", audio: false, countries: ['*'], cats: ["movie","series","limited series","documentary","stand-up comedy special","reality show","kids","anime"], url: "https://www.max.com", search: t => `https://www.max.com/search?q=${encodeURIComponent(t)}` },
     "Apple TV+":      { group: "Global Giants", audio: false, countries: ['*'], cats: ["movie","series","limited series","documentary","kids","short film"], url: "https://tv.apple.com", search: t => `https://tv.apple.com/search?term=${encodeURIComponent(t)}` },
@@ -1563,11 +1563,11 @@ const PLATFORMS = {
     "Viu":            { group: "Regional & Local", audio: false, countries: ['*'], cats: ["K-drama","C-drama","Turkish dizi","movie","series"], url: "https://www.viu.com", search: t => `https://www.viu.com/ott/search?q=${encodeURIComponent(t)}` },
     "MUBI":           { group: "Regional & Local", audio: false, countries: ['*'], cats: ["movie","European cinema","short film","documentary"], url: "https://mubi.com", search: t => `https://mubi.com/search/${encodeURIComponent(t)}` },
 
-    "Pure Flix":      { group: "Faith & Gospel", audio: false, countries: ['*'], cats: ["movie","series","documentary","kids"], url: "https://pureflix.com", search: t => `https://pureflix.com/search?q=${encodeURIComponent(t)}` },
-    "Angel Studios":  { group: "Faith & Gospel", audio: false, countries: ['*'], cats: ["movie","series","documentary"], url: "https://www.angel.com", search: t => `https://www.angel.com/search?q=${encodeURIComponent(t)}` },
+    "Pure Flix":      { group: "Faith & Gospel", audio: false, countries: ['*'], cats: ["Gospel & Faith"], url: "https://pureflix.com", search: t => `https://pureflix.com/search?q=${encodeURIComponent(t)}` },
+    "Angel Studios":  { group: "Faith & Gospel", audio: false, countries: ['*'], cats: ["Gospel & Faith"], url: "https://www.angel.com", search: t => `https://www.angel.com/search?q=${encodeURIComponent(t)}` },
 
-    "Spotify":        { group: "Audio", audio: true, countries: ['*'], cats: ["podcast","Spotify playlist","Spotify single","music album","audiobook"], url: "https://open.spotify.com", search: t => `https://open.spotify.com/search/${encodeURIComponent(t)}` },
-    "Apple Music":    { group: "Audio", audio: true, countries: ['*'], cats: ["Spotify single","music album","Spotify playlist"], url: "https://music.apple.com", search: t => `https://music.apple.com/search?term=${encodeURIComponent(t)}` },
+    "Spotify":        { group: "Audio", audio: true, countries: ['*'], cats: ["podcast","Spotify playlist","Spotify single","music album","audiobook","Gospel & Faith"], url: "https://open.spotify.com", search: t => `https://open.spotify.com/search/${encodeURIComponent(t)}` },
+    "Apple Music":    { group: "Audio", audio: true, countries: ['*'], cats: ["Spotify single","music album","Spotify playlist","Gospel & Faith"], url: "https://music.apple.com", search: t => `https://music.apple.com/search?term=${encodeURIComponent(t)}` },
     "Apple Podcasts": { group: "Audio", audio: true, countries: ['*'], cats: ["podcast","audiobook"], url: "https://podcasts.apple.com", search: t => `https://podcasts.apple.com/search?term=${encodeURIComponent(t)}` },
     "YouTube Music":  { group: "Audio", audio: true, countries: ['*'], cats: ["Spotify playlist","Spotify single","music album"], url: "https://music.youtube.com", search: t => `https://music.youtube.com/search?q=${encodeURIComponent(t)}` },
     "Audible":        { group: "Audio", audio: true, countries: ['*'], cats: ["audiobook","podcast"], url: "https://www.audible.com", search: t => `https://www.audible.com/search?keywords=${encodeURIComponent(t)}` },
@@ -1787,6 +1787,13 @@ function isBlockedEntry(entry) {
 window.isBlockedEntry = isBlockedEntry;
 
 /** Same test for a free-text title/description from a live lookup. */
+// Shared keyword signals for recognising gospel/faith content in free text
+// (live iTunes results, which carry no category tags of our own). Used both
+// as the default exclusion below and by isBlockedText() for anything else a
+// user has blocked via the Not For Me chooser.
+const GOSPEL_TEXT_SIGNALS = ['gospel','faith','christian','gospel music','bible','biblical',
+    'igreja','evangel','católic','catholic','jesus','christ','worship','pastor','church'];
+
 function isBlockedText(text) {
     const blocked = getBlockedCategories();
     if (!blocked.length || !text) return false;
@@ -1794,7 +1801,7 @@ function isBlockedText(text) {
     // Only the blocked categories that have meaningful keyword signals; a
     // category like "any" would match everything and is never blockable.
     const SIGNALS = {
-        'gospel and faith': ['gospel','faith','christian','gospel music','bible','biblical','igreja','evangel','católic','catholic','jesus','christ','worship','pastor','church'],
+        'Gospel & Faith': GOSPEL_TEXT_SIGNALS,
         'scary': ['horror','terror','slasher'],
         'romantic': ['romance','romantic'],
         'funny': ['comedy','comédia'],
@@ -1839,6 +1846,20 @@ async function discoverFromITunes(cat, mood, vibe, decade, rating) {
         // Only keep entries that actually have artwork, so covers never come back blank.
         let pool = data.results.filter(r => r.artworkUrl100 && (r.trackName || r.collectionName));
         pool = pool.filter(r => !excluded.has(r.trackName || r.collectionName));
+
+        // Default gospel exclusion — independent of whether the user has ever
+        // blocked anything. isBlockedText() below only fires once a category
+        // has been explicitly blocked, which left a gap: a first-time user
+        // asking for an "inspiring" movie could still get a real Christian
+        // film straight from iTunes' own index, before ever touching the
+        // blocklist. Same default-off-unless-requested rule as the catalog:
+        // held back unless the category itself was explicitly Gospel & Faith.
+        if (cat !== 'Gospel & Faith') {
+            pool = pool.filter(r => !GOSPEL_TEXT_SIGNALS.some(w =>
+                [r.trackName, r.collectionName, r.primaryGenreName, r.longDescription, r.shortDescription]
+                    .filter(Boolean).join(' ').toLowerCase().includes(w)));
+        }
+
         // Enforce the user's blocked categories here too. This path is where
         // gospel titles were still getting through after the catalog was gated:
         // it queries iTunes by mood term, and "inspiring" returns faith cinema.
@@ -1886,18 +1907,28 @@ function pickFromCatalog(cat, plat, mood, vibe, rating) {
     const excluded = new Set([...seenList, ...dislikedList].map(i => i.title || i));
     const seenRecently = new Set(recentTitles);
 
-    // FAITH CONTENT GATING.
-    // All 12 faith titles are also tagged "inspiring", which is the single most
-    // common mood in the catalogue — so picking "inspiring" made roughly 4 in 10
-    // candidates gospel titles, and they dominated generic pools too. Faith
-    // content is intentional here (Pure Flix and Angel Studios are supported
-    // platforms), so the fix isn't to remove it: it's to surface it when the
-    // user actually signalled interest rather than by default.
+    // GOSPEL CONTENT GATING.
+    // Previously gated by mood + a fragile cat.includes('faith') substring
+    // check, with the 12 titles ALSO cross-listed under mainstream cats
+    // (movie, series, documentary, podcast, music album, Spotify playlist)
+    // and mainstream moods (inspiring, heartbreaking, intense and thrilling,
+    // mind-bending, light and feel-good, cozy comfort watch). Checked it: for
+    // "music album" and "Spotify playlist" specifically, 100% of catalog
+    // entries in those categories were gospel — selecting either category
+    // guaranteed a gospel result regardless of gating. Same for the Apple
+    // Music platform (its one catalog entry was gospel) and Pure Flix/Angel
+    // Studios (intentionally, see below).
+    //
+    // Gospel titles are now isolated to a single dedicated category — cats:
+    // ["Gospel & Faith"], moods: [] — so a specific pick of any OTHER
+    // category or mood structurally cannot match them at all; there is
+    // nothing left to gate in that case. The one combination that still
+    // needs an explicit gate is the fully open "surprise me" query (cat=any,
+    // mood=any), where gospel remains part of the general pool unless held
+    // back on purpose.
     const FAITH_PLATFORMS = ['Pure Flix', 'Angel Studios'];
-    const wantsFaith = mood === 'gospel and faith'
-        || FAITH_PLATFORMS.includes(plat)
-        || (cat && String(cat).toLowerCase().includes('faith'));
-    const isFaithTitle = (e) => e.moods.includes('gospel and faith');
+    const wantsGospel = cat === 'Gospel & Faith' || FAITH_PLATFORMS.includes(plat);
+    const isGospelEntry = (e) => e.cats.includes('Gospel & Faith');
 
     // Tiered relaxation: try a full match first, then progressively relax filters
     // rather than ever falling back to one hardcoded title. Tier 0 is the only
@@ -1914,12 +1945,15 @@ function pickFromCatalog(cat, plat, mood, vibe, rating) {
     for (const tier of tiers) {
         let pool = CONTENT_CATALOG.filter(e => tier.test(e) && !excluded.has(e.title) && !isBlockedEntry(e));
 
-        // Hold faith titles back unless asked for — but never at the cost of
-        // returning nothing, so a pool that is entirely faith content still works.
-        if (!wantsFaith) {
-            const nonFaith = pool.filter(e => !isFaithTitle(e));
-            if (nonFaith.length > 0) pool = nonFaith;
-        }
+        // UNCONDITIONAL exclusion — this is the actual fix, not just the data
+        // isolation above. The previous version only narrowed the pool "if
+        // doing so leaves something behind" (`if (nonFaith.length > 0) pool =
+        // nonFaith`), which silently UN-DID the exclusion the moment a tier's
+        // pool happened to be 100% gospel — exactly the guaranteed-leak cases
+        // found above. Excluding unconditionally means a tier that goes empty
+        // because of this correctly falls through to the next, more relaxed
+        // tier instead of quietly keeping gospel content in.
+        if (!wantsGospel) pool = pool.filter(e => !isGospelEntry(e));
 
         let freshPool = pool.filter(e => !seenRecently.has(e.title));
         if (freshPool.length > 0) pool = freshPool;
@@ -1947,14 +1981,26 @@ function pickFromCatalog(cat, plat, mood, vibe, rating) {
     // what made rejections feel like they were being ignored. Rejections are
     // now respected here too, and only dropped if honouring them would leave
     // literally nothing to show.
-    let lastPool = CONTENT_CATALOG.filter(e => !excluded.has(e.title) && !isBlockedEntry(e));
-    // If blocking left nothing, honour the blocks over the exclusions rather
-    // than the other way round — a user who said "never show me this genre"
-    // means it more than "I've already seen that title".
-    if (lastPool.length === 0) lastPool = CONTENT_CATALOG.filter(e => !isBlockedEntry(e));
-    // And if they've blocked so much that NOTHING is left, returning null here
-    // would leave the result card blank with no explanation. Tell them what
-    // happened and show something rather than silently breaking.
+    // Absolute last resort: any catalog title not shown in the last 6 results.
+    // No platform request could be honored here, by definition.
+    //
+    // Priority order, each stage only reached if the one above came up empty:
+    //   1. Respect everything: not excluded, not blocked, gospel held back.
+    //   2. Gospel allowed back in — we've genuinely run out of everything
+    //      else, which is a legitimate reason to show it, not a leak.
+    //   3. Blocked categories allowed back in too (existing "you've blocked
+    //      everything" case, unrelated to gospel specifically).
+    //   4. The entire catalog, unfiltered — should only ever be reached if
+    //      the user has both seen and disliked nearly all 99 titles.
+    let lastPool = CONTENT_CATALOG.filter(e =>
+        !excluded.has(e.title) && !isBlockedEntry(e) && (wantsGospel || !isGospelEntry(e)));
+
+    if (lastPool.length === 0) {
+        lastPool = CONTENT_CATALOG.filter(e => !excluded.has(e.title) && !isBlockedEntry(e));
+    }
+    if (lastPool.length === 0) {
+        lastPool = CONTENT_CATALOG.filter(e => !isBlockedEntry(e));
+    }
     if (lastPool.length === 0) {
         lastPool = CONTENT_CATALOG;
         if (window.showToast) {
@@ -1962,11 +2008,6 @@ function pickFromCatalog(cat, plat, mood, vibe, rating) {
                 : "You've blocked every category — showing anything. Unblock some in your Profile.");
         }
     }
-    if (!wantsFaith) {
-        const nonFaith = lastPool.filter(e => !isFaithTitle(e));
-        if (nonFaith.length > 0) lastPool = nonFaith;
-    }
-    if (lastPool.length === 0) lastPool = CONTENT_CATALOG; // everything rejected; nothing else to offer
     const lastFresh = lastPool.filter(e => !seenRecently.has(e.title));
     const finalPool = lastFresh.length ? lastFresh : lastPool;
     const pick = finalPool[Math.floor(Math.random() * finalPool.length)];
