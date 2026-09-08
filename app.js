@@ -821,21 +821,52 @@ window.selectMarqueeItem = function(titleName) {
 // data-start / data-end on every load, and finished events sort to the back of
 // the rail instead of leading it.
 // ----------------------------------------------------
-function eventStateFor(startStr, endStr, now) {
+function eventStateFor(startStr, endStr, now, windowsStr) {
     // Parse as local dates; an event is "live" through the whole of its end day.
     const start = new Date(startStr + 'T00:00:00');
     const end = new Date(endStr + 'T23:59:59');
     if (isNaN(start) || isNaN(end)) return null;
     if (now < start) return 'upcoming';
     if (now > end) return 'ended';
+
+    // Multi-weekend events have gaps. Rock in Rio 2026 runs 4-7 AND 11-13
+    // September, so on the 8th-10th nothing is actually happening — but a
+    // single start/end range says "LIVE", which reads as broken and made the
+    // festival look finished when it had three days still to come. When
+    // data-windows lists the real active spans, a gap day says so honestly.
+    if (windowsStr) {
+        const spans = windowsStr.split(',').map(w => w.trim()).filter(Boolean);
+        let inSpan = false, nextStart = null;
+        for (const sp of spans) {
+            const [a, b] = sp.split(':');
+            if (!a || !b) continue;
+            const sA = new Date(a + 'T00:00:00'), sB = new Date(b + 'T23:59:59');
+            if (isNaN(sA) || isNaN(sB)) continue;
+            if (now >= sA && now <= sB) { inSpan = true; break; }
+            if (now < sA && (!nextStart || sA < nextStart)) nextStart = sA;
+        }
+        if (!inSpan) return nextStart ? 'intermission' : 'live';
+    }
     return 'live';
+}
+
+function nextWindowStart(windowsStr, now) {
+    if (!windowsStr) return null;
+    let next = null;
+    for (const sp of windowsStr.split(',')) {
+        const a = (sp.split(':')[0] || '').trim();
+        if (!a) continue;
+        const d = new Date(a + 'T00:00:00');
+        if (!isNaN(d) && d > now && (!next || d < next)) next = d;
+    }
+    return next;
 }
 
 function refreshEventStates() {
     const now = new Date();
 
     document.querySelectorAll('.event-card[data-start]').forEach(card => {
-        const state = eventStateFor(card.dataset.start, card.dataset.end, now);
+        const state = eventStateFor(card.dataset.start, card.dataset.end, now, card.dataset.windows);
         if (!state) return;
         const badge = card.querySelector('.event-badge');
         if (!badge) return;
@@ -846,6 +877,13 @@ function refreshEventStates() {
         if (state === 'live') {
             badge.classList.add('event-live');
             badge.textContent = window.t ? t('event.live') : '● LIVE';
+        } else if (state === 'intermission') {
+            badge.classList.add('event-soon');
+            const next = nextWindowStart(card.dataset.windows, now);
+            const d = next ? Math.ceil((next - now) / 86400000) : 0;
+            badge.textContent = (d > 0)
+                ? (window.t ? t('event.resumesIn').replace('{d}', d) : `BACK IN ${d}D`)
+                : (window.t ? t('event.resumes') : 'RESUMES SOON');
         } else if (state === 'upcoming') {
             badge.classList.add('event-soon');
             const days = Math.ceil((new Date(card.dataset.start + 'T00:00:00') - now) / 86400000);
@@ -869,8 +907,15 @@ function refreshEventStates() {
     // Same treatment for the Rock in Rio spotlight ribbon.
     const ribbon = document.getElementById('rir-ribbon');
     if (ribbon) {
-        const st = eventStateFor(ribbon.dataset.start, ribbon.dataset.end, now);
-        if (st === 'live') ribbon.textContent = window.t ? t('event.liveNow') : 'LIVE NOW';
+        const st = eventStateFor(ribbon.dataset.start, ribbon.dataset.end, now, ribbon.dataset.windows);
+        if (st === 'intermission') {
+            const nx = nextWindowStart(ribbon.dataset.windows, now);
+            const d = nx ? Math.ceil((nx - now) / 86400000) : 0;
+            ribbon.textContent = d > 0
+                ? (window.t ? t('event.resumesIn').replace('{d}', d) : `BACK IN ${d}D`)
+                : (window.t ? t('event.resumes') : 'RESUMES SOON');
+        }
+        else if (st === 'live') ribbon.textContent = window.t ? t('event.liveNow') : 'LIVE NOW';
         else if (st === 'upcoming') ribbon.textContent = window.t ? t('event.soon') : 'SOON';
         else { ribbon.textContent = window.t ? t('event.ended') : 'ENDED'; ribbon.classList.add('ribbon-ended'); }
     }
