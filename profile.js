@@ -299,6 +299,36 @@ function buildPosterCard(item, accent) {
     `;
 }
 
+window.renderBlockedCategories = function () {
+    const card = document.getElementById('blocked-card');
+    const list = document.getElementById('blocked-list');
+    if (!card || !list) return;
+
+    const blocked = (typeof window.getBlockedCategories === 'function')
+        ? window.getBlockedCategories() : [];
+    if (!blocked.length) { card.style.display = 'none'; return; }
+
+    const pretty = (v) => String(v).replace(/\b\w/g, c => c.toUpperCase());
+    list.innerHTML = '';
+    blocked.forEach(b => {
+        // Built as a real element rather than an HTML string: category names
+        // come from catalog data and could contain quotes, which would break
+        // an inline onclick attribute.
+        const btn = document.createElement('button');
+        btn.className = 'blocked-chip';
+        btn.textContent = pretty(b);
+        btn.addEventListener('click', () => window.unblockCategoryUI(b));
+        list.appendChild(btn);
+    });
+    card.style.display = 'block';
+};
+
+window.unblockCategoryUI = function (cat) {
+    if (typeof window.unblockCategory === 'function') window.unblockCategory(cat);
+    window.renderBlockedCategories();
+    if (window.showToast) showToast('\u2705 "' + cat + '" can appear in your matches again.');
+};
+
 window.renderTasteDNA = function () {
     const card = document.getElementById('taste-dna-card');
     if (!card) return;
@@ -396,6 +426,7 @@ window.renderProfileGrids = function() {
 
     // Taste DNA reads the same lists, so refresh it on the same cycle.
     if (typeof window.renderTasteDNA === 'function') window.renderTasteDNA();
+    if (typeof window.renderBlockedCategories === 'function') window.renderBlockedCategories();
 };
 
 // ----------------------------------------------------

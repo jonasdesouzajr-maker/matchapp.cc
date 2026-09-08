@@ -1679,6 +1679,92 @@ function mediaForCategory(cat) {
     return 'tvShow';
 }
 
+// ----------------------------------------------------
+// USER CATEGORY BLOCKLIST
+//
+// The faith-content gating fixed the catalog, but gospel titles kept arriving
+// anyway because discoverFromITunes() — tier 2, which runs whenever the
+// catalog can't honour the requested platform — was never gated at all. It
+// queries iTunes by mood terms, and "inspiring" pulls back faith cinema.
+//
+// Rather than keep patching one source at a time, rejection is now something
+// the USER owns: when a title isn't for them they can say the whole category
+// isn't for them, and that decision is enforced at every point a title is
+// chosen — catalog, live discovery, and anything added later.
+// ----------------------------------------------------
+const BLOCKED_KEY = 'match_blockedCategories';
+
+function getBlockedCategories() {
+    try {
+        const raw = JSON.parse(localStorage.getItem(BLOCKED_KEY) || '[]');
+        return Array.isArray(raw) ? raw : [];
+    } catch (e) { return []; }
+}
+
+function setBlockedCategories(list) {
+    const clean = [...new Set((list || []).filter(Boolean))];
+    try { localStorage.setItem(BLOCKED_KEY, JSON.stringify(clean)); } catch (e) {}
+    // Best-effort sync so the choice follows the user across devices.
+    try {
+        if (isUserLoggedIn && supabaseClient && currentUser) {
+            supabaseClient.from('profiles')
+                .update({ blocked_categories: clean })
+                .eq('id', currentUser.id)
+                .then(() => {}, () => {});
+        }
+    } catch (e) {}
+    return clean;
+}
+window.getBlockedCategories = getBlockedCategories;
+
+window.blockCategory = function(cat) {
+    if (!cat) return;
+    const list = getBlockedCategories();
+    if (!list.includes(cat)) list.push(cat);
+    setBlockedCategories(list);
+};
+
+window.unblockCategory = function(cat) {
+    setBlockedCategories(getBlockedCategories().filter(c => c !== cat));
+};
+
+/** True when this catalog entry falls into anything the user has blocked. */
+function isBlockedEntry(entry) {
+    if (!entry) return false;
+    const blocked = getBlockedCategories();
+    if (!blocked.length) return false;
+    const tags = []
+        .concat(entry.moods || [])
+        .concat(entry.cats || [])
+        .concat(entry.vibes || []);
+    return tags.some(t => blocked.includes(t));
+}
+window.isBlockedEntry = isBlockedEntry;
+
+/** Same test for a free-text title/description from a live lookup. */
+function isBlockedText(text) {
+    const blocked = getBlockedCategories();
+    if (!blocked.length || !text) return false;
+    const hay = String(text).toLowerCase();
+    // Only the blocked categories that have meaningful keyword signals; a
+    // category like "any" would match everything and is never blockable.
+    const SIGNALS = {
+        'gospel and faith': ['gospel','faith','christian','gospel music','bible','biblical','igreja','evangel','católic','catholic','jesus','christ','worship','pastor','church'],
+        'scary': ['horror','terror','slasher'],
+        'romantic': ['romance','romantic'],
+        'funny': ['comedy','comédia'],
+        'dark and gritty': ['gritty','noir'],
+        'heartbreaking': ['tearjerker','melodrama']
+    };
+    for (const b of blocked) {
+        const words = SIGNALS[b];
+        if (!words) continue;
+        if (words.some(w => hay.includes(w))) return true;
+    }
+    return false;
+}
+window.isBlockedText = isBlockedText;
+
 async function discoverFromITunes(cat, mood, vibe, decade, rating) {
     // Vertical micro-dramas live entirely inside proprietary apps (ReelShort,
     // DramaBox, ShortMax, Globoplay's own line) and were never indexed by
@@ -1708,6 +1794,12 @@ async function discoverFromITunes(cat, mood, vibe, decade, rating) {
         // Only keep entries that actually have artwork, so covers never come back blank.
         let pool = data.results.filter(r => r.artworkUrl100 && (r.trackName || r.collectionName));
         pool = pool.filter(r => !excluded.has(r.trackName || r.collectionName));
+        // Enforce the user's blocked categories here too. This path is where
+        // gospel titles were still getting through after the catalog was gated:
+        // it queries iTunes by mood term, and "inspiring" returns faith cinema.
+        pool = pool.filter(r => !isBlockedText(
+            [r.trackName, r.collectionName, r.primaryGenreName, r.longDescription, r.shortDescription]
+                .filter(Boolean).join(' ')));
         const fresh = pool.filter(r => !seenRecently.has(r.trackName || r.collectionName));
         if (fresh.length) pool = fresh;
         if (!pool.length) return null;
@@ -1775,7 +1867,7 @@ function pickFromCatalog(cat, plat, mood, vibe, rating) {
     ];
 
     for (const tier of tiers) {
-        let pool = CONTENT_CATALOG.filter(e => tier.test(e) && !excluded.has(e.title));
+        let pool = CONTENT_CATALOG.filter(e => tier.test(e) && !excluded.has(e.title) && !isBlockedEntry(e));
 
         // Hold faith titles back unless asked for — but never at the cost of
         // returning nothing, so a pool that is entirely faith content still works.
@@ -1810,7 +1902,21 @@ function pickFromCatalog(cat, plat, mood, vibe, rating) {
     // what made rejections feel like they were being ignored. Rejections are
     // now respected here too, and only dropped if honouring them would leave
     // literally nothing to show.
-    let lastPool = CONTENT_CATALOG.filter(e => !excluded.has(e.title));
+    let lastPool = CONTENT_CATALOG.filter(e => !excluded.has(e.title) && !isBlockedEntry(e));
+    // If blocking left nothing, honour the blocks over the exclusions rather
+    // than the other way round — a user who said "never show me this genre"
+    // means it more than "I've already seen that title".
+    if (lastPool.length === 0) lastPool = CONTENT_CATALOG.filter(e => !isBlockedEntry(e));
+    // And if they've blocked so much that NOTHING is left, returning null here
+    // would leave the result card blank with no explanation. Tell them what
+    // happened and show something rather than silently breaking.
+    if (lastPool.length === 0) {
+        lastPool = CONTENT_CATALOG;
+        if (window.showToast) {
+            showToast(window.t ? t('nfm.allBlocked')
+                : "You've blocked every category — showing anything. Unblock some in your Profile.");
+        }
+    }
     if (!wantsFaith) {
         const nonFaith = lastPool.filter(e => !isFaithTitle(e));
         if (nonFaith.length > 0) lastPool = nonFaith;
@@ -2470,6 +2576,77 @@ function updateActionButtonStates() {
         seenBtn.style.opacity = already ? '0.65' : '1';
     }
 }
+
+// "Not For Me" now asks WHAT wasn't for them. Rejecting one title at a time
+// never stops a genre you dislike from reappearing — you have to reject every
+// title in it individually, which is exactly the frustration reported. This
+// offers the underlying categories of the title in front of them, so one tap
+// can retire a whole genre.
+window.openNotForMeChooser = function() {
+    if (!globalMatchTitle) return;
+
+    let entry = null;
+    try {
+        if (typeof CONTENT_CATALOG !== 'undefined') {
+            entry = CONTENT_CATALOG.find(e => e.title === globalMatchTitle) || null;
+        }
+    } catch (e) {}
+
+    // Offer the title's own moods and formats. Falls back to the criteria the
+    // user matched on when the title isn't in our catalog.
+    let options = [];
+    if (entry) {
+        options = [].concat(entry.moods || [], entry.cats || []);
+    } else if (window.lastMatchCriteria) {
+        const c = window.lastMatchCriteria;
+        options = [c.mood, c.cat].filter(v => v && v !== 'any');
+    }
+    options = [...new Set(options)].filter(o => o && o !== 'any').slice(0, 6);
+
+    const blocked = getBlockedCategories();
+    const modal = document.getElementById('notforme-modal');
+    const list = document.getElementById('notforme-options');
+    const titleEl = document.getElementById('notforme-title');
+    if (!modal || !list) { window.recordAction('dislike'); return; }
+
+    if (titleEl) titleEl.textContent = globalMatchTitle;
+
+    const pretty = (v) => String(v).replace(/\b\w/g, ch => ch.toUpperCase());
+    list.innerHTML = options.map(o => `
+        <label class="nfm-option">
+            <input type="checkbox" value="${sanitizeDisplayText(o)}" ${blocked.includes(o) ? 'checked disabled' : ''}>
+            <span>${sanitizeDisplayText(pretty(o))}${blocked.includes(o) ? ' — already blocked' : ''}</span>
+        </label>`).join('') || `<p style="color:#a99cc4;font-size:13px;margin:0;">No categories to block for this title — it'll just be hidden individually.</p>`;
+
+    modal.style.display = 'flex';
+};
+
+window.closeNotForMeChooser = function() {
+    const m = document.getElementById('notforme-modal');
+    if (m) m.style.display = 'none';
+};
+
+// Just this one title.
+window.notForMeJustThis = function() {
+    window.closeNotForMeChooser();
+    window.recordAction('dislike');
+};
+
+// This title AND every category the user ticked.
+window.notForMeBlockCategories = function() {
+    const list = document.getElementById('notforme-options');
+    const picked = list
+        ? Array.from(list.querySelectorAll('input[type="checkbox"]:checked:not(:disabled)')).map(i => i.value)
+        : [];
+
+    picked.forEach(c => window.blockCategory(c));
+    window.closeNotForMeChooser();
+
+    if (picked.length && window.showToast) {
+        showToast(`🚫 ${picked.length === 1 ? '"' + picked[0] + '"' : picked.length + ' categories'} won't be suggested again. Undo in your Profile.`);
+    }
+    window.recordAction('dislike');
+};
 
 window.recordAction = function(type) {
     if (!globalMatchTitle) return;
