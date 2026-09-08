@@ -1,0 +1,154 @@
+/* ============================================================
+   MATCHAPP INSTALL — "add to home screen" that actually works.
+
+   Three real paths exist, and no single API covers all of them:
+
+   1. Chrome/Edge/Brave on Android or Desktop — supports beforeinstallprompt.
+      We capture that event, hold onto it, and fire it on a real user tap.
+      This is the only path with a genuine one-tap native install dialog.
+
+   2. iOS (any browser — Safari, Chrome, Edge all now share this since
+      iOS 17) — there is NO beforeinstallprompt on iOS and no JS API that
+      can trigger the install. Apple deliberately doesn't expose one (there
+      is an open, years-old feature request on Apple's own developer forums
+      asking for exactly this, still unresolved). The only real mechanism is
+      the user manually tapping Share -> Add to Home Screen. So instead of
+      pretending to have a button that "installs," we show the exact steps.
+
+   3. Desktop Safari (macOS, not iOS) — similarly no JS trigger; the real
+      path is the File menu -> Add to Dock. Shown the same way as iOS: real
+      instructions, not a fake button.
+
+   For every other browser (Firefox desktop, older browsers with no
+   installability support at all), the button simply never appears. Showing
+   a button that does nothing when tapped is worse than showing nothing.
+   ============================================================ */
+
+let deferredInstallPrompt = null;
+
+function platformInfo() {
+    const ua = navigator.userAgent || '';
+    const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+    const isMac = /Macintosh/.test(ua) && !isIOS;
+    // True Safari engine, excluding Chrome/Firefox/Edge on iOS which all
+    // report "Safari" in their UA string too since they're WebKit wrappers.
+    const isSafari = /^((?!chrome|crios|fxios|edgios|android).)*safari/i.test(ua);
+    const isStandalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches
+        || window.navigator.standalone === true; // iOS's own standalone flag
+    return { isIOS, isMac, isSafari, isStandalone };
+}
+
+function installButtons() {
+    return Array.from(document.querySelectorAll('.install-btn'));
+}
+
+function showInstallButtons() {
+    installButtons().forEach(b => { b.style.display = 'inline-flex'; });
+}
+function hideInstallButtons() {
+    installButtons().forEach(b => { b.style.display = 'none'; });
+}
+
+// Chrome/Edge/Brave signal real installability by firing this. We stop the
+// browser's own mini-infobar (preventDefault) so our button is the single,
+// consistent entry point instead of two competing prompts.
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    showInstallButtons();
+});
+
+window.addEventListener('appinstalled', () => {
+    deferredInstallPrompt = null;
+    hideInstallButtons();
+    if (window.showToast) {
+        showToast(window.t ? t('install.done') : '🎉 MatchApp installed — find it on your home screen.');
+    }
+});
+
+function buildInstallModal() {
+    if (document.getElementById('install-modal')) return document.getElementById('install-modal');
+
+    const { isIOS, isMac } = platformInfo();
+    const T = (k, fallback) => (window.t ? t(k) : fallback);
+
+    const body = isIOS
+        ? `<p style="color:#ddd;font-size:15px;line-height:1.8;margin:0 0 6px 0;">
+             ${T('install.iosStep1', '1. Tap the <strong>Share</strong> icon')} 📤
+           </p>
+           <p style="color:#ddd;font-size:15px;line-height:1.8;margin:0;">
+             ${T('install.iosStep2', '2. Scroll down and tap <strong>"Add to Home Screen"</strong>')}
+           </p>`
+        : isMac
+        ? `<p style="color:#ddd;font-size:15px;line-height:1.8;margin:0;">
+             ${T('install.macStep', 'In Safari\u2019s <strong>File</strong> menu, choose <strong>"Add to Dock"</strong>.')}
+           </p>`
+        : `<p style="color:#ddd;font-size:15px;line-height:1.8;margin:0;">
+             ${T('install.genericStep', 'Look for <strong>"Install app"</strong> or <strong>"Add to Home Screen"</strong> in your browser\u2019s menu.')}
+           </p>`;
+
+    const wrap = document.createElement('div');
+    wrap.id = 'install-modal';
+    wrap.className = 'modal-overlay';
+    wrap.innerHTML = `
+        <div class="modal-content" style="background:linear-gradient(150deg,rgba(40,20,60,0.98),rgba(20,19,26,0.99));border:2px solid var(--gold);border-radius:20px;padding:28px;max-width:400px;">
+            <span class="close-x" onclick="closeInstallModal()">&times;</span>
+            <div style="font-size:44px;margin-bottom:10px;">📲</div>
+            <h3 style="color:var(--gold-glow);font-size:20px;font-weight:900;margin:0 0 16px 0;text-transform:uppercase;">
+                ${T('install.modalTitle', 'Install MatchApp')}
+            </h3>
+            <div style="text-align:left;background:rgba(0,0,0,0.35);border-radius:14px;padding:16px 18px;margin-bottom:18px;">
+                ${body}
+            </div>
+            <p style="color:#a99cc4;font-size:12.5px;margin:0;">
+                ${T('install.modalNote', 'It opens like a real app \u2014 no browser bar, one tap from your home screen.')}
+            </p>
+        </div>`;
+    document.body.appendChild(wrap);
+    return wrap;
+}
+
+window.closeInstallModal = function () {
+    const m = document.getElementById('install-modal');
+    if (m) m.style.display = 'none';
+};
+
+window.installMatchApp = async function () {
+    // Path 1: a real native prompt is available (Chrome/Edge/Android/Desktop).
+    if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        try { await deferredInstallPrompt.userChoice; } catch (e) {}
+        deferredInstallPrompt = null;
+        return;
+    }
+    // Path 2/3: no programmatic install exists on this platform — show the
+    // real steps instead of a button that quietly does nothing.
+    const modal = buildInstallModal();
+    modal.style.display = 'flex';
+};
+
+function initInstall() {
+    const { isIOS, isMac, isStandalone } = platformInfo();
+
+    // Already running as an installed app — nothing to install.
+    if (isStandalone) { hideInstallButtons(); return; }
+
+    // iOS and desktop Safari have no install event to wait for, but the
+    // manual path always exists, so the button is meaningful immediately.
+    if (isIOS || isMac) { showInstallButtons(); return; }
+
+    // Everyone else: stay hidden until beforeinstallprompt actually fires.
+    // If it never does (Firefox, an already-dismissed prompt this session,
+    // etc.), the button correctly never appears rather than sitting there
+    // doing nothing when tapped.
+}
+
+if ('serviceWorker' in navigator) {
+    // Registered for installability only — see sw.js for why it deliberately
+    // caches nothing.
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => setTimeout(initInstall, 100));

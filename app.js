@@ -173,7 +173,31 @@ window.refreshQuotaStatus = async function() {
 // ----------------------------------------------------
 // AUDIO & FX ENGINE
 // ----------------------------------------------------
+// ----------------------------------------------------
+// SOUND PREFERENCE — respected by every sound function below. Default on,
+// one tap to mute, remembered across visits. Unsolicited audio is genuinely
+// annoying in the wrong context (quiet room, headphones not in), so this
+// has to be trivially easy to turn off, not buried in a settings page.
+// ----------------------------------------------------
+function soundEnabled() {
+    try { return localStorage.getItem('match_soundEnabled') !== 'false'; } catch (e) { return true; }
+}
+window.toggleSound = function () {
+    const next = !soundEnabled();
+    try { localStorage.setItem('match_soundEnabled', String(next)); } catch (e) {}
+    document.querySelectorAll('.sound-toggle-btn').forEach(b => { b.textContent = next ? '🔊' : '🔇'; });
+    if (window.showToast) {
+        showToast(next ? (window.t ? t('sound.on') : '🔊 Sound on')
+                       : (window.t ? t('sound.off') : '🔇 Sound off'));
+    }
+};
+function initSoundToggle() {
+    document.querySelectorAll('.sound-toggle-btn').forEach(b => { b.textContent = soundEnabled() ? '🔊' : '🔇'; });
+}
+document.addEventListener('DOMContentLoaded', initSoundToggle);
+
 window.playPremiumSound = function() {
+    if (!soundEnabled()) return;
     try { 
         const ctx = new (window.AudioContext || window.webkitAudioContext)(); 
         const osc = ctx.createOscillator(); 
@@ -185,6 +209,28 @@ window.playPremiumSound = function() {
         gain.gain.setValueAtTime(0.3, ctx.currentTime); 
         gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2); 
         osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.2); 
+    } catch (e) { console.log("Audio FX skipped"); }
+};
+
+// A second, distinct chime for Match Together's reveal — deliberately not
+// the same sound as a solo match. Two people converging on one answer is a
+// different kind of moment (and had confetti already, but total silence),
+// so it gets a two-note ascending tone instead of reusing the solo sweep.
+window.playTogetherSound = function () {
+    if (!soundEnabled()) return;
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        [[523.25, 0], [659.25, 0.12]].forEach(([freq, delay]) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.type = 'sine';
+            const t0 = ctx.currentTime + delay;
+            osc.frequency.setValueAtTime(freq, t0);
+            gain.gain.setValueAtTime(0.28, t0);
+            gain.gain.exponentialRampToValueAtTime(0.01, t0 + 0.28);
+            osc.start(t0); osc.stop(t0 + 0.28);
+        });
     } catch (e) { console.log("Audio FX skipped"); }
 };
 

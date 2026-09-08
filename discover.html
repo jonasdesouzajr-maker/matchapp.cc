@@ -42,7 +42,8 @@
     <meta name="twitter:image" content="https://matchapp.cc/og-image.jpg">
     <link rel="icon" href="/logo.jpeg" type="image/jpeg">
 
-    <script defer src="/i18n.js?v=150"></script>
+    <script defer src="/i18n.js?v=152"></script>
+    <script defer src="/install.js?v=152"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -51,7 +52,18 @@
     </script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
 
-    <link rel="stylesheet" href="/style.css?v=150">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://matchapp.cc/" },
+        { "@type": "ListItem", "position": 2, "name": "Ask AI", "item": "https://matchapp.cc/discover.html" }
+      ]
+    }
+    </script>
+
+    <link rel="stylesheet" href="/style.css?v=152">
     <style>
         :root { --gold: #E5C158; --gold-deep: #B8912F; --gold-glow: #FFF3A3; --ink: #14131A; --royal-deep: #130734; --royal: #402562; --royal-lift: #6B3FA0; --royal-glow: #A376B6; --bg-dark: #14131A; --card-bg: rgba(26, 22, 38, 0.90); }
         body { background: var(--bg-dark); color: #fff; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
@@ -214,6 +226,8 @@
             <span class="app-title-main">MatchApp</span>
         </a>
         <nav style="display:flex; gap:12px; align-items:center;">
+            <button class="install-btn" style="display:none;" onclick="installMatchApp()" aria-label="Install MatchApp" data-i18n-aria="install.aria">📲 <span class="install-label" data-i18n="install.btn">Install</span></button>
+            
             <div id="lang-switcher-host"></div>
             <a href="/index.html" class="gold-btn" style="padding:11px 18px; font-size:13px; width:auto;" data-i18n="discover.newMatch">⚡ New Match</a>
         </nav>
@@ -266,12 +280,14 @@
             <p class="chat-history-sub" data-i18n="chat.historySub">Pick up any past conversation right where you left it. Saved on this device only.</p>
             <div id="chat-history-list"></div>
         </section>
+    
+        <p style="text-align:center; color:#8f85a8; font-size:12.5px; margin:24px 0 4px 0;"><span data-i18n="support.ideas">💌 Got an idea for MatchApp? We read every email —</span> <a href="mailto:support@matchapp.cc" style="color:var(--gold); text-decoration:none; font-weight:bold;">support@matchapp.cc</a></p>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="/app.js?v=150"></script>
-    <script src="/discover.js?v=150"></script>
-    <script src="/voice-input.js?v=150"></script>
+    <script src="/app.js?v=152"></script>
+    <script src="/discover.js?v=152"></script>
+    <script src="/voice-input.js?v=152"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initVoiceInput('discover-new-input', 'mic-btn-discover', () => newDiscoverSearch());

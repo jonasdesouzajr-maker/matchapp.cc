@@ -114,3 +114,18 @@ input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow
 
 .fade-in { animation: fadeIn 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards; }
 @keyframes fadeIn { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
+
+/* 📲 INSTALL & 🔊 SOUND TOGGLE — header buttons */
+.install-btn { background: rgba(229,193,88,0.14); border: 1px solid var(--gold); color: var(--gold-glow);
+               padding: 8px 14px; border-radius: 12px; font-weight: 700; font-size: 12px; cursor: pointer;
+               transition: 0.2s; align-items: center; gap: 6px; font-family: inherit; text-decoration: none;
+               white-space: nowrap; }
+.install-btn:hover { background: rgba(229,193,88,0.26); transform: translateY(-1px); }
+.sound-toggle-btn { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.22); color: #ddd;
+                    width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 15px;
+                    display: inline-flex; align-items: center; justify-content: center; transition: 0.2s;
+                    flex-shrink: 0; padding: 0; }
+.sound-toggle-btn:hover { border-color: var(--gold); color: var(--gold-glow); }
+@media (max-width: 480px) {
+    .install-btn span.install-label { display: none; } /* icon-only on very small screens */
+}

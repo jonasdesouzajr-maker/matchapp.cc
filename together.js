@@ -365,6 +365,7 @@ function tgRenderResult(result, participants) {
         confetti({ particleCount: 150, spread: 95, origin: { y: 0.6 },
                    colors: ['#E5C158', '#FFF3A3', '#A376B6', '#ffffff'] });
     }
+    if (typeof window.playTogetherSound === 'function') window.playTogetherSound();
 }
 
 function tgEscape(str) {

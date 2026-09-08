@@ -12,7 +12,7 @@
   "lang": "en",
   "dir": "auto",
   "icons": [
-    { "src": "/logo.jpeg", "sizes": "192x192", "type": "image/jpeg", "purpose": "any" },
+    { "src": "/logo-192.jpeg", "sizes": "192x192", "type": "image/jpeg", "purpose": "any" },
     { "src": "/logo.jpeg", "sizes": "512x512", "type": "image/jpeg", "purpose": "any" },
     { "src": "/logo.jpeg", "sizes": "512x512", "type": "image/jpeg", "purpose": "maskable" }
   ],
