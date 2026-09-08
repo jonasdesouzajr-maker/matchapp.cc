@@ -480,6 +480,126 @@ async function getRichMetadata(title, categoryHint) {
     return bestArtworkOnly;
 }
 
+// ----------------------------------------------------
+// TITLE METADATA
+//
+// Why this exists: isRelevantMatch() is good at rejecting UNRELATED results,
+// but it is powerless against IDENTICALLY named ones. "Kingdom" is at least
+// four different shows — the 2019 Korean zombie period drama, a 2014 American
+// MMA drama, a Japanese film series and a British sitcom. Every one of them
+// returns name === "Kingdom", sails through the guard, and can hand back the
+// wrong poster and the wrong story.
+//
+// The fix is to stop matching on the title alone. TVMaze's /search/shows
+// endpoint returns ALL candidates with premiered date, country and genres
+// attached, so when a catalog entry declares what it actually is, we can pick
+// the right one instead of trusting whichever happened to rank first.
+// ----------------------------------------------------
+const SHOW_META_CACHE = {};
+
+function scoreCandidate(show, hints) {
+    let score = 0;
+    if (!show) return -999;
+
+    // Country is the single strongest disambiguator for same-named works.
+    const country = (show.network && show.network.country && show.network.country.code)
+                 || (show.webChannel && show.webChannel.country && show.webChannel.country.code) || '';
+    if (hints.countryCode) {
+        if (country === hints.countryCode) score += 6;
+        else if (country) score -= 4;
+    }
+
+    // Premiere year: allow a year of slack for regional release differences.
+    if (hints.year && show.premiered) {
+        const y = parseInt(String(show.premiered).slice(0, 4), 10);
+        if (!isNaN(y)) {
+            const gap = Math.abs(y - hints.year);
+            if (gap === 0) score += 5;
+            else if (gap <= 1) score += 3;
+            else if (gap > 6) score -= 3;
+        }
+    }
+
+    if (hints.genre && Array.isArray(show.genres)) {
+        if (show.genres.some(g => g.toLowerCase() === hints.genre.toLowerCase())) score += 2;
+    }
+    if (show.image && (show.image.original || show.image.medium)) score += 1;
+    return score;
+}
+
+function stripTags(html) {
+    return String(html || '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * Returns { synopsis, year, country, genres, cast, poster } or null.
+ * hints = { year, countryCode, genre } from the catalog entry, when known.
+ */
+async function fetchTitleMeta(title, hints) {
+    if (!title) return null;
+    const key = title.toLowerCase();
+    if (SHOW_META_CACHE[key]) return SHOW_META_CACHE[key];
+    hints = hints || {};
+
+    try {
+        const res = await fetchWithTimeout(
+            `https://api.tvmaze.com/search/shows?q=${encodeURIComponent(title)}`);
+        if (!res.ok) return null;
+        const list = await res.json();
+        if (!Array.isArray(list) || !list.length) return null;
+
+        // Only consider candidates that pass the existing relevance guard,
+        // then rank what's left by how well it fits the catalog's own claims.
+        const viable = list
+            .map(r => r.show)
+            .filter(sh => sh && isRelevantMatch(title, sh.name || ''));
+        if (!viable.length) return null;
+
+        let best = null, bestScore = -Infinity;
+        for (const sh of viable) {
+            const sc = scoreCandidate(sh, hints);
+            if (sc > bestScore) { bestScore = sc; best = sh; }
+        }
+        // If hints were supplied and NOTHING scored positively, we are probably
+        // looking at the wrong work entirely. Better to show a generated cover
+        // and the catalog's own synopsis than confidently show someone else's.
+        if ((hints.year || hints.countryCode) && bestScore <= 0) return null;
+
+        const country = (best.network && best.network.country)
+                     || (best.webChannel && best.webChannel.country) || null;
+
+        const meta = {
+            name: best.name || title,
+            synopsis: stripTags(best.summary),
+            year: best.premiered ? String(best.premiered).slice(0, 4) : (hints.year ? String(hints.year) : ''),
+            country: country ? country.name : (hints.country || ''),
+            genres: Array.isArray(best.genres) ? best.genres.slice(0, 3) : [],
+            language: best.language || '',
+            poster: best.image ? (best.image.original || best.image.medium) : null,
+            cast: []
+        };
+
+        // Cast is a second call, so it must never block the render — the poster
+        // and synopsis are far more important than the actor list.
+        if (best.id) {
+            try {
+                const cRes = await fetchWithTimeout(`https://api.tvmaze.com/shows/${best.id}/cast`);
+                if (cRes.ok) {
+                    const cast = await cRes.json();
+                    meta.cast = (cast || []).slice(0, 4)
+                        .map(c => c && c.person && c.person.name).filter(Boolean);
+                }
+            } catch (e) { /* cast is optional */ }
+        }
+
+        SHOW_META_CACHE[key] = meta;
+        return meta;
+    } catch (e) {
+        return null;
+    }
+}
+window.fetchTitleMeta = fetchTitleMeta;
+
 async function getRealCoverImage(title) {
     if (!title) return generatedCover(title);
     if (COVER_CACHE[title]) return COVER_CACHE[title];
@@ -1230,9 +1350,9 @@ const CONTENT_CATALOG = [
     { title: "Dune: Part Two", synopsis: "Paul Atreides unites with the Fremen to seek revenge against the conspirators who destroyed his family.", platform: "Max", cats: ["movie"], moods: ["epic and adventurous","intense and thrilling"], vibes: ["prestige and critically acclaimed","fast-paced binge-worthy"], ratings: ["teen PG-13","any"] },
     { title: "Deadpool & Wolverine", synopsis: "A fast, foul-mouthed superhero team-up across the Marvel multiverse.", platform: "Disney+", cats: ["movie"], moods: ["funny","intense and thrilling"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["mature adults only R rated","any"] },
     { title: "House of the Dragon", synopsis: "Two centuries before Game of Thrones, the Targaryen dynasty tears itself apart in civil war.", platform: "Max", cats: ["series"], moods: ["dark and gritty","epic and adventurous"], vibes: ["prestige and critically acclaimed","long running series"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
-    { title: "Queen of Tears", synopsis: "A K-drama about a wealthy heiress and her husband navigating love, betrayal and a terminal illness twist.", platform: "Viki", cats: ["K-drama","series"], moods: ["romantic","heartbreaking"], vibes: ["slow burn","long running series"], ratings: ["teen PG-13","any"] },
+    { title: "Queen of Tears", year: 2024, country: "South Korea", countryCode: "KR", cast: ["Kim Soo-hyun","Kim Ji-won"], synopsis: "A K-drama about a wealthy heiress and her husband navigating love, betrayal and a terminal illness twist.", platform: "Viki", cats: ["K-drama","series"], moods: ["romantic","heartbreaking"], vibes: ["slow burn","long running series"], ratings: ["teen PG-13","any"] },
     { title: "Crash Landing on You", synopsis: "A South Korean heiress paraglides into North Korea and falls for the officer who hides her.", platform: "Netflix", cats: ["K-drama","series"], moods: ["romantic","light and feel-good"], vibes: ["slow burn","fast-paced binge-worthy"], ratings: ["teen PG-13","any"] },
-    { title: "Jujutsu Kaisen", synopsis: "A boy swallows a cursed talisman and joins a secret school to battle supernatural threats.", platform: "Crunchyroll", cats: ["anime"], moods: ["intense and thrilling","dark and gritty"], vibes: ["fast-paced binge-worthy","long running series"], ratings: ["teen PG-13","any"] , shareRestricted: true },
+    { title: "Jujutsu Kaisen", year: 2020, country: "Japan", countryCode: "JP", synopsis: "A boy swallows a cursed talisman and joins a secret school to battle supernatural threats.", platform: "Crunchyroll", cats: ["anime"], moods: ["intense and thrilling","dark and gritty"], vibes: ["fast-paced binge-worthy","long running series"], ratings: ["teen PG-13","any"] , shareRestricted: true },
     { title: "Frieren: Beyond Journey's End", synopsis: "An elven mage reflects on mortality and friendship long after her adventuring party has aged and passed.", platform: "Crunchyroll", cats: ["anime"], moods: ["cozy comfort watch","heartbreaking"], vibes: ["slow burn","award winning"], ratings: ["all ages family friendly","any"] },
     { title: "A Vida Secreta do Meu Marido Bilionário", synopsis: "A Brazilian vertical novela about a woman who discovers her husband is secretly a billionaire tycoon.", platform: "ReelShort", cats: ["vertical micro-drama","novela brasileira"], moods: ["romantic","intense and thrilling"], vibes: ["guilty pleasure","one sitting short watch"], ratings: ["teen PG-13","any"] },
     { title: "CEO's Contract Bride", synopsis: "A gripping vertical micro-drama romance between a ruthless CEO and the woman forced into a marriage of convenience.", platform: "DramaBox", cats: ["vertical micro-drama"], moods: ["romantic","guilty pleasure"], vibes: ["one sitting short watch","fast-paced binge-worthy"], ratings: ["teen PG-13","any"] },
@@ -1252,8 +1372,8 @@ const CONTENT_CATALOG = [
     { title: "RRR", synopsis: "Two revolutionaries in colonial India form an epic, action-packed friendship in this Tollywood blockbuster.", platform: "Netflix", cats: ["Bollywood","movie"], moods: ["epic and adventurous","intense and thrilling"], vibes: ["fast-paced binge-worthy","award winning"], ratings: ["teen PG-13","any"] },
     { title: "Business Proposal", synopsis: "A woman goes on a blind date pretending to be someone else — and it turns out to be her own CEO.", platform: "Viki", cats: ["K-drama","series"], moods: ["light and feel-good","romantic"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["teen PG-13","any"] },
     { title: "Rebel Moon", synopsis: "A peaceful colony on the edge of the galaxy sends a warrior to recruit fighters against a tyrannical regime.", platform: "Netflix", cats: ["movie"], moods: ["epic and adventurous","intense and thrilling"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
-    { title: "Midnight Diner: Tokyo Stories", synopsis: "A quiet late-night Tokyo diner serves comfort food and even more comforting stories to its regulars.", platform: "Netflix", watchUrl: "https://www.netflix.com/title/80113037", cats: ["J-drama","series"], moods: ["cozy comfort watch","nostalgic"], vibes: ["easy background watch","hidden gem underrated"], ratings: ["all ages family friendly","any"] },
-    { title: "Kingdom", synopsis: "A Korean crown prince investigates a mysterious plague that turns the dead into the undead.", platform: "Netflix", cats: ["K-drama","series"], moods: ["scary","dark and gritty"], vibes: ["fast-paced binge-worthy","hidden gem underrated"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
+    { title: "Midnight Diner: Tokyo Stories", year: 2016, country: "Japan", countryCode: "JP", synopsis: "A quiet late-night Tokyo diner serves comfort food and even more comforting stories to its regulars.", platform: "Netflix", watchUrl: "https://www.netflix.com/title/80113037", cats: ["J-drama","series"], moods: ["cozy comfort watch","nostalgic"], vibes: ["easy background watch","hidden gem underrated"], ratings: ["all ages family friendly","any"] },
+    { title: "Kingdom", year: 2019, country: "South Korea", countryCode: "KR", cast: ["Ju Ji-hoon","Bae Doona","Ryu Seung-ryong","Kim Sang-ho"], synopsis: "A Korean crown prince investigates a mysterious plague that turns the dead into the undead.", platform: "Netflix", cats: ["K-drama","series"], moods: ["scary","dark and gritty"], vibes: ["fast-paced binge-worthy","hidden gem underrated"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
     { title: "Emilia Pérez", synopsis: "A Mexican cartel leader seeks a secret gender transition, told as a genre-defying musical thriller.", platform: "Netflix", cats: ["movie","European cinema"], moods: ["mind-bending","intense and thrilling"], vibes: ["prestige and critically acclaimed","award winning"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
 
     // ---- Trending on Netflix right now (Sept 2026) ----
@@ -1262,14 +1382,14 @@ const CONTENT_CATALOG = [
     { title: "Facing El Chapo", synopsis: "A documentary built from firsthand accounts of those who lived inside the world of the infamous cartel kingpin.", platform: "Netflix", cats: ["documentary"], moods: ["intense and thrilling","dark and gritty"], vibes: ["prestige and critically acclaimed","based on a true story"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
     { title: "Alpha", synopsis: "A prehistoric coming-of-age survival story about a young hunter who befriends an injured wolf.", platform: "Netflix", cats: ["movie"], moods: ["epic and adventurous","heartbreaking"], vibes: ["award winning","based on a true story"], ratings: ["all ages family friendly","teen PG-13","any"] },
     { title: "Death of the Pastor's Wife", synopsis: "A true-crime drama unraveling the mysterious death that shook a small church community.", platform: "Netflix", cats: ["series","limited series"], moods: ["dark and gritty","mind-bending"], vibes: ["fast-paced binge-worthy","based on a true story"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
-    { title: "Beauty in Black", synopsis: "Tyler Perry's soapy thriller about two women whose lives collide around a glamorous cosmetics empire built on secrets.", platform: "Netflix", cats: ["series"], moods: ["dark and gritty","intense and thrilling"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
-    { title: "Outer Banks", synopsis: "A group of teenage treasure hunters chase a generations-old mystery across the Carolina coast.", platform: "Netflix", cats: ["series"], moods: ["epic and adventurous","intense and thrilling"], vibes: ["fast-paced binge-worthy","long running series"], ratings: ["teen PG-13","any"] },
+    { title: "Beauty in Black", year: 2024, country: "United States", countryCode: "US", synopsis: "Tyler Perry's soapy thriller about two women whose lives collide around a glamorous cosmetics empire built on secrets.", platform: "Netflix", cats: ["series"], moods: ["dark and gritty","intense and thrilling"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
+    { title: "Outer Banks", year: 2020, country: "United States", countryCode: "US", synopsis: "A group of teenage treasure hunters chase a generations-old mystery across the Carolina coast.", platform: "Netflix", cats: ["series"], moods: ["epic and adventurous","intense and thrilling"], vibes: ["fast-paced binge-worthy","long running series"], ratings: ["teen PG-13","any"] },
     { title: "Blood Sacrifice", synopsis: "A supernatural thriller following a family who discovers their new home demands a terrifying price.", platform: "Netflix", cats: ["series"], moods: ["scary","dark and gritty"], vibes: ["fast-paced binge-worthy","guilty pleasure"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },
     { title: "Love Is Blind: UK", synopsis: "British singles date and get engaged sight unseen, meeting face-to-face only after saying yes.", platform: "Netflix", cats: ["reality show"], moods: ["romantic","funny"], vibes: ["guilty pleasure","fast-paced binge-worthy"], ratings: ["teen PG-13","any"] },
     { title: "Mousetrap", synopsis: "An adaptation of the classic whodunit where seven strangers snowed into a country house realize a killer is among them.", platform: "Netflix", cats: ["series","limited series"], moods: ["mind-bending","intense and thrilling"], vibes: ["prestige and critically acclaimed","based on a true story"], ratings: ["teen PG-13","any"] },
 
     // ---- Gospel & Faith, spread across every relevant category ----
-    { title: "The Chosen", synopsis: "A multi-season drama portraying the life of Jesus Christ through the eyes of those who knew him — one of the most-watched faith series ever made.", platform: "Prime Video", cats: ["series","documentary"], moods: ["inspiring","heartbreaking","gospel and faith"], vibes: ["long running series","award winning","based on a true story"], ratings: ["all ages family friendly","any"] },
+    { title: "The Chosen", year: 2017, country: "United States", countryCode: "US", synopsis: "A multi-season drama portraying the life of Jesus Christ through the eyes of those who knew him — one of the most-watched faith series ever made.", platform: "Prime Video", cats: ["series","documentary"], moods: ["inspiring","heartbreaking","gospel and faith"], vibes: ["long running series","award winning","based on a true story"], ratings: ["all ages family friendly","any"] },
     { title: "Voices of Fire", synopsis: "Bishop Ezekiel Williams and producer Pharrell Williams build an unconventional gospel choir from the ground up in this uplifting docuseries.", platform: "Netflix", cats: ["documentary","series"], moods: ["inspiring","light and feel-good","gospel and faith"], vibes: ["award winning","based on a true story"], ratings: ["all ages family friendly","any"] },
     { title: "I Can Only Imagine", synopsis: "The true story behind MercyMe's chart-topping gospel anthem, following songwriter Bart Millard's journey through a broken childhood to redemption.", platform: "Netflix", cats: ["movie"], moods: ["heartbreaking","inspiring","gospel and faith"], vibes: ["based on a true story","award winning"], ratings: ["all ages family friendly","teen PG-13","any"] },
     { title: "A Week Away", synopsis: "A teen in the foster system avoids juvenile hall by attending a lively Christian summer camp that changes his outlook on life.", platform: "Netflix", cats: ["movie"], moods: ["light and feel-good","inspiring","gospel and faith"], vibes: ["easy background watch","guilty pleasure"], ratings: ["all ages family friendly","any"] },
@@ -1837,6 +1957,12 @@ window.triggerMatch = async function(isSpecificSearch = false) {
         // it's the single most trustworthy source available and wins outright.
         const catalogPick = pickFromCatalog(cat, plat, mood, vibe, rating);
 
+        // Remember what the user actually asked for, so the result card can show
+        // it back to them. Without this the pick arrives with no explanation and
+        // reads as arbitrary — especially after the taste-DNA tie-break, which
+        // legitimately narrows things in ways the user didn't explicitly request.
+        window.lastMatchCriteria = { cat, plat, mood, vibe, rating };
+
         if (catalogPick.platformVerified) {
             matchResult = catalogPick;
         } else {
@@ -1922,12 +2048,102 @@ function renderQuotaCorner() {
     el.style.display = 'flex';
 }
 
+// Echo back what the user chose. A pick with no stated reason reads as random;
+// showing the filters it satisfied makes it legible. Filters left on "any" are
+// omitted rather than shown as "Any" noise.
+function renderMatchCriteria() {
+    const wrap = document.getElementById('res-criteria');
+    const chips = document.getElementById('res-criteria-chips');
+    if (!wrap || !chips) return;
+
+    const c = window.lastMatchCriteria;
+    if (!c) { wrap.style.display = 'none'; return; }
+
+    const pretty = (v) => String(v || '').replace(/\b\w/g, ch => ch.toUpperCase());
+    const parts = [];
+    if (c.cat && c.cat !== 'any') parts.push(pretty(c.cat));
+    if (c.plat && c.plat !== 'any') parts.push(pretty(c.plat));
+    if (c.mood && c.mood !== 'any') parts.push(pretty(c.mood));
+    if (c.vibe && c.vibe !== 'any') parts.push(pretty(c.vibe));
+    if (c.rating && c.rating !== 'any') parts.push(pretty(c.rating));
+
+    if (!parts.length) {
+        chips.innerHTML = `<span>${window.t ? t('res.surpriseMe') : 'Surprise me — no filters set'}</span>`;
+    } else {
+        chips.innerHTML = parts.map(p => `<span>${sanitizeDisplayText(p)}</span>`).join('');
+    }
+    wrap.style.display = 'block';
+}
+
+// Fills origin/year/genre and cast from live metadata, using the catalog's own
+// year/country as disambiguation hints so same-named works can't be confused.
+async function hydrateTitleFacts(selected) {
+    const bar = document.getElementById('res-factbar');
+    const castEl = document.getElementById('res-cast');
+    const synEl = document.getElementById('res-synopsis');
+    if (bar) { bar.style.display = 'none'; bar.innerHTML = ''; }
+    if (castEl) { castEl.style.display = 'none'; castEl.textContent = ''; }
+    if (!selected || !selected.title) return;
+
+    // Catalog hints, when we have them.
+    let hints = {};
+    try {
+        if (typeof CONTENT_CATALOG !== 'undefined') {
+            const e = CONTENT_CATALOG.find(x => x.title === selected.title);
+            if (e) hints = { year: e.year, country: e.country, countryCode: e.countryCode, cast: e.cast };
+        }
+    } catch (err) {}
+
+    // Show what the catalog already knows immediately, so the card is never
+    // empty while the network call is in flight.
+    const facts = [];
+    if (hints.year) facts.push(String(hints.year));
+    if (hints.country) facts.push(hints.country);
+    if (bar && facts.length) {
+        bar.innerHTML = facts.map(f => `<span>${sanitizeDisplayText(f)}</span>`).join('');
+        bar.style.display = 'flex';
+    }
+    if (castEl && Array.isArray(hints.cast) && hints.cast.length) {
+        castEl.innerHTML = `<strong>${window.t ? t('res.starring') : 'Starring'}:</strong> `
+                         + sanitizeDisplayText(hints.cast.join(', '));
+        castEl.style.display = 'block';
+    }
+
+    let meta = null;
+    try { meta = await fetchTitleMeta(selected.title, hints); } catch (e) {}
+    if (!meta) return;
+
+    const merged = [];
+    if (meta.year) merged.push(meta.year);
+    if (meta.country) merged.push(meta.country);
+    (meta.genres || []).forEach(g => merged.push(g));
+    if (bar && merged.length) {
+        bar.innerHTML = merged.map(f => `<span>${sanitizeDisplayText(f)}</span>`).join('');
+        bar.style.display = 'flex';
+    }
+
+    const cast = (Array.isArray(hints.cast) && hints.cast.length) ? hints.cast : meta.cast;
+    if (castEl && cast && cast.length) {
+        castEl.innerHTML = `<strong>${window.t ? t('res.starring') : 'Starring'}:</strong> `
+                         + sanitizeDisplayText(cast.join(', '));
+        castEl.style.display = 'block';
+    }
+
+    // Prefer a fuller synopsis when the catalog's one-liner is thin, but never
+    // replace a written synopsis with something shorter and vaguer.
+    if (synEl && meta.synopsis && meta.synopsis.length > (synEl.textContent || '').length + 40) {
+        synEl.textContent = meta.synopsis.slice(0, 420);
+    }
+}
+
 async function renderResult(selected, isSpecificSearch) {
     const loadBox = document.getElementById('loading-box'); const resultBox = document.getElementById('result-box');
     if (loadBox) loadBox.style.display = 'none';
     resultBox.style.display = 'block'; resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
     renderQuotaCorner();
+    renderMatchCriteria();
+    hydrateTitleFacts(selected);
 
     // TRIGGER PREMIUM FX
     window.playPremiumSound();
