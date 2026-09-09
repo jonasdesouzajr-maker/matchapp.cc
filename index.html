@@ -418,8 +418,8 @@
     <link rel="alternate" hreflang="zh" href="https://matchapp.cc/?lang=zh">
 
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=163"></script>
-    <script defer src="/install.js?v=163"></script>
+    <script defer src="/i18n.js?v=164"></script>
+    <script defer src="/install.js?v=164"></script>
 
     <!-- GOOGLE ANALYTICS (GTAG) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
@@ -445,7 +445,7 @@
         });
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=163">
+    <link rel="stylesheet" href="/style.css?v=164">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -1176,6 +1176,39 @@
             .streaming-links a, .rir-artists a { flex: 1 1 100%; }
         }
 
+        /* ===== COLLAPSIBLE SPOTLIGHTS =====
+           These two cards duplicate events already shown in the compact rail
+           above, and together ran to ~19,000 characters of markup — they were
+           the single biggest reason the match form sat far below the fold.
+           Collapsing them keeps every artist link in the DOM (Google renders
+           and indexes <details> content, so the SEO value is retained) while
+           giving that vertical space back to people who came here to get a
+           recommendation. */
+        .spotlight-details { margin-bottom: 16px; border: 2px solid rgba(229,193,88,0.5);
+                             border-radius: 16px; overflow: hidden;
+                             background: linear-gradient(135deg, rgba(19,7,52,0.9), rgba(20,19,26,0.94)); }
+        .spotlight-summary { display: flex; align-items: center; gap: 14px; padding: 15px 18px;
+                             cursor: pointer; list-style: none; transition: 0.2s; }
+        .spotlight-summary::-webkit-details-marker { display: none; }
+        .spotlight-summary:hover { background: rgba(229,193,88,0.08); }
+        .spot-sum-icon { font-size: 26px; flex-shrink: 0; }
+        .spot-sum-text { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
+        .spot-sum-text strong { color: var(--gold-glow); font-size: 15px; font-weight: 900;
+                                text-transform: uppercase; letter-spacing: 0.4px; }
+        .spot-sum-text small { color: #bdb2d4; font-size: 12px; }
+        .spot-sum-chevron { color: var(--gold); font-size: 20px; flex-shrink: 0;
+                            transition: transform 0.25s; }
+        .spotlight-details[open] .spot-sum-chevron { transform: rotate(180deg); }
+        /* The nested article already carries its own border; drop it when
+           it's inside the details wrapper so there's no double frame. */
+        .spotlight-details .spotlight-card { border: none !important; border-radius: 0; margin-bottom: 0; }
+        @media (max-width: 640px) {
+            .spotlight-summary { padding: 12px 14px; gap: 11px; }
+            .spot-sum-icon { font-size: 21px; }
+            .spot-sum-text strong { font-size: 13.5px; }
+            .spot-sum-text small { font-size: 11px; }
+        }
+
         /* ===== MOBILE DENSITY PASS =====
            Placed last so it layers cleanly over the rules above rather than
            competing with them. Everything here removes WASTED VERTICAL SPACE
@@ -1260,15 +1293,16 @@
         </nav>
     </header>
 
-    <!-- QUICK JUMP PAIR — the two ways into MatchApp. Neither reads as a
-         lookup tool: the site's whole pitch is an AI that thinks for you,
-         not a search box, so the second button deliberately avoids "search"
-         entirely — it promises a decision, not a lookup. -->
+    <!-- QUICK JUMP PAIR — the two ways into MatchApp. The match form now sits
+         directly under the hero, so a "skip down to matching" button would be
+         pointing at something already on screen; this now offers the two real
+         alternatives to filling in the form: browse what's trending, or hand
+         the whole decision to the AI. -->
     <div class="quick-jump-row">
-        <button onclick="scrollToQuestionnaire()" class="jump-to-match-btn" aria-label="Jump to the match form">
-            <span data-i18n="jump.label">⚡ Skip Straight To Matching</span>
+        <a href="#trending-rail" class="jump-to-match-btn" aria-label="Jump to trending titles">
+            <span data-i18n="jump.trending">🔥 See What's Trending</span>
             <span class="jump-arrow" aria-hidden="true">↓</span>
-        </button>
+        </a>
         <a href="/discover.html" class="jump-to-match-btn jump-to-ai-btn" aria-label="Ask our AI what to watch">
             <span data-i18n="jump.aiLabel">🤖 Let Our AI Decide For You</span>
             <span class="jump-arrow" aria-hidden="true">→</span>
@@ -1314,322 +1348,6 @@
                     <h1 class="home-h1" data-i18n="home.h1">What Should I Watch Tonight?</h1>
                     <p class="home-h1-sub" data-i18n="home.h1sub">Tell MatchApp your mood and get one perfect pick — movies, series, K-dramas, anime, novelas, micro-dramas, podcasts and YouTube — plus exactly where to stream it.</p>
                 </header>
-
-                <div class="marquee-wrapper">
-                    <h4 style="color: var(--gold); font-size: 15px; text-transform: uppercase; text-align: center; margin: 0 0 15px 0; letter-spacing: 2px;" data-i18n="marquee.title">🔥 Most Watched Right Now — Tap Any Title</h4>
-                    <button class="marquee-arrow marquee-arrow--left" onclick="marqueeNudge(-1)" aria-label="Scroll trending titles left">‹</button>
-                    <button class="marquee-arrow marquee-arrow--right" onclick="marqueeNudge(1)" aria-label="Scroll trending titles right">›</button>
-                    <div class="marquee-viewport" id="marquee-viewport">
-                    <div class="marquee-track" id="marquee-track">
-                        <!-- LIVE TRENDING: pinned first, scrolls to the spotlight card above instead of a title match -->
-                        <div class="marquee-item" onclick="document.getElementById('rock-in-rio-hub').scrollIntoView({behavior:'smooth', block:'start'})" style="border-color: var(--gold-glow); box-shadow: 0 0 18px rgba(229,193,88,0.55);">
-                            <img data-title="#RockInRio 2026" src="" alt="#RockInRio 2026" loading="lazy">
-                            <div style="position:absolute; top:4px; left:4px; background:#E5C158; color:#000; font-size:8px; font-weight:900; padding:2px 6px; border-radius:5px; text-transform:uppercase; z-index:4;">🔥 Live Now</div>
-                            <div class="marquee-title">#RockInRio 2026</div>
-                        </div>
-                        <!-- NEVER-FAIL IMAGE GENERATORS (ONERROR TRIGGERS DYNAMIC COVER) -->
-                        <div class="marquee-item" onclick="selectMarqueeItem('The Whisper Man')">
-                            <img data-title="The Whisper Man" src="" alt="The Whisper Man" loading="lazy">
-                            <div class="marquee-title">The Whisper Man</div>
-                        </div>
-                        <div class="marquee-item" onclick="selectMarqueeItem(&quot;Death of the Pastor's Wife&quot;)">
-                            <img data-title="Death of the Pastor's Wife" src="" alt="Death of the Pastor's Wife" loading="lazy">
-                            <div class="marquee-title">Death of the Pastor's Wife</div>
-                        </div>
-                        <div class="marquee-item" onclick="selectMarqueeItem('Beauty in Black')">
-                            <img data-title="Beauty in Black" src="" alt="Beauty in Black" loading="lazy">
-                            <div class="marquee-title">Beauty in Black</div>
-                        </div>
-                        <div class="marquee-item" onclick="selectMarqueeItem('Outer Banks')">
-                            <img data-title="Outer Banks" src="" alt="Outer Banks" loading="lazy">
-                            <div class="marquee-title">Outer Banks</div>
-                        </div>
-                        <div class="marquee-item" onclick="selectMarqueeItem('A Vida Secreta do Meu Marido Bilionário')">
-                            <img data-title="A Vida Secreta do Meu Marido Bilionário" src="" alt="A Vida Secreta do Meu Marido Bilionário" loading="lazy">
-                            <div class="marquee-title">Marido Bilionário</div>
-                        </div>
-                        <div class="marquee-item" onclick="selectMarqueeItem('Queen of Tears')">
-                            <img data-title="Queen of Tears" src="" alt="Queen of Tears" loading="lazy">
-                            <div class="marquee-title">Queen of Tears</div>
-                        </div>
-                        <div class="marquee-item" onclick="selectMarqueeItem('Jujutsu Kaisen')">
-                            <img data-title="Jujutsu Kaisen" src="" alt="Jujutsu Kaisen" loading="lazy">
-                            <div class="marquee-title">Jujutsu Kaisen</div>
-                        </div>
-                        <div class="marquee-item" onclick="selectMarqueeItem('The Chosen')">
-                            <img data-title="The Chosen" src="" alt="The Chosen" loading="lazy">
-                            <div class="marquee-title">The Chosen</div>
-                        </div>
-                        <div class="marquee-item" onclick="selectMarqueeItem('Love Is Blind: UK')">
-                            <img data-title="Love Is Blind: UK" src="" alt="Love Is Blind: UK" loading="lazy">
-                            <div class="marquee-title">Love Is Blind: UK</div>
-                        </div>
-                        <div class="marquee-item" onclick="selectMarqueeItem('The Joe Rogan Experience')">
-                            <img data-title="The Joe Rogan Experience" src="" alt="The Joe Rogan Experience" loading="lazy">
-                            <div class="marquee-title">Joe Rogan</div>
-                        </div>
-
-                        <!-- Duplicated Loop for Marquee -->
-                        <div class="marquee-item" onclick="selectMarqueeItem('The Whisper Man')">
-                            <img data-title="The Whisper Man" src="" alt="The Whisper Man" loading="lazy">
-                            <div class="marquee-title">The Whisper Man</div>
-                        </div>
-                        <div class="marquee-item" onclick="selectMarqueeItem(&quot;Death of the Pastor's Wife&quot;)">
-                            <img data-title="Death of the Pastor's Wife" src="" alt="Death of the Pastor's Wife" loading="lazy">
-                            <div class="marquee-title">Death of the Pastor's Wife</div>
-                        </div>
-                        <div class="marquee-item" onclick="selectMarqueeItem('Beauty in Black')">
-                            <img data-title="Beauty in Black" src="" alt="Beauty in Black" loading="lazy">
-                            <div class="marquee-title">Beauty in Black</div>
-                        </div>
-                        <div class="marquee-item" onclick="selectMarqueeItem('The Chosen')">
-                            <img data-title="The Chosen" src="" alt="The Chosen" loading="lazy">
-                            <div class="marquee-title">The Chosen</div>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-
-                <!-- TOP BANNER — Google AdSense responsive (Adsterra removed: served popunders) -->
-                <div class="ad-banner-container premium-ad-frame">
-                    <span style="font-size: 10px; color: #888; display: block; margin-bottom: 5px;" data-i18n="ad.sponsoredContent">SPONSORED CONTENT</span>
-                    <ins class="adsbygoogle" style="display:block; min-height:90px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
-                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-                </div>
-
-                <!-- SPOTLIGHT: upcoming major release -->
-                <!-- ============================================ -->
-                <!-- LIVE EVENTS RAIL — same scroll behaviour as trending -->
-                <!-- ============================================ -->
-                <div class="marquee-wrapper events-wrapper">
-                    <h4 class="rail-heading" data-i18n="events.heading">🎪 Events Happening Now — Tap For A Match</h4>
-                    <button class="marquee-arrow marquee-arrow--left" onclick="railNudge('events-viewport',-1)" aria-label="Scroll events left">‹</button>
-                    <button class="marquee-arrow marquee-arrow--right" onclick="railNudge('events-viewport',1)" aria-label="Scroll events right">›</button>
-                    <div class="marquee-viewport" id="events-viewport">
-                        <div class="marquee-track" id="events-track">
-
-                            <div class="event-card" data-start="2026-09-04" data-end="2026-09-13" data-windows="2026-09-04:2026-09-07,2026-09-11:2026-09-13" data-label="Rock in Rio 2026" onclick="eventMatch('Rock in Rio 2026 Rio de Janeiro festival — best songs and playlists from this year\'s lineup')" role="button" tabindex="0" onkeydown="if(event.key===&quot;Enter&quot;){this.click();}">
-                                <img src="/rock-in-rio-2026.png" alt="Rock in Rio 2026, Cidade do Rock, Rio de Janeiro" loading="lazy">
-                                <span class="event-badge event-live">● LIVE</span>
-                                <div class="event-meta">
-                                    <strong>Rock in Rio 2026</strong>
-                                    <small data-i18n="ev.rirMeta">Sept 4–7 &amp; 11–13 · Cidade do Rock, Rio</small>
-                                </div>
-                            </div>
-
-                            <div class="event-card" data-start="2026-09-04" data-end="2026-09-13" data-windows="2026-09-04:2026-09-07,2026-09-11:2026-09-13" data-label="Oktoberfest Petrópolis" onclick="eventMatch('Oktoberfest Petrópolis 2026 in Itaipava — German music, folk bands and Bavarian drinking songs to get in the mood')" role="button" tabindex="0" onkeydown="if(event.key===&quot;Enter&quot;){this.click();}">
-                                <img src="/oktoberfest-petropolis-2026.png" alt="Oktoberfest Petrópolis 2026, Parque Paulo Rattes, Itaipava" loading="lazy">
-                                <span class="event-badge event-live">● LIVE</span>
-                                <div class="event-meta">
-                                    <strong>Oktoberfest Petrópolis</strong>
-                                    <small data-i18n="ev.oktMeta">Sept 4–7 &amp; 11–13 · Itaipava · Free entry</small>
-                                </div>
-                            </div>
-
-                            <div class="event-card" data-start="2026-09-24" data-end="2026-12-17" data-label="American Horror Story 13" onclick="eventMatch('American Horror Story season 13 — what to watch before the premiere')" role="button" tabindex="0" onkeydown="if(event.key===&quot;Enter&quot;){this.click();}">
-                                <img src="/ahs13-poster.jpg" alt="American Horror Story 13 premiere" loading="lazy">
-                                <span class="event-badge event-soon">SOON</span>
-                                <div class="event-meta">
-                                    <strong>American Horror Story 13</strong>
-                                    <small data-i18n="ev.ahsMeta">Premieres Sept 24 · FX &amp; Hulu</small>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ============================================ -->
-                <!-- #ROCKINRIO 2026 SPOTLIGHT — LIVE TRENDING     -->
-                <!-- ============================================ -->
-                <article id="rock-in-rio-hub" class="premium-card spotlight-card">
-                    <div class="spotlight-glow" aria-hidden="true"></div>
-                    <div class="spotlight-inner">
-                        <div class="spotlight-poster" onclick="triggerRockInRioMatch()" role="button" tabindex="0"
-                             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();triggerRockInRioMatch();}"
-                             aria-label="Get a Rock in Rio 2026 playlist match">
-                            <img src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22600%22%20height%3D%22900%22%20viewBox%3D%220%200%20600%20900%22%3E%0A%3Cdefs%3E%0A%3ClinearGradient%20id%3D%22sky%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%0A%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%230B0518%22/%3E%3Cstop%20offset%3D%2238%25%22%20stop-color%3D%22%232E1259%22/%3E%0A%3Cstop%20offset%3D%2266%25%22%20stop-color%3D%22%236B2A7A%22/%3E%3Cstop%20offset%3D%2280%25%22%20stop-color%3D%22%23C4487B%22/%3E%3Cstop%20offset%3D%2292%25%22%20stop-color%3D%22%23F0834E%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%233A1230%22/%3E%0A%3C/linearGradient%3E%0A%3CradialGradient%20id%3D%22sunGlow%22%20cx%3D%2250%25%22%20cy%3D%2276%25%22%20r%3D%2242%25%22%3E%0A%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23FFD9A0%22%20stop-opacity%3D%220.95%22/%3E%3Cstop%20offset%3D%2255%25%22%20stop-color%3D%22%23F0834E%22%20stop-opacity%3D%220.35%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23F0834E%22%20stop-opacity%3D%220%22/%3E%0A%3C/radialGradient%3E%0A%3ClinearGradient%20id%3D%22beam%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%0A%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23E5C158%22%20stop-opacity%3D%220.55%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23E5C158%22%20stop-opacity%3D%220%22/%3E%0A%3C/linearGradient%3E%0A%3ClinearGradient%20id%3D%22beam2%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%0A%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%238FD6FF%22%20stop-opacity%3D%220.4%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%238FD6FF%22%20stop-opacity%3D%220%22/%3E%0A%3C/linearGradient%3E%0A%3ClinearGradient%20id%3D%22goldText%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%0A%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23FFF3A3%22/%3E%3Cstop%20offset%3D%2250%25%22%20stop-color%3D%22%23E5C158%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23B8862F%22/%3E%0A%3C/linearGradient%3E%0A%3ClinearGradient%20id%3D%22crowdFade%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%0A%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%230B0518%22%20stop-opacity%3D%220%22/%3E%3Cstop%20offset%3D%2255%25%22%20stop-color%3D%22%230B0518%22%20stop-opacity%3D%220.72%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%230B0518%22%20stop-opacity%3D%221%22/%3E%0A%3C/linearGradient%3E%0A%3C/defs%3E%0A%0A%3Crect%20width%3D%22600%22%20height%3D%22900%22%20fill%3D%22url%28%23sky%29%22/%3E%0A%3Ccircle%20cx%3D%22300%22%20cy%3D%22640%22%20r%3D%22285%22%20fill%3D%22url%28%23sunGlow%29%22/%3E%0A%0A%3Cg%20opacity%3D%220.85%22%3E%0A%3Ccircle%20cx%3D%2288%22%20cy%3D%2296%22%20r%3D%221.6%22%20fill%3D%22%23fff%22/%3E%3Ccircle%20cx%3D%22182%22%20cy%3D%2258%22%20r%3D%221.1%22%20fill%3D%22%23fff%22/%3E%3Ccircle%20cx%3D%22268%22%20cy%3D%22118%22%20r%3D%221.5%22%20fill%3D%22%23fff%22/%3E%0A%3Ccircle%20cx%3D%22392%22%20cy%3D%2272%22%20r%3D%221.2%22%20fill%3D%22%23fff%22/%3E%3Ccircle%20cx%3D%22470%22%20cy%3D%22136%22%20r%3D%221.7%22%20fill%3D%22%23fff%22/%3E%3Ccircle%20cx%3D%22524%22%20cy%3D%2266%22%20r%3D%221.1%22%20fill%3D%22%23fff%22/%3E%0A%3Ccircle%20cx%3D%22132%22%20cy%3D%22168%22%20r%3D%221.2%22%20fill%3D%22%23fff%22/%3E%3Ccircle%20cx%3D%22342%22%20cy%3D%22182%22%20r%3D%221.3%22%20fill%3D%22%23fff%22/%3E%3Ccircle%20cx%3D%22228%22%20cy%3D%2242%22%20r%3D%221.1%22%20fill%3D%22%23fff%22/%3E%0A%3C/g%3E%0A%0A%3Cg%20opacity%3D%220.7%22%3E%0A%3Cpolygon%20points%3D%22120%2C150%2092%2C470%20168%2C470%22%20fill%3D%22url%28%23beam2%29%22/%3E%0A%3Cpolygon%20points%3D%22300%2C120%20250%2C470%20350%2C470%22%20fill%3D%22url%28%23beam%29%22/%3E%0A%3Cpolygon%20points%3D%22480%2C150%20432%2C470%20508%2C470%22%20fill%3D%22url%28%23beam2%29%22/%3E%0A%3C/g%3E%0A%0A%3C%21--%20Sugarloaf-inspired%20skyline%20silhouette%3A%20Rio%2C%20rendered%20as%20simple%20original%20shapes%20--%3E%0A%3Cg%20fill%3D%22%23150A2E%22%20opacity%3D%220.96%22%3E%0A%3Cpath%20d%3D%22M0%2C596%20L52%2C548%20L96%2C596%20Z%22/%3E%0A%3Cpath%20d%3D%22M84%2C600%20C104%2C536%20152%2C516%20186%2C556%20C206%2C580%20210%2C596%20212%2C600%20Z%22/%3E%0A%3Cpath%20d%3D%22M232%2C600%20C250%2C554%20286%2C540%20306%2C570%20C318%2C588%20320%2C596%20322%2C600%20Z%22/%3E%0A%3Cpath%20d%3D%22M338%2C600%20C366%2C506%20428%2C494%20462%2C554%20C478%2C582%20482%2C594%20484%2C600%20Z%22/%3E%0A%3Cpath%20d%3D%22M498%2C600%20L540%2C552%20L600%2C600%20Z%22/%3E%0A%3Crect%20x%3D%220%22%20y%3D%22596%22%20width%3D%22600%22%20height%3D%2224%22/%3E%0A%3C/g%3E%0A%0A%3C%21--%20Stage%20truss%20%2B%20crowd%20--%3E%0A%3Cg%20opacity%3D%220.95%22%3E%0A%3Crect%20x%3D%22150%22%20y%3D%22612%22%20width%3D%22300%22%20height%3D%228%22%20fill%3D%22%23241040%22/%3E%0A%3Crect%20x%3D%22150%22%20y%3D%22620%22%20width%3D%2210%22%20height%3D%2252%22%20fill%3D%22%23241040%22/%3E%3Crect%20x%3D%22440%22%20y%3D%22620%22%20width%3D%2210%22%20height%3D%2252%22%20fill%3D%22%23241040%22/%3E%0A%3Ccircle%20cx%3D%22196%22%20cy%3D%22608%22%20r%3D%225%22%20fill%3D%22%23E5C158%22%20opacity%3D%220.9%22/%3E%3Ccircle%20cx%3D%22264%22%20cy%3D%22608%22%20r%3D%225%22%20fill%3D%22%238FD6FF%22%20opacity%3D%220.85%22/%3E%0A%3Ccircle%20cx%3D%22336%22%20cy%3D%22608%22%20r%3D%225%22%20fill%3D%22%23E5C158%22%20opacity%3D%220.9%22/%3E%3Ccircle%20cx%3D%22404%22%20cy%3D%22608%22%20r%3D%225%22%20fill%3D%22%23C4487B%22%20opacity%3D%220.85%22/%3E%0A%3C/g%3E%0A%3Cg%20fill%3D%22%230B0518%22%20opacity%3D%220.9%22%3E%0A%3Ccircle%20cx%3D%2240%22%20cy%3D%22686%22%20r%3D%2215%22/%3E%3Ccircle%20cx%3D%2286%22%20cy%3D%22694%22%20r%3D%2213%22/%3E%3Ccircle%20cx%3D%22134%22%20cy%3D%22684%22%20r%3D%2216%22/%3E%3Ccircle%20cx%3D%22184%22%20cy%3D%22696%22%20r%3D%2213%22/%3E%0A%3Ccircle%20cx%3D%22232%22%20cy%3D%22686%22%20r%3D%2215%22/%3E%3Ccircle%20cx%3D%22282%22%20cy%3D%22696%22%20r%3D%2214%22/%3E%3Ccircle%20cx%3D%22330%22%20cy%3D%22684%22%20r%3D%2216%22/%3E%3Ccircle%20cx%3D%22380%22%20cy%3D%22694%22%20r%3D%2213%22/%3E%0A%3Ccircle%20cx%3D%22428%22%20cy%3D%22686%22%20r%3D%2215%22/%3E%3Ccircle%20cx%3D%22476%22%20cy%3D%22696%22%20r%3D%2214%22/%3E%3Ccircle%20cx%3D%22524%22%20cy%3D%22684%22%20r%3D%2216%22/%3E%3Ccircle%20cx%3D%22568%22%20cy%3D%22694%22%20r%3D%2213%22/%3E%0A%3Crect%20x%3D%220%22%20y%3D%22694%22%20width%3D%22600%22%20height%3D%2260%22/%3E%0A%3C/g%3E%0A%3Crect%20x%3D%220%22%20y%3D%22628%22%20width%3D%22600%22%20height%3D%22252%22%20fill%3D%22url%28%23crowdFade%29%22/%3E%0A%0A%3C%21--%20Frame%20--%3E%0A%3Crect%20x%3D%2220%22%20y%3D%2220%22%20width%3D%22560%22%20height%3D%22860%22%20fill%3D%22none%22%20stroke%3D%22%23E5C158%22%20stroke-width%3D%222.5%22%20opacity%3D%220.9%22/%3E%0A%3Crect%20x%3D%2231%22%20y%3D%2231%22%20width%3D%22538%22%20height%3D%22838%22%20fill%3D%22none%22%20stroke%3D%22%23E5C158%22%20stroke-width%3D%221%22%20opacity%3D%220.3%22/%3E%0A%0A%3C%21--%20Type%20--%3E%0A%3Ctext%20x%3D%22300%22%20y%3D%22196%22%20font-family%3D%22Arial%20Black%2C%20Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2215%22%20font-weight%3D%22900%22%20fill%3D%22%23FFF3A3%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%227%22%20opacity%3D%220.95%22%3ERIO%20DE%20JANEIRO%3C/text%3E%0A%3Cline%20x1%3D%22196%22%20y1%3D%22216%22%20x2%3D%22404%22%20y2%3D%22216%22%20stroke%3D%22%23E5C158%22%20stroke-width%3D%221%22%20opacity%3D%220.55%22/%3E%0A%0A%3Ctext%20x%3D%22300%22%20y%3D%22296%22%20font-family%3D%22Arial%20Black%2C%20Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2270%22%20font-weight%3D%22900%22%20fill%3D%22url%28%23goldText%29%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%221%22%3EROCK%3C/text%3E%0A%3Ctext%20x%3D%22300%22%20y%3D%22356%22%20font-family%3D%22Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2234%22%20font-weight%3D%22300%22%20fill%3D%22%23FFF3A3%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%2216%22%20opacity%3D%220.92%22%3EIN%20RIO%3C/text%3E%0A%3Ctext%20x%3D%22300%22%20y%3D%22452%22%20font-family%3D%22Arial%20Black%2C%20Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2282%22%20font-weight%3D%22900%22%20fill%3D%22%23fff%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%224%22%20opacity%3D%220.97%22%3E2026%3C/text%3E%0A%0A%3Cline%20x1%3D%22196%22%20y1%3D%22490%22%20x2%3D%22404%22%20y2%3D%22490%22%20stroke%3D%22%23E5C158%22%20stroke-width%3D%221%22%20opacity%3D%220.55%22/%3E%0A%3Ctext%20x%3D%22300%22%20y%3D%22522%22%20font-family%3D%22Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2217%22%20font-weight%3D%22bold%22%20fill%3D%22%23fff%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%222%22%3ESET%204-7%20%26%23183%3B%2011-13%3C/text%3E%0A%3Ctext%20x%3D%22300%22%20y%3D%22550%22%20font-family%3D%22Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2213%22%20fill%3D%22%23D8C9F0%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%221%22%3ECIDADE%20DO%20ROCK%20%26%23183%3B%20PARQUE%20OL%26%23205%3BMPICO%3C/text%3E%0A%0A%3C%21--%20Live%20badge%20--%3E%0A%3Crect%20x%3D%22222%22%20y%3D%22782%22%20width%3D%22156%22%20height%3D%2230%22%20rx%3D%2215%22%20fill%3D%22%23E5C158%22/%3E%0A%3Ccircle%20cx%3D%22246%22%20cy%3D%22797%22%20r%3D%225%22%20fill%3D%22%23B8241F%22/%3E%0A%3Ctext%20x%3D%22266%22%20y%3D%22802%22%20font-family%3D%22Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2212.5%22%20font-weight%3D%22900%22%20fill%3D%22%2314131A%22%20letter-spacing%3D%221.6%22%3ELIVE%20NOW%3C/text%3E%0A%0A%3Ctext%20x%3D%22300%22%20y%3D%22848%22%20font-family%3D%22Arial%20Black%2C%20Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2217%22%20font-weight%3D%22900%22%20fill%3D%22%23FFF3A3%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%223.5%22%3Ematchapp.cc%3C/text%3E%0A%3C/svg%3E" alt="#RockInRio 2026 — Rio de Janeiro, Brazil">
-                            <div class="spotlight-ribbon" id="rir-ribbon" data-start="2026-09-04" data-end="2026-09-13" data-windows="2026-09-04:2026-09-07,2026-09-11:2026-09-13">LIVE NOW</div>
-                        </div>
-                        <div class="spotlight-body">
-                            <span class="spotlight-eyebrow" data-i18n="ev.rirEyebrow">🔥 Trending Now in Rio de Janeiro</span>
-                            <h2 class="spotlight-title">#RockInRio 2026</h2>
-                            <p class="spotlight-desc">
-                                The 11th edition is underway at Cidade do Rock, headlined by Foo Fighters, Elton John's
-                                final Brazilian show, Maroon 5, Twenty One Pilots, Calvin Harris, Stray Kids and Avenged
-                                Sevenfold across six stages. Tap any artist below for their Spotify page, or get an
-                                AI-built playlist match for the festival.
-                            </p>
-
-                            <div class="spotlight-meta">
-                                <span class="spotlight-chip">📅 <strong>Sept 4-7 &amp; 11-13, 2026</strong></span>
-                                <span class="spotlight-chip">📍 Cidade do Rock, Parque Olímpico</span>
-                                <span class="spotlight-chip">🎪 6 stages</span>
-                            </div>
-
-                            <div class="spotlight-actions">
-                                <button onclick="triggerRockInRioMatch()" class="gold-btn spotlight-save">🎧 Get My Rock in Rio Playlist Match</button>
-                                <button onclick="askAI('Tell me about Rock in Rio 2026 and who I should listen to before the festival')" class="spotlight-ask">🤖 Ask our AI about it</button>
-                            </div>
-
-                            <h4 class="rir-group-h">🌎 International Headliners</h4>
-                            <div class="rir-artists">
-                                <a href="https://open.spotify.com/search/Foo%20Fighters" target="_blank" rel="noopener noreferrer">Foo Fighters</a>
-                                <a href="https://open.spotify.com/search/Elton%20John" target="_blank" rel="noopener noreferrer">Elton John</a>
-                                <a href="https://open.spotify.com/search/Maroon%205" target="_blank" rel="noopener noreferrer">Maroon 5</a>
-                                <a href="https://open.spotify.com/search/Twenty%20One%20Pilots" target="_blank" rel="noopener noreferrer">Twenty One Pilots</a>
-                                <a href="https://open.spotify.com/search/Calvin%20Harris" target="_blank" rel="noopener noreferrer">Calvin Harris</a>
-                                <a href="https://open.spotify.com/search/Stray%20Kids" target="_blank" rel="noopener noreferrer">Stray Kids</a>
-                                <a href="https://open.spotify.com/search/Avenged%20Sevenfold" target="_blank" rel="noopener noreferrer">Avenged Sevenfold</a>
-                                <a href="https://open.spotify.com/search/Black%20Eyed%20Peas" target="_blank" rel="noopener noreferrer">Black Eyed Peas</a>
-                                <a href="https://open.spotify.com/search/Bring%20Me%20the%20Horizon" target="_blank" rel="noopener noreferrer">Bring Me the Horizon</a>
-                                <a href="https://open.spotify.com/search/Demi%20Lovato" target="_blank" rel="noopener noreferrer">Demi Lovato</a>
-                                <a href="https://open.spotify.com/search/Jamiroquai" target="_blank" rel="noopener noreferrer">Jamiroquai</a>
-                                <a href="https://open.spotify.com/search/Rise%20Against" target="_blank" rel="noopener noreferrer">Rise Against</a>
-                                <a href="https://open.spotify.com/search/The%20Hives" target="_blank" rel="noopener noreferrer">The Hives</a>
-                                <a href="https://open.spotify.com/search/Nova%20Twins" target="_blank" rel="noopener noreferrer">Nova Twins</a>
-                                <a href="https://open.spotify.com/search/Ne-Yo" target="_blank" rel="noopener noreferrer">Ne-Yo</a>
-                                <a href="https://open.spotify.com/search/Meduza" target="_blank" rel="noopener noreferrer">Meduza</a>
-                            </div>
-
-                            <h4 class="rir-group-h">🇧🇷 Brazilian Lineup</h4>
-                            <div class="rir-artists">
-                                <a href="https://open.spotify.com/search/Gilberto%20Gil" target="_blank" rel="noopener noreferrer">Gilberto Gil</a>
-                                <a href="https://open.spotify.com/search/Capital%20Inicial" target="_blank" rel="noopener noreferrer">Capital Inicial</a>
-                                <a href="https://open.spotify.com/search/Sepultura" target="_blank" rel="noopener noreferrer">Sepultura</a>
-                                <a href="https://open.spotify.com/search/Bar%C3%A3o%20Vermelho" target="_blank" rel="noopener noreferrer">Barão Vermelho</a>
-                                <a href="https://open.spotify.com/search/Jota%20Quest" target="_blank" rel="noopener noreferrer">Jota Quest</a>
-                                <a href="https://open.spotify.com/search/BaianaSystem" target="_blank" rel="noopener noreferrer">BaianaSystem</a>
-                                <a href="https://open.spotify.com/search/Detonautas" target="_blank" rel="noopener noreferrer">Detonautas</a>
-                                <a href="https://open.spotify.com/search/Di%20Ferrero" target="_blank" rel="noopener noreferrer">Di Ferrero</a>
-                                <a href="https://open.spotify.com/search/Paulinho%20Moska" target="_blank" rel="noopener noreferrer">Paulinho Moska</a>
-                                <a href="https://open.spotify.com/search/Supercombo" target="_blank" rel="noopener noreferrer">Supercombo</a>
-                            </div>
-
-                            <p class="rir-disclaimer">
-                                MatchApp is an independent AI entertainment concierge and is not affiliated with or
-                                endorsed by Rock in Rio, its organizers, sponsors or performing artists. Lineup and
-                                dates per public festival announcements and subject to change.
-                            </p>
-                        </div>
-                    </div>
-                </article>
-
-                <article id="spotlight-ahs13" class="premium-card spotlight-card">
-                    <div class="spotlight-glow" aria-hidden="true"></div>
-                    <div class="spotlight-inner">
-                        <div class="spotlight-poster" onclick="saveSpotlightTitle()" role="button" tabindex="0"
-                             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();saveSpotlightTitle();}"
-                             aria-label="Save American Horror Story: 13 to Watch Later">
-                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=163" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
-                            <div class="spotlight-ribbon" data-i18n="spotlight.ribbon">COMING THIS MONTH</div>
-                        </div>
-                        <div class="spotlight-body">
-                            <span class="spotlight-eyebrow" data-i18n="spotlight.eyebrow">🔥 Most Anticipated Premiere</span>
-                            <h2 class="spotlight-title">American Horror Story: 13</h2>
-                            <p class="spotlight-desc" data-i18n="spotlight.desc">The Coven rises again. Jessica Lange, Sarah Paulson, Evan Peters, Angela Bassett and Kathy Bates return for a 13-episode all-star season — plus Ariana Grande's franchise debut.</p>
-
-                            <div class="spotlight-meta">
-                                <span class="spotlight-chip">📅 <strong>Sept 24, 2026</strong></span>
-                                <span class="spotlight-chip">🕘 9/8c</span>
-                                <span class="spotlight-chip">📺 FX &amp; Hulu</span>
-                                <span class="spotlight-chip">🌍 Disney+ <span data-i18n="spotlight.intl">(international)</span></span>
-                            </div>
-
-                            <div id="spotlight-countdown" class="spotlight-countdown" aria-live="polite"></div>
-
-                            <div class="spotlight-actions">
-                                <button onclick="saveSpotlightTitle()" class="gold-btn spotlight-save" id="spotlight-save-btn" data-i18n="spotlight.save">⭐ Save to Watch Later</button>
-                                <button onclick="askAI('Tell me about American Horror Story 13 and what to watch before it premieres')" class="spotlight-ask" data-i18n="spotlight.ask">🤖 Ask our AI about it</button>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-
-
-                <!-- MATCH TOGETHER ENTRY -->
-                <a href="/together.html" class="tg-entry">
-                    <span class="tg-entry-icon">🍿</span>
-                    <span class="tg-entry-body">
-                        <strong>Watching with someone? Match Together</strong>
-                        <small>You both pick — we find the one title you'll actually agree on. They don't need an account.</small>
-                    </span>
-                    <span class="tg-entry-arrow">→</span>
-                </a>
-
-                <article id="search-box" class="premium-card">
-                    <h2 style="color: var(--gold); margin: 0 0 8px 0; font-size: 26px; text-align: center; text-transform: uppercase; font-weight: 900;" data-i18n="search.heading">Search or Ask Anything</h2>
-                    <p style="color:#b9b1cc; font-size:14px; text-align:center; margin:0 0 4px 0;" data-i18n="search.hint">Type a title for a direct match — or ask a full question and our AI will find every title that fits.</p>
-                    <p style="color:var(--gold); font-size:12.5px; text-align:center; margin:0 0 20px 0; font-weight:700; text-transform:uppercase; letter-spacing:0.4px;" data-i18n="search.voiceHint">🎙️ Or just tap the mic and talk — your AI concierge listens in your language</p>
-                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                        <input type="text" id="specific-search-input" placeholder="e.g., Fallout — or: Is there a TV show about Doctors Without Borders?" data-i18n-placeholder="search.placeholder" onkeydown="if(event.key==='Enter') smartSearch()" style="flex: 1; padding: 18px; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.7); color: #fff; font-size: 17px; min-width: 200px;">
-                        <button id="mic-btn-index" class="mic-btn" type="button" aria-label="Speak your question" title="Speak your question" style="display:none;"><svg viewBox="0 0 48 48" width="30" height="30" aria-hidden="true" focusable="false">
-                            <path d="M8,20 Q4,24 8,28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" opacity="0.55"/>
-                            <path d="M3,17 Q-3,24 3,31" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" opacity="0.3"/>
-                            <path d="M40,20 Q44,24 40,28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" opacity="0.55"/>
-                            <path d="M45,17 Q51,24 45,31" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" opacity="0.3"/>
-                            <rect x="18" y="6" width="12" height="21" rx="6" fill="currentColor"/>
-                            <path d="M13,21 a11,11 0 0 0 22,0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-                            <line x1="24" y1="32" x2="24" y2="38" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-                            <line x1="17" y1="38" x2="31" y2="38" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-                        </svg></button>
-                        <button onclick="smartSearch()" class="gold-btn" style="padding: 18px 35px; font-size: 18px; width:auto;" data-i18n="search.button">🔍 Search</button>
-                    </div>
-                    <div class="search-examples">
-                        <span data-i18n="search.trythese">Try:</span>
-                        <button onclick="askAI('Is there a TV show about Doctors Without Borders?')">Shows about Doctors Without Borders</button>
-                        <button onclick="askAI('Best documentaries about deep sea exploration')">Deep sea documentaries</button>
-                        <button onclick="askAI('Series like Breaking Bad but funnier')">Like Breaking Bad but funnier</button>
-                    </div>
-                </article>
-
-                <!-- HOW IT WORKS — orients first-time visitors straight into the matcher -->
-                <section id="how-it-works" class="premium-card" style="text-align:center; padding: 30px 28px;">
-                    <h2 style="margin:0 0 10px 0; font-size:26px; color:var(--gold); font-weight:900; text-transform:uppercase; letter-spacing:1px;" data-i18n="how.title">How MatchApp Works</h2>
-                    <p data-i18n-html="how.intro" style="color:#cfc7e0; font-size:16px; line-height:1.7; margin:0 auto 26px auto; max-width:680px;">
-                        MatchApp is your <strong style="color:var(--gold-glow);">premium AI streaming concierge</strong>. Instead of scrolling three apps for forty minutes, tell us what you're in the mood for and our AI finds the one title worth your night — plus exactly where to watch it. It takes about <strong style="color:var(--gold-glow);">15 seconds</strong>.
-                    </p>
-                    <div class="how-steps">
-                        <div class="how-step">
-                            <div class="how-num">1</div>
-                            <h3 data-i18n="how.s1.title">Set Your Mood</h3>
-                            <p data-i18n-html="how.s1.body">Pick a format, platform, mood, era and age rating. Choosing one narrows the rest automatically — or hit <em>Surprise Me</em> and let the AI decide everything.</p>
-                        </div>
-                        <div class="how-step">
-                            <div class="how-num">2</div>
-                            <h3 data-i18n="how.s2.title">Get Your Match</h3>
-                            <p data-i18n-html="how.s2.body">Our AI returns one perfect pick with its real cover art, a playable trailer, and a synopsis — drawn from movies, series, K-dramas, anime, novelas, micro-dramas, podcasts and Spotify.</p>
-                        </div>
-                        <div class="how-step">
-                            <div class="how-num">3</div>
-                            <h3 data-i18n="how.s3.title">Watch It Instantly</h3>
-                            <p data-i18n-html="how.s3.body">One tap opens it on Netflix, Prime, Max, Disney+, Spotify or wherever it lives. Save it to Watch Later, or hit <em>Not For Me</em> and we'll instantly find another.</p>
-                        </div>
-                    </div>
-                    <button onclick="scrollToQuestionnaire()" class="gold-btn" style="margin-top:28px; max-width:420px; font-size:17px; padding:18px;" data-i18n="how.cta">⚡ Find My Match — It's Free</button>
-                    <p style="color:#8f88a5; font-size:12px; margin:14px 0 0 0;" data-i18n="how.freeline">3 free matches daily · Register free for 5 · No credit card required</p>
-                </section>
-
-                <!-- AI CONCIERGE FOR ENTERTAINMENT — substantive content on the concierge concept -->
-                <section id="ai-concierge-section" class="premium-card concierge-section">
-                    <h2 data-i18n="concierge.title">Your AI Concierge for Entertainment</h2>
-                    <p data-i18n-html="concierge.p1">MatchApp isn't a filter menu — it's an <strong style="color:var(--gold-glow);">AI Concierge for the entertainment industry</strong>. A hotel concierge doesn't ask you to browse a list of restaurants; you tell them what you're in the mood for, and they know exactly where to send you. MatchApp works the same way, powered by AI instead of local knowledge.</p>
-                    <p data-i18n-html="concierge.p2">Type a full question — <em>"is there a documentary about deep sea exploration?"</em> — or tap the microphone and simply <strong style="color:var(--gold-glow);">speak it in your own language</strong>. The AI Concierge answers like a knowledgeable friend, in natural sentences, and can read its answer back to you aloud. Behind the scenes it's drawing on movies, TV series, K-dramas, anime, telenovelas, vertical micro-dramas, gospel and faith titles, podcasts and Spotify — one consultant across every format and platform, instead of a search box for each.</p>
-                    <div class="concierge-features">
-                        <div class="concierge-feature">
-                            <span class="concierge-feature-icon">🎙️</span>
-                            <span data-i18n="concierge.f1">Voice or text, your choice</span>
-                        </div>
-                        <div class="concierge-feature">
-                            <span class="concierge-feature-icon">🌍</span>
-                            <span data-i18n="concierge.f2">Understands 14 languages</span>
-                        </div>
-                        <div class="concierge-feature">
-                            <span class="concierge-feature-icon">🎬</span>
-                            <span data-i18n="concierge.f3">Every format, one consultant</span>
-                        </div>
-                    </div>
-                </section>
 
                 <article id="questionnaire-box" class="premium-card">
                     <h2 style="margin: 0 0 25px 0; font-size: 34px; color: var(--gold); text-align: center; font-weight: 900; text-transform: uppercase;" data-i18n="q.title">Curate Your Perfect Match</h2>
@@ -1793,14 +1511,7 @@
                     <button onclick="triggerMatch(false)" class="gold-btn" style="margin-top: 30px; width: 100%; font-size: 22px; padding: 22px; text-transform: uppercase; letter-spacing: 2px;" data-i18n="q.submit">⚡ Consult AI Concierge</button>
                 </article>
 
-                <!-- ADSENSE RESPONSIVE BANNER 2 -->
-                <div class="ad-banner-container premium-ad-frame" style="margin-top: 30px;">
-                    <span style="font-size: 10px; color: #888; display: block; margin-bottom: 5px;">SPONSORED ADVERTISEMENT</span>
-                    <ins class="adsbygoogle" style="display:block; min-height: 90px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins>
-                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-                </div>
-
-                <article id="loading-box" class="premium-card" style="display: none; padding: 46px 20px 40px 20px; text-align: center;">
+<article id="loading-box" class="premium-card" style="display: none; padding: 46px 20px 40px 20px; text-align: center;">
 
                     <!-- CINEMA SCANNER: film reel + sweeping search beam, synced to the meter -->
                     <div class="scanner-stage">
@@ -1843,7 +1554,7 @@
                     <p class="loading-adnote">✨ Your perfect match is being curated — thanks for supporting us by viewing our sponsors below.</p>
                 </article>
 
-                <article id="result-box" class="premium-card" style="display: none; text-align: left; position: relative;">
+<article id="result-box" class="premium-card" style="display: none; text-align: left; position: relative;">
                     <!-- REMAINING MATCHES — small corner counter, filled in per match -->
                     <div id="result-quota-corner" class="quota-corner" style="display:none;">
                         <span class="qc-num" id="result-quota-num">0</span>
@@ -1967,6 +1678,363 @@
                         Saved titles appear in your <a href="/profile/profile.html" style="color: var(--gold); text-decoration: none; font-weight: bold;">Profile Portfolio →</a>
                     </p>
                 </article>
+
+                <article id="search-box" class="premium-card">
+                    <h2 style="color: var(--gold); margin: 0 0 8px 0; font-size: 26px; text-align: center; text-transform: uppercase; font-weight: 900;" data-i18n="search.heading">Search or Ask Anything</h2>
+                    <p style="color:#b9b1cc; font-size:14px; text-align:center; margin:0 0 4px 0;" data-i18n="search.hint">Type a title for a direct match — or ask a full question and our AI will find every title that fits.</p>
+                    <p style="color:var(--gold); font-size:12.5px; text-align:center; margin:0 0 20px 0; font-weight:700; text-transform:uppercase; letter-spacing:0.4px;" data-i18n="search.voiceHint">🎙️ Or just tap the mic and talk — your AI concierge listens in your language</p>
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <input type="text" id="specific-search-input" placeholder="e.g., Fallout — or: Is there a TV show about Doctors Without Borders?" data-i18n-placeholder="search.placeholder" onkeydown="if(event.key==='Enter') smartSearch()" style="flex: 1; padding: 18px; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.7); color: #fff; font-size: 17px; min-width: 200px;">
+                        <button id="mic-btn-index" class="mic-btn" type="button" aria-label="Speak your question" title="Speak your question" style="display:none;"><svg viewBox="0 0 48 48" width="30" height="30" aria-hidden="true" focusable="false">
+                            <path d="M8,20 Q4,24 8,28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" opacity="0.55"/>
+                            <path d="M3,17 Q-3,24 3,31" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" opacity="0.3"/>
+                            <path d="M40,20 Q44,24 40,28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" opacity="0.55"/>
+                            <path d="M45,17 Q51,24 45,31" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" opacity="0.3"/>
+                            <rect x="18" y="6" width="12" height="21" rx="6" fill="currentColor"/>
+                            <path d="M13,21 a11,11 0 0 0 22,0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                            <line x1="24" y1="32" x2="24" y2="38" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                            <line x1="17" y1="38" x2="31" y2="38" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                        </svg></button>
+                        <button onclick="smartSearch()" class="gold-btn" style="padding: 18px 35px; font-size: 18px; width:auto;" data-i18n="search.button">🔍 Search</button>
+                    </div>
+                    <div class="search-examples">
+                        <span data-i18n="search.trythese">Try:</span>
+                        <button onclick="askAI('Is there a TV show about Doctors Without Borders?')">Shows about Doctors Without Borders</button>
+                        <button onclick="askAI('Best documentaries about deep sea exploration')">Deep sea documentaries</button>
+                        <button onclick="askAI('Series like Breaking Bad but funnier')">Like Breaking Bad but funnier</button>
+                    </div>
+                </article>
+
+                <div class="marquee-wrapper" id="trending-rail">
+                    <h4 style="color: var(--gold); font-size: 15px; text-transform: uppercase; text-align: center; margin: 0 0 15px 0; letter-spacing: 2px;" data-i18n="marquee.title">🔥 Most Watched Right Now — Tap Any Title</h4>
+                    <button class="marquee-arrow marquee-arrow--left" onclick="marqueeNudge(-1)" aria-label="Scroll trending titles left">‹</button>
+                    <button class="marquee-arrow marquee-arrow--right" onclick="marqueeNudge(1)" aria-label="Scroll trending titles right">›</button>
+                    <div class="marquee-viewport" id="marquee-viewport">
+                    <div class="marquee-track" id="marquee-track">
+                        <!-- LIVE TRENDING: pinned first, scrolls to the spotlight card above instead of a title match -->
+                        <div class="marquee-item" onclick="document.getElementById('rock-in-rio-hub').scrollIntoView({behavior:'smooth', block:'start'})" style="border-color: var(--gold-glow); box-shadow: 0 0 18px rgba(229,193,88,0.55);">
+                            <img data-title="#RockInRio 2026" src="" alt="#RockInRio 2026" loading="lazy">
+                            <div style="position:absolute; top:4px; left:4px; background:#E5C158; color:#000; font-size:8px; font-weight:900; padding:2px 6px; border-radius:5px; text-transform:uppercase; z-index:4;">🔥 Live Now</div>
+                            <div class="marquee-title">#RockInRio 2026</div>
+                        </div>
+                        <!-- NEVER-FAIL IMAGE GENERATORS (ONERROR TRIGGERS DYNAMIC COVER) -->
+                        <div class="marquee-item" onclick="selectMarqueeItem('The Whisper Man')">
+                            <img data-title="The Whisper Man" src="" alt="The Whisper Man" loading="lazy">
+                            <div class="marquee-title">The Whisper Man</div>
+                        </div>
+                        <div class="marquee-item" onclick="selectMarqueeItem(&quot;Death of the Pastor's Wife&quot;)">
+                            <img data-title="Death of the Pastor's Wife" src="" alt="Death of the Pastor's Wife" loading="lazy">
+                            <div class="marquee-title">Death of the Pastor's Wife</div>
+                        </div>
+                        <div class="marquee-item" onclick="selectMarqueeItem('Beauty in Black')">
+                            <img data-title="Beauty in Black" src="" alt="Beauty in Black" loading="lazy">
+                            <div class="marquee-title">Beauty in Black</div>
+                        </div>
+                        <div class="marquee-item" onclick="selectMarqueeItem('Outer Banks')">
+                            <img data-title="Outer Banks" src="" alt="Outer Banks" loading="lazy">
+                            <div class="marquee-title">Outer Banks</div>
+                        </div>
+                        <div class="marquee-item" onclick="selectMarqueeItem('A Vida Secreta do Meu Marido Bilionário')">
+                            <img data-title="A Vida Secreta do Meu Marido Bilionário" src="" alt="A Vida Secreta do Meu Marido Bilionário" loading="lazy">
+                            <div class="marquee-title">Marido Bilionário</div>
+                        </div>
+                        <div class="marquee-item" onclick="selectMarqueeItem('Queen of Tears')">
+                            <img data-title="Queen of Tears" src="" alt="Queen of Tears" loading="lazy">
+                            <div class="marquee-title">Queen of Tears</div>
+                        </div>
+                        <div class="marquee-item" onclick="selectMarqueeItem('Jujutsu Kaisen')">
+                            <img data-title="Jujutsu Kaisen" src="" alt="Jujutsu Kaisen" loading="lazy">
+                            <div class="marquee-title">Jujutsu Kaisen</div>
+                        </div>
+                        <div class="marquee-item" onclick="selectMarqueeItem('The Chosen')">
+                            <img data-title="The Chosen" src="" alt="The Chosen" loading="lazy">
+                            <div class="marquee-title">The Chosen</div>
+                        </div>
+                        <div class="marquee-item" onclick="selectMarqueeItem('Love Is Blind: UK')">
+                            <img data-title="Love Is Blind: UK" src="" alt="Love Is Blind: UK" loading="lazy">
+                            <div class="marquee-title">Love Is Blind: UK</div>
+                        </div>
+                        <div class="marquee-item" onclick="selectMarqueeItem('The Joe Rogan Experience')">
+                            <img data-title="The Joe Rogan Experience" src="" alt="The Joe Rogan Experience" loading="lazy">
+                            <div class="marquee-title">Joe Rogan</div>
+                        </div>
+
+                        <!-- Duplicated Loop for Marquee -->
+                        <div class="marquee-item" onclick="selectMarqueeItem('The Whisper Man')">
+                            <img data-title="The Whisper Man" src="" alt="The Whisper Man" loading="lazy">
+                            <div class="marquee-title">The Whisper Man</div>
+                        </div>
+                        <div class="marquee-item" onclick="selectMarqueeItem(&quot;Death of the Pastor's Wife&quot;)">
+                            <img data-title="Death of the Pastor's Wife" src="" alt="Death of the Pastor's Wife" loading="lazy">
+                            <div class="marquee-title">Death of the Pastor's Wife</div>
+                        </div>
+                        <div class="marquee-item" onclick="selectMarqueeItem('Beauty in Black')">
+                            <img data-title="Beauty in Black" src="" alt="Beauty in Black" loading="lazy">
+                            <div class="marquee-title">Beauty in Black</div>
+                        </div>
+                        <div class="marquee-item" onclick="selectMarqueeItem('The Chosen')">
+                            <img data-title="The Chosen" src="" alt="The Chosen" loading="lazy">
+                            <div class="marquee-title">The Chosen</div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+                <!-- TOP BANNER — Google AdSense responsive (Adsterra removed: served popunders) -->
+                <div class="ad-banner-container premium-ad-frame">
+                    <span style="font-size: 10px; color: #888; display: block; margin-bottom: 5px;" data-i18n="ad.sponsoredContent">SPONSORED CONTENT</span>
+                    <ins class="adsbygoogle" style="display:block; min-height:90px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                </div>
+
+                <!-- SPOTLIGHT: upcoming major release -->
+                <!-- ============================================ -->
+                <!-- LIVE EVENTS RAIL — same scroll behaviour as trending -->
+                <!-- ============================================ -->
+                <div class="marquee-wrapper events-wrapper">
+                    <h4 class="rail-heading" data-i18n="events.heading">🎪 Events Happening Now — Tap For A Match</h4>
+                    <button class="marquee-arrow marquee-arrow--left" onclick="railNudge('events-viewport',-1)" aria-label="Scroll events left">‹</button>
+                    <button class="marquee-arrow marquee-arrow--right" onclick="railNudge('events-viewport',1)" aria-label="Scroll events right">›</button>
+                    <div class="marquee-viewport" id="events-viewport">
+                        <div class="marquee-track" id="events-track">
+
+                            <div class="event-card" data-start="2026-09-04" data-end="2026-09-13" data-windows="2026-09-04:2026-09-07,2026-09-11:2026-09-13" data-label="Rock in Rio 2026" onclick="eventMatch('Rock in Rio 2026 Rio de Janeiro festival — best songs and playlists from this year\'s lineup')" role="button" tabindex="0" onkeydown="if(event.key===&quot;Enter&quot;){this.click();}">
+                                <img src="/rock-in-rio-2026.png" alt="Rock in Rio 2026, Cidade do Rock, Rio de Janeiro" loading="lazy">
+                                <span class="event-badge event-live">● LIVE</span>
+                                <div class="event-meta">
+                                    <strong>Rock in Rio 2026</strong>
+                                    <small data-i18n="ev.rirMeta">Sept 4–7 &amp; 11–13 · Cidade do Rock, Rio</small>
+                                </div>
+                            </div>
+
+                            <div class="event-card" data-start="2026-09-04" data-end="2026-09-13" data-windows="2026-09-04:2026-09-07,2026-09-11:2026-09-13" data-label="Oktoberfest Petrópolis" onclick="eventMatch('Oktoberfest Petrópolis 2026 in Itaipava — German music, folk bands and Bavarian drinking songs to get in the mood')" role="button" tabindex="0" onkeydown="if(event.key===&quot;Enter&quot;){this.click();}">
+                                <img src="/oktoberfest-petropolis-2026.png" alt="Oktoberfest Petrópolis 2026, Parque Paulo Rattes, Itaipava" loading="lazy">
+                                <span class="event-badge event-live">● LIVE</span>
+                                <div class="event-meta">
+                                    <strong>Oktoberfest Petrópolis</strong>
+                                    <small data-i18n="ev.oktMeta">Sept 4–7 &amp; 11–13 · Itaipava · Free entry</small>
+                                </div>
+                            </div>
+
+                            <div class="event-card" data-start="2026-09-24" data-end="2026-12-17" data-label="American Horror Story 13" onclick="eventMatch('American Horror Story season 13 — what to watch before the premiere')" role="button" tabindex="0" onkeydown="if(event.key===&quot;Enter&quot;){this.click();}">
+                                <img src="/ahs13-poster.jpg" alt="American Horror Story 13 premiere" loading="lazy">
+                                <span class="event-badge event-soon">SOON</span>
+                                <div class="event-meta">
+                                    <strong>American Horror Story 13</strong>
+                                    <small data-i18n="ev.ahsMeta">Premieres Sept 24 · FX &amp; Hulu</small>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================ -->
+                <!-- #ROCKINRIO 2026 SPOTLIGHT — LIVE TRENDING     -->
+                <!-- ============================================ -->
+                
+
+                
+
+
+                <!-- MATCH TOGETHER ENTRY -->
+                <a href="/together.html" class="tg-entry">
+                    <span class="tg-entry-icon">🍿</span>
+                    <span class="tg-entry-body">
+                        <strong>Watching with someone? Match Together</strong>
+                        <small>You both pick — we find the one title you'll actually agree on. They don't need an account.</small>
+                    </span>
+                    <span class="tg-entry-arrow">→</span>
+                </a>
+
+                                <details class="spotlight-details">
+                    <summary class="spotlight-summary">
+                        <span class="spot-sum-icon">🎤</span>
+                        <span class="spot-sum-text">
+                            <strong data-i18n="spot.rirTitle">Rock in Rio 2026 — Full Lineup</strong>
+                            <small data-i18n="spot.rirSub">26 artists, dates and Spotify links</small>
+                        </span>
+                        <span class="spot-sum-chevron" aria-hidden="true">⌄</span>
+                    </summary>
+<article id="rock-in-rio-hub" class="premium-card spotlight-card">
+                    <div class="spotlight-glow" aria-hidden="true"></div>
+                    <div class="spotlight-inner">
+                        <div class="spotlight-poster" onclick="triggerRockInRioMatch()" role="button" tabindex="0"
+                             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();triggerRockInRioMatch();}"
+                             aria-label="Get a Rock in Rio 2026 playlist match">
+                            <img src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22600%22%20height%3D%22900%22%20viewBox%3D%220%200%20600%20900%22%3E%0A%3Cdefs%3E%0A%3ClinearGradient%20id%3D%22sky%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%0A%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%230B0518%22/%3E%3Cstop%20offset%3D%2238%25%22%20stop-color%3D%22%232E1259%22/%3E%0A%3Cstop%20offset%3D%2266%25%22%20stop-color%3D%22%236B2A7A%22/%3E%3Cstop%20offset%3D%2280%25%22%20stop-color%3D%22%23C4487B%22/%3E%3Cstop%20offset%3D%2292%25%22%20stop-color%3D%22%23F0834E%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%233A1230%22/%3E%0A%3C/linearGradient%3E%0A%3CradialGradient%20id%3D%22sunGlow%22%20cx%3D%2250%25%22%20cy%3D%2276%25%22%20r%3D%2242%25%22%3E%0A%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23FFD9A0%22%20stop-opacity%3D%220.95%22/%3E%3Cstop%20offset%3D%2255%25%22%20stop-color%3D%22%23F0834E%22%20stop-opacity%3D%220.35%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23F0834E%22%20stop-opacity%3D%220%22/%3E%0A%3C/radialGradient%3E%0A%3ClinearGradient%20id%3D%22beam%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%0A%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23E5C158%22%20stop-opacity%3D%220.55%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23E5C158%22%20stop-opacity%3D%220%22/%3E%0A%3C/linearGradient%3E%0A%3ClinearGradient%20id%3D%22beam2%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%0A%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%238FD6FF%22%20stop-opacity%3D%220.4%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%238FD6FF%22%20stop-opacity%3D%220%22/%3E%0A%3C/linearGradient%3E%0A%3ClinearGradient%20id%3D%22goldText%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%0A%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23FFF3A3%22/%3E%3Cstop%20offset%3D%2250%25%22%20stop-color%3D%22%23E5C158%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23B8862F%22/%3E%0A%3C/linearGradient%3E%0A%3ClinearGradient%20id%3D%22crowdFade%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%0A%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%230B0518%22%20stop-opacity%3D%220%22/%3E%3Cstop%20offset%3D%2255%25%22%20stop-color%3D%22%230B0518%22%20stop-opacity%3D%220.72%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%230B0518%22%20stop-opacity%3D%221%22/%3E%0A%3C/linearGradient%3E%0A%3C/defs%3E%0A%0A%3Crect%20width%3D%22600%22%20height%3D%22900%22%20fill%3D%22url%28%23sky%29%22/%3E%0A%3Ccircle%20cx%3D%22300%22%20cy%3D%22640%22%20r%3D%22285%22%20fill%3D%22url%28%23sunGlow%29%22/%3E%0A%0A%3Cg%20opacity%3D%220.85%22%3E%0A%3Ccircle%20cx%3D%2288%22%20cy%3D%2296%22%20r%3D%221.6%22%20fill%3D%22%23fff%22/%3E%3Ccircle%20cx%3D%22182%22%20cy%3D%2258%22%20r%3D%221.1%22%20fill%3D%22%23fff%22/%3E%3Ccircle%20cx%3D%22268%22%20cy%3D%22118%22%20r%3D%221.5%22%20fill%3D%22%23fff%22/%3E%0A%3Ccircle%20cx%3D%22392%22%20cy%3D%2272%22%20r%3D%221.2%22%20fill%3D%22%23fff%22/%3E%3Ccircle%20cx%3D%22470%22%20cy%3D%22136%22%20r%3D%221.7%22%20fill%3D%22%23fff%22/%3E%3Ccircle%20cx%3D%22524%22%20cy%3D%2266%22%20r%3D%221.1%22%20fill%3D%22%23fff%22/%3E%0A%3Ccircle%20cx%3D%22132%22%20cy%3D%22168%22%20r%3D%221.2%22%20fill%3D%22%23fff%22/%3E%3Ccircle%20cx%3D%22342%22%20cy%3D%22182%22%20r%3D%221.3%22%20fill%3D%22%23fff%22/%3E%3Ccircle%20cx%3D%22228%22%20cy%3D%2242%22%20r%3D%221.1%22%20fill%3D%22%23fff%22/%3E%0A%3C/g%3E%0A%0A%3Cg%20opacity%3D%220.7%22%3E%0A%3Cpolygon%20points%3D%22120%2C150%2092%2C470%20168%2C470%22%20fill%3D%22url%28%23beam2%29%22/%3E%0A%3Cpolygon%20points%3D%22300%2C120%20250%2C470%20350%2C470%22%20fill%3D%22url%28%23beam%29%22/%3E%0A%3Cpolygon%20points%3D%22480%2C150%20432%2C470%20508%2C470%22%20fill%3D%22url%28%23beam2%29%22/%3E%0A%3C/g%3E%0A%0A%3C%21--%20Sugarloaf-inspired%20skyline%20silhouette%3A%20Rio%2C%20rendered%20as%20simple%20original%20shapes%20--%3E%0A%3Cg%20fill%3D%22%23150A2E%22%20opacity%3D%220.96%22%3E%0A%3Cpath%20d%3D%22M0%2C596%20L52%2C548%20L96%2C596%20Z%22/%3E%0A%3Cpath%20d%3D%22M84%2C600%20C104%2C536%20152%2C516%20186%2C556%20C206%2C580%20210%2C596%20212%2C600%20Z%22/%3E%0A%3Cpath%20d%3D%22M232%2C600%20C250%2C554%20286%2C540%20306%2C570%20C318%2C588%20320%2C596%20322%2C600%20Z%22/%3E%0A%3Cpath%20d%3D%22M338%2C600%20C366%2C506%20428%2C494%20462%2C554%20C478%2C582%20482%2C594%20484%2C600%20Z%22/%3E%0A%3Cpath%20d%3D%22M498%2C600%20L540%2C552%20L600%2C600%20Z%22/%3E%0A%3Crect%20x%3D%220%22%20y%3D%22596%22%20width%3D%22600%22%20height%3D%2224%22/%3E%0A%3C/g%3E%0A%0A%3C%21--%20Stage%20truss%20%2B%20crowd%20--%3E%0A%3Cg%20opacity%3D%220.95%22%3E%0A%3Crect%20x%3D%22150%22%20y%3D%22612%22%20width%3D%22300%22%20height%3D%228%22%20fill%3D%22%23241040%22/%3E%0A%3Crect%20x%3D%22150%22%20y%3D%22620%22%20width%3D%2210%22%20height%3D%2252%22%20fill%3D%22%23241040%22/%3E%3Crect%20x%3D%22440%22%20y%3D%22620%22%20width%3D%2210%22%20height%3D%2252%22%20fill%3D%22%23241040%22/%3E%0A%3Ccircle%20cx%3D%22196%22%20cy%3D%22608%22%20r%3D%225%22%20fill%3D%22%23E5C158%22%20opacity%3D%220.9%22/%3E%3Ccircle%20cx%3D%22264%22%20cy%3D%22608%22%20r%3D%225%22%20fill%3D%22%238FD6FF%22%20opacity%3D%220.85%22/%3E%0A%3Ccircle%20cx%3D%22336%22%20cy%3D%22608%22%20r%3D%225%22%20fill%3D%22%23E5C158%22%20opacity%3D%220.9%22/%3E%3Ccircle%20cx%3D%22404%22%20cy%3D%22608%22%20r%3D%225%22%20fill%3D%22%23C4487B%22%20opacity%3D%220.85%22/%3E%0A%3C/g%3E%0A%3Cg%20fill%3D%22%230B0518%22%20opacity%3D%220.9%22%3E%0A%3Ccircle%20cx%3D%2240%22%20cy%3D%22686%22%20r%3D%2215%22/%3E%3Ccircle%20cx%3D%2286%22%20cy%3D%22694%22%20r%3D%2213%22/%3E%3Ccircle%20cx%3D%22134%22%20cy%3D%22684%22%20r%3D%2216%22/%3E%3Ccircle%20cx%3D%22184%22%20cy%3D%22696%22%20r%3D%2213%22/%3E%0A%3Ccircle%20cx%3D%22232%22%20cy%3D%22686%22%20r%3D%2215%22/%3E%3Ccircle%20cx%3D%22282%22%20cy%3D%22696%22%20r%3D%2214%22/%3E%3Ccircle%20cx%3D%22330%22%20cy%3D%22684%22%20r%3D%2216%22/%3E%3Ccircle%20cx%3D%22380%22%20cy%3D%22694%22%20r%3D%2213%22/%3E%0A%3Ccircle%20cx%3D%22428%22%20cy%3D%22686%22%20r%3D%2215%22/%3E%3Ccircle%20cx%3D%22476%22%20cy%3D%22696%22%20r%3D%2214%22/%3E%3Ccircle%20cx%3D%22524%22%20cy%3D%22684%22%20r%3D%2216%22/%3E%3Ccircle%20cx%3D%22568%22%20cy%3D%22694%22%20r%3D%2213%22/%3E%0A%3Crect%20x%3D%220%22%20y%3D%22694%22%20width%3D%22600%22%20height%3D%2260%22/%3E%0A%3C/g%3E%0A%3Crect%20x%3D%220%22%20y%3D%22628%22%20width%3D%22600%22%20height%3D%22252%22%20fill%3D%22url%28%23crowdFade%29%22/%3E%0A%0A%3C%21--%20Frame%20--%3E%0A%3Crect%20x%3D%2220%22%20y%3D%2220%22%20width%3D%22560%22%20height%3D%22860%22%20fill%3D%22none%22%20stroke%3D%22%23E5C158%22%20stroke-width%3D%222.5%22%20opacity%3D%220.9%22/%3E%0A%3Crect%20x%3D%2231%22%20y%3D%2231%22%20width%3D%22538%22%20height%3D%22838%22%20fill%3D%22none%22%20stroke%3D%22%23E5C158%22%20stroke-width%3D%221%22%20opacity%3D%220.3%22/%3E%0A%0A%3C%21--%20Type%20--%3E%0A%3Ctext%20x%3D%22300%22%20y%3D%22196%22%20font-family%3D%22Arial%20Black%2C%20Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2215%22%20font-weight%3D%22900%22%20fill%3D%22%23FFF3A3%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%227%22%20opacity%3D%220.95%22%3ERIO%20DE%20JANEIRO%3C/text%3E%0A%3Cline%20x1%3D%22196%22%20y1%3D%22216%22%20x2%3D%22404%22%20y2%3D%22216%22%20stroke%3D%22%23E5C158%22%20stroke-width%3D%221%22%20opacity%3D%220.55%22/%3E%0A%0A%3Ctext%20x%3D%22300%22%20y%3D%22296%22%20font-family%3D%22Arial%20Black%2C%20Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2270%22%20font-weight%3D%22900%22%20fill%3D%22url%28%23goldText%29%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%221%22%3EROCK%3C/text%3E%0A%3Ctext%20x%3D%22300%22%20y%3D%22356%22%20font-family%3D%22Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2234%22%20font-weight%3D%22300%22%20fill%3D%22%23FFF3A3%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%2216%22%20opacity%3D%220.92%22%3EIN%20RIO%3C/text%3E%0A%3Ctext%20x%3D%22300%22%20y%3D%22452%22%20font-family%3D%22Arial%20Black%2C%20Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2282%22%20font-weight%3D%22900%22%20fill%3D%22%23fff%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%224%22%20opacity%3D%220.97%22%3E2026%3C/text%3E%0A%0A%3Cline%20x1%3D%22196%22%20y1%3D%22490%22%20x2%3D%22404%22%20y2%3D%22490%22%20stroke%3D%22%23E5C158%22%20stroke-width%3D%221%22%20opacity%3D%220.55%22/%3E%0A%3Ctext%20x%3D%22300%22%20y%3D%22522%22%20font-family%3D%22Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2217%22%20font-weight%3D%22bold%22%20fill%3D%22%23fff%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%222%22%3ESET%204-7%20%26%23183%3B%2011-13%3C/text%3E%0A%3Ctext%20x%3D%22300%22%20y%3D%22550%22%20font-family%3D%22Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2213%22%20fill%3D%22%23D8C9F0%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%221%22%3ECIDADE%20DO%20ROCK%20%26%23183%3B%20PARQUE%20OL%26%23205%3BMPICO%3C/text%3E%0A%0A%3C%21--%20Live%20badge%20--%3E%0A%3Crect%20x%3D%22222%22%20y%3D%22782%22%20width%3D%22156%22%20height%3D%2230%22%20rx%3D%2215%22%20fill%3D%22%23E5C158%22/%3E%0A%3Ccircle%20cx%3D%22246%22%20cy%3D%22797%22%20r%3D%225%22%20fill%3D%22%23B8241F%22/%3E%0A%3Ctext%20x%3D%22266%22%20y%3D%22802%22%20font-family%3D%22Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2212.5%22%20font-weight%3D%22900%22%20fill%3D%22%2314131A%22%20letter-spacing%3D%221.6%22%3ELIVE%20NOW%3C/text%3E%0A%0A%3Ctext%20x%3D%22300%22%20y%3D%22848%22%20font-family%3D%22Arial%20Black%2C%20Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2217%22%20font-weight%3D%22900%22%20fill%3D%22%23FFF3A3%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%223.5%22%3Ematchapp.cc%3C/text%3E%0A%3C/svg%3E" alt="#RockInRio 2026 — Rio de Janeiro, Brazil">
+                            <div class="spotlight-ribbon" id="rir-ribbon" data-start="2026-09-04" data-end="2026-09-13" data-windows="2026-09-04:2026-09-07,2026-09-11:2026-09-13">LIVE NOW</div>
+                        </div>
+                        <div class="spotlight-body">
+                            <span class="spotlight-eyebrow" data-i18n="ev.rirEyebrow">🔥 Trending Now in Rio de Janeiro</span>
+                            <h2 class="spotlight-title">#RockInRio 2026</h2>
+                            <p class="spotlight-desc">
+                                The 11th edition is underway at Cidade do Rock, headlined by Foo Fighters, Elton John's
+                                final Brazilian show, Maroon 5, Twenty One Pilots, Calvin Harris, Stray Kids and Avenged
+                                Sevenfold across six stages. Tap any artist below for their Spotify page, or get an
+                                AI-built playlist match for the festival.
+                            </p>
+
+                            <div class="spotlight-meta">
+                                <span class="spotlight-chip">📅 <strong>Sept 4-7 &amp; 11-13, 2026</strong></span>
+                                <span class="spotlight-chip">📍 Cidade do Rock, Parque Olímpico</span>
+                                <span class="spotlight-chip">🎪 6 stages</span>
+                            </div>
+
+                            <div class="spotlight-actions">
+                                <button onclick="triggerRockInRioMatch()" class="gold-btn spotlight-save">🎧 Get My Rock in Rio Playlist Match</button>
+                                <button onclick="askAI('Tell me about Rock in Rio 2026 and who I should listen to before the festival')" class="spotlight-ask">🤖 Ask our AI about it</button>
+                            </div>
+
+                            <h4 class="rir-group-h">🌎 International Headliners</h4>
+                            <div class="rir-artists">
+                                <a href="https://open.spotify.com/search/Foo%20Fighters" target="_blank" rel="noopener noreferrer">Foo Fighters</a>
+                                <a href="https://open.spotify.com/search/Elton%20John" target="_blank" rel="noopener noreferrer">Elton John</a>
+                                <a href="https://open.spotify.com/search/Maroon%205" target="_blank" rel="noopener noreferrer">Maroon 5</a>
+                                <a href="https://open.spotify.com/search/Twenty%20One%20Pilots" target="_blank" rel="noopener noreferrer">Twenty One Pilots</a>
+                                <a href="https://open.spotify.com/search/Calvin%20Harris" target="_blank" rel="noopener noreferrer">Calvin Harris</a>
+                                <a href="https://open.spotify.com/search/Stray%20Kids" target="_blank" rel="noopener noreferrer">Stray Kids</a>
+                                <a href="https://open.spotify.com/search/Avenged%20Sevenfold" target="_blank" rel="noopener noreferrer">Avenged Sevenfold</a>
+                                <a href="https://open.spotify.com/search/Black%20Eyed%20Peas" target="_blank" rel="noopener noreferrer">Black Eyed Peas</a>
+                                <a href="https://open.spotify.com/search/Bring%20Me%20the%20Horizon" target="_blank" rel="noopener noreferrer">Bring Me the Horizon</a>
+                                <a href="https://open.spotify.com/search/Demi%20Lovato" target="_blank" rel="noopener noreferrer">Demi Lovato</a>
+                                <a href="https://open.spotify.com/search/Jamiroquai" target="_blank" rel="noopener noreferrer">Jamiroquai</a>
+                                <a href="https://open.spotify.com/search/Rise%20Against" target="_blank" rel="noopener noreferrer">Rise Against</a>
+                                <a href="https://open.spotify.com/search/The%20Hives" target="_blank" rel="noopener noreferrer">The Hives</a>
+                                <a href="https://open.spotify.com/search/Nova%20Twins" target="_blank" rel="noopener noreferrer">Nova Twins</a>
+                                <a href="https://open.spotify.com/search/Ne-Yo" target="_blank" rel="noopener noreferrer">Ne-Yo</a>
+                                <a href="https://open.spotify.com/search/Meduza" target="_blank" rel="noopener noreferrer">Meduza</a>
+                            </div>
+
+                            <h4 class="rir-group-h">🇧🇷 Brazilian Lineup</h4>
+                            <div class="rir-artists">
+                                <a href="https://open.spotify.com/search/Gilberto%20Gil" target="_blank" rel="noopener noreferrer">Gilberto Gil</a>
+                                <a href="https://open.spotify.com/search/Capital%20Inicial" target="_blank" rel="noopener noreferrer">Capital Inicial</a>
+                                <a href="https://open.spotify.com/search/Sepultura" target="_blank" rel="noopener noreferrer">Sepultura</a>
+                                <a href="https://open.spotify.com/search/Bar%C3%A3o%20Vermelho" target="_blank" rel="noopener noreferrer">Barão Vermelho</a>
+                                <a href="https://open.spotify.com/search/Jota%20Quest" target="_blank" rel="noopener noreferrer">Jota Quest</a>
+                                <a href="https://open.spotify.com/search/BaianaSystem" target="_blank" rel="noopener noreferrer">BaianaSystem</a>
+                                <a href="https://open.spotify.com/search/Detonautas" target="_blank" rel="noopener noreferrer">Detonautas</a>
+                                <a href="https://open.spotify.com/search/Di%20Ferrero" target="_blank" rel="noopener noreferrer">Di Ferrero</a>
+                                <a href="https://open.spotify.com/search/Paulinho%20Moska" target="_blank" rel="noopener noreferrer">Paulinho Moska</a>
+                                <a href="https://open.spotify.com/search/Supercombo" target="_blank" rel="noopener noreferrer">Supercombo</a>
+                            </div>
+
+                            <p class="rir-disclaimer">
+                                MatchApp is an independent AI entertainment concierge and is not affiliated with or
+                                endorsed by Rock in Rio, its organizers, sponsors or performing artists. Lineup and
+                                dates per public festival announcements and subject to change.
+                            </p>
+                        </div>
+                    </div>
+                </article>
+                </details>
+
+                <details class="spotlight-details">
+                    <summary class="spotlight-summary">
+                        <span class="spot-sum-icon">🩸</span>
+                        <span class="spot-sum-text">
+                            <strong data-i18n="spot.ahsTitle">American Horror Story 13</strong>
+                            <small data-i18n="spot.ahsSub">Premiere date and countdown</small>
+                        </span>
+                        <span class="spot-sum-chevron" aria-hidden="true">⌄</span>
+                    </summary>
+<article id="spotlight-ahs13" class="premium-card spotlight-card">
+                    <div class="spotlight-glow" aria-hidden="true"></div>
+                    <div class="spotlight-inner">
+                        <div class="spotlight-poster" onclick="saveSpotlightTitle()" role="button" tabindex="0"
+                             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();saveSpotlightTitle();}"
+                             aria-label="Save American Horror Story: 13 to Watch Later">
+                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=164" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
+                            <div class="spotlight-ribbon" data-i18n="spotlight.ribbon">COMING THIS MONTH</div>
+                        </div>
+                        <div class="spotlight-body">
+                            <span class="spotlight-eyebrow" data-i18n="spotlight.eyebrow">🔥 Most Anticipated Premiere</span>
+                            <h2 class="spotlight-title">American Horror Story: 13</h2>
+                            <p class="spotlight-desc" data-i18n="spotlight.desc">The Coven rises again. Jessica Lange, Sarah Paulson, Evan Peters, Angela Bassett and Kathy Bates return for a 13-episode all-star season — plus Ariana Grande's franchise debut.</p>
+
+                            <div class="spotlight-meta">
+                                <span class="spotlight-chip">📅 <strong>Sept 24, 2026</strong></span>
+                                <span class="spotlight-chip">🕘 9/8c</span>
+                                <span class="spotlight-chip">📺 FX &amp; Hulu</span>
+                                <span class="spotlight-chip">🌍 Disney+ <span data-i18n="spotlight.intl">(international)</span></span>
+                            </div>
+
+                            <div id="spotlight-countdown" class="spotlight-countdown" aria-live="polite"></div>
+
+                            <div class="spotlight-actions">
+                                <button onclick="saveSpotlightTitle()" class="gold-btn spotlight-save" id="spotlight-save-btn" data-i18n="spotlight.save">⭐ Save to Watch Later</button>
+                                <button onclick="askAI('Tell me about American Horror Story 13 and what to watch before it premieres')" class="spotlight-ask" data-i18n="spotlight.ask">🤖 Ask our AI about it</button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                </details>
+
+<section id="how-it-works" class="premium-card" style="text-align:center; padding: 30px 28px;">
+                    <h2 style="margin:0 0 10px 0; font-size:26px; color:var(--gold); font-weight:900; text-transform:uppercase; letter-spacing:1px;" data-i18n="how.title">How MatchApp Works</h2>
+                    <p data-i18n-html="how.intro" style="color:#cfc7e0; font-size:16px; line-height:1.7; margin:0 auto 26px auto; max-width:680px;">
+                        MatchApp is your <strong style="color:var(--gold-glow);">premium AI streaming concierge</strong>. Instead of scrolling three apps for forty minutes, tell us what you're in the mood for and our AI finds the one title worth your night — plus exactly where to watch it. It takes about <strong style="color:var(--gold-glow);">15 seconds</strong>.
+                    </p>
+                    <div class="how-steps">
+                        <div class="how-step">
+                            <div class="how-num">1</div>
+                            <h3 data-i18n="how.s1.title">Set Your Mood</h3>
+                            <p data-i18n-html="how.s1.body">Pick a format, platform, mood, era and age rating. Choosing one narrows the rest automatically — or hit <em>Surprise Me</em> and let the AI decide everything.</p>
+                        </div>
+                        <div class="how-step">
+                            <div class="how-num">2</div>
+                            <h3 data-i18n="how.s2.title">Get Your Match</h3>
+                            <p data-i18n-html="how.s2.body">Our AI returns one perfect pick with its real cover art, a playable trailer, and a synopsis — drawn from movies, series, K-dramas, anime, novelas, micro-dramas, podcasts and Spotify.</p>
+                        </div>
+                        <div class="how-step">
+                            <div class="how-num">3</div>
+                            <h3 data-i18n="how.s3.title">Watch It Instantly</h3>
+                            <p data-i18n-html="how.s3.body">One tap opens it on Netflix, Prime, Max, Disney+, Spotify or wherever it lives. Save it to Watch Later, or hit <em>Not For Me</em> and we'll instantly find another.</p>
+                        </div>
+                    </div>
+                    <button onclick="scrollToQuestionnaire()" class="gold-btn" style="margin-top:28px; max-width:420px; font-size:17px; padding:18px;" data-i18n="how.cta">⚡ Find My Match — It's Free</button>
+                    <p style="color:#8f88a5; font-size:12px; margin:14px 0 0 0;" data-i18n="how.freeline">3 free matches daily · Register free for 5 · No credit card required</p>
+                </section>
+
+                
+
+                <!-- HOW IT WORKS — orients first-time visitors straight into the matcher -->
+                
+
+                <!-- AI CONCIERGE FOR ENTERTAINMENT — substantive content on the concierge concept -->
+                <section id="ai-concierge-section" class="premium-card concierge-section">
+                    <h2 data-i18n="concierge.title">Your AI Concierge for Entertainment</h2>
+                    <p data-i18n-html="concierge.p1">MatchApp isn't a filter menu — it's an <strong style="color:var(--gold-glow);">AI Concierge for the entertainment industry</strong>. A hotel concierge doesn't ask you to browse a list of restaurants; you tell them what you're in the mood for, and they know exactly where to send you. MatchApp works the same way, powered by AI instead of local knowledge.</p>
+                    <p data-i18n-html="concierge.p2">Type a full question — <em>"is there a documentary about deep sea exploration?"</em> — or tap the microphone and simply <strong style="color:var(--gold-glow);">speak it in your own language</strong>. The AI Concierge answers like a knowledgeable friend, in natural sentences, and can read its answer back to you aloud. Behind the scenes it's drawing on movies, TV series, K-dramas, anime, telenovelas, vertical micro-dramas, gospel and faith titles, podcasts and Spotify — one consultant across every format and platform, instead of a search box for each.</p>
+                    <div class="concierge-features">
+                        <div class="concierge-feature">
+                            <span class="concierge-feature-icon">🎙️</span>
+                            <span data-i18n="concierge.f1">Voice or text, your choice</span>
+                        </div>
+                        <div class="concierge-feature">
+                            <span class="concierge-feature-icon">🌍</span>
+                            <span data-i18n="concierge.f2">Understands 14 languages</span>
+                        </div>
+                        <div class="concierge-feature">
+                            <span class="concierge-feature-icon">🎬</span>
+                            <span data-i18n="concierge.f3">Every format, one consultant</span>
+                        </div>
+                    </div>
+                </section>
+
+                
+
+                <!-- ADSENSE RESPONSIVE BANNER 2 -->
+                <div class="ad-banner-container premium-ad-frame" style="margin-top: 30px;">
+                    <span style="font-size: 10px; color: #888; display: block; margin-bottom: 5px;">SPONSORED ADVERTISEMENT</span>
+                    <ins class="adsbygoogle" style="display:block; min-height: 90px;" data-ad-client="ca-pub-9541435081010948" data-ad-slot="2595698117" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                </div>
+
+                
+
+                
             </section>
 
             <!-- STICKY ADSENSE SIDEBAR AD RIGHT -->
@@ -2241,10 +2309,10 @@
         </div>
     </div>
 
-    <script src="/app.js?v=163"></script>
-    <script src="/taste.js?v=163"></script>
-    <script src="/share.js?v=163"></script>
-    <script src="/voice-input.js?v=163"></script>
+    <script src="/app.js?v=164"></script>
+    <script src="/taste.js?v=164"></script>
+    <script src="/share.js?v=164"></script>
+    <script src="/voice-input.js?v=164"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initVoiceInput('specific-search-input', 'mic-btn-index', () => smartSearch());
