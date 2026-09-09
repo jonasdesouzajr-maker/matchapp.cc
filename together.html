@@ -90,7 +90,7 @@
     }
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=162">
+    <link rel="stylesheet" href="/style.css?v=163">
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" href="/logo.jpeg">
 
@@ -177,6 +177,28 @@
         .tg-back { display:block; text-align:center; margin-top:22px; color:#8f85a8; font-size:13px; text-decoration:none; }
         .tg-back:hover { color:var(--gold); }
         .tg-ad { text-align:center; margin:26px 0; background:rgba(0,0,0,0.4); border-radius:14px; padding:12px; border:1px dashed rgba(255,255,255,0.14); }
+
+        /* ===== MOBILE DENSITY PASS =====
+           Reduces wasted vertical space so more fits per screen. Tap targets
+           and the 16px input font are deliberately left alone (smaller inputs
+           make iOS Safari auto-zoom on focus). */
+        @media (max-width: 640px) {
+            .tg-card { padding: 16px 14px; margin-top: 14px; border-radius: 16px; }
+            .tg-hero { padding: 18px 0 8px 0; }
+            .tg-h1 { font-size: 23px; margin-bottom: 8px; }
+            .tg-lede { font-size: 13px; line-height: 1.6; }
+            .tg-how { margin: 14px 0 4px 0; gap: 8px; }
+            .tg-how-step { padding: 10px; }
+            .tg-how-text { font-size: 11.5px; }
+            .tg-wrap { padding: 0 12px 46px 12px; }
+            .tg-field { margin-bottom: 11px; }
+            .tg-card h2 { font-size: 18px; margin-bottom: 6px; }
+            .tg-card p.tg-sub { font-size: 12.5px; margin-bottom: 14px; }
+        }
+        @media (max-width: 400px) {
+            .tg-card { padding: 13px 11px; }
+            .tg-h1 { font-size: 20px; }
+        }
     </style>
 </head>
 <body>
@@ -430,9 +452,9 @@
         <p style="text-align:center; color:#8f85a8; font-size:12.5px; margin:24px 0 4px 0;"><span data-i18n="support.ideas">💌 Got an idea for MatchApp? We read every email —</span> <a href="mailto:support@matchapp.cc" style="color:var(--gold); text-decoration:none; font-weight:bold;">support@matchapp.cc</a></p>
     </main>
 
-    <script src="/app.js?v=162"></script>
-    <script src="/i18n.js?v=162"></script>
-    <script defer src="/install.js?v=162"></script>
-    <script src="/together.js?v=162"></script>
+    <script src="/app.js?v=163"></script>
+    <script src="/i18n.js?v=163"></script>
+    <script defer src="/install.js?v=163"></script>
+    <script src="/together.js?v=163"></script>
 </body>
 </html>

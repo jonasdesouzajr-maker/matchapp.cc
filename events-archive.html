@@ -56,7 +56,7 @@
     }
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=162">
+    <link rel="stylesheet" href="/style.css?v=163">
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" href="/logo.jpeg">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
@@ -103,6 +103,20 @@
         /* Respect an OS-level request for reduced motion. */
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+        }
+
+        /* ===== MOBILE DENSITY PASS ===== */
+        @media (max-width: 640px) {
+            .arc-wrap { padding: 0 12px 46px 12px; }
+            .arc-event { padding: 15px 13px; margin-top: 14px; border-radius: 16px; }
+            .arc-hero { padding: 18px 0 6px 0; }
+            .arc-h1 { font-size: 22px; margin-bottom: 8px; }
+            .arc-lede { font-size: 13px; line-height: 1.6; }
+            .arc-event h2 { font-size: 19px; }
+            .arc-blurb { font-size: 13px; line-height: 1.6; margin-bottom: 14px; }
+            .arc-group { margin: 14px 0 8px 0; font-size: 11px; }
+            .arc-artists { gap: 7px; }
+            .arc-artist { font-size: 12px; padding: 7px 11px; }
         }
     </style>
 </head>
@@ -209,7 +223,7 @@
         <p style="text-align:center; color:#8f85a8; font-size:12.5px; margin:24px 0 4px 0;"><span data-i18n="support.ideas">💌 Got an idea for MatchApp? We read every email —</span> <a href="mailto:support@matchapp.cc" style="color:var(--gold); text-decoration:none; font-weight:bold;">support@matchapp.cc</a></p>
     </main>
 
-    <script src="/i18n.js?v=162"></script>
-    <script defer src="/install.js?v=162"></script>
+    <script src="/i18n.js?v=163"></script>
+    <script defer src="/install.js?v=163"></script>
 </body>
 </html>

@@ -418,8 +418,8 @@
     <link rel="alternate" hreflang="zh" href="https://matchapp.cc/?lang=zh">
 
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=162"></script>
-    <script defer src="/install.js?v=162"></script>
+    <script defer src="/i18n.js?v=163"></script>
+    <script defer src="/install.js?v=163"></script>
 
     <!-- GOOGLE ANALYTICS (GTAG) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
@@ -445,7 +445,7 @@
         });
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=162">
+    <link rel="stylesheet" href="/style.css?v=163">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -1175,6 +1175,58 @@
                platform names, so go single column. */
             .streaming-links a, .rir-artists a { flex: 1 1 100%; }
         }
+
+        /* ===== MOBILE DENSITY PASS =====
+           Placed last so it layers cleanly over the rules above rather than
+           competing with them. Everything here removes WASTED VERTICAL SPACE
+           (padding, margins, oversized headings) so more real content fits
+           per screen and there's less scrolling to reach anything.
+
+           Deliberately NOT reduced: button and select heights, and the 16px
+           font on form inputs. Shrinking tap targets makes a phone harder to
+           use, and any input font below 16px makes iOS Safari auto-zoom the
+           whole page on focus, which feels broken. The density comes from the
+           space BETWEEN elements, not from making them hard to tap. */
+        @media (max-width: 640px) {
+            /* Card chrome: 35px padding + 30px margin on every card is a lot
+               of dead space once several stack down a phone screen. */
+            .premium-card { padding: 16px 14px !important; margin-bottom: 16px !important; border-radius: 16px; }
+            .main-layout { padding-top: 14px; gap: 12px; }
+            .container { padding-bottom: 50px; }
+
+            /* Hero */
+            .home-hero { padding: 2px 6px 12px 6px; }
+            .home-h1 { font-size: 21px; margin-bottom: 7px; }
+            .home-h1-sub { font-size: 12.5px; line-height: 1.55; }
+
+            /* Rails */
+            .marquee-wrapper { padding: 11px 0; margin-bottom: 16px; border-radius: 13px; }
+            .events-wrapper { margin-bottom: 16px; }
+            .rail-heading { margin: 0 0 9px 14px; }
+
+            /* Section headings across the page */
+            .concierge-section { padding: 18px 15px; }
+            .concierge-section h2 { font-size: 20px !important; }
+
+            /* Questionnaire: 25px between every control adds up fast */
+            .q-grid { gap: 13px !important; }
+
+            /* Entry cards + quick-jump row */
+            .tg-entry { margin-bottom: 14px; }
+            .quick-jump-row { margin-bottom: 11px; gap: 8px; }
+            .upgrade-ribbon { padding: 8px 12px; }
+
+            /* "How it works" step cards */
+            .how-steps { gap: 12px !important; }
+            .how-step { padding: 14px 12px !important; }
+        }
+        @media (max-width: 400px) {
+            /* Smallest common phones — tighten the chrome further, still
+               without touching tap targets. */
+            .premium-card { padding: 13px 11px !important; }
+            .home-h1 { font-size: 19px; }
+            .concierge-section { padding: 15px 12px; }
+        }
     </style>
 </head>
 <body>
@@ -1469,7 +1521,7 @@
                         <div class="spotlight-poster" onclick="saveSpotlightTitle()" role="button" tabindex="0"
                              onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();saveSpotlightTitle();}"
                              aria-label="Save American Horror Story: 13 to Watch Later">
-                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=162" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
+                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=163" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
                             <div class="spotlight-ribbon" data-i18n="spotlight.ribbon">COMING THIS MONTH</div>
                         </div>
                         <div class="spotlight-body">
@@ -2189,10 +2241,10 @@
         </div>
     </div>
 
-    <script src="/app.js?v=162"></script>
-    <script src="/taste.js?v=162"></script>
-    <script src="/share.js?v=162"></script>
-    <script src="/voice-input.js?v=162"></script>
+    <script src="/app.js?v=163"></script>
+    <script src="/taste.js?v=163"></script>
+    <script src="/share.js?v=163"></script>
+    <script src="/voice-input.js?v=163"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initVoiceInput('specific-search-input', 'mic-btn-index', () => smartSearch());

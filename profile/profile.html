@@ -34,7 +34,7 @@
         });
     </script>
     
-    <link rel="stylesheet" href="/style.css?v=162">
+    <link rel="stylesheet" href="/style.css?v=163">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --gold: #E5C158; --gold-deep: #B8912F; --gold-glow: #FFF3A3; --ink: #14131A; --royal-deep: #130734; --royal: #402562; --royal-lift: #6B3FA0; --royal-glow: #A376B6; --bg-dark: #14131A; --card-bg: rgba(26, 22, 38, 0.90); }
@@ -159,6 +159,23 @@
         /* Respect an OS-level request for less motion. */
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+        }
+
+        /* ===== MOBILE DENSITY PASS =====
+           Wasted vertical space only. Tap targets and the 16px input font are
+           left alone on purpose (smaller inputs trigger iOS auto-zoom). */
+        @media (max-width: 640px) {
+            .premium-card { padding: 16px 14px; margin-bottom: 16px; border-radius: 16px; }
+            .taste-card { padding: 16px 14px; margin-bottom: 16px; }
+            .taste-header { margin-bottom: 13px; }
+            .taste-header h3 { font-size: 18px; }
+            .taste-sub { font-size: 11.5px; }
+            .taste-headline { font-size: 15px; padding: 11px; margin-bottom: 14px; }
+            .taste-section { margin-bottom: 13px; }
+            .portfolio-tabs { gap: 8px; margin-bottom: 14px; }
+        }
+        @media (max-width: 400px) {
+            .premium-card, .taste-card { padding: 13px 11px; }
         }
     </style>
 </head>
@@ -404,10 +421,10 @@
         <p style="text-align:center; color:#8f85a8; font-size:12.5px; margin:24px 0 4px 0;"><span data-i18n="support.ideas">💌 Got an idea for MatchApp? We read every email —</span> <a href="mailto:support@matchapp.cc" style="color:var(--gold); text-decoration:none; font-weight:bold;">support@matchapp.cc</a></p>
     </main>
 
-    <script src="/i18n.js?v=162"></script>
-    <script defer src="/install.js?v=162"></script>
-    <script src="/app.js?v=162"></script>
-    <script src="/taste.js?v=162"></script>
-    <script src="/profile.js?v=162"></script>
+    <script src="/i18n.js?v=163"></script>
+    <script defer src="/install.js?v=163"></script>
+    <script src="/app.js?v=163"></script>
+    <script src="/taste.js?v=163"></script>
+    <script src="/profile.js?v=163"></script>
 </body>
 </html>
