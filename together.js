@@ -339,12 +339,23 @@ function tgRenderResult(result, participants) {
             : `Your picks were quite different, so this one works for everyone.`;
     }
 
-    // Poster — same never-fail chain as the solo flow.
+    // Poster — same never-fail chain as the solo flow, and now the same
+    // disambiguation hints too. This used to call getRealCoverImage with no
+    // hints at all, which is the exact "Hell's Paradise" class of bug in a
+    // second rendering path: a catalog title with a real, known year/country
+    // was being looked up as if neither existed.
     const img = tgEl('tg-result-poster');
     if (img && result.title) {
         img.src = `https://placehold.co/600x900/1a0505/E5C158?text=${encodeURIComponent(result.title)}`;
+        let posterHints = {};
+        try {
+            if (typeof CONTENT_CATALOG !== 'undefined') {
+                const e = CONTENT_CATALOG.find(x => x.title === result.title);
+                if (e) posterHints = { year: e.year, country: e.country, countryCode: e.countryCode };
+            }
+        } catch (err) {}
         if (typeof getRealCoverImage === 'function') {
-            getRealCoverImage(result.title).then(url => { if (url) img.src = url; }).catch(() => {});
+            getRealCoverImage(result.title, posterHints).then(url => { if (url) img.src = url; }).catch(() => {});
         }
     }
 

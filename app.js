@@ -421,8 +421,8 @@ function isRelevantMatch(query, resultName) {
     return true;
 }
 
-async function itunesLookup(title, media) {
-    const rich = await itunesRichLookup(title, media);
+async function itunesLookup(title, media, hints) {
+    const rich = await itunesRichLookup(title, media, hints);
     return rich ? rich.artwork : null;
 }
 
@@ -446,30 +446,73 @@ function fetchWithTimeout(url, ms = 3500) {
     return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(timer));
 }
 
-async function itunesRichLookup(title, media) {
+// Scores an iTunes result against catalog hints, mirroring scoreCandidate()
+// used for TVMaze below — same philosophy, adapted to what iTunes actually
+// returns (a releaseDate, and sometimes a country field on the result).
+function scoreITunesResult(r, hints) {
+    let score = 0;
+    if (!hints || (!hints.year && !hints.countryCode)) return 0; // nothing to score against
+    const year = r.releaseDate ? parseInt(String(r.releaseDate).slice(0, 4), 10) : null;
+    if (hints.year && year) {
+        const gap = Math.abs(year - hints.year);
+        if (gap === 0) score += 5;
+        else if (gap <= 1) score += 3;
+        else if (gap > 6) score -= 4;
+    }
+    if (hints.countryCode && r.country) {
+        score += (r.country === hints.countryCode) ? 3 : -2;
+    }
+    return score;
+}
+
+async function itunesRichLookup(title, media, hints) {
     if (!title) return null;
-    const cacheKey = `${title}::${media}`;
+    const cacheKey = `${title}::${media}::${hints ? hints.year || '' : ''}${hints ? hints.countryCode || '' : ''}`;
     if (META_CACHE[cacheKey] !== undefined) return META_CACHE[cacheKey];
     try {
-        const res = await fetchWithTimeout(`https://itunes.apple.com/search?term=${encodeURIComponent(title)}&media=${media}&limit=1`);
+        // THE ACTUAL BUG: this used limit=1, meaning iTunes' single top-ranked
+        // guess was trusted outright with no validation beyond a name check —
+        // even though the response already carries a releaseDate that could
+        // have been checked against the catalog's own known year all along.
+        // Fetching a small handful of candidates and scoring them (only when
+        // we actually have hints to score against) is what "Kingdom" and now
+        // "Hell's Paradise" both needed: several works can share a name, and
+        // iTunes' internal relevance ranking has no idea which one our
+        // catalog actually means.
+        const res = await fetchWithTimeout(`https://itunes.apple.com/search?term=${encodeURIComponent(title)}&media=${media}&limit=5`);
         if (res.ok) {
             const data = await res.json();
-            if (data.results && data.results.length > 0) {
-                const r = data.results[0];
-                const resultName = r.trackName || r.collectionName || '';
-                if ((r.artworkUrl100 || r.previewUrl) && isRelevantMatch(title, resultName)) {
-                    const meta = {
-                        title: resultName || title,
-                        artwork: upgradeArtwork(r.artworkUrl100),
-                        preview: r.previewUrl || null,
-                        storeUrl: r.trackViewUrl || r.collectionViewUrl || null,
-                        kind: r.kind || media,
-                        year: r.releaseDate ? String(r.releaseDate).substring(0, 4) : null,
-                        description: r.longDescription || r.shortDescription || null
-                    };
-                    META_CACHE[cacheKey] = meta;
-                    return meta;
+            const raw = Array.isArray(data.results) ? data.results : [];
+            const viable = raw.filter(r => {
+                const name = r.trackName || r.collectionName || '';
+                return (r.artworkUrl100 || r.previewUrl) && isRelevantMatch(title, name);
+            });
+            if (viable.length) {
+                let best = viable[0], bestScore = -Infinity;
+                for (const r of viable) {
+                    const sc = scoreITunesResult(r, hints);
+                    if (sc > bestScore) { bestScore = sc; best = r; }
                 }
+                // Same rule as the TVMaze path: if we HAD hints and nothing
+                // scored positively, every candidate is probably the wrong
+                // work. A generated placeholder beats confidently showing
+                // someone else's cover.
+                if (hints && (hints.year || hints.countryCode) && bestScore <= 0) {
+                    META_CACHE[cacheKey] = null;
+                    return null;
+                }
+                const resultName = best.trackName || best.collectionName || '';
+                const meta = {
+                    title: resultName || title,
+                    artwork: upgradeArtwork(best.artworkUrl100),
+                    preview: best.previewUrl || null,
+                    storeUrl: best.trackViewUrl || best.collectionViewUrl || null,
+                    kind: best.kind || media,
+                    year: best.releaseDate ? String(best.releaseDate).substring(0, 4) : null,
+                    description: best.longDescription || best.shortDescription || null
+                };
+                META_CACHE[cacheKey] = meta;
+                return meta;
             }
         }
     } catch (e) {}
@@ -489,7 +532,7 @@ function isVideoPreview(meta) {
     return /movie|tv|video|short/i.test(meta.kind || '');
 }
 
-async function getRichMetadata(title, categoryHint) {
+async function getRichMetadata(title, categoryHint, hints) {
     const hint = (categoryHint || '').toLowerCase();
     const wantsAudio = /podcast|playlist|music|single|album|audiobook|spotify/.test(hint);
 
@@ -510,7 +553,7 @@ async function getRichMetadata(title, categoryHint) {
     // still walks the results in the exact same priority order as before, so
     // which one wins is unchanged; only the worst-case wait time drops, from
     // up to 4x a single timeout down to about 1x.
-    const results = await Promise.all(order.map(media => itunesRichLookup(title, media)));
+    const results = await Promise.all(order.map(media => itunesRichLookup(title, media, hints)));
 
     let bestArtworkOnly = null;
     for (const meta of results) {
@@ -646,11 +689,12 @@ async function fetchTitleMeta(title, hints) {
 }
 window.fetchTitleMeta = fetchTitleMeta;
 
-async function getRealCoverImage(title) {
+async function getRealCoverImage(title, hints) {
     if (!title) return generatedCover(title);
-    if (COVER_CACHE[title]) return COVER_CACHE[title];
+    const cacheKey = hints && (hints.year || hints.countryCode) ? `${title}::${hints.year || ''}${hints.countryCode || ''}` : title;
+    if (COVER_CACHE[cacheKey]) return COVER_CACHE[cacheKey];
 
-    const cacheAndReturn = (url) => { COVER_CACHE[title] = url; return url; };
+    const cacheAndReturn = (url) => { COVER_CACHE[cacheKey] = url; return url; };
 
     // 1. Offline Dictionary — exact match only (case-insensitive). The previous
     //    version used title.includes(key) in either direction, so a title that
@@ -660,11 +704,12 @@ async function getRealCoverImage(title) {
     const exactKey = Object.keys(OFFLINE_COVERS).find(k => k.toLowerCase() === title.toLowerCase());
     if (exactKey) return cacheAndReturn(OFFLINE_COVERS[exactKey]);
 
-    // 2. iTunes across several media types — itunesLookup already runs every
-    //    result through isRelevantMatch(), so nothing unrelated gets this far.
-    //    Fetched concurrently (bounded by fetchWithTimeout per-call) instead of
-    //    sequentially; the first truthy result in this same order still wins.
-    const arts = await Promise.all(['movie', 'tvShow', 'podcast', 'music'].map(media => itunesLookup(title, media)));
+    // 2. iTunes across several media types — itunesLookup now scores multiple
+    //    candidates against hints (year/country) when we have them, instead of
+    //    trusting iTunes' single top-ranked guess outright. Fetched concurrently
+    //    (bounded by fetchWithTimeout per-call) instead of sequentially; the
+    //    first truthy result in this same order still wins.
+    const arts = await Promise.all(['movie', 'tvShow', 'podcast', 'music'].map(media => itunesLookup(title, media, hints)));
     for (const art of arts) { if (art) return cacheAndReturn(art); }
 
     // 3. TVMaze (strong for international + K-drama series).
@@ -676,13 +721,28 @@ async function getRealCoverImage(title) {
     //    iTunes (step 2) correctly finds nothing, control reaches this TVMaze
     //    call, and it confidently hands back an unrelated show's poster. Same
     //    isRelevantMatch() guard as the iTunes path now applies here too.
+    //    Singlesearch only ever returns ONE candidate, so unlike iTunes above
+    //    there's nothing to rank — but when hints exist, a wildly wrong
+    //    premiere year is still a strong enough signal to reject it outright
+    //    rather than accept whatever single guess TVMaze made.
     try {
         const tvRes = await fetchWithTimeout(`https://api.tvmaze.com/singlesearch/shows?q=${encodeURIComponent(title)}`);
         if (tvRes.ok) {
             const tvData = await tvRes.json();
             const img = tvData && tvData.image && (tvData.image.original || tvData.image.medium);
             if (img && isRelevantMatch(title, tvData.name || '')) {
-                return cacheAndReturn(img);
+                if (hints && hints.year && tvData.premiered) {
+                    const tvYear = parseInt(String(tvData.premiered).slice(0, 4), 10);
+                    if (!isNaN(tvYear) && Math.abs(tvYear - hints.year) > 6) {
+                        // Wrong era entirely — almost certainly a different
+                        // work sharing the name. Fall through to a generated
+                        // cover rather than show it.
+                    } else {
+                        return cacheAndReturn(img);
+                    }
+                } else {
+                    return cacheAndReturn(img);
+                }
             }
         }
     } catch(e) {}
@@ -830,8 +890,9 @@ async function hydrateMarqueeCovers() {
         if (riskyByCatalog || riskyByPlatform || (typeof VERTICAL_DRAMA_TITLES !== 'undefined' && VERTICAL_DRAMA_TITLES.includes(title))) return;
 
         try {
-            const meta = await getRichMetadata(title, 'series');
-            const real = (meta && meta.artwork) ? meta.artwork : await getRealCoverImage(title);
+            const rowHints = catalogEntry ? { year: catalogEntry.year, country: catalogEntry.country, countryCode: catalogEntry.countryCode } : {};
+            const meta = await getRichMetadata(title, 'series', rowHints);
+            const real = (meta && meta.artwork) ? meta.artwork : await getRealCoverImage(title, rowHints);
             if (real) {
                 img.onerror = function() { this.onerror = null; this.src = generateLocalPosterSVG(title); };
                 img.src = real;
@@ -2322,7 +2383,7 @@ function renderMatchCriteria() {
 
 // Fills origin/year/genre and cast from live metadata, using the catalog's own
 // year/country as disambiguation hints so same-named works can't be confused.
-async function hydrateTitleFacts(selected) {
+async function hydrateTitleFacts(selected, hints) {
     const bar = document.getElementById('res-factbar');
     const castEl = document.getElementById('res-cast');
     const synEl = document.getElementById('res-synopsis');
@@ -2330,14 +2391,7 @@ async function hydrateTitleFacts(selected) {
     if (castEl) { castEl.style.display = 'none'; castEl.textContent = ''; }
     if (!selected || !selected.title) return;
 
-    // Catalog hints, when we have them.
-    let hints = {};
-    try {
-        if (typeof CONTENT_CATALOG !== 'undefined') {
-            const e = CONTENT_CATALOG.find(x => x.title === selected.title);
-            if (e) hints = { year: e.year, country: e.country, countryCode: e.countryCode, cast: e.cast };
-        }
-    } catch (err) {}
+    hints = hints || {};
 
     // Show what the catalog already knows immediately, so the card is never
     // empty while the network call is in flight.
@@ -2386,9 +2440,26 @@ async function renderResult(selected, isSpecificSearch) {
     if (loadBox) loadBox.style.display = 'none';
     resultBox.style.display = 'block'; resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
+    // Computed ONCE and shared by both the poster lookup below and
+    // hydrateTitleFacts(). Previously each ran its own separate,
+    // independently-hinted (or unhinted) search — the poster came from
+    // itunesRichLookup with NO year/country check at all, while the fact bar
+    // came from a completely different TVMaze call that WAS disambiguated,
+    // and its correctly-verified poster field was computed and then silently
+    // thrown away. The poster and the "2023 · Japan" caption under it could
+    // therefore each be right about a DIFFERENT show. One shared hints object
+    // closes that gap at the source rather than patching either lookup alone.
+    let matchHints = {};
+    try {
+        if (typeof CONTENT_CATALOG !== 'undefined') {
+            const e = CONTENT_CATALOG.find(x => x.title === selected.title);
+            if (e) matchHints = { year: e.year, country: e.country, countryCode: e.countryCode, cast: e.cast };
+        }
+    } catch (err) {}
+
     renderQuotaCorner();
     renderMatchCriteria();
-    hydrateTitleFacts(selected);
+    hydrateTitleFacts(selected, matchHints);
 
     // TRIGGER PREMIUM FX
     window.playPremiumSound();
@@ -2424,7 +2495,7 @@ async function renderResult(selected, isSpecificSearch) {
     // The discovery engine already carries artwork/preview/store data — reuse it
     // instead of making a second network round-trip for the same title.
     let meta = selected._meta || null;
-    if (!meta && !skipLiveLookup && !verified) meta = await getRichMetadata(selected.title, categoryHint);
+    if (!meta && !skipLiveLookup && !verified) meta = await getRichMetadata(selected.title, categoryHint, matchHints);
 
     let realCover;
     if (verified) {
@@ -2432,7 +2503,7 @@ async function renderResult(selected, isSpecificSearch) {
     } else if (skipLiveLookup && !(meta && meta.artwork)) {
         realCover = generateLocalPosterSVG(selected.title);
     } else {
-        realCover = (meta && meta.artwork) ? meta.artwork : await getRealCoverImage(selected.title);
+        realCover = (meta && meta.artwork) ? meta.artwork : await getRealCoverImage(selected.title, matchHints);
     }
     if (!realCover) realCover = generateLocalPosterSVG(selected.title);
 

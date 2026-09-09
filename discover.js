@@ -323,7 +323,19 @@ async function hydrateDiscoverCard(item, idx) {
 
     let meta = item._meta || null;
     if (!meta && !skipLiveLookup && !verified && typeof getRichMetadata === 'function') {
-        meta = await getRichMetadata(item.title, item.type || '');
+        // If this AI-chat title happens to also be one of our curated catalog
+        // entries, use its real year/country to disambiguate the same way the
+        // main match render does. The common case is no catalog hit at all
+        // (most AI answers aren't in it), in which case this is a no-op and
+        // behaviour is unchanged from before.
+        let chatHints = {};
+        try {
+            if (typeof CONTENT_CATALOG !== 'undefined') {
+                const e = CONTENT_CATALOG.find(x => x.title === item.title);
+                if (e) chatHints = { year: e.year, country: e.country, countryCode: e.countryCode };
+            }
+        } catch (err) {}
+        meta = await getRichMetadata(item.title, item.type || '', chatHints);
     }
     // The TVMaze secondary attempt is deliberately NOT used for AI-chat
     // results at all (unlike the main match render, which does use it for
