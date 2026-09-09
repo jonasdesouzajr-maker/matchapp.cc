@@ -24,6 +24,10 @@
         <div style="font-size: 60px; margin-bottom: 20px; animation: pulseIcon 1.5s infinite; filter: drop-shadow(0 0 20px var(--gold));">🛡️</div>
         <h2 style="color: var(--gold); font-size: 28px; margin: 0 0 10px 0;">Authenticating Securely</h2>
         <p style="color: var(--text-muted); font-size: 15px;">Establishing secure connection with Google...</p>
+        <!-- Visible escape hatch, not just a timer. If Supabase is slow, blocked
+             by an ad blocker, or fails outright, a person shouldn't be staring
+             at a spinner with zero way out. -->
+        <a href="/index.html" style="display:inline-block; margin-top:22px; color:#8f85a8; font-size:13px; text-decoration:none;">← Cancel and return home</a>
     </div>
 
     <!-- Hidden Engine -->
@@ -40,6 +44,15 @@
                         // If it fails, send them back so they can try again.
                         window.location.href = 'index.html'; 
                     }
+                } else {
+                    // BUG FIXED: this branch didn't exist before. If Supabase's
+                    // client never initialised (slow network, ad blocker,
+                    // script failure), nothing here ever fired, and the visible
+                    // link above was the ONLY way out — someone could otherwise
+                    // sit on this screen indefinitely. Now it degrades the same
+                    // way the other two outcomes already do: back to the
+                    // homepage, where they can simply try signing in again.
+                    window.location.href = 'index.html';
                 }
             }, 2500); // Gives the aesthetic loading screen 2.5 seconds to shine
         });
