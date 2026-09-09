@@ -20,8 +20,8 @@
       gtag('set', 'ads_data_redaction', true); gtag('set', 'url_passthrough', true);
     </script>
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=153"></script>
-    <script defer src="/install.js?v=153"></script>
+    <script defer src="/i18n.js?v=154"></script>
+    <script defer src="/install.js?v=154"></script>
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
     <script>gtag('js', new Date()); gtag('config', 'G-2ECND229RR');</script>
@@ -130,9 +130,22 @@
     }
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=153">
+    <link rel="stylesheet" href="/style.css?v=154">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
+    <script>
+        // AUTO ADS — lets Google's own placement algorithm find additional
+        // ad slots on this page, on top of the manual units already placed
+        // by hand below. This is the real "Auto ads" feature (Google decides
+        // where), distinct from the data-ad-format="auto" on the manual
+        // units (which only means a single unit resizes itself to its
+        // container). Google's own system is what enforces its own density
+        // and placement policies here, rather than guesswork on our end.
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-9541435081010948",
+            enable_page_level_ads: true
+        });
+    </script>
 
     <style>
         .app-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 25px; background: rgba(10,5,5,0.95); border-bottom: 2px solid var(--gold); box-shadow: 0 4px 25px rgba(212,175,55,0.4); flex-wrap: wrap; gap: 15px; }
