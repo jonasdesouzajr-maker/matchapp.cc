@@ -418,8 +418,9 @@
     <link rel="alternate" hreflang="zh" href="https://matchapp.cc/?lang=zh">
 
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=164"></script>
-    <script defer src="/install.js?v=164"></script>
+    <script defer src="/i18n.js?v=165"></script>
+    <script defer src="/install.js?v=165"></script>
+    <script defer src="/ambient.js?v=165"></script>
 
     <!-- GOOGLE ANALYTICS (GTAG) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
@@ -445,7 +446,7 @@
         });
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=164">
+    <link rel="stylesheet" href="/style.css?v=165">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -456,14 +457,52 @@
         :root { --gold: #E5C158; --gold-deep: #B8912F; --gold-glow: #FFF3A3; --ink: #14131A; --ink-2: #1A191F; --royal-deep: #130734; --royal: #402562; --royal-lift: #6B3FA0; --royal-glow: #A376B6; --bg-dark: #14131A; --card-bg: rgba(26, 22, 38, 0.90); }
         body { margin: 0; background: var(--bg-dark); color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; position: relative; }
         
-        #floating-logos-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -1; overflow: hidden; opacity: 0.15; }
-        .floating-logo { position: absolute; border-radius: 12px; filter: grayscale(100%) brightness(200%); animation: floatUp linear infinite; opacity: 0.5; }
-        @keyframes floatUp { 0% { transform: translateY(100vh) scale(0.8) rotate(0deg); opacity: 0; } 10% { opacity: 0.5; } 90% { opacity: 0.5; } 100% { transform: translateY(-20vh) scale(1.2) rotate(360deg); opacity: 0; } }
+        
+        
+        
 
         /* CHROME INJECTOR BANNER */
-        #chrome-notice { background: linear-gradient(90deg, #E5C158, #b38f36); text-align: center; padding: 12px; font-weight: 900; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; z-index: 2000; position: relative; box-shadow: 0 4px 15px rgba(229,193,88,0.4); cursor: pointer; transition: 0.3s; }
-        #chrome-notice:hover { filter: brightness(1.1); }
-        .chrome-link { color: #000; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; height: 100%; }
+        /* ===== AMBIENT BACKGROUND CANVAS =====
+           Fixed behind all content, non-interactive, and below every z-index
+           in use so it can never intercept a tap. */
+        #ambient-bg { position: fixed; inset: 0; width: 100vw; height: 100vh;
+                      pointer-events: none; z-index: -1; display: block; }
+
+        /* ===== CHROME HINT — subtle pill, not a billboard =====
+           Was a full-width solid-gold bar at 14px uppercase with 12px padding:
+           loud, generic, and stealing real estate from the content. Now a small
+           centred pill in the site's own purple/gold palette, roughly a third
+           of the height, that reads as part of the UI rather than a banner
+           bolted on top of it. The shimmer is a slow gold sweep across the
+           border — present enough to catch the eye once, quiet enough to
+           ignore. */
+        #chrome-notice { display: flex; justify-content: center; padding: 7px 12px 0 12px;
+                         z-index: 2000; position: relative; cursor: pointer; }
+        .chrome-link { display: inline-flex; align-items: center; gap: 7px;
+                       color: #cbbfe4; text-decoration: none;
+                       font-size: 10.5px; font-weight: 700; letter-spacing: 0.4px;
+                       padding: 5px 13px; border-radius: 999px;
+                       background: linear-gradient(100deg, rgba(107,63,160,0.42), rgba(30,20,55,0.7), rgba(107,63,160,0.42));
+                       background-size: 220% 100%;
+                       border: 1px solid rgba(229,193,88,0.42);
+                       box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+                       animation: chromeShimmer 7s ease-in-out infinite;
+                       transition: color 0.25s, border-color 0.25s, transform 0.25s; }
+        .chrome-mark { flex-shrink: 0; color: var(--gold); opacity: 0.9; }
+        .chrome-arrow { color: var(--gold); font-size: 11px; opacity: 0.75;
+                        transition: transform 0.25s; }
+        #chrome-notice:hover .chrome-link { color: #fff; border-color: var(--gold); transform: translateY(-1px); }
+        #chrome-notice:hover .chrome-arrow { transform: translateX(3px); }
+        /* Slow sweep of the gradient plus a soft gold glow pulse on the border. */
+        @keyframes chromeShimmer {
+            0%, 100% { background-position: 0% 50%; box-shadow: 0 2px 10px rgba(0,0,0,0.4); }
+            50%      { background-position: 100% 50%; box-shadow: 0 2px 16px rgba(229,193,88,0.28); }
+        }
+        @media (prefers-reduced-motion: reduce) { .chrome-link { animation: none; } }
+        @media (max-width: 480px) {
+            .chrome-link { font-size: 9.5px; padding: 4px 11px; gap: 6px; }
+        }
+        
 
         .app-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 25px; background: linear-gradient(135deg, rgba(19,7,52,0.97), rgba(26,25,31,0.97)); border-bottom: 2px solid var(--gold); box-shadow: 0 4px 40px rgba(107,63,160,0.45); flex-wrap: wrap; gap: 15px; position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(15px); }
         .header-brand-area { display: flex; align-items: center; gap: 15px; text-decoration: none; }
@@ -1265,13 +1304,25 @@
 <body>
 
     <!-- OS-LEVEL CHROME DEEP LINK INJECTOR -->
-    <div id="chrome-notice" onclick="openInChrome()">
-        <div class="chrome-link">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/8/87/Google_Chrome_icon_%282011%29.png" alt="Chrome" style="width: 22px; height: 22px;">
+    <div id="chrome-notice" onclick="openInChrome()" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openInChrome()">
+        <span class="chrome-link">
+            <!-- Chrome mark drawn locally rather than hotlinked from Wikimedia.
+                 The old <img> depended on an external server we don't control,
+                 and at 22px a remote request for a logo is pure overhead. -->
+            <svg class="chrome-mark" viewBox="0 0 48 48" width="14" height="14" aria-hidden="true" focusable="false">
+                <circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" stroke-width="4" opacity="0.5"/>
+                <circle cx="24" cy="24" r="8.5" fill="none" stroke="currentColor" stroke-width="4"/>
+                <line x1="31.5" y1="19.5" x2="45" y2="19.5" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+                <line x1="19.7" y1="30.9" x2="12.9" y2="42.6" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+                <line x1="24" y1="15.5" x2="17.2" y2="3.8" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+            </svg>
             <span data-i18n="chrome.notice">Open on Google Chrome for the Best Experience</span>
-        </div>
+            <span class="chrome-arrow" aria-hidden="true">→</span>
+        </span>
     </div>
-    <div id="floating-logos-container"></div>
+    <!-- Ambient background: flowing aurora waves + streaming logos with real
+         collision physics. See ambient.js. -->
+    <canvas id="ambient-bg" aria-hidden="true"></canvas>
 
     <header class="app-header">
         <a href="/index.html" class="header-brand-area">
@@ -1945,7 +1996,7 @@
                         <div class="spotlight-poster" onclick="saveSpotlightTitle()" role="button" tabindex="0"
                              onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();saveSpotlightTitle();}"
                              aria-label="Save American Horror Story: 13 to Watch Later">
-                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=164" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
+                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=165" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
                             <div class="spotlight-ribbon" data-i18n="spotlight.ribbon">COMING THIS MONTH</div>
                         </div>
                         <div class="spotlight-body">
@@ -2309,10 +2360,10 @@
         </div>
     </div>
 
-    <script src="/app.js?v=164"></script>
-    <script src="/taste.js?v=164"></script>
-    <script src="/share.js?v=164"></script>
-    <script src="/voice-input.js?v=164"></script>
+    <script src="/app.js?v=165"></script>
+    <script src="/taste.js?v=165"></script>
+    <script src="/share.js?v=165"></script>
+    <script src="/voice-input.js?v=165"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initVoiceInput('specific-search-input', 'mic-btn-index', () => smartSearch());
@@ -2331,26 +2382,8 @@
             }
         }
 
-        const logos = [
-            "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg",
-            "https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg",
-            "https://upload.wikimedia.org/wikipedia/commons/c/ce/Max_logo.svg",
-            "https://upload.wikimedia.org/wikipedia/commons/3/3e/Disney%2B_logo.svg"
-        ];
-        function createFloatingLogo() {
-            const container = document.getElementById('floating-logos-container');
-            if(!container) return;
-            const img = document.createElement('img');
-            img.src = logos[Math.floor(Math.random() * logos.length)];
-            img.className = 'floating-logo';
-            img.style.left = Math.random() * 90 + 'vw';
-            img.style.width = (Math.random() * 40 + 40) + 'px';
-            img.style.animationDuration = (Math.random() * 10 + 15) + 's';
-            container.appendChild(img);
-            setTimeout(() => img.remove(), 25000);
-        }
-        setInterval(createFloatingLogo, 3000);
-        for(let i=0; i<5; i++) setTimeout(createFloatingLogo, i*500);
+        // Floating logos are now handled by ambient.js (canvas + collision physics).
+
 
         const footerYearEl = document.getElementById('footer-year');
         if (footerYearEl) footerYearEl.innerText = new Date().getFullYear();
