@@ -43,19 +43,38 @@
     /* ---------- Aurora wave bands ---------- */
     // Each band is an independent sine with its own character. Layered with
     // 'lighter' compositing so crossings glow rather than occlude.
+    //
+    // TIMING IS EXPRESSED AS A PERIOD IN SECONDS, deliberately. The previous
+    // version used an opaque `speed` multiplier applied as `t * speed * 1000`
+    // with t in milliseconds, which worked out to 25-46 full wave cycles per
+    // SECOND — a fast shimmer, not a wave. Real ocean swell has roughly 6-16
+    // seconds between crests, so these are set in that range and the maths
+    // below converts a period directly into radians. Stating the period in
+    // seconds means the intent is readable and a mistake of this size can't
+    // hide inside a magic number again.
+    //
+    // dir is simply which way the band drifts (+1 / -1).
     const BANDS = [
-        { colour: '229,193,88',  amp: 0.055, freq: 1.15, speed: 0.00022, yOff: 0.34, alpha: 0.16, thick: 0.16 },
-        { colour: '107,63,160',  amp: 0.075, freq: 0.85, speed: -0.00016, yOff: 0.52, alpha: 0.20, thick: 0.22 },
-        { colour: '163,118,182', amp: 0.045, freq: 1.55, speed: 0.00029, yOff: 0.63, alpha: 0.13, thick: 0.14 },
-        { colour: '196,72,123',  amp: 0.065, freq: 0.65, speed: -0.00021, yOff: 0.74, alpha: 0.11, thick: 0.18 }
+        { colour: '229,193,88',  amp: 0.055, freq: 1.15, periodSec: 11, dir:  1, yOff: 0.34, alpha: 0.16, thick: 0.16 },
+        { colour: '107,63,160',  amp: 0.075, freq: 0.85, periodSec: 16, dir: -1, yOff: 0.52, alpha: 0.20, thick: 0.22 },
+        { colour: '163,118,182', amp: 0.045, freq: 1.55, periodSec:  9, dir:  1, yOff: 0.63, alpha: 0.13, thick: 0.14 },
+        { colour: '196,72,123',  amp: 0.065, freq: 0.65, periodSec: 14, dir: -1, yOff: 0.74, alpha: 0.11, thick: 0.18 }
     ];
 
     function drawBands() {
+        const seconds = t / 1000;
         ctx.globalCompositeOperation = 'lighter';
         for (const b of BANDS) {
             const baseY = H * b.yOff;
             const amp = H * b.amp;
             const thickness = H * b.thick;
+
+            // One full 2π cycle every periodSec seconds.
+            const phase = seconds * (Math.PI * 2 / b.periodSec) * b.dir;
+            // The second, slower sine runs at ~0.61x so the two never line up
+            // on a short common period — the crest keeps drifting instead of
+            // visibly repeating.
+            const phaseSlow = phase * 0.61;
 
             const grad = ctx.createLinearGradient(0, baseY - thickness, 0, baseY + thickness);
             grad.addColorStop(0,   `rgba(${b.colour},0)`);
@@ -66,12 +85,10 @@
             ctx.moveTo(0, H);
             const step = Math.max(6, W / 120);
             for (let x = 0; x <= W + step; x += step) {
-                // Two summed sines per band so the crest never repeats on a
-                // simple period — it keeps drifting instead of looping visibly.
                 const p = (x / W) * Math.PI * 2 * b.freq;
                 const y = baseY
-                    + Math.sin(p + t * b.speed * 1000) * amp
-                    + Math.sin(p * 0.5 + t * b.speed * 640) * amp * 0.45;
+                    + Math.sin(p + phase) * amp
+                    + Math.sin(p * 0.5 + phaseSlow) * amp * 0.45;
                 ctx.lineTo(x, y);
             }
             ctx.lineTo(W, H);

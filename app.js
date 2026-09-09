@@ -379,8 +379,22 @@ window.getAnotherMatchInstead = function() {
     }
 };
 
-function generatedCover(title) {
-    return generateLocalPosterSVG(title);
+function generatedCover(title, meta) {
+    // Callers pass different shapes: renderResult passes `hints` (which carry
+    // cats but NOT platform or moods), while others pass nothing at all. So
+    // always look the full catalog entry up and use it to fill any gaps —
+    // relying on hints alone would silently drop the platform label and the
+    // mood-based theming.
+    let entry = null;
+    if (title && typeof CONTENT_CATALOG !== 'undefined') {
+        try { entry = CONTENT_CATALOG.find(e => e.title === title) || null; } catch (e) { entry = null; }
+    }
+    const merged = {
+        cats:     (meta && meta.cats)     || (entry && entry.cats)     || [],
+        moods:    (meta && meta.moods)    || (entry && entry.moods)    || [],
+        platform: (meta && meta.platform) || (entry && entry.platform) || ''
+    };
+    return generateLocalPosterSVG(title, merged);
 }
 window.sanitizeDisplayText = sanitizeDisplayText;
 
@@ -560,10 +574,30 @@ async function itunesRichLookup(title, media, hints) {
         // "Hell's Paradise" both needed: several works can share a name, and
         // iTunes' internal relevance ranking has no idea which one our
         // catalog actually means.
-        const res = await fetchWithTimeout(`https://itunes.apple.com/search?term=${encodeURIComponent(title)}&media=${media}&limit=5`);
-        if (res.ok) {
+        // ITUNES STOREFRONT. The API defaults to the US catalogue when no
+        // country is given, and the US store genuinely does not carry many
+        // Brazilian novelas, Korean dramas or other regional titles — so those
+        // lookups returned nothing and fell back to a generated poster even
+        // though real artwork exists in the right storefront.
+        //
+        // Two passes, deliberately: the regional store first when we know where
+        // a title is from, then the default store if that comes back empty.
+        // Regional-first alone would be a REGRESSION for any title that the
+        // local store happens not to carry but the US store does — this way the
+        // change can only ever find more covers than before, never fewer.
+        const base = `https://itunes.apple.com/search?term=${encodeURIComponent(title)}&media=${media}&limit=5`;
+        const attempts = [];
+        if (hints && hints.countryCode) attempts.push(`${base}&country=${encodeURIComponent(hints.countryCode)}`);
+        attempts.push(base);
+
+        let raw = [];
+        for (const url of attempts) {
+            const res = await fetchWithTimeout(url);
+            if (!res.ok) continue;
             const data = await res.json();
-            const raw = Array.isArray(data.results) ? data.results : [];
+            if (Array.isArray(data.results) && data.results.length) { raw = data.results; break; }
+        }
+        if (raw.length) {
             const viable = raw.filter(r => {
                 const name = r.trackName || r.collectionName || '';
                 if (!(r.artworkUrl100 || r.previewUrl)) return false;
@@ -789,18 +823,18 @@ async function fetchTitleMeta(title, hints) {
 window.fetchTitleMeta = fetchTitleMeta;
 
 async function getRealCoverImage(title, hints) {
-    if (!title) return generatedCover(title);
+    if (!title) return generatedCover(title, hints);
     // SAFE MODE: never fetch artwork for titles known to collide with adult
     // content by name. No request means no wrong result — the strongest
     // possible guarantee, and cheap.
-    if (COVER_SAFE_MODE.has(title)) return generatedCover(title);
+    if (COVER_SAFE_MODE.has(title)) return generatedCover(title, hints);
     // YouTube channels/Shorts aren't in iTunes or TVMaze at all, so any result
     // here is by definition a different work. getRichMetadata() already skips
     // them, but this is the FALLBACK path and receives no category — without
     // this check a YouTube channel would still get searched against film, TV,
     // podcast and music catalogues.
     if (hints && Array.isArray(hints.cats) && hints.cats.some(c => /youtube/i.test(c))) {
-        return generatedCover(title);
+        return generatedCover(title, hints);
     }
     const cacheKey = hints && (hints.year || hints.countryCode) ? `${title}::${hints.year || ''}${hints.countryCode || ''}` : title;
     if (COVER_CACHE[cacheKey]) return COVER_CACHE[cacheKey];
@@ -860,7 +894,7 @@ async function getRealCoverImage(title, hints) {
 
     // 4. ABSOLUTE FALLBACK: local branded SVG (no network, cannot fail, and
     //    critically — cannot ever show the wrong title's artwork).
-    return cacheAndReturn(generatedCover(title));
+    return cacheAndReturn(generatedCover(title, hints));
 }
 
 // LOCAL (NO-NETWORK) POSTER — guaranteed to render even if placehold.co is blocked too.
@@ -915,49 +949,156 @@ function isHighRiskCategory(categoryHint, title) {
 }
 window.isHighRiskCategory = isHighRiskCategory;
 
-function generateLocalPosterSVG(title) {
+function generateLocalPosterSVG(title, meta) {
     const raw = (title || 'MatchApp').trim();
-    const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-    // Wrap onto up to 4 lines instead of truncating mid-word at 24 chars, which
-    // turned longer titles into unreadable stubs like "A Vida Secreta do Meu B…".
+    // ---- What IS this? ----------------------------------------------------
+    // Every generated cover used to be identical apart from the title: the
+    // same 🎬 clapperboard whether it was a yoga channel, a workout playlist
+    // or a Korean thriller. Now the artwork actually reflects the content —
+    // its own icon, palette and label — so a fallback cover reads as a
+    // designed cover for THAT thing rather than a generic "no image" tile.
+    const cats = (meta && Array.isArray(meta.cats)) ? meta.cats.join(' ').toLowerCase() : '';
+    const moods = (meta && Array.isArray(meta.moods)) ? meta.moods.join(' ').toLowerCase() : '';
+    const platform = (meta && meta.platform) ? String(meta.platform) : '';
+    const hay = (cats + ' ' + moods + ' ' + raw).toLowerCase();
+
+    // Ordered most-specific first: a "yoga" YouTube channel should read as
+    // yoga, not as generic YouTube.
+    // Icons are drawn as SVG paths, NOT emoji. Emoji render from whatever font
+    // the device happens to ship — they came out as empty tofu boxes when
+    // rendered outside a browser, and vary in style across Android, iOS,
+    // Windows and Linux. Drawn shapes look identical everywhere and stay on
+    // brand, which matters when the whole point is a cover that looks
+    // deliberate rather than missing.
+    const ICONS = {
+        calm:    '<circle cx="300" cy="250" r="34" fill="none" stroke="COL" stroke-width="5"/><circle cx="300" cy="250" r="15" fill="COL"/><path d="M234,250 a66,66 0 0 1 132,0" fill="none" stroke="COL" stroke-width="5" opacity="0.55"/>',
+        yoga:    '<circle cx="300" cy="205" r="17" fill="COL"/><path d="M300,226 L300,272 M300,272 L268,300 M300,272 L332,300 M262,246 L338,246" stroke="COL" stroke-width="6" stroke-linecap="round" fill="none"/>',
+        fitness: '<rect x="256" y="238" width="88" height="20" rx="6" fill="COL"/><rect x="232" y="224" width="20" height="48" rx="6" fill="COL"/><rect x="348" y="224" width="20" height="48" rx="6" fill="COL"/><rect x="214" y="234" width="14" height="28" rx="5" fill="COL" opacity="0.7"/><rect x="372" y="234" width="14" height="28" rx="5" fill="COL" opacity="0.7"/>',
+        podcast: '<rect x="286" y="204" width="28" height="52" rx="14" fill="COL"/><path d="M270,246 a30,30 0 0 0 60,0" fill="none" stroke="COL" stroke-width="6" stroke-linecap="round"/><line x1="300" y1="276" x2="300" y2="296" stroke="COL" stroke-width="6" stroke-linecap="round"/><line x1="282" y1="296" x2="318" y2="296" stroke="COL" stroke-width="6" stroke-linecap="round"/>',
+        music:   '<circle cx="274" cy="286" r="17" fill="COL"/><circle cx="340" cy="272" r="17" fill="COL"/><path d="M291,286 L291,212 L357,198 L357,272" fill="none" stroke="COL" stroke-width="7" stroke-linejoin="round"/>',
+        book:    '<path d="M240,212 L296,224 L296,296 L240,284 Z" fill="COL" opacity="0.85"/><path d="M360,212 L304,224 L304,296 L360,284 Z" fill="COL" opacity="0.85"/><line x1="300" y1="222" x2="300" y2="296" stroke="COL" stroke-width="4"/>',
+        play:    '<rect x="228" y="208" width="144" height="96" rx="22" fill="COL" opacity="0.9"/><path d="M286,238 L322,256 L286,274 Z" fill="#101018"/>',
+        heart:   '<path d="M300,300 C300,300 244,266 244,232 C244,212 262,202 278,210 C288,215 296,224 300,232 C304,224 312,215 322,210 C338,202 356,212 356,232 C356,266 300,300 300,300 Z" fill="COL"/>',
+        torii:   '<path d="M244,214 L356,214 M236,232 L364,232 M262,232 L262,300 M338,232 L338,300" stroke="COL" stroke-width="8" stroke-linecap="round" fill="none"/>',
+        globe:   '<circle cx="300" cy="252" r="42" fill="none" stroke="COL" stroke-width="5"/><ellipse cx="300" cy="252" rx="18" ry="42" fill="none" stroke="COL" stroke-width="4"/><line x1="258" y1="252" x2="342" y2="252" stroke="COL" stroke-width="4"/>',
+        mic:     '<rect x="286" y="200" width="28" height="56" rx="14" fill="COL"/><path d="M268,248 a32,32 0 0 0 64,0" fill="none" stroke="COL" stroke-width="6" stroke-linecap="round"/><line x1="300" y1="280" x2="300" y2="300" stroke="COL" stroke-width="6" stroke-linecap="round"/>',
+        star:    '<path d="M300,204 L314,244 L356,244 L322,268 L335,308 L300,284 L265,308 L278,268 L244,244 L286,244 Z" fill="COL"/>',
+        phone:   '<rect x="266" y="198" width="68" height="110" rx="12" fill="none" stroke="COL" stroke-width="6"/><path d="M292,240 L318,254 L292,268 Z" fill="COL"/>',
+        moon:    '<path d="M322,204 a54,54 0 1 0 0,96 a42,42 0 0 1 0,-96 Z" fill="COL"/>',
+        film:    '<rect x="238" y="212" width="124" height="84" rx="10" fill="none" stroke="COL" stroke-width="6"/><path d="M266,212 L266,296 M334,212 L334,296" stroke="COL" stroke-width="4" opacity="0.6"/><path d="M290,238 L322,254 L290,270 Z" fill="COL"/>',
+        tv:      '<rect x="234" y="216" width="132" height="82" rx="10" fill="none" stroke="COL" stroke-width="6"/><line x1="268" y1="196" x2="296" y2="216" stroke="COL" stroke-width="5" stroke-linecap="round"/><line x1="332" y1="196" x2="304" y2="216" stroke="COL" stroke-width="5" stroke-linecap="round"/>'
+    };
+
+    const THEMES = [
+        { test: /medit|mindful|sleep|calm|relax|nidra|hypnos/, icon: 'calm', label: 'MEDITATION & CALM',
+          a: '#1B2A4A', b: '#2E4A6B', accent: '#8FD6FF' },
+        { test: /yoga|pilates|stretch/,                        icon: 'yoga', label: 'YOGA & MOVEMENT',
+          a: '#243A2E', b: '#3E6B4A', accent: '#9BE8B4' },
+        { test: /workout|fitness|gym|hiit|cardio|training|treino/, icon: 'fitness', label: 'FITNESS & WORKOUT',
+          a: '#3A1E12', b: '#6B3A1E', accent: '#FFB07A' },
+        { test: /podcast/,                                     icon: 'podcast', label: 'PODCAST',
+          a: '#2A1A47', b: '#4A2A6B', accent: '#C9A7E8' },
+        { test: /playlist|album|music|single|spotify/,          icon: 'music', label: 'MUSIC',
+          a: '#14331F', b: '#1D6B3A', accent: '#7DE8A0' },
+        { test: /audiobook/,                                   icon: 'book', label: 'AUDIOBOOK',
+          a: '#33240F', b: '#6B4A1D', accent: '#F0C878' },
+        { test: /youtube/,                                     icon: 'play', label: 'YOUTUBE CHANNEL',
+          a: '#3A1218', b: '#6B1E2A', accent: '#FF9BA8' },
+        { test: /k-drama|kdrama/,                              icon: 'heart', label: 'K-DRAMA',
+          a: '#3A1830', b: '#6B2A55', accent: '#FFA8D8' },
+        { test: /anime/,                                       icon: 'torii', label: 'ANIME',
+          a: '#2A1440', b: '#52277A', accent: '#C9A0FF' },
+        { test: /novela|telenovela/,                           icon: 'heart', label: 'NOVELA',
+          a: '#3A1220', b: '#6B1E3A', accent: '#FFA0B8' },
+        { test: /documentar/,                                  icon: 'globe', label: 'DOCUMENTARY',
+          a: '#12303A', b: '#1E5A6B', accent: '#8FE0F0' },
+        { test: /stand-?up|comedy|funny/,                      icon: 'mic', label: 'COMEDY',
+          a: '#3A3012', b: '#6B5A1E', accent: '#FFE88F' },
+        { test: /kids|family/,                                 icon: 'star', label: 'FAMILY & KIDS',
+          a: '#123A33', b: '#1E6B5A', accent: '#8FF0DC' },
+        { test: /micro-?drama|short film/,                     icon: 'phone', label: 'SHORT DRAMA',
+          a: '#2A1440', b: '#5A2A7A', accent: '#D4A0FF' },
+        { test: /gospel|faith/,                                icon: 'star', label: 'GOSPEL & FAITH',
+          a: '#33280F', b: '#6B5520', accent: '#F5DC96' },
+        { test: /scary|horror/,                                icon: 'moon', label: 'HORROR',
+          a: '#1A1218', b: '#3A1E2A', accent: '#E88F9B' },
+        { test: /movie|cinema|film/,                           icon: 'film', label: 'FILM',
+          a: '#14131A', b: '#2A1A47', accent: '#E5C158' },
+        // Catches plain "series" / "limited series", which previously fell
+        // through to the generic default and looked unfinished.
+        { test: /series|drama|show/,                           icon: 'tv', label: 'SERIES',
+          a: '#181430', b: '#342A5E', accent: '#B0A0F0' }
+    ];
+    let theme = THEMES.find(t => t.test.test(hay));
+    if (!theme) theme = { icon: 'film', label: 'ON MATCHAPP', a: '#14131A', b: '#2A1A47', accent: '#E5C158' };
+
+    // Deterministic per-title variation so two yoga channels don't produce
+    // pixel-identical covers. Same title always yields the same angle, which
+    // matters because these are cached and shown repeatedly — a cover that
+    // shifted on every render would look broken.
+    let h = 0;
+    for (let i = 0; i < raw.length; i++) h = (h * 31 + raw.charCodeAt(i)) >>> 0;
+    const angle = h % 360;
+    const dotSeed = h % 7;
+
+    // ---- Title wrapping ---------------------------------------------------
     const words = raw.split(/\s+/);
     const lines = [];
     let line = '';
     for (const w of words) {
         const test = line ? line + ' ' + w : w;
-        if (test.length > 16 && line) { lines.push(line); line = w; } else { line = test; }
+        if (test.length > 15 && line) { lines.push(line); line = w; } else { line = test; }
     }
     if (line) lines.push(line);
     const shown = lines.slice(0, 4);
-    if (lines.length > 4) shown[3] = shown[3].slice(0, 14) + '…';
+    if (lines.length > 4) shown[3] = shown[3].slice(0, 13) + '…';
 
-    const fontSize = shown.length >= 4 ? 40 : (shown.length === 3 ? 46 : 54);
-    const lineHeight = fontSize + 12;
-    const blockTop = 450 - ((shown.length - 1) * lineHeight) / 2;
+    const fontSize = shown.length >= 4 ? 38 : (shown.length === 3 ? 45 : 53);
+    const lineHeight = fontSize + 13;
+    const blockTop = 470 - ((shown.length - 1) * lineHeight) / 2;
     const tspans = shown.map((l, i) =>
-        `<text x="300" y="${blockTop + i * lineHeight}" font-family="Arial, Helvetica, sans-serif" font-size="${fontSize}" font-weight="900" fill="#E5C158" text-anchor="middle">${esc(l)}</text>`
+        `<text x="300" y="${blockTop + i * lineHeight}" font-family="Arial, Helvetica, sans-serif" font-size="${fontSize}" font-weight="900" fill="#ffffff" text-anchor="middle">${esc(l)}</text>`
     ).join('');
+
+    // Soft scattered dots — gives the flat panel some depth without competing
+    // with the title.
+    let dots = '';
+    for (let i = 0; i < 9; i++) {
+        const dx = ((h >> (i * 2)) % 560) + 20;
+        const dy = ((h >> (i * 3)) % 300) + 40;
+        const dr = ((h >> i) % 3) + 1.5;
+        dots += `<circle cx="${dx}" cy="${dy}" r="${dr}" fill="${theme.accent}" opacity="0.18"/>`;
+    }
+
+    const platformTag = platform
+        ? `<text x="300" y="742" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="${theme.accent}" text-anchor="middle" letter-spacing="1.5" opacity="0.9">${esc(platform.toUpperCase())}</text>`
+        : '';
 
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="900" viewBox="0 0 600 900">
         <defs>
-            <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#14131A"/><stop offset="55%" stop-color="#2A1A47"/><stop offset="100%" stop-color="#130734"/>
+            <linearGradient id="g" gradientTransform="rotate(${angle} 0.5 0.5)">
+                <stop offset="0%" stop-color="${theme.a}"/><stop offset="100%" stop-color="${theme.b}"/>
             </linearGradient>
-            <radialGradient id="glow" cx="50%" cy="38%" r="55%">
-                <stop offset="0%" stop-color="#6B3FA0" stop-opacity="0.55"/><stop offset="100%" stop-color="#6B3FA0" stop-opacity="0"/>
+            <radialGradient id="glow" cx="50%" cy="30%" r="60%">
+                <stop offset="0%" stop-color="${theme.accent}" stop-opacity="0.30"/>
+                <stop offset="100%" stop-color="${theme.accent}" stop-opacity="0"/>
             </radialGradient>
         </defs>
         <rect width="600" height="900" fill="url(#g)"/>
         <rect width="600" height="900" fill="url(#glow)"/>
-        <rect x="22" y="22" width="556" height="856" fill="none" stroke="#E5C158" stroke-width="3"/>
-        <rect x="34" y="34" width="532" height="832" fill="none" stroke="#E5C158" stroke-opacity="0.35" stroke-width="1"/>
-        <text x="300" y="300" font-family="Arial, Helvetica, sans-serif" font-size="58" text-anchor="middle">🎬</text>
-        <line x1="180" y1="352" x2="420" y2="352" stroke="#6B3FA0" stroke-width="2"/>
+        ${dots}
+        <rect x="22" y="22" width="556" height="856" rx="18" fill="none" stroke="${theme.accent}" stroke-width="3" opacity="0.85"/>
+        <rect x="34" y="34" width="532" height="832" rx="12" fill="none" stroke="${theme.accent}" stroke-opacity="0.3" stroke-width="1"/>
+        ${(ICONS[theme.icon] || ICONS.film).replace(/COL/g, theme.accent)}
+        <text x="300" y="330" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="900" fill="${theme.accent}" text-anchor="middle" letter-spacing="4.5">${esc(theme.label)}</text>
+        <line x1="200" y1="362" x2="400" y2="362" stroke="${theme.accent}" stroke-width="2" opacity="0.6"/>
         ${tspans}
-        <line x1="180" y1="620" x2="420" y2="620" stroke="#6B3FA0" stroke-width="2"/>
-        <text x="300" y="672" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="bold" fill="#FFF0B3" text-anchor="middle" letter-spacing="2">matchapp.cc</text>
-        <text x="300" y="702" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#A376B6" text-anchor="middle">AI Concierge for Entertainment</text>
+        <line x1="200" y1="700" x2="400" y2="700" stroke="${theme.accent}" stroke-width="2" opacity="0.6"/>
+        ${platformTag}
+        <text x="300" y="812" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#FFF0B3" text-anchor="middle" letter-spacing="2.5">matchapp.cc</text>
+        <text x="300" y="840" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" opacity="0.55">AI Concierge for Entertainment</text>
     </svg>`;
     return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
 }
@@ -974,7 +1115,7 @@ async function hydrateMarqueeCovers() {
     // itself out, and the tile ended up blank with only the title showing.
     imgs.forEach(img => {
         const title = img.getAttribute('data-title') || img.getAttribute('alt') || '';
-        if (!img.getAttribute('src')) img.src = generateLocalPosterSVG(title);
+        if (!img.getAttribute('src')) img.src = generatedCover(title);
     });
 
     // Then hydrate every tile in parallel so the strip fills quickly.
@@ -985,7 +1126,7 @@ async function hydrateMarqueeCovers() {
         // Hand-verified art short-circuits the lookup entirely.
         const verified = getVerifiedPoster(title);
         if (verified) {
-            img.onerror = function() { this.onerror = null; this.src = generateLocalPosterSVG(title); };
+            img.onerror = function() { this.onerror = null; this.src = generatedCover(title); };
             img.src = verified;
             return;
         }
@@ -1005,7 +1146,7 @@ async function hydrateMarqueeCovers() {
             const meta = await getRichMetadata(title, 'series', rowHints);
             const real = (meta && meta.artwork) ? meta.artwork : await getRealCoverImage(title, rowHints);
             if (real) {
-                img.onerror = function() { this.onerror = null; this.src = generateLocalPosterSVG(title); };
+                img.onerror = function() { this.onerror = null; this.src = generatedCover(title); };
                 img.src = real;
             }
         } catch (e) { /* placeholder already showing */ }
