@@ -115,26 +115,46 @@ input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow
 .fade-in { animation: fadeIn 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards; }
 @keyframes fadeIn { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
 
-/* ⚡🤖 QUICK JUMP PAIR — top-of-page shortcuts past the marquee/events/spotlights */
-.quick-jump-row { display: flex; gap: 10px; margin-bottom: 14px; }
-.jump-to-match-btn { display: flex; align-items: center; justify-content: center; gap: 10px;
-                     flex: 1; background: linear-gradient(90deg, rgba(229,193,88,0.16), rgba(107,63,160,0.28), rgba(229,193,88,0.16));
-                     border: 1px solid rgba(229,193,88,0.55); color: var(--gold-glow); font-weight: 800;
-                     font-size: 13px; letter-spacing: 0.2px; padding: 13px 12px; border-radius: 14px;
-                     cursor: pointer; font-family: inherit; transition: 0.2s; text-decoration: none; text-align: center; }
-.jump-to-match-btn:hover { border-color: var(--gold); background: linear-gradient(90deg, rgba(229,193,88,0.26), rgba(107,63,160,0.4), rgba(229,193,88,0.26)); }
-/* The AI button gets a cooler, more "intelligent" purple-forward tint rather
-   than reusing an identical gold treatment — a small visual cue that this is
-   a different kind of interaction (a conversation) from the form below it. */
-.jump-to-ai-btn { background: linear-gradient(90deg, rgba(107,63,160,0.34), rgba(163,118,182,0.28), rgba(107,63,160,0.34));
-                  border-color: rgba(163,118,182,0.65); }
-.jump-to-ai-btn:hover { border-color: var(--royal-glow); background: linear-gradient(90deg, rgba(107,63,160,0.5), rgba(163,118,182,0.42), rgba(107,63,160,0.5)); }
-.jump-arrow { display: inline-block; animation: jumpBounce 1.6s ease-in-out infinite; }
-@keyframes jumpBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
-@media (prefers-reduced-motion: reduce) { .jump-arrow { animation: none; } }
+/* 🤖 TOP ASK BOX — the zero-effort shortcut.
+   A real input, not a link styled like one: it posts straight to
+   discover.html?q=, so it's tap → type → answer with no intermediate page.
+   Kept deliberately compact and centred so it reads as an invitation rather
+   than a form to fill in. */
+.top-ask-wrap { display: flex; flex-direction: column; align-items: center; gap: 7px;
+                padding: 0 12px; margin-bottom: 12px; }
+.top-ask { display: flex; align-items: center; gap: 9px; width: 100%; max-width: 520px;
+           background: linear-gradient(100deg, rgba(107,63,160,0.42), rgba(30,20,55,0.72), rgba(107,63,160,0.42));
+           background-size: 220% 100%;
+           border: 1px solid rgba(229,193,88,0.5); border-radius: 999px;
+           padding: 6px 6px 6px 16px; box-shadow: 0 4px 18px rgba(0,0,0,0.45);
+           animation: askGlow 6s ease-in-out infinite; transition: border-color 0.25s, box-shadow 0.25s; }
+.top-ask:focus-within { border-color: var(--gold); box-shadow: 0 4px 24px rgba(229,193,88,0.3); animation: none; }
+.top-ask-icon { font-size: 15px; flex-shrink: 0; line-height: 1; }
+/* 16px on the input is deliberate and must not be reduced: anything smaller
+   makes iOS Safari auto-zoom the whole page the moment it's focused, which
+   for a box this prominent would feel like the page broke. */
+.top-ask input { flex: 1; min-width: 0; background: none; border: none; outline: none;
+                 color: #fff; font-family: inherit; font-size: 16px; padding: 8px 0; }
+.top-ask input::placeholder { color: #a99cc4; font-size: 13.5px; }
+.top-ask-go { flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%; border: none;
+              background: linear-gradient(135deg, #FFD700, #FFA500); color: #14131A;
+              font-size: 16px; font-weight: 900; cursor: pointer; line-height: 1;
+              display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
+.top-ask-go:hover { transform: scale(1.08); }
+.top-ask-alt { color: #a99cc4; font-size: 11.5px; text-decoration: none; font-weight: 600;
+               letter-spacing: 0.2px; transition: color 0.2s; }
+.top-ask-alt:hover { color: var(--gold-glow); }
+/* Slow gold sweep — enough to draw the eye once, not enough to nag. */
+@keyframes askGlow {
+    0%, 100% { background-position: 0% 50%; box-shadow: 0 4px 18px rgba(0,0,0,0.45); }
+    50%      { background-position: 100% 50%; box-shadow: 0 4px 22px rgba(229,193,88,0.22); }
+}
+@media (prefers-reduced-motion: reduce) { .top-ask { animation: none; } }
 @media (max-width: 480px) {
-    .quick-jump-row { flex-direction: column; }
-    .jump-to-match-btn { font-size: 12.5px; padding: 13px; }
+    .top-ask { padding: 5px 5px 5px 13px; gap: 7px; }
+    .top-ask input::placeholder { font-size: 12.5px; }
+    .top-ask-go { width: 31px; height: 31px; font-size: 15px; }
+    .top-ask-alt { font-size: 11px; }
 }
 
 /* 📲 INSTALL & 🔊 SOUND TOGGLE — header buttons */

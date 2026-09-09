@@ -418,9 +418,9 @@
     <link rel="alternate" hreflang="zh" href="https://matchapp.cc/?lang=zh">
 
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=169"></script>
-    <script defer src="/install.js?v=169"></script>
-    <script defer src="/ambient.js?v=169"></script>
+    <script defer src="/i18n.js?v=170"></script>
+    <script defer src="/install.js?v=170"></script>
+    <script defer src="/ambient.js?v=170"></script>
 
     <!-- GOOGLE ANALYTICS (GTAG) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
@@ -446,7 +446,7 @@
         });
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=169">
+    <link rel="stylesheet" href="/style.css?v=170">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -1285,7 +1285,7 @@
 
             /* Entry cards + quick-jump row */
             .tg-entry { margin-bottom: 14px; }
-            .quick-jump-row { margin-bottom: 11px; gap: 8px; }
+            .top-ask-wrap { margin-bottom: 10px; gap: 6px; }
             .upgrade-ribbon { padding: 8px 12px; }
 
             /* "How it works" step cards */
@@ -1349,15 +1349,24 @@
          pointing at something already on screen; this now offers the two real
          alternatives to filling in the form: browse what's trending, or hand
          the whole decision to the AI. -->
-    <div class="quick-jump-row">
-        <a href="#trending-rail" class="jump-to-match-btn" aria-label="Jump to trending titles">
-            <span data-i18n="jump.trending">🔥 See What's Trending</span>
-            <span class="jump-arrow" aria-hidden="true">↓</span>
-        </a>
-        <a href="/discover.html" class="jump-to-match-btn jump-to-ai-btn" aria-label="Ask our AI what to watch">
-            <span data-i18n="jump.aiLabel">🤖 Let Our AI Decide For You</span>
-            <span class="jump-arrow" aria-hidden="true">→</span>
-        </a>
+    <!-- TOP ASK BOX — the shortcut for someone who wants zero effort.
+         Deliberately a REAL input, not a link dressed up as one: discover.html
+         already accepts ?q=, so typing here and hitting enter lands directly on
+         the answer. A link would have meant tap -> new page -> find the input
+         -> type -> submit. This is tap -> type -> done, which is the whole
+         point for an audience that leaves when made to work.
+         Trending stays as a small secondary chip rather than an equal-weight
+         button, because "ask" is the lower-effort path and should look it. -->
+    <div class="top-ask-wrap">
+        <form class="top-ask" onsubmit="return topAskSubmit(event)" role="search">
+            <span class="top-ask-icon" aria-hidden="true">🤖</span>
+            <input id="top-ask-input" type="text" autocomplete="off"
+                   placeholder="Ask our AI — what should I watch tonight?"
+                   data-i18n-placeholder="topask.placeholder"
+                   aria-label="Ask our AI what to watch">
+            <button type="submit" class="top-ask-go" aria-label="Ask" data-i18n-aria="topask.go">→</button>
+        </form>
+        <a href="#trending-rail" class="top-ask-alt" data-i18n="jump.trending">🔥 See What's Trending</a>
     </div>
 
     <!-- LIVE STATUS STRIP: visitor's real local date/time + genuine activity stats -->
@@ -1996,7 +2005,7 @@
                         <div class="spotlight-poster" onclick="saveSpotlightTitle()" role="button" tabindex="0"
                              onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();saveSpotlightTitle();}"
                              aria-label="Save American Horror Story: 13 to Watch Later">
-                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=169" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
+                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=170" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
                             <div class="spotlight-ribbon" data-i18n="spotlight.ribbon">COMING THIS MONTH</div>
                         </div>
                         <div class="spotlight-body">
@@ -2360,10 +2369,10 @@
         </div>
     </div>
 
-    <script src="/app.js?v=169"></script>
-    <script src="/taste.js?v=169"></script>
-    <script src="/share.js?v=169"></script>
-    <script src="/voice-input.js?v=169"></script>
+    <script src="/app.js?v=170"></script>
+    <script src="/taste.js?v=170"></script>
+    <script src="/share.js?v=170"></script>
+    <script src="/voice-input.js?v=170"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initVoiceInput('specific-search-input', 'mic-btn-index', () => smartSearch());

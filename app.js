@@ -1596,6 +1596,21 @@ window.closePosterZoom = function () {
     if (overlay) overlay.style.display = 'none';
 };
 
+// Top-of-page ask box. Sends the query straight to Ask AI rather than making
+// the user land on discover.html and type a second time.
+window.topAskSubmit = function (e) {
+    if (e) e.preventDefault();
+    const input = document.getElementById('top-ask-input');
+    const q = input ? input.value.trim() : '';
+    // Empty submit still goes through — discover.html shows its own prompt in
+    // that case, which is friendlier than silently doing nothing when someone
+    // taps the arrow expecting something to happen.
+    window.location.href = q
+        ? `/discover.html?q=${encodeURIComponent(q)}`
+        : '/discover.html';
+    return false;
+};
+
 function goToQuestionnaire() {
     const box = document.getElementById('questionnaire-box');
     if (!box) return false;
