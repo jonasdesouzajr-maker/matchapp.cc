@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#14131A">
 
     <!-- RESOURCE HINTS: cuts DNS+TLS setup off the critical path.
@@ -418,8 +418,8 @@
     <link rel="alternate" hreflang="zh" href="https://matchapp.cc/?lang=zh">
 
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=159"></script>
-    <script defer src="/install.js?v=159"></script>
+    <script defer src="/i18n.js?v=160"></script>
+    <script defer src="/install.js?v=160"></script>
 
     <!-- GOOGLE ANALYTICS (GTAG) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
@@ -445,7 +445,7 @@
         });
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=159">
+    <link rel="stylesheet" href="/style.css?v=160">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -1444,7 +1444,7 @@
                         <div class="spotlight-poster" onclick="saveSpotlightTitle()" role="button" tabindex="0"
                              onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();saveSpotlightTitle();}"
                              aria-label="Save American Horror Story: 13 to Watch Later">
-                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=159" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
+                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=160" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
                             <div class="spotlight-ribbon" data-i18n="spotlight.ribbon">COMING THIS MONTH</div>
                         </div>
                         <div class="spotlight-body">
@@ -1791,12 +1791,12 @@
                         </div>
                     </div>
 
-                    <!-- Full-size cover, tap to dismiss. Native pinch-zoom is left
-                         switched off site-wide on purpose (it fights the drag/swipe
-                         gestures the trending rail and Match Together already use) —
-                         this gives the same "see it bigger" outcome without that
-                         conflict, matching how a polished app actually presents an
-                         enlarged image rather than relying on the browser's own zoom. -->
+                    <!-- Full-size cover, tap to dismiss. Native pinch-zoom is enabled
+                         site-wide, but this overlay is still the better tool for this
+                         specific job: it shows the poster at full size in one tap and
+                         dismisses in one tap, without zooming the entire page (which
+                         would then need pinching back out, and competes with the
+                         drag/swipe gestures the trending rail already uses). -->
                     <div id="poster-zoom-overlay" class="modal-overlay" onclick="closePosterZoom()" role="dialog" aria-modal="true" aria-label="Full-size cover, tap to close">
                         <img id="poster-zoom-img" src="" alt="" style="max-width:92vw; max-height:88vh; border-radius:16px; border:2px solid var(--gold); box-shadow:0 20px 60px rgba(0,0,0,0.8);">
                     </div>
@@ -2148,10 +2148,10 @@
         </div>
     </div>
 
-    <script src="/app.js?v=159"></script>
-    <script src="/taste.js?v=159"></script>
-    <script src="/share.js?v=159"></script>
-    <script src="/voice-input.js?v=159"></script>
+    <script src="/app.js?v=160"></script>
+    <script src="/taste.js?v=160"></script>
+    <script src="/share.js?v=160"></script>
+    <script src="/voice-input.js?v=160"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initVoiceInput('specific-search-input', 'mic-btn-index', () => smartSearch());

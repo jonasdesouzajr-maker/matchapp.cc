@@ -1309,12 +1309,13 @@ document.addEventListener('DOMContentLoaded', initUpgradeRibbon);
 // ancestor is, which is why every other scroll in this file works. Combined
 // with the #questionnaire-box scroll-margin-top rule, it also clears the
 // sticky header without manual maths.
-// Tap-to-zoom on the compact mobile poster thumbnail. Deliberately not native
-// pinch-zoom (viewport stays locked site-wide) — pinch-zoom on the whole page
-// would fight the drag/swipe gestures the trending rail and Match Together
-// already use. This gives the same "see it bigger" result without that
-// conflict: a real full-size view of the exact same image, one tap to open,
-// one tap anywhere to close.
+// Tap-to-zoom on the compact mobile poster thumbnail. Native pinch-zoom is now
+// enabled site-wide (the old user-scalable=no was a WCAG failure and has been
+// removed), but this overlay still earns its place: pinch-zooming the whole
+// page to inspect one poster means then having to pinch back out, and on the
+// homepage it competes with the drag/swipe gestures the trending rail and
+// Match Together use. One tap for a clean full-size view, one tap to dismiss,
+// is simply better for this specific job.
 window.openPosterZoom = function () {
     const src = document.getElementById('res-poster-img')?.src;
     if (!src) return;
