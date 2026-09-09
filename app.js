@@ -248,6 +248,26 @@ const OFFLINE_COVERS = {
     "Jujutsu Kaisen": "https://image.tmdb.org/t/p/w500/hFWP5HkbVEe40hrptlzSyDpFBqw.jpg"
 };
 
+// Titles whose names collide with adult content in external catalogues.
+// For these we skip external artwork lookup ENTIRELY and always render the
+// locally generated poster — no network result can be wrong, because none is
+// requested. "Beauty in Black" is the confirmed case (an adult title of the
+// same name was being returned); the rest are here because their names are
+// generic enough that the same collision is plausible.
+//
+// Deliberately NOT solved by hardcoding TMDB poster URLs: unverifiable image
+// hashes were added that way earlier in this project and 404'd. A clean
+// branded placeholder that is always correct beats a hardcoded URL that might
+// silently break — or worse, be wrong.
+const COVER_SAFE_MODE = new Set([
+    'Beauty in Black',
+    'The Scandal',
+    'Nemesis',
+    'The Last House',
+    'Temptation Island'
+]);
+window.COVER_SAFE_MODE = COVER_SAFE_MODE;
+
 // In-memory cache so the same title never re-hits the network twice per session.
 const COVER_CACHE = {};
 
@@ -446,6 +466,67 @@ function fetchWithTimeout(url, ms = 3500) {
     return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(timer));
 }
 
+// ----------------------------------------------------
+// EXPLICIT CONTENT GATE FOR EXTERNAL ARTWORK
+//
+// A "Beauty in Black" search returned adult-film artwork with nothing to do
+// with the Tyler Perry series. Root cause: nothing in the lookup chain ever
+// checked content ratings. iTunes returns trackExplicitness /
+// collectionExplicitness / contentAdvisoryRating on EVERY result and we read
+// none of them — and worse, the year/country scorer would hand an adult title
+// that happened to share the year and country a maximum score, actively
+// preferring it.
+//
+// This is not a cosmetic bug: pornographic artwork on a page running Google
+// AdSense is grounds for account termination, and no user should ever be
+// shown that. So this gate is deliberately aggressive — a title showing a
+// generic placeholder is a trivial cost, showing porn is not. When in doubt,
+// reject.
+// ----------------------------------------------------
+const EXPLICIT_NAME_PATTERNS = [
+    /\bxxx\b/i, /\bporn/i, /\bhardcore\b/i, /\berotic/i, /\buncensored\b/i,
+    /\bnude\b/i, /\bnudity\b/i, /\bsex tape\b/i, /\badult (film|movie|video)\b/i,
+    /\bonlyfans\b/i, /\bcam ?girl\b/i, /\bstrip(per|tease)\b/i, /\bfetish\b/i,
+    /\bbrazzers\b/i, /\bplayboy\b/i, /\bhentai\b/i, /\b18\+\b/, /\bnsfw\b/i,
+    /\bpornô/i, /\bpornogr/i, /\bsexo explícito/i, /\bputaria\b/i
+];
+
+const EXPLICIT_GENRE_PATTERNS = [
+    /adult/i, /erotic/i, /porn/i, /xxx/i
+];
+
+/**
+ * True when an external API result should NEVER be used for artwork.
+ * Checks iTunes' own explicitness metadata first (authoritative), then falls
+ * back to name/genre heuristics for sources that don't provide it.
+ */
+function isExplicitResult(r) {
+    if (!r) return true; // no data at all -> don't risk it
+
+    // 1. iTunes' own explicitness flags — the authoritative signal, and the
+    //    one that was being ignored entirely.
+    const flags = [r.trackExplicitness, r.collectionExplicitness].filter(Boolean);
+    if (flags.some(f => String(f).toLowerCase() === 'explicit')) return true;
+
+    // 2. Formal content advisory ratings that indicate adult material.
+    const advisory = String(r.contentAdvisoryRating || '').toLowerCase();
+    if (advisory && /^(nc-17|x|xxx|unrated adult|adults only|ao)$/.test(advisory.trim())) return true;
+
+    // 3. Genre — iTunes exposes an "Adult" primaryGenreName for such content.
+    const genre = String(r.primaryGenreName || '');
+    if (EXPLICIT_GENRE_PATTERNS.some(p => p.test(genre))) return true;
+
+    // 4. Name and description heuristics, for anything the flags miss (and
+    //    for sources like TVMaze that carry no explicitness metadata at all).
+    const text = [r.trackName, r.collectionName, r.artistName, r.name,
+                  r.longDescription, r.shortDescription, r.summary]
+                 .filter(Boolean).join(' ');
+    if (EXPLICIT_NAME_PATTERNS.some(p => p.test(text))) return true;
+
+    return false;
+}
+window.isExplicitResult = isExplicitResult;
+
 // Scores an iTunes result against catalog hints, mirroring scoreCandidate()
 // used for TVMaze below — same philosophy, adapted to what iTunes actually
 // returns (a releaseDate, and sometimes a country field on the result).
@@ -485,7 +566,14 @@ async function itunesRichLookup(title, media, hints) {
             const raw = Array.isArray(data.results) ? data.results : [];
             const viable = raw.filter(r => {
                 const name = r.trackName || r.collectionName || '';
-                return (r.artworkUrl100 || r.previewUrl) && isRelevantMatch(title, name);
+                if (!(r.artworkUrl100 || r.previewUrl)) return false;
+                if (!isRelevantMatch(title, name)) return false;
+                // Content gate runs BEFORE scoring — an adult title sharing
+                // the right year and country would otherwise score maximum
+                // points and win outright, which is exactly what happened
+                // with "Beauty in Black".
+                if (isExplicitResult(r)) return false;
+                return true;
             });
             if (viable.length) {
                 let best = viable[0], bestScore = -Infinity;
@@ -533,6 +621,9 @@ function isVideoPreview(meta) {
 }
 
 async function getRichMetadata(title, categoryHint, hints) {
+    // Safe-mode titles get no external metadata lookup at all — the caller
+    // falls through to getRealCoverImage(), which returns a generated poster.
+    if (title && COVER_SAFE_MODE.has(title)) return null;
     const hint = (categoryHint || '').toLowerCase();
     const wantsAudio = /podcast|playlist|music|single|album|audiobook|spotify/.test(hint);
 
@@ -641,7 +732,7 @@ async function fetchTitleMeta(title, hints) {
         // then rank what's left by how well it fits the catalog's own claims.
         const viable = list
             .map(r => r.show)
-            .filter(sh => sh && isRelevantMatch(title, sh.name || ''));
+            .filter(sh => sh && isRelevantMatch(title, sh.name || '') && !isExplicitResult(sh));
         if (!viable.length) return null;
 
         let best = null, bestScore = -Infinity;
@@ -691,6 +782,10 @@ window.fetchTitleMeta = fetchTitleMeta;
 
 async function getRealCoverImage(title, hints) {
     if (!title) return generatedCover(title);
+    // SAFE MODE: never fetch artwork for titles known to collide with adult
+    // content by name. No request means no wrong result — the strongest
+    // possible guarantee, and cheap.
+    if (COVER_SAFE_MODE.has(title)) return generatedCover(title);
     const cacheKey = hints && (hints.year || hints.countryCode) ? `${title}::${hints.year || ''}${hints.countryCode || ''}` : title;
     if (COVER_CACHE[cacheKey]) return COVER_CACHE[cacheKey];
 
@@ -730,7 +825,7 @@ async function getRealCoverImage(title, hints) {
         if (tvRes.ok) {
             const tvData = await tvRes.json();
             const img = tvData && tvData.image && (tvData.image.original || tvData.image.medium);
-            if (img && isRelevantMatch(title, tvData.name || '')) {
+            if (img && isRelevantMatch(title, tvData.name || '') && !isExplicitResult(tvData)) {
                 if (hints && hints.year && tvData.premiered) {
                     const tvYear = parseInt(String(tvData.premiered).slice(0, 4), 10);
                     if (!isNaN(tvYear) && Math.abs(tvYear - hints.year) > 6) {
