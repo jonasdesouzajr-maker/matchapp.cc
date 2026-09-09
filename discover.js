@@ -104,7 +104,11 @@ function parseAIResponse(data) {
 }
 
 async function askAIConversational(question, history) {
-    if (!window.supabaseClient) throw new Error('No backend');
+    if (!window.supabaseClient) {
+        const err = new Error('No backend');
+        err.aiUnavailable = true;
+        throw err;
+    }
 
     // The prompt engineering lives in the gemini-proxy Edge Function, so the
     // client sends structured params rather than a pre-built prompt string.
@@ -112,6 +116,20 @@ async function askAIConversational(question, history) {
     const age = localStorage.getItem('match_user_age') || '';
     const lang = window.MATCH_LANG || 'en';
     const body = { mode: 'discover', question, lang, country, age, history: history || [] };
+
+    // HARD TIMEOUT PER ATTEMPT. supabase-js's functions.invoke has no timeout
+    // of its own, so if the Edge Function hangs — cold start, an upstream
+    // Gemini stall, a bad deploy — this waited forever. With two attempts that
+    // meant the page could sit on the loading meter indefinitely, which is
+    // exactly the "no output, then it took too long" report. 18s is generous
+    // enough for a genuine cold start but bounded, so the worst case is ~36s
+    // and then an honest message rather than an open-ended wait.
+    const AI_TIMEOUT_MS = 18000;
+    const withTimeout = (promise) => Promise.race([
+        promise,
+        new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('AI request timed out')), AI_TIMEOUT_MS))
+    ]);
 
     // Two attempts of the SAME contract, not a fallback to a different one.
     // This used to retry with a bare {prompt} request on failure — but that
@@ -126,7 +144,8 @@ async function askAIConversational(question, history) {
     // the identical, correct contract removes that collision entirely.
     for (let attempt = 1; attempt <= 2; attempt++) {
         try {
-            const { data, error } = await window.supabaseClient.functions.invoke('gemini-proxy', { body });
+            const { data, error } = await withTimeout(
+                window.supabaseClient.functions.invoke('gemini-proxy', { body }));
             if (!error && data && !data.error) return parseAIResponse(data);
             if (attempt === 1) {
                 console.warn('[MatchApp AI] Attempt 1 failed, retrying once:', (error && error.message) || (data && data.error) || 'unknown');
@@ -135,13 +154,20 @@ async function askAIConversational(question, history) {
             const detail = (error && error.message) || (data && data.error) || 'unknown';
             console.error('[MatchApp AI] Both attempts failed:', detail,
                 '\n→ Run the diagnostic to see exactly why: open /ai-check.html on this site.');
-            throw new Error('AI unavailable: ' + detail);
+            const err = new Error('AI unavailable: ' + detail);
+            err.aiUnavailable = true;   // lets the caller word the message honestly
+            throw err;
         } catch (e) {
-            if (attempt === 2) throw e;
+            if (attempt === 2) {
+                e.aiUnavailable = true;
+                throw e;
+            }
             console.warn('[MatchApp AI] Attempt 1 threw, retrying once:', e.message || e);
         }
     }
-    throw new Error('AI unavailable');
+    const err = new Error('AI unavailable');
+    err.aiUnavailable = true;
+    throw err;
 }
 
 /* ---------- Keyless fallback (intent-aware — the actual bug fix) ---------- */
@@ -153,7 +179,7 @@ function stripQuestionWords(q) {
             .trim();
 }
 
-async function fallbackSearch(question) {
+async function fallbackSearch(question, aiWasDown) {
     const term = stripQuestionWords(question) || question;
     const audioIntent = detectAudioIntent(question);
     // Only the media types that actually match intent are searched — this is
@@ -188,9 +214,16 @@ async function fallbackSearch(question) {
 
     const offlineNote = (typeof t === 'function') ? t('discover.offlineNote') : "Our AI concierge is temporarily offline, so here's what our catalog found for you:";
     const noResults = (typeof t === 'function') ? t('discover.noResults') : `We couldn't find a confident match for "${question}". Try rephrasing with a title, topic or person.`;
+    // When the AI itself was unreachable, saying "try rephrasing" blames the
+    // user for a question that was probably fine, and sends them off rewording
+    // it repeatedly to no effect. Say what actually happened instead.
+    const aiDown = (typeof t === 'function') ? t('discover.aiDown')
+        : "Our AI concierge couldn't be reached just now — this is on our side, not your question. Please try again in a moment.";
+
+    const emptyMessage = aiWasDown ? aiDown : noResults;
 
     return {
-        answer: out.length ? `${offlineNote} “${question}”` : noResults,
+        answer: out.length ? `${offlineNote} “${question}”` : emptyMessage,
         results: out.slice(0, DISCOVER_MAX),
         _live: false
     };
@@ -572,7 +605,7 @@ async function askAndRender(question) {
 
     let payload, source = 'ai';
     try { payload = await askAIConversational(question, history); }
-    catch (e) { payload = await fallbackSearch(question); source = 'fallback'; }
+    catch (e) { payload = await fallbackSearch(question, !!e.aiUnavailable); source = 'fallback'; }
 
     // Same unconditional safety net as the match engine: no matter which
     // upstream path produced this, raw JSON-looking text can never reach
