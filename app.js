@@ -625,6 +625,14 @@ async function getRichMetadata(title, categoryHint, hints) {
     // falls through to getRealCoverImage(), which returns a generated poster.
     if (title && COVER_SAFE_MODE.has(title)) return null;
     const hint = (categoryHint || '').toLowerCase();
+
+    // YouTube channels and Shorts exist in NEITHER iTunes nor TVMaze. Searching
+    // the film/TV catalogues for "Fitness Blender" or "Great Meditation" can
+    // only return some unrelated title that happens to share a word — which is
+    // exactly the wrong-cover complaint. Return null so the caller falls
+    // through to the generated branded poster, which is always correct.
+    if (hint.includes('youtube')) return null;
+
     const wantsAudio = /podcast|playlist|music|single|album|audiobook|spotify/.test(hint);
 
     let order;
@@ -786,6 +794,14 @@ async function getRealCoverImage(title, hints) {
     // content by name. No request means no wrong result — the strongest
     // possible guarantee, and cheap.
     if (COVER_SAFE_MODE.has(title)) return generatedCover(title);
+    // YouTube channels/Shorts aren't in iTunes or TVMaze at all, so any result
+    // here is by definition a different work. getRichMetadata() already skips
+    // them, but this is the FALLBACK path and receives no category — without
+    // this check a YouTube channel would still get searched against film, TV,
+    // podcast and music catalogues.
+    if (hints && Array.isArray(hints.cats) && hints.cats.some(c => /youtube/i.test(c))) {
+        return generatedCover(title);
+    }
     const cacheKey = hints && (hints.year || hints.countryCode) ? `${title}::${hints.year || ''}${hints.countryCode || ''}` : title;
     if (COVER_CACHE[cacheKey]) return COVER_CACHE[cacheKey];
 
@@ -985,7 +1001,7 @@ async function hydrateMarqueeCovers() {
         if (riskyByCatalog || riskyByPlatform || (typeof VERTICAL_DRAMA_TITLES !== 'undefined' && VERTICAL_DRAMA_TITLES.includes(title))) return;
 
         try {
-            const rowHints = catalogEntry ? { year: catalogEntry.year, country: catalogEntry.country, countryCode: catalogEntry.countryCode } : {};
+            const rowHints = catalogEntry ? { year: catalogEntry.year, country: catalogEntry.country, countryCode: catalogEntry.countryCode, cats: catalogEntry.cats } : {};
             const meta = await getRichMetadata(title, 'series', rowHints);
             const real = (meta && meta.artwork) ? meta.artwork : await getRealCoverImage(title, rowHints);
             if (real) {
@@ -1806,6 +1822,45 @@ const CONTENT_CATALOG = [
     { title: "Teach You a Lesson", year: 2026, country: "South Korea", countryCode: "KR", synopsis: "When school discipline collapses, a government agency with the legal power to physically intervene sends its most unconventional inspector to take on the bullies running the halls.", platform: "Netflix", cats: ["K-drama","series"], moods: ["intense and thrilling","funny"], vibes: ["fast-paced binge-worthy"], ratings: ["teen PG-13","any"] },
     { title: "Hell's Paradise", year: 2023, country: "Japan", countryCode: "JP", synopsis: "An amnesiac ninja sentenced to death is offered a pardon if he can find a legendary elixir on a mysterious island \u2014 one guarded by monsters far worse than any executioner.", platform: "Crunchyroll", cats: ["anime","series"], moods: ["dark and gritty","intense and thrilling"], vibes: ["fast-paced binge-worthy"], ratings: ["mature adults only R rated","any"] },
     { title: "The Last House", year: 2026, country: "United States", countryCode: "US", synopsis: "A family finds every door and window in their home sealed shut by an inexplicable force, and must find a way to survive as supplies run out and no rescue comes.", platform: "Netflix", cats: ["movie"], moods: ["intense and thrilling","mind-bending"], vibes: ["fast-paced binge-worthy"], ratings: ["teen PG-13","any"] },
+    // ---- FITNESS & WORKOUT (YouTube) ----
+    { title: "Fitness Blender", country: "United States", countryCode: "US", synopsis: "Husband-and-wife team Daniel and Kelli publish hundreds of full-length, equipment-optional workouts with no subscription and no upsell.", platform: "YouTube", cats: ["YouTube channel"], moods: ["inspiring"], vibes: ["easy background watch"], ratings: ["all ages family friendly","tween PG","teen PG-13","any"] },
+    { title: "Blogilates", country: "United States", countryCode: "US", synopsis: "Cassey Ho's Pilates-led channel, one of the longest-running fitness brands on the platform, mixing workouts with food and body-image honesty.", platform: "YouTube", cats: ["YouTube channel"], moods: ["light and feel-good","inspiring"], vibes: ["easy background watch"], ratings: ["all ages family friendly","tween PG","teen PG-13","any"] },
+    { title: "Walk at Home by Leslie Sansone", country: "United States", countryCode: "US", synopsis: "The original indoor walking workout, running for over thirty years — low-impact routines you can do in a few square feet of floor.", platform: "YouTube", cats: ["YouTube channel"], moods: ["light and feel-good"], vibes: ["easy background watch"], ratings: ["all ages family friendly","any"] },
+    { title: "HASfit", country: "United States", countryCode: "US", synopsis: "Coach Kozak and Claudia run free full-length workouts scaled for every level, with a modifier demonstrated in almost every video.", platform: "YouTube", cats: ["YouTube channel"], moods: ["inspiring"], vibes: ["easy background watch"], ratings: ["all ages family friendly","tween PG","teen PG-13","any"] },
+    { title: "Sydney Cummings Houdyshell", country: "United States", countryCode: "US", synopsis: "A new full-length strength or conditioning workout published every single day, programmed in monthly blocks you can follow like a plan.", platform: "YouTube", cats: ["YouTube channel"], moods: ["intense and thrilling","inspiring"], vibes: ["fast-paced binge-worthy"], ratings: ["teen PG-13","any"] },
+    { title: "Lucy Wyndham-Read", country: "United Kingdom", countryCode: "GB", synopsis: "Short, beginner-friendly routines built around walking, low-impact cardio and quick sessions that fit into a normal day.", platform: "YouTube", cats: ["YouTube channel"], moods: ["light and feel-good"], vibes: ["easy background watch"], ratings: ["all ages family friendly","any"] },
+    { title: "The Fitness Marshall", country: "United States", countryCode: "US", synopsis: "Dance cardio to current pop tracks, played for joy rather than discipline — closer to a living-room party than a workout.", platform: "YouTube", cats: ["YouTube channel"], moods: ["funny","light and feel-good"], vibes: ["easy background watch","guilty pleasure"], ratings: ["tween PG","teen PG-13","any"] },
+    { title: "growwithjo", country: "Malaysia", countryCode: "MY", synopsis: "Joanna Soh's walking and home workouts aimed squarely at beginners, with an emphasis on routines that need no equipment at all.", platform: "YouTube", cats: ["YouTube channel"], moods: ["light and feel-good","inspiring"], vibes: ["easy background watch"], ratings: ["all ages family friendly","any"] },
+    { title: "MadFit", country: "Canada", countryCode: "CA", synopsis: "Apartment-friendly workouts choreographed to full songs, designed to be quiet enough not to annoy the neighbours below.", platform: "YouTube", cats: ["YouTube channel"], moods: ["light and feel-good"], vibes: ["fast-paced binge-worthy"], ratings: ["tween PG","teen PG-13","any"] },
+    { title: "Pamela Reif", country: "Germany", countryCode: "DE", synopsis: "Silent, no-talking workout sets timed to music, from ten-minute abs to full-length HIIT, with a follow-along format and no chat.", platform: "YouTube", cats: ["YouTube channel"], moods: ["intense and thrilling"], vibes: ["fast-paced binge-worthy"], ratings: ["teen PG-13","any"] },
+    { title: "Chloe Ting", country: "Australia", countryCode: "AU", synopsis: "Free structured challenge programmes with a calendar to follow, which is what turned her short at-home routines into a global habit.", platform: "YouTube", cats: ["YouTube channel"], moods: ["intense and thrilling","inspiring"], vibes: ["fast-paced binge-worthy"], ratings: ["teen PG-13","any"] },
+    { title: "POPSUGAR Fitness", country: "United States", countryCode: "US", synopsis: "Studio-style classes across dance, HIIT, strength and cardio, taught by rotating professional instructors.", platform: "YouTube", cats: ["YouTube channel"], moods: ["light and feel-good"], vibes: ["easy background watch"], ratings: ["all ages family friendly","tween PG","any"] },
+
+    // ---- YOGA & MEDITATION (YouTube) ----
+    { title: "Yoga With Kassandra", country: "Canada", countryCode: "CA", synopsis: "Yin and slow-flow yoga with a focus on morning and bedtime routines, plus long-form yoga nidra for deep rest.", platform: "YouTube", cats: ["YouTube channel"], moods: ["cozy comfort watch"], vibes: ["slow burn"], ratings: ["all ages family friendly","any"] },
+    { title: "Yoga with Tim", country: "United States", countryCode: "US", synopsis: "Detailed, alignment-led vinyasa for people who want to understand what a pose is actually doing rather than just follow along.", platform: "YouTube", cats: ["YouTube channel"], moods: ["cozy comfort watch","inspiring"], vibes: ["slow burn"], ratings: ["all ages family friendly","any"] },
+    { title: "The Mindful Movement", country: "United States", countryCode: "US", synopsis: "Sara and Les Raymond combine guided imagery, breathwork and gentle movement — meditation for people whose legs go numb sitting still.", platform: "YouTube", cats: ["YouTube channel"], moods: ["cozy comfort watch","inspiring"], vibes: ["slow burn"], ratings: ["all ages family friendly","any"] },
+    { title: "The Honest Guys", country: "United Kingdom", countryCode: "GB", synopsis: "Cinematic guided meditations and sleep visualisations — closer to bedtime stories for adults than to instruction.", platform: "YouTube", cats: ["YouTube channel"], moods: ["cozy comfort watch"], vibes: ["slow burn","easy background watch"], ratings: ["all ages family friendly","any"] },
+    { title: "Michael Sealey", country: "Australia", countryCode: "AU", synopsis: "Long-form sleep hypnosis and guided relaxation, widely used for insomnia and anxiety, in a deliberately unhurried voice.", platform: "YouTube", cats: ["YouTube channel"], moods: ["cozy comfort watch"], vibes: ["slow burn"], ratings: ["teen PG-13","any"] },
+    { title: "Jason Stephenson - Sleep Meditation Music", country: "Australia", countryCode: "AU", synopsis: "Guided sleep meditations and hours-long relaxation music, one of the most-listened sources of bedtime audio anywhere.", platform: "YouTube", cats: ["YouTube channel"], moods: ["cozy comfort watch"], vibes: ["slow burn","easy background watch"], ratings: ["all ages family friendly","any"] },
+    { title: "Great Meditation", country: "United States", countryCode: "US", synopsis: "Short morning meditations and affirmations alongside longer sessions for sleep and spiritual growth, with minimal visuals.", platform: "YouTube", cats: ["YouTube channel"], moods: ["cozy comfort watch","inspiring"], vibes: ["slow burn"], ratings: ["all ages family friendly","any"] },
+    { title: "Declutter The Mind", country: "Canada", countryCode: "CA", synopsis: "Secular, situation-specific guided meditation — sessions for a 3am panic attack or a hard conversation rather than vague moods.", platform: "YouTube", cats: ["YouTube channel"], moods: ["cozy comfort watch"], vibes: ["slow burn"], ratings: ["teen PG-13","any"] },
+
+    // ---- MEDITATION & WELLNESS PODCASTS ----
+    { title: "Get Sleepy", country: "United Kingdom", countryCode: "GB", synopsis: "Original bedtime stories read slowly over ambient sound, consistently at the top of the sleep podcast charts.", platform: "Spotify", cats: ["podcast"], moods: ["cozy comfort watch"], vibes: ["slow burn","easy background watch"], ratings: ["all ages family friendly","any"] },
+    { title: "Tara Brach", country: "United States", countryCode: "US", synopsis: "Weekly talks and guided meditations from the psychologist and meditation teacher, blending Buddhist practice with clinical psychology.", platform: "Apple Podcasts", cats: ["podcast"], moods: ["inspiring","cozy comfort watch"], vibes: ["slow burn"], ratings: ["teen PG-13","any"] },
+    { title: "Meditation Minis Podcast", country: "United States", countryCode: "US", synopsis: "Guided meditations under ten minutes for anxiety, stress and sleep, aimed at people who genuinely have no time.", platform: "Spotify", cats: ["podcast"], moods: ["cozy comfort watch"], vibes: ["slow burn"], ratings: ["all ages family friendly","any"] },
+    { title: "Sleep Cove", country: "United Kingdom", countryCode: "GB", synopsis: "Guided sleep meditation and hypnosis from Christopher Fitton, built specifically to be fallen asleep to rather than finished.", platform: "Apple Podcasts", cats: ["podcast"], moods: ["cozy comfort watch"], vibes: ["slow burn"], ratings: ["teen PG-13","any"] },
+    { title: "Tracks To Relax", country: "Canada", countryCode: "CA", synopsis: "Guided sleep meditations designed so you never hear the ending, with sessions for napping and daytime resets too.", platform: "Spotify", cats: ["podcast"], moods: ["cozy comfort watch"], vibes: ["slow burn"], ratings: ["all ages family friendly","any"] },
+    { title: "The Mindful in Minutes Podcast", country: "United States", countryCode: "US", synopsis: "Kelly Smith teaches meditation in roughly ten-minute sittings, with themed series on grief, burnout and building a daily habit.", platform: "Apple Podcasts", cats: ["podcast"], moods: ["cozy comfort watch","inspiring"], vibes: ["slow burn"], ratings: ["all ages family friendly","any"] },
+
+    // ---- MEDITATION & FOCUS MUSIC ----
+    { title: "Deep Focus", country: "Global", synopsis: "Instrumental, lyric-free tracks built to hold concentration for long stretches of work or study.", platform: "Spotify", cats: ["Spotify playlist"], moods: ["cozy comfort watch"], vibes: ["easy background watch","slow burn"], ratings: ["all ages family friendly","any"] },
+    { title: "Peaceful Meditation", country: "Global", synopsis: "Slow ambient soundscapes for meditation practice, breathwork and winding down without any spoken guidance.", platform: "Spotify", cats: ["Spotify playlist"], moods: ["cozy comfort watch"], vibes: ["slow burn","easy background watch"], ratings: ["all ages family friendly","any"] },
+    { title: "Pure Yoga", country: "Global", synopsis: "Flowing instrumental music paced for a yoga session, calm enough to hold a long hold and warm enough to keep you moving.", platform: "Apple Music", cats: ["Spotify playlist"], moods: ["cozy comfort watch"], vibes: ["slow burn"], ratings: ["all ages family friendly","any"] },
+    { title: "Sleep Sounds", country: "Global", synopsis: "Rain, white noise and low ambient drones running long enough to cover a whole night without a loop you can hear.", platform: "YouTube Music", cats: ["Spotify playlist"], moods: ["cozy comfort watch"], vibes: ["easy background watch","slow burn"], ratings: ["all ages family friendly","any"] },
+    { title: "Workout Twerkout", country: "Global", synopsis: "High-tempo tracks sequenced to carry a full gym session without needing to touch your phone.", platform: "Spotify", cats: ["Spotify playlist"], moods: ["intense and thrilling"], vibes: ["fast-paced binge-worthy"], ratings: ["teen PG-13","mature adults only R rated","any"] },
+    { title: "Beast Mode", country: "Global", synopsis: "Heavy hip-hop and rap built for lifting, one of the most-followed workout playlists anywhere.", platform: "Spotify", cats: ["Spotify playlist"], moods: ["intense and thrilling"], vibes: ["fast-paced binge-worthy"], ratings: ["mature adults only R rated","any"] },
 ];
 
 // Titles genuinely rooted in gospel/faith content, for quick lookup by other
@@ -2004,6 +2059,11 @@ const DECADE_TERMS = {
 
 function mediaForCategory(cat) {
     const c = (cat || '').toLowerCase();
+    // YouTube channels and Shorts: iTunes and TVMaze index NEITHER, so a
+    // lookup can only ever return something unrelated that happens to share
+    // a word — pure mismatch risk with no possible upside. 'none' short-
+    // circuits to the generated branded poster, which is always correct.
+    if (c.includes('youtube')) return 'none';
     if (c.includes('podcast')) return 'podcast';
     if (c.includes('playlist') || c.includes('single') || c.includes('album') || c.includes('music')) return 'music';
     if (c.includes('audiobook')) return 'audiobook';
@@ -2123,6 +2183,11 @@ async function discoverFromITunes(cat, mood, vibe, decade, rating) {
 
     const term = parts.join(' ');
     const media = mediaForCategory(cat);
+    // 'none' means this category has no iTunes equivalent (YouTube channels
+    // and Shorts). Searching anyway would return unrelated films or shows, so
+    // return null and let the caller fall back to the curated catalog, which
+    // does have real YouTube entries.
+    if (media === 'none') return null;
     try {
         const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(term)}&media=${media}&limit=40`);
         if (!res.ok) return null;
@@ -2677,7 +2742,7 @@ async function renderResult(selected, isSpecificSearch) {
     try {
         if (typeof CONTENT_CATALOG !== 'undefined') {
             const e = CONTENT_CATALOG.find(x => x.title === selected.title);
-            if (e) matchHints = { year: e.year, country: e.country, countryCode: e.countryCode, cast: e.cast };
+            if (e) matchHints = { year: e.year, country: e.country, countryCode: e.countryCode, cast: e.cast, cats: e.cats };
         }
     } catch (err) {}
 

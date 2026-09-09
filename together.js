@@ -351,7 +351,7 @@ function tgRenderResult(result, participants) {
         try {
             if (typeof CONTENT_CATALOG !== 'undefined') {
                 const e = CONTENT_CATALOG.find(x => x.title === result.title);
-                if (e) posterHints = { year: e.year, country: e.country, countryCode: e.countryCode };
+                if (e) posterHints = { year: e.year, country: e.country, countryCode: e.countryCode, cats: e.cats };
             }
         } catch (err) {}
         if (typeof getRealCoverImage === 'function') {
