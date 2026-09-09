@@ -276,6 +276,18 @@ function buildPosterCard(item, accent) {
     const link = (typeof item === 'object' && item.streamUrl) ? item.streamUrl : platformFallbackUrl(platform, title);
 
     const safeTitle = escapeHtml(title);
+
+    // The user's own private note for this title, written on the match screen.
+    // A note you can't find again is pointless, so it surfaces right on the
+    // history card rather than being buried behind another click.
+    let noteText = '';
+    try {
+        const notes = JSON.parse(localStorage.getItem('match_titleNotes') || '{}');
+        if (notes && notes[title] && notes[title].text) noteText = notes[title].text;
+    } catch (e) {}
+    const noteBadge = noteText
+        ? `<div class="poster-note-badge" title="${escapeHtml(noteText)}">📝</div>`
+        : '';
     const hasPoster = poster && poster.trim() !== '' && poster !== 'invalid-image' && poster !== 'fallback';
     const imgTag = hasPoster
         ? `<img src="${escapeHtml(poster)}" alt="${safeTitle}" style="width:100%; height:100%; object-fit:contain; background:#0b0303; display:block;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">`
@@ -284,6 +296,7 @@ function buildPosterCard(item, accent) {
     const cta = isAudio ? '🎧 Listen Now' : '▶ Stream Now';
 
     return `
+      <div class="poster-cell">
         <a class="poster-card" href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer" title="Open ${safeTitle}"
            style="position:relative; display:block; width:100%; height:230px; border-radius:12px; overflow:hidden; border:1px solid ${accent}; box-shadow:0 5px 20px rgba(0,0,0,0.9); text-decoration:none; transition:transform 0.3s ease, box-shadow 0.3s ease;"
            onmouseover="this.style.transform='translateY(-6px) scale(1.03)'; this.style.boxShadow='0 14px 34px rgba(0,0,0,0.95)'; this.querySelector('.card-cta').style.opacity='1';"
@@ -292,10 +305,13 @@ function buildPosterCard(item, accent) {
             <div class="css-poster-fallback" style="display:${fallbackDisplay}; background:linear-gradient(135deg,#130734,#6B3FA0); width:100%; height:100%; align-items:center; justify-content:center; text-align:center; padding:10px; box-sizing:border-box; color:var(--gold); font-weight:900; font-size:16px; text-transform:uppercase; text-shadow:0 2px 8px rgba(0,0,0,0.9); box-shadow: inset 0 0 30px rgba(0,0,0,0.9);">
                 ${safeTitle}
             </div>
+            ${noteBadge}
             ${platform ? `<div style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.85); color:${accent}; font-size:9px; font-weight:900; padding:4px 8px; border-radius:6px; text-transform:uppercase; border:1px solid ${accent};">${escapeHtml(platform)}</div>` : ''}
             <div class="card-cta" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.62); color:var(--gold-glow); font-weight:900; font-size:14px; text-transform:uppercase; opacity:0; transition:opacity 0.3s ease;">${cta}</div>
             <div class="poster-title" style="position:absolute; bottom:0; width:100%; background:linear-gradient(transparent, rgba(0,0,0,0.95)); color:#fff; font-size:12px; padding:10px 4px 4px 4px; text-align:center; font-weight:bold; border-top:1px solid ${accent};">${safeTitle}</div>
         </a>
+        ${noteText ? `<p class="poster-note">${escapeHtml(noteText)}</p>` : ''}
+      </div>
     `;
 }
 

@@ -1430,6 +1430,52 @@ async function hydrateProfileFromAuth(user) {
         const googleName = meta.full_name || meta.name || '';
         const googleAvatar = meta.avatar_url || meta.picture || '';
 
+        // RESTORE PORTFOLIO + NOTES FROM THE ACCOUNT.
+        // syncListsToDatabase() has always WRITTEN these to user metadata, but
+        // nothing ever read them back — so signing in on a second device gave
+        // you an empty portfolio even though the data was sitting there. Notes
+        // would have inherited exactly the same one-way problem, so this
+        // restores all of it.
+        //
+        // Merge rather than replace: whatever is in localStorage right now may
+        // be newer than the server copy (e.g. saved while offline, or before
+        // signing in), and silently discarding it would lose real user data.
+        try {
+            const mergeList = (localArr, remoteArr) => {
+                if (!Array.isArray(remoteArr)) return localArr;
+                const seen = new Set(localArr.map(i => (i && i.title) || i));
+                const merged = localArr.slice();
+                for (const r of remoteArr) {
+                    const key = (r && r.title) || r;
+                    if (key && !seen.has(key)) { merged.push(r); seen.add(key); }
+                }
+                return merged;
+            };
+
+            if (Array.isArray(meta.seen_list))     { seenList     = mergeList(seenList, meta.seen_list); }
+            if (Array.isArray(meta.saved_list))    { savedList    = mergeList(savedList, meta.saved_list); }
+            if (Array.isArray(meta.disliked_list)) { dislikedList = mergeList(dislikedList, meta.disliked_list); }
+            if (meta.user_ratings && typeof meta.user_ratings === 'object') {
+                userRatings = Object.assign({}, meta.user_ratings, userRatings); // local wins on conflict
+            }
+            if (meta.title_notes && typeof meta.title_notes === 'object') {
+                // Per title, keep whichever note was updated most recently.
+                for (const [title, remote] of Object.entries(meta.title_notes)) {
+                    const local = titleNotes[title];
+                    if (!local) { titleNotes[title] = remote; continue; }
+                    if (remote && remote.updated && local.updated && remote.updated > local.updated) {
+                        titleNotes[title] = remote;
+                    }
+                }
+            }
+
+            localStorage.setItem('match_seenList', JSON.stringify(seenList));
+            localStorage.setItem('match_savedList', JSON.stringify(savedList));
+            localStorage.setItem('match_dislikedList', JSON.stringify(dislikedList));
+            localStorage.setItem('match_userRatings', JSON.stringify(userRatings));
+            localStorage.setItem('match_titleNotes', JSON.stringify(titleNotes));
+        } catch (e) { console.warn('Portfolio restore skipped:', e); }
+
         // Read the existing row first — never overwrite something the user
         // has already filled in themselves with Google's version.
         const { data: existing } = await supabaseClient
@@ -2469,6 +2515,55 @@ async function hydrateTitleFacts(selected, hints) {
     }
 }
 
+// Renders the private-notes panel for the currently shown match. Called from
+// renderResult() on every reveal.
+function renderNotePanel(title) {
+    const wrap = document.getElementById('res-note-wrap');
+    const box = document.getElementById('res-note-input');
+    const locked = document.getElementById('res-note-locked');
+    const status = document.getElementById('res-note-status');
+    const saveBtn = document.getElementById('res-note-save');
+    if (!wrap) return;
+
+    wrap.style.display = 'block';
+    if (status) status.textContent = '';
+
+    if (!isUserLoggedIn) {
+        // Signed-out: show what the feature is rather than hiding it entirely.
+        // A locked feature someone can see is a reason to register; an
+        // invisible one is just a feature they never discover.
+        if (box) box.style.display = 'none';
+        if (saveBtn) saveBtn.style.display = 'none';
+        if (locked) locked.style.display = 'flex';
+        return;
+    }
+
+    if (locked) locked.style.display = 'none';
+    if (box) {
+        box.style.display = 'block';
+        box.value = window.getTitleNote(title);
+    }
+    if (saveBtn) saveBtn.style.display = 'inline-flex';
+}
+
+window.saveCurrentNote = async function () {
+    if (!isUserLoggedIn) return;
+    const box = document.getElementById('res-note-input');
+    const status = document.getElementById('res-note-status');
+    if (!box || !globalMatchTitle) return;
+
+    const ok = await saveTitleNote(globalMatchTitle, box.value);
+    if (status) {
+        status.textContent = box.value.trim() === ''
+            ? (window.t ? t('note.cleared') : 'Note cleared.')
+            : (window.t ? t('note.saved') : 'Saved to your history.');
+        setTimeout(() => { if (status) status.textContent = ''; }, 2600);
+    }
+    if (ok && window.showToast && box.value.trim() !== '') {
+        showToast(window.t ? t('note.savedToast') : '📝 Note saved — find it in your Profile history.');
+    }
+};
+
 async function renderResult(selected, isSpecificSearch) {
     const loadBox = document.getElementById('loading-box'); const resultBox = document.getElementById('result-box');
     if (loadBox) loadBox.style.display = 'none';
@@ -2555,6 +2650,10 @@ async function renderResult(selected, isSpecificSearch) {
     window.globalMatchTitle = globalMatchTitle;
     window.globalMatchPoster = globalMatchPoster;
     window.globalPlatform = globalPlatform;
+
+    // Must come AFTER globalMatchTitle is assigned — saveCurrentNote() reads
+    // it to know which title the note belongs to.
+    renderNotePanel(selected.title);
 
     // Content-safety gate: some titles simply shouldn't go out in a branded
     // social share under MatchApp's name. Swap the share button into a
@@ -2945,6 +3044,52 @@ window.recordAction = function(type) {
     syncListsToDatabase();
     updateActionButtonStates();
 };
+
+// ----------------------------------------------------
+// PRIVATE TITLE NOTES (registered users only)
+//
+// Keyed by title, stored alongside the existing portfolio lists and synced
+// to Supabase user metadata the same way they are — so a note follows the
+// account across devices, not just the browser it was written in.
+//
+// Deliberately NOT a public comment system: these are personal notes only
+// the author ever sees, surfaced in their own profile history. That avoids
+// the entire moderation surface (spam, abuse, defamation, and the legal
+// exposure of hosting third-party public speech) that a real public comment
+// feature would require, while giving exactly what was asked for.
+// ----------------------------------------------------
+let titleNotes = {};
+try { titleNotes = JSON.parse(localStorage.getItem('match_titleNotes') || '{}'); } catch (e) { titleNotes = {}; }
+
+const NOTE_MAX_LEN = 1000;
+
+window.getTitleNote = function (title) {
+    if (!title) return '';
+    return (titleNotes && typeof titleNotes[title] === 'object') ? (titleNotes[title].text || '') : '';
+};
+
+async function saveTitleNote(title, text) {
+    if (!title) return false;
+    const clean = String(text || '').slice(0, NOTE_MAX_LEN);
+
+    if (clean.trim() === '') {
+        delete titleNotes[title];           // empty note = remove it entirely
+    } else {
+        titleNotes[title] = {
+            text: clean,
+            updated: new Date().toISOString()
+        };
+    }
+
+    try { localStorage.setItem('match_titleNotes', JSON.stringify(titleNotes)); } catch (e) {}
+
+    if (isUserLoggedIn && supabaseClient) {
+        try {
+            await supabaseClient.auth.updateUser({ data: { title_notes: titleNotes } });
+        } catch (e) { console.warn('Note sync deferred:', e); }
+    }
+    return true;
+}
 
 async function syncListsToDatabase() {
     localStorage.setItem('match_seenList', JSON.stringify(seenList));

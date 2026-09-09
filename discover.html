@@ -42,8 +42,8 @@
     <meta name="twitter:image" content="https://matchapp.cc/og-image.jpg">
     <link rel="icon" href="/logo.jpeg" type="image/jpeg">
 
-    <script defer src="/i18n.js?v=160"></script>
-    <script defer src="/install.js?v=160"></script>
+    <script defer src="/i18n.js?v=161"></script>
+    <script defer src="/install.js?v=161"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -76,7 +76,7 @@
     }
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=160">
+    <link rel="stylesheet" href="/style.css?v=161">
     <style>
         :root { --gold: #E5C158; --gold-deep: #B8912F; --gold-glow: #FFF3A3; --ink: #14131A; --royal-deep: #130734; --royal: #402562; --royal-lift: #6B3FA0; --royal-glow: #A376B6; --bg-dark: #14131A; --card-bg: rgba(26, 22, 38, 0.90); }
         body { background: var(--bg-dark); color: #fff; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
@@ -183,7 +183,19 @@
         @keyframes scanBounce { 0%,80%,100% { transform: translateY(0); opacity:0.45; } 40% { transform: translateY(-16px); opacity:1; } }
         #discover-empty { display:none; text-align:center; padding: 34px; color:#b9b1cc; }
         .ad-banner-container { text-align:center; margin-bottom:26px; background: rgba(0,0,0,0.55); padding:15px; border-radius:16px; border:1px solid rgba(229,193,88,0.35); min-height:100px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
-        @media (max-width: 620px) { .discover-card { flex-direction: column; } .discover-poster { width: 100%; height: 210px; } .wrap { padding: 22px 14px 110px 14px; } }
+        /* Mobile: KEEP the side-by-side thumbnail layout rather than stacking.
+           This used to switch to flex-direction:column with a full-width 210px
+           poster, which made each card dramatically TALLER on the smallest
+           screens — the opposite of what's wanted. A compact row matches the
+           result card's mobile treatment and fits far more per screen. */
+        @media (max-width: 620px) {
+            .discover-card { gap: 11px; padding: 11px; }
+            .discover-poster { width: 78px; height: 117px; }
+            .wrap { padding: 22px 14px 110px 14px; }
+        }
+        @media (max-width: 380px) {
+            .discover-poster { width: 66px; height: 99px; }
+        }
     </style>
 
     <script type="application/ld+json">
@@ -308,9 +320,9 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="/app.js?v=160"></script>
-    <script src="/discover.js?v=160"></script>
-    <script src="/voice-input.js?v=160"></script>
+    <script src="/app.js?v=161"></script>
+    <script src="/discover.js?v=161"></script>
+    <script src="/voice-input.js?v=161"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initVoiceInput('discover-new-input', 'mic-btn-discover', () => newDiscoverSearch());

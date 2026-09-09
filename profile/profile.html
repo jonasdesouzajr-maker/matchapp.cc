@@ -34,7 +34,7 @@
         });
     </script>
     
-    <link rel="stylesheet" href="/style.css?v=160">
+    <link rel="stylesheet" href="/style.css?v=161">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --gold: #E5C158; --gold-deep: #B8912F; --gold-glow: #FFF3A3; --ink: #14131A; --royal-deep: #130734; --royal: #402562; --royal-lift: #6B3FA0; --royal-glow: #A376B6; --bg-dark: #14131A; --card-bg: rgba(26, 22, 38, 0.90); }
@@ -49,8 +49,26 @@
         .input-group input, .input-group select { width: 100%; padding: 18px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: #000; color: #fff; font-size: 16px; }
         
         #portfolio-grid, #seen-grid, #audio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
+
+        /* Note badge + saved note text on history cards */
+        .poster-cell { display: flex; flex-direction: column; }
+        .poster-note-badge { position: absolute; top: 8px; left: 8px; background: rgba(107,63,160,0.92);
+                             color: var(--gold-glow); font-size: 11px; padding: 4px 7px; border-radius: 6px;
+                             border: 1px solid rgba(229,193,88,0.55); z-index: 3; }
+        .poster-note { color: #bdb2d4; font-size: 11.5px; line-height: 1.5; margin: 8px 2px 0 2px;
+                       background: rgba(107,63,160,0.14); border-left: 2px solid rgba(229,193,88,0.5);
+                       padding: 7px 9px; border-radius: 0 8px 8px 0; white-space: pre-wrap;
+                       overflow-wrap: anywhere; }
         @media (max-width: 640px) {
-            #portfolio-grid, #seen-grid, #audio-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 14px; }
+            /* More titles per screen, less scrolling. The card height is set
+               inline by profile.js's buildPosterCard(), so !important is the
+               honest way to override it here rather than duplicating that
+               markup into CSS where the two could silently drift apart. */
+            #portfolio-grid, #seen-grid, #audio-grid { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 11px; }
+            #portfolio-grid .poster-card, #seen-grid .poster-card, #audio-grid .poster-card { height: 156px !important; }
+            .poster-title { font-size: 10px !important; padding: 8px 3px 3px 3px !important; }
+            .poster-note { font-size: 10.5px; padding: 6px 8px; margin-top: 6px; }
+            .poster-note-badge { font-size: 9.5px; padding: 3px 5px; top: 6px; left: 6px; }
             .portfolio-tab { min-width: 100%; font-size: 13px; padding: 14px 10px; }
             .identity-grid { grid-template-columns: 1fr 1fr; }
         }
@@ -386,10 +404,10 @@
         <p style="text-align:center; color:#8f85a8; font-size:12.5px; margin:24px 0 4px 0;"><span data-i18n="support.ideas">💌 Got an idea for MatchApp? We read every email —</span> <a href="mailto:support@matchapp.cc" style="color:var(--gold); text-decoration:none; font-weight:bold;">support@matchapp.cc</a></p>
     </main>
 
-    <script src="/i18n.js?v=160"></script>
-    <script defer src="/install.js?v=160"></script>
-    <script src="/app.js?v=160"></script>
-    <script src="/taste.js?v=160"></script>
-    <script src="/profile.js?v=160"></script>
+    <script src="/i18n.js?v=161"></script>
+    <script defer src="/install.js?v=161"></script>
+    <script src="/app.js?v=161"></script>
+    <script src="/taste.js?v=161"></script>
+    <script src="/profile.js?v=161"></script>
 </body>
 </html>

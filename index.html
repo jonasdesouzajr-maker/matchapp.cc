@@ -418,8 +418,8 @@
     <link rel="alternate" hreflang="zh" href="https://matchapp.cc/?lang=zh">
 
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=160"></script>
-    <script defer src="/install.js?v=160"></script>
+    <script defer src="/i18n.js?v=161"></script>
+    <script defer src="/install.js?v=161"></script>
 
     <!-- GOOGLE ANALYTICS (GTAG) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
@@ -445,7 +445,7 @@
         });
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=160">
+    <link rel="stylesheet" href="/style.css?v=161">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -601,6 +601,28 @@
         /* ===== RESULT POSTER: show the artwork's TRUE shape, never cropped ===== */
         .poster-stage { position: relative; display: inline-block; max-width: 100%; cursor: zoom-in; }
 
+        /* ===== PRIVATE TITLE NOTES ===== */
+        .res-note-wrap { background: rgba(107,63,160,0.14); border: 1px solid rgba(163,118,182,0.45);
+                         border-radius: 14px; padding: 14px 16px; margin-bottom: 22px; }
+        .res-note-label { display: block; color: #a99cc4; font-size: 10.5px; text-transform: uppercase;
+                          letter-spacing: 1.3px; font-weight: bold; margin-bottom: 9px; }
+        .res-note-input { width: 100%; background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.18);
+                          border-radius: 10px; color: #eee; font-size: 14px; font-family: inherit; padding: 11px 12px;
+                          line-height: 1.55; resize: vertical; box-sizing: border-box; }
+        .res-note-input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 14px rgba(229,193,88,0.22); }
+        .res-note-row { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
+        .res-note-save { background: rgba(229,193,88,0.16); border: 1px solid var(--gold); color: var(--gold-glow);
+                         padding: 9px 18px; border-radius: 10px; font-weight: 800; font-size: 13px; cursor: pointer;
+                         font-family: inherit; }
+        .res-note-save:hover { background: rgba(229,193,88,0.3); }
+        .res-note-status { color: #9beeb8; font-size: 12.5px; }
+        .res-note-locked { display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+                           color: #bdb2d4; font-size: 13px; line-height: 1.6; }
+        .res-note-signin { background: rgba(229,193,88,0.16); border: 1px solid var(--gold); color: var(--gold-glow);
+                           padding: 8px 16px; border-radius: 10px; font-weight: 800; font-size: 12.5px;
+                           cursor: pointer; font-family: inherit; white-space: nowrap; }
+        .res-note-signin:hover { background: rgba(229,193,88,0.3); }
+
         /* ===== RESULT CARD — RESPONSIVE MEDIA ROW =====
            Desktop keeps the original stacked layout (big centred poster, title
            below) — plenty of room there, and it isn't where the "too much
@@ -642,6 +664,9 @@
             .share-cta { padding: 11px !important; font-size: 12.5px !important; margin-top: 6px !important; }
             #btn-loved-it, #btn-not-for-me { padding: 10px 6px !important; font-size: 12px !important; }
             .res-criteria { padding: 10px 12px !important; margin-bottom: 14px !important; }
+            .res-note-wrap { padding: 11px 12px !important; margin-bottom: 14px !important; }
+            .res-note-input { font-size: 13.5px !important; padding: 9px 10px !important; }
+            .res-note-locked { font-size: 12px !important; gap: 9px !important; }
             .ad-banner-container { margin-bottom: 16px !important; } /* the ad unit itself is untouched, just its own spacing */
         }
         #res-poster-img {
@@ -1444,7 +1469,7 @@
                         <div class="spotlight-poster" onclick="saveSpotlightTitle()" role="button" tabindex="0"
                              onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();saveSpotlightTitle();}"
                              aria-label="Save American Horror Story: 13 to Watch Later">
-                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=160" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
+                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=161" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
                             <div class="spotlight-ribbon" data-i18n="spotlight.ribbon">COMING THIS MONTH</div>
                         </div>
                         <div class="spotlight-body">
@@ -1827,6 +1852,22 @@
                         <div id="res-criteria-chips" class="res-criteria-chips"></div>
                     </div>
 
+                    <!-- PRIVATE NOTES — registered users only. Personal, never public. -->
+                    <div id="res-note-wrap" class="res-note-wrap" style="display:none;">
+                        <label for="res-note-input" class="res-note-label" data-i18n="note.label">📝 Your private note</label>
+                        <div id="res-note-locked" class="res-note-locked" style="display:none;">
+                            <span data-i18n="note.locked">Sign in to keep private notes on any title — they're saved to your history and only ever visible to you.</span>
+                            <button onclick="openAuthModal()" class="res-note-signin" data-i18n="note.signin">Sign in</button>
+                        </div>
+                        <textarea id="res-note-input" class="res-note-input" maxlength="1000" rows="2"
+                                  placeholder="Why you saved it, where you left off, who recommended it…"
+                                  data-i18n-placeholder="note.placeholder" style="display:none;"></textarea>
+                        <div class="res-note-row">
+                            <button id="res-note-save" onclick="saveCurrentNote()" class="res-note-save" style="display:none;" data-i18n="note.save">Save note</button>
+                            <span id="res-note-status" class="res-note-status" aria-live="polite"></span>
+                        </div>
+                    </div>
+
                     <!-- IN-RESULT HIGH VALUE ADSENSE BANNER -->
                     <div class="ad-banner-container premium-ad-frame" style="margin-bottom: 30px;">
                         <span style="font-size: 10px; color: #888; display: block; margin-bottom: 5px;">SPONSORED</span>
@@ -2148,10 +2189,10 @@
         </div>
     </div>
 
-    <script src="/app.js?v=160"></script>
-    <script src="/taste.js?v=160"></script>
-    <script src="/share.js?v=160"></script>
-    <script src="/voice-input.js?v=160"></script>
+    <script src="/app.js?v=161"></script>
+    <script src="/taste.js?v=161"></script>
+    <script src="/share.js?v=161"></script>
+    <script src="/voice-input.js?v=161"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initVoiceInput('specific-search-input', 'mic-btn-index', () => smartSearch());
