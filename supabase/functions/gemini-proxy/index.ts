@@ -31,16 +31,43 @@
 // how the web works; see the accompanying note in supabase/README.md.
 // ============================================================
 
-// Model chain, newest first. Google retires models on a rolling schedule
-// (1.0 and 1.5 are gone, 2.0 Flash shut down June 2026, 2.5 Pro goes in
-// October 2026), so this deliberately spans several generations — if the
-// newest name isn't available on a given API key or region, the next one
-// down is tried rather than the whole feature failing.
+// Model chain, newest first. Google retires models on a rolling schedule, so
+// this spans more than one generation: if the first name isn't available on a
+// given key or region, the next is tried rather than the feature failing.
+//
+// TRIMMED 2026-09 after a live diagnostic run against the production key.
+// The chain used to include "gemini-2.5-flash" and "gemini-2.5-flash-lite" at
+// positions 2 and 3. Both are now RETIRED and return a hard 404 on this key
+// ("no longer available to new users"). Because they sat in the MIDDLE of the
+// chain, every time the primary model was busy, rate-limited or returned an
+// unusable MAX_TOKENS response, the function made two guaranteed-failing
+// round-trips to Google before it could reach a model that actually works.
+// That is dead latency on exactly the slow path where the user is already
+// waiting — a direct contributor to the "no output, then it took too long"
+// reports. Both removed.
+//
+// Only models CONFIRMED working against the live key are listed. Google's own
+// 404 text suggests "gemini-3.6-flash" as the successor, but that has not been
+// verified against this key, and adding an untested name would recreate the
+// exact problem being fixed here. The diagnostic (/ai-check.html) now probes
+// it, so once it reports WORKING it can be promoted to the front of this list.
 const MODEL_CHAIN = [
-  "gemini-3.5-flash",       // widely available Flash generation
-  "gemini-2.5-flash",       // older but very broadly enabled
-  "gemini-2.5-flash-lite",  // cheapest, near-universal availability
-  "gemini-3.1-flash-lite",  // newer lite tier
+  "gemini-3.5-flash",       // confirmed WORKING — primary
+  "gemini-3.1-flash-lite",  // confirmed WORKING — cheaper lite fallback
+];
+
+// Models the DIAGNOSTIC probes, which is deliberately wider than the serving
+// chain above. Trimming the chain to only confirmed-working models is right
+// for serving — but if the diagnostic only tested the chain, it could never
+// tell us about a newer model worth promoting, or confirm that a removed one
+// is still dead. This list is probe-only: nothing here serves traffic until
+// it is explicitly moved into MODEL_CHAIN.
+const DIAGNOSTIC_PROBE_MODELS = [
+  ...MODEL_CHAIN,
+  "gemini-3.6-flash",       // named by Google's own 404 text as the 2.5 successor
+  "gemini-3.5-flash-lite",  // named as the 2.5-flash-lite successor
+  "gemini-2.5-flash",       // retired — probed to confirm it stays dead
+  "gemini-2.5-flash-lite",  // retired — probed to confirm it stays dead
 ];
 
 const CORS_HEADERS = {
@@ -196,13 +223,15 @@ Deno.serve(async (req: Request) => {
         const report: Record<string, unknown> = {
             apiKeyPresent: !!apiKey,
             apiKeyLength: apiKey ? apiKey.length : 0,
-            functionVersion: "2026-09-supports-discover-mode",
+            functionVersion: "2026-09-trimmed-dead-models",
             supportsDiscoverMode: true,
+            // Which models actually serve traffic, vs which are only probed.
+            servingChain: MODEL_CHAIN,
             models: {} as Record<string, string>,
         };
         const models = report.models as Record<string, string>;
 
-        for (const model of MODEL_CHAIN) {
+        for (const model of DIAGNOSTIC_PROBE_MODELS) {
             try {
                 const r = await fetch(
                     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
