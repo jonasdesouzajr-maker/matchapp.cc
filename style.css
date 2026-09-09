@@ -115,16 +115,27 @@ input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow
 .fade-in { animation: fadeIn 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards; }
 @keyframes fadeIn { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
 
-/* ⚡ JUMP TO MATCH — top-of-page shortcut past the marquee/events/spotlights */
+/* ⚡🤖 QUICK JUMP PAIR — top-of-page shortcuts past the marquee/events/spotlights */
+.quick-jump-row { display: flex; gap: 10px; margin-bottom: 14px; }
 .jump-to-match-btn { display: flex; align-items: center; justify-content: center; gap: 10px;
-                     width: 100%; background: linear-gradient(90deg, rgba(229,193,88,0.16), rgba(107,63,160,0.28), rgba(229,193,88,0.16));
+                     flex: 1; background: linear-gradient(90deg, rgba(229,193,88,0.16), rgba(107,63,160,0.28), rgba(229,193,88,0.16));
                      border: 1px solid rgba(229,193,88,0.55); color: var(--gold-glow); font-weight: 800;
-                     font-size: 13.5px; letter-spacing: 0.3px; padding: 13px 16px; border-radius: 14px;
-                     cursor: pointer; font-family: inherit; margin-bottom: 14px; transition: 0.2s; }
+                     font-size: 13px; letter-spacing: 0.2px; padding: 13px 12px; border-radius: 14px;
+                     cursor: pointer; font-family: inherit; transition: 0.2s; text-decoration: none; text-align: center; }
 .jump-to-match-btn:hover { border-color: var(--gold); background: linear-gradient(90deg, rgba(229,193,88,0.26), rgba(107,63,160,0.4), rgba(229,193,88,0.26)); }
+/* The AI button gets a cooler, more "intelligent" purple-forward tint rather
+   than reusing an identical gold treatment — a small visual cue that this is
+   a different kind of interaction (a conversation) from the form below it. */
+.jump-to-ai-btn { background: linear-gradient(90deg, rgba(107,63,160,0.34), rgba(163,118,182,0.28), rgba(107,63,160,0.34));
+                  border-color: rgba(163,118,182,0.65); }
+.jump-to-ai-btn:hover { border-color: var(--royal-glow); background: linear-gradient(90deg, rgba(107,63,160,0.5), rgba(163,118,182,0.42), rgba(107,63,160,0.5)); }
 .jump-arrow { display: inline-block; animation: jumpBounce 1.6s ease-in-out infinite; }
 @keyframes jumpBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
 @media (prefers-reduced-motion: reduce) { .jump-arrow { animation: none; } }
+@media (max-width: 480px) {
+    .quick-jump-row { flex-direction: column; }
+    .jump-to-match-btn { font-size: 12.5px; padding: 13px; }
+}
 
 /* 📲 INSTALL & 🔊 SOUND TOGGLE — header buttons */
 .install-btn { background: rgba(229,193,88,0.14); border: 1px solid var(--gold); color: var(--gold-glow);

@@ -418,8 +418,8 @@
     <link rel="alternate" hreflang="zh" href="https://matchapp.cc/?lang=zh">
 
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=154"></script>
-    <script defer src="/install.js?v=154"></script>
+    <script defer src="/i18n.js?v=155"></script>
+    <script defer src="/install.js?v=155"></script>
 
     <!-- GOOGLE ANALYTICS (GTAG) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
@@ -445,7 +445,7 @@
         });
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=154">
+    <link rel="stylesheet" href="/style.css?v=155">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -1137,13 +1137,20 @@
         </nav>
     </header>
 
-    <!-- JUMP TO MATCH — the questionnaire sits well below the fold once the
-         trending rail, events rail and spotlights are all in place. This is
-         the fastest path down to it for anyone who just wants to get matched. -->
-    <button onclick="scrollToQuestionnaire()" class="jump-to-match-btn" aria-label="Jump to the match form">
-        <span data-i18n="jump.label">⚡ Skip Straight To Matching</span>
-        <span class="jump-arrow" aria-hidden="true">↓</span>
-    </button>
+    <!-- QUICK JUMP PAIR — the two ways into MatchApp. Neither reads as a
+         lookup tool: the site's whole pitch is an AI that thinks for you,
+         not a search box, so the second button deliberately avoids "search"
+         entirely — it promises a decision, not a lookup. -->
+    <div class="quick-jump-row">
+        <button onclick="scrollToQuestionnaire()" class="jump-to-match-btn" aria-label="Jump to the match form">
+            <span data-i18n="jump.label">⚡ Skip Straight To Matching</span>
+            <span class="jump-arrow" aria-hidden="true">↓</span>
+        </button>
+        <a href="/discover.html" class="jump-to-match-btn jump-to-ai-btn" aria-label="Ask our AI what to watch">
+            <span data-i18n="jump.aiLabel">🤖 Let Our AI Decide For You</span>
+            <span class="jump-arrow" aria-hidden="true">→</span>
+        </a>
+    </div>
 
     <!-- LIVE STATUS STRIP: visitor's real local date/time + genuine activity stats -->
     <div id="live-status-strip" class="live-strip" role="status" aria-live="polite">
@@ -1391,7 +1398,7 @@
                         <div class="spotlight-poster" onclick="saveSpotlightTitle()" role="button" tabindex="0"
                              onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();saveSpotlightTitle();}"
                              aria-label="Save American Horror Story: 13 to Watch Later">
-                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=154" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
+                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=155" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
                             <div class="spotlight-ribbon" data-i18n="spotlight.ribbon">COMING THIS MONTH</div>
                         </div>
                         <div class="spotlight-body">
@@ -2074,10 +2081,10 @@
         </div>
     </div>
 
-    <script src="/app.js?v=154"></script>
-    <script src="/taste.js?v=154"></script>
-    <script src="/share.js?v=154"></script>
-    <script src="/voice-input.js?v=154"></script>
+    <script src="/app.js?v=155"></script>
+    <script src="/taste.js?v=155"></script>
+    <script src="/share.js?v=155"></script>
+    <script src="/voice-input.js?v=155"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initVoiceInput('specific-search-input', 'mic-btn-index', () => smartSearch());
