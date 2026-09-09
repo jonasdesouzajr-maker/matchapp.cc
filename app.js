@@ -1309,21 +1309,77 @@ document.addEventListener('DOMContentLoaded', initUpgradeRibbon);
 // ancestor is, which is why every other scroll in this file works. Combined
 // with the #questionnaire-box scroll-margin-top rule, it also clears the
 // sticky header without manual maths.
+// Tap-to-zoom on the compact mobile poster thumbnail. Deliberately not native
+// pinch-zoom (viewport stays locked site-wide) — pinch-zoom on the whole page
+// would fight the drag/swipe gestures the trending rail and Match Together
+// already use. This gives the same "see it bigger" result without that
+// conflict: a real full-size view of the exact same image, one tap to open,
+// one tap anywhere to close.
+window.openPosterZoom = function () {
+    const src = document.getElementById('res-poster-img')?.src;
+    if (!src) return;
+    const overlay = document.getElementById('poster-zoom-overlay');
+    const img = document.getElementById('poster-zoom-img');
+    if (!overlay || !img) return;
+    img.src = src;
+    img.alt = document.getElementById('res-title')?.textContent || 'Cover';
+    overlay.style.display = 'flex';
+};
+window.closePosterZoom = function () {
+    const overlay = document.getElementById('poster-zoom-overlay');
+    if (overlay) overlay.style.display = 'none';
+};
+
 function goToQuestionnaire() {
     const box = document.getElementById('questionnaire-box');
     if (!box) return false;
 
+    // THE ACTUAL BUG: triggerMatch() sets this box to display:none once a
+    // result is showing, so it can be replaced by the loading/result cards.
+    // Every one of the four buttons that scroll here (Match Again's "New
+    // Criteria", "Same Criteria", the header's jump button, and the "How It
+    // Works" CTA) could be tapped AFTER a match already happened — and
+    // scrollIntoView() on a display:none element has no layout box to scroll
+    // to, so it silently does nothing. The toast still fired, which is why it
+    // looked like the button was "telling" the user something without ever
+    // taking them anywhere. Re-show the form before attempting to scroll.
+    if (box.style.display === 'none') box.style.display = '';
+    const resultBox = document.getElementById('result-box');
+    if (resultBox && resultBox.style.display !== 'none') resultBox.style.display = 'none';
+
+    // 'center' was wrong here: the questionnaire is taller than a phone
+    // viewport, so centring it scrolled the "Curate Your Perfect Match"
+    // heading off the top and dropped the user into the middle of the form.
+    // 'start' + the scroll-margin-top rule lands the heading just below the
+    // sticky header instead.
     try {
         box.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } catch (e) {
         box.scrollIntoView(true); // older browsers: no options object
     }
 
-    // Visible acknowledgement even if the form was already on screen.
-    box.classList.add('cta-highlight');
-    setTimeout(() => box.classList.remove('cta-highlight'), 1600);
+    setTimeout(() => {
+        box.classList.add('cta-highlight');
+
+        // Focusing a <select> on a touch device opens the native option
+        // picker immediately, covering the form the user was just sent to.
+        // Only auto-focus where there's a real keyboard.
+        const isTouch = window.matchMedia && window.matchMedia('(hover: none), (pointer: coarse)').matches;
+        if (!isTouch) {
+            const firstField = document.getElementById('q-category');
+            if (firstField) firstField.focus({ preventScroll: true });
+        }
+
+        setTimeout(() => box.classList.remove('cta-highlight'), 1600);
+    }, 450); // let the smooth scroll settle before drawing attention to it
+
     return true;
 }
+// One shared implementation under both names — this used to be two
+// near-duplicate functions that could drift out of sync, which is exactly
+// how the header/How-It-Works buttons ended up with the same hidden-box bug
+// as Match Again without anyone touching them directly.
+window.scrollToQuestionnaire = goToQuestionnaire;
 
 // Path A: change the criteria first.
 window.matchAgainNewCriteria = function() {
@@ -1352,32 +1408,9 @@ window.matchAgainSameCriteria = function() {
     setTimeout(() => { window.triggerMatch(false); }, 350);
 };
 
-window.scrollToQuestionnaire = function() {
-    const box = document.getElementById('questionnaire-box');
-    if (!box) return;
-
-    // 'center' was wrong here: the questionnaire is taller than a phone
-    // viewport, so centring it scrolled the "Curate Your Perfect Match"
-    // heading off the top and dropped the user into the middle of the form.
-    // 'start' + the scroll-margin-top rule lands the heading just below the
-    // sticky header instead.
-    box.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-    setTimeout(() => {
-        box.classList.add('cta-highlight');
-
-        // Focusing a <select> on a touch device opens the native option
-        // picker immediately, covering the form the user was just sent to.
-        // Only auto-focus where there's a real keyboard.
-        const isTouch = window.matchMedia && window.matchMedia('(hover: none), (pointer: coarse)').matches;
-        if (!isTouch) {
-            const firstField = document.getElementById('q-category');
-            if (firstField) firstField.focus({ preventScroll: true });
-        }
-
-        setTimeout(() => box.classList.remove('cta-highlight'), 1600);
-    }, 450); // let the smooth scroll settle before drawing attention to it
-};
+// scrollToQuestionnaire is defined once, above, as an alias for
+// goToQuestionnaire() — see that function for the full behaviour
+// (re-showing the form if hidden, scroll timing, touch-aware focus).
 
 // ----------------------------------------------------
 // PROFILE HYDRATION AFTER LOGIN

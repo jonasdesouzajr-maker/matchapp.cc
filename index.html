@@ -418,8 +418,8 @@
     <link rel="alternate" hreflang="zh" href="https://matchapp.cc/?lang=zh">
 
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=158"></script>
-    <script defer src="/install.js?v=158"></script>
+    <script defer src="/i18n.js?v=159"></script>
+    <script defer src="/install.js?v=159"></script>
 
     <!-- GOOGLE ANALYTICS (GTAG) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
@@ -445,7 +445,7 @@
         });
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=158">
+    <link rel="stylesheet" href="/style.css?v=159">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -599,7 +599,51 @@
         .premium-card { transition: box-shadow 0.4s ease, transform 0.4s ease; }
         .premium-card:hover { box-shadow: 0 20px 60px rgba(0,0,0,0.95), 0 0 40px rgba(229,193,88,0.08); }
         /* ===== RESULT POSTER: show the artwork's TRUE shape, never cropped ===== */
-        .poster-stage { position: relative; display: inline-block; max-width: 100%; }
+        .poster-stage { position: relative; display: inline-block; max-width: 100%; cursor: zoom-in; }
+
+        /* ===== RESULT CARD — RESPONSIVE MEDIA ROW =====
+           Desktop keeps the original stacked layout (big centred poster, title
+           below) — plenty of room there, and it isn't where the "too much
+           scrolling" complaint came from. Mobile switches to a compact
+           side-by-side row: a thumbnail-sized poster next to platform/title/
+           facts, which is what actually buys back a full screen's worth of
+           scroll on a phone. One shared markup structure serves both — only
+           the CSS changes per breakpoint, so nothing about the underlying IDs
+           or JS differs between them. */
+        .res-media-row { display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 25px; }
+        .res-poster-col { flex-shrink: 0; }
+        .res-info-col { width: 100%; }
+        .res-platform-badge-el { display: inline-block; background: var(--gold); color:#000; font-weight:900; padding: 8px 18px; border-radius:10px; font-size:16px; text-transform: uppercase; margin-bottom: 15px; }
+        .res-title-el { color: #fff; font-size: 42px; margin: 0 0 15px 0; font-weight: 900; text-transform: uppercase; }
+        .res-zoom-hint { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.65); color: var(--gold-glow);
+                         width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+                         font-size: 15px; border: 1px solid rgba(229,193,88,0.5); pointer-events: none; }
+        #poster-zoom-overlay { cursor: zoom-out; }
+
+        @media (max-width: 640px) {
+            .res-media-row { flex-direction: row; align-items: flex-start; text-align: left; gap: 14px; margin-bottom: 18px; }
+            .res-poster-col .poster-stage { width: 92px; }
+            .res-poster-col img#res-poster-img { width: 92px; height: 138px; object-fit: cover; border-radius: 10px; }
+            .res-poster-col .pulse-ring { display: none; } /* the loading pulse only makes sense at full size */
+            .res-zoom-hint { width: 22px; height: 22px; font-size: 11px; bottom: 4px; right: 4px; }
+            .res-info-col { flex: 1; min-width: 0; }
+            .res-platform-badge-el { padding: 5px 12px; font-size: 12px; margin-bottom: 8px; }
+            .res-title-el { font-size: 21px; margin: 0 0 6px 0; line-height: 1.2; }
+
+            /* Everything below still uses inline styles from earlier work, so
+               !important is the honest way to override them here rather than
+               silently duplicating those rules into a class that could drift
+               out of sync with the inline originals over time. */
+            #res-synopsis { font-size: 14.5px !important; line-height: 1.55 !important; margin-bottom: 12px !important; }
+            #res-cast { font-size: 12.5px !important; }
+            #res-direct-link { font-size: 17px !important; padding: 16px !important; margin-bottom: 14px !important; }
+            .res-action-grid { gap: 8px !important; margin-bottom: 12px !important; }
+            #btn-watch-later, #btn-seen-it { padding: 12px 6px !important; font-size: 12px !important; }
+            .share-cta { padding: 11px !important; font-size: 12.5px !important; margin-top: 6px !important; }
+            #btn-loved-it, #btn-not-for-me { padding: 10px 6px !important; font-size: 12px !important; }
+            .res-criteria { padding: 10px 12px !important; margin-bottom: 14px !important; }
+            .ad-banner-container { margin-bottom: 16px !important; } /* the ad unit itself is untouched, just its own spacing */
+        }
         #res-poster-img {
             display: block; max-width: 100%; width: auto; max-height: 70vh; height: auto;
             object-fit: contain; border-radius: 16px; border: 3px solid var(--gold);
@@ -1024,9 +1068,11 @@
         .rematch-text strong { font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.4px; color: var(--gold-glow); }
         .rematch-text small { font-size: 11.5px; color: #bdb2d4; font-weight: normal; }
         @media (max-width: 560px) {
-            .rematch-grid { grid-template-columns: 1fr; gap: 10px; }
-            .rematch-btn { padding: 14px 13px; gap: 11px; }
-            .rematch-text strong { font-size: 14.5px; }
+            .rematch-grid { gap: 8px; }
+            .rematch-btn { padding: 12px 8px; gap: 8px; }
+            .rematch-icon { font-size: 19px; }
+            .rematch-text strong { font-size: 12.5px; }
+            .rematch-text small { font-size: 10px; }
         }
 
         /* The header is position:sticky, so a plain scrollIntoView('start')
@@ -1398,7 +1444,7 @@
                         <div class="spotlight-poster" onclick="saveSpotlightTitle()" role="button" tabindex="0"
                              onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();saveSpotlightTitle();}"
                              aria-label="Save American Horror Story: 13 to Watch Later">
-                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=158" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
+                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=159" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
                             <div class="spotlight-ribbon" data-i18n="spotlight.ribbon">COMING THIS MONTH</div>
                         </div>
                         <div class="spotlight-body">
@@ -1726,14 +1772,33 @@
                         <span class="qc-num" id="result-quota-num">0</span>
                         <span class="qc-label" id="result-quota-label">left today</span>
                     </div>
-                    <div style="text-align: center; margin-bottom: 25px;">
-                        <!-- THIS IMAGE TAG WILL ALWAYS BE VISIBLE, NO MATTER WHAT -->
-                        <div class="poster-stage">
-                            <span class="pulse-ring"></span>
-                            <span class="pulse-ring"></span>
-                            <span class="pulse-ring"></span>
-                            <img id="res-poster-img" src="" alt="Poster" style="display: none;">
+                    <div class="res-media-row">
+                        <div class="res-poster-col">
+                            <!-- THIS IMAGE TAG WILL ALWAYS BE VISIBLE, NO MATTER WHAT -->
+                            <div class="poster-stage" onclick="openPosterZoom()" role="button" tabindex="0" aria-label="View full-size cover" onkeydown="if(event.key==='Enter')openPosterZoom()">
+                                <span class="pulse-ring"></span>
+                                <span class="pulse-ring"></span>
+                                <span class="pulse-ring"></span>
+                                <img id="res-poster-img" src="" alt="Poster" style="display: none;">
+                                <span class="res-zoom-hint" aria-hidden="true">⤢</span>
+                            </div>
                         </div>
+                        <div class="res-info-col">
+                            <span id="res-platform-badge" class="res-platform-badge-el">Platform</span>
+                            <h2 id="res-title" class="res-title-el">Title</h2>
+                            <!-- Origin / year / genre chips, filled from live metadata -->
+                            <div id="res-factbar" class="res-factbar" style="display:none;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Full-size cover, tap to dismiss. Native pinch-zoom is left
+                         switched off site-wide on purpose (it fights the drag/swipe
+                         gestures the trending rail and Match Together already use) —
+                         this gives the same "see it bigger" outcome without that
+                         conflict, matching how a polished app actually presents an
+                         enlarged image rather than relying on the browser's own zoom. -->
+                    <div id="poster-zoom-overlay" class="modal-overlay" onclick="closePosterZoom()" role="dialog" aria-modal="true" aria-label="Full-size cover, tap to close">
+                        <img id="poster-zoom-img" src="" alt="" style="max-width:92vw; max-height:88vh; border-radius:16px; border:2px solid var(--gold); box-shadow:0 20px 60px rgba(0,0,0,0.8);">
                     </div>
 
                     <!-- TRAILER — a single, prominent, always-working link to YouTube.
@@ -1751,13 +1816,6 @@
                         </a>
                     </div>
                     
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-                        <span id="res-platform-badge" style="background: var(--gold); color:#000; font-weight:900; padding: 8px 18px; border-radius:10px; font-size:16px; text-transform: uppercase;">Platform</span>
-                    </div>
-                    <h2 id="res-title" style="color: #fff; font-size: 42px; margin: 0 0 15px 0; font-weight: 900; text-transform: uppercase;">Title</h2>
-                    <!-- Origin / year / genre chips, filled from live metadata -->
-                    <div id="res-factbar" class="res-factbar" style="display:none;"></div>
-
                     <p id="res-synopsis" style="color: #f1ecdc; font-size: 18px; line-height: 1.7; margin: 0 0 18px 0; font-weight: 600;"></p>
 
                     <!-- Cast, when we can confirm it -->
@@ -1787,8 +1845,8 @@
 
                     <!-- RATING ACTIONS -->
                     <div class="res-action-grid res-action-grid--last">
-                        <button onclick="recordAction('like')" style="background: rgba(37,211,102,0.1); border: 1px solid rgba(37,211,102,0.6); color: #25D366; padding: 14px 10px; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: bold;" data-i18n="res.loved">👍 Loved It</button>
-                        <button onclick="openNotForMeChooser()" style="background: rgba(255,82,82,0.1); border: 1px solid rgba(255,82,82,0.6); color: #ff5252; padding: 14px 10px; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: bold;" data-i18n="res.notforme">👎 Not For Me</button>
+                        <button id="btn-loved-it" onclick="recordAction('like')" style="background: rgba(37,211,102,0.1); border: 1px solid rgba(37,211,102,0.6); color: #25D366; padding: 14px 10px; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: bold;" data-i18n="res.loved">👍 Loved It</button>
+                        <button id="btn-not-for-me" onclick="openNotForMeChooser()" style="background: rgba(255,82,82,0.1); border: 1px solid rgba(255,82,82,0.6); color: #ff5252; padding: 14px 10px; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: bold;" data-i18n="res.notforme">👎 Not For Me</button>
                     </div>
 
                     <!-- MATCH AGAIN — two paths: instant re-roll, or adjust first -->
@@ -2090,10 +2148,10 @@
         </div>
     </div>
 
-    <script src="/app.js?v=158"></script>
-    <script src="/taste.js?v=158"></script>
-    <script src="/share.js?v=158"></script>
-    <script src="/voice-input.js?v=158"></script>
+    <script src="/app.js?v=159"></script>
+    <script src="/taste.js?v=159"></script>
+    <script src="/share.js?v=159"></script>
+    <script src="/voice-input.js?v=159"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initVoiceInput('specific-search-input', 'mic-btn-index', () => smartSearch());
