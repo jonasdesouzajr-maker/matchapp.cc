@@ -25,6 +25,10 @@
         .ok   { color:#4ade80; font-weight:700; }
         .bad  { color:#ff6b6b; font-weight:700; }
         .warn { color:#ffb84d; font-weight:700; }
+        /* Neutral grey: for things that are expected to be unavailable and are
+           correctly excluded from use. Deliberately NOT red — a red mark on
+           something working as designed devalues every real red mark. */
+        .muted { color:#6f6880; font-weight:700; }
         .step { padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.07); font-size:14px; }
         .step:last-child { border-bottom:none; }
         .verdict { border-left:4px solid var(--gold); padding:14px 18px; background:rgba(107,63,160,0.2);
@@ -67,8 +71,14 @@ try { client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } 
 
 const stepsEl = () => document.getElementById('steps');
 function step(label, state, detail) {
+    // 'retired' is deliberately its own state, not a failure. A red ✖ on
+    // something that is working exactly as intended trains you to ignore red
+    // ✖ marks — including the ones that DO matter. These models are known
+    // retired, deliberately excluded from the serving chain, and probed only
+    // so their status stays visible.
     const icon = state === 'ok' ? '<span class="ok">✔</span>'
               : state === 'bad' ? '<span class="bad">✖</span>'
+              : state === 'retired' ? '<span class="muted">—</span>'
               : '<span class="warn">…</span>';
     const div = document.createElement('div');
     div.className = 'step';
@@ -164,8 +174,36 @@ async function runDiagnostic() {
     // 5. Which models actually work?
     const models = selftest.models || {};
     const working = Object.entries(models).filter(([, v]) => v === 'WORKING').map(([k]) => k);
+
+    // The function reports which models actually serve traffic. Anything
+    // outside that list is a probe — its failure costs nothing and is
+    // expected, so it must not be shown with the same alarm as a real fault.
+    // Falling back to treating everything as serving is the safe default: if
+    // an older function version is deployed and doesn't send servingChain,
+    // we'd rather over-report a problem than hide one.
+    const serving = Array.isArray(selftest.servingChain) ? selftest.servingChain : Object.keys(models);
+    const servingSet = new Set(serving);
+
     for (const [name, result] of Object.entries(models)) {
-        step(`Model: ${name}`, result === 'WORKING' ? 'ok' : 'bad', result === 'WORKING' ? 'Reachable' : result);
+        const isServing = servingSet.has(name);
+        const ok = result === 'WORKING';
+        if (ok) {
+            step(`Model: ${name}`, 'ok', isServing ? 'Reachable — serving traffic' : 'Reachable (probe only)');
+        } else if (!isServing) {
+            step(`Model: ${name}`, 'retired',
+                 'Retired by Google — expected, and deliberately not used. Kept as a probe so its status stays visible.');
+        } else {
+            step(`Model: ${name}`, 'bad', result);
+        }
+    }
+
+    // Make the headline number about what actually matters.
+    const servingWorking = serving.filter(m => models[m] === 'WORKING');
+    if (serving.length) {
+        step('Serving chain',
+             servingWorking.length === serving.length ? 'ok' : (servingWorking.length ? 'warn' : 'bad'),
+             `${servingWorking.length} of ${serving.length} models in the live chain are working` +
+             (servingWorking.length === serving.length ? ' — no dead entries, so a fallback never wastes a request.' : '.'));
     }
 
     if (!working.length) {
