@@ -31,29 +31,29 @@
 // how the web works; see the accompanying note in supabase/README.md.
 // ============================================================
 
-// Model chain, newest first. Google retires models on a rolling schedule, so
-// this spans more than one generation: if the first name isn't available on a
-// given key or region, the next is tried rather than the feature failing.
+// Model chain, in serving order. Google retires models on a rolling schedule,
+// so this keeps several working alternates rather than relying on one name.
 //
-// TRIMMED 2026-09 after a live diagnostic run against the production key.
-// The chain used to include "gemini-2.5-flash" and "gemini-2.5-flash-lite" at
-// positions 2 and 3. Both are now RETIRED and return a hard 404 on this key
-// ("no longer available to new users"). Because they sat in the MIDDLE of the
-// chain, every time the primary model was busy, rate-limited or returned an
-// unusable MAX_TOKENS response, the function made two guaranteed-failing
-// round-trips to Google before it could reach a model that actually works.
-// That is dead latency on exactly the slow path where the user is already
-// waiting — a direct contributor to the "no output, then it took too long"
-// reports. Both removed.
+// UPDATED 2026-09 from a second live diagnostic. All four below are CONFIRMED
+// reachable on the production key, which means the chain now has zero
+// guaranteed-failing entries — any fallback goes straight to something that
+// works instead of burning round-trips on a 404.
 //
-// Only models CONFIRMED working against the live key are listed. Google's own
-// 404 text suggests "gemini-3.6-flash" as the successor, but that has not been
-// verified against this key, and adding an untested name would recreate the
-// exact problem being fixed here. The diagnostic (/ai-check.html) now probes
-// it, so once it reports WORKING it can be promoted to the front of this list.
+// ORDERING IS DELIBERATE, and gemini-3.6-flash is NOT first despite being the
+// newest. The diagnostic proves reachability — it sends "Reply with exactly:
+// OK" with a 10-token cap. That is not the same as proving a model returns
+// well-formed structured JSON for discover mode under our responseSchema
+// config. gemini-3.5-flash is the one that actually served the end-to-end
+// test and produced a correct, parseable discover payload, so it stays
+// primary; 3.6 sits directly behind it as the first fallback and will take
+// real traffic whenever the primary is busy. If it performs well there it can
+// be promoted, but the main path shouldn't be moved onto a model proven only
+// to answer a ping.
 const MODEL_CHAIN = [
-  "gemini-3.5-flash",       // confirmed WORKING — primary
-  "gemini-3.1-flash-lite",  // confirmed WORKING — cheaper lite fallback
+  "gemini-3.5-flash",       // PROVEN end-to-end on discover mode — primary
+  "gemini-3.6-flash",       // confirmed reachable, newest generation
+  "gemini-3.5-flash-lite",  // confirmed reachable, cheaper tier
+  "gemini-3.1-flash-lite",  // confirmed reachable, older lite tier
 ];
 
 // Models the DIAGNOSTIC probes, which is deliberately wider than the serving
@@ -64,10 +64,13 @@ const MODEL_CHAIN = [
 // it is explicitly moved into MODEL_CHAIN.
 const DIAGNOSTIC_PROBE_MODELS = [
   ...MODEL_CHAIN,
-  "gemini-3.6-flash",       // named by Google's own 404 text as the 2.5 successor
-  "gemini-3.5-flash-lite",  // named as the 2.5-flash-lite successor
-  "gemini-2.5-flash",       // retired — probed to confirm it stays dead
-  "gemini-2.5-flash-lite",  // retired — probed to confirm it stays dead
+  // Retired models, kept here ONLY as probes. They are deliberately absent
+  // from MODEL_CHAIN so they never cost a real request, but continuing to
+  // test them means the diagnostic still reports plainly that they are dead
+  // rather than going silent about them — if Google ever revives one, or
+  // retires another, this is where that shows up first.
+  "gemini-2.5-flash",
+  "gemini-2.5-flash-lite",
 ];
 
 const CORS_HEADERS = {
@@ -223,7 +226,7 @@ Deno.serve(async (req: Request) => {
         const report: Record<string, unknown> = {
             apiKeyPresent: !!apiKey,
             apiKeyLength: apiKey ? apiKey.length : 0,
-            functionVersion: "2026-09-trimmed-dead-models",
+            functionVersion: "2026-09-four-working-models",
             supportsDiscoverMode: true,
             // Which models actually serve traffic, vs which are only probed.
             servingChain: MODEL_CHAIN,
