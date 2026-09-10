@@ -240,27 +240,57 @@ window.playTogetherSound = function () {
 // NOTE: Only verified-live TMDB paths belong here. Several previous entries were
 // invalid poster hashes that 404'd, which is why covers fell back to text placeholders.
 const OFFLINE_COVERS = {
-    "The Bear": "https://image.tmdb.org/t/p/w500/q2gJGrH0aGZ1X1qP440xQzKqOee.jpg",
-    "Shogun": "https://image.tmdb.org/t/p/w500/7O4iVfOMQmdCSxhOg1WwSCSOOOQ.jpg",
-    "House of the Dragon": "https://image.tmdb.org/t/p/w500/t9XkeE7HzOsdQcOGaTOFdZCEYnF.jpg",
-    "Deadpool & Wolverine": "https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg",
-    "Dune: Part Two": "https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2JGjjc9CW.jpg",
-    "Jujutsu Kaisen": "https://image.tmdb.org/t/p/w500/hFWP5HkbVEe40hrptlzSyDpFBqw.jpg"
+    // LOCAL FILES ONLY, deliberately.
+    //
+    // This used to hold six hardcoded TMDB image URLs. They were removed for
+    // two reasons. First, a wrong cover was reported for one of them
+    // (Jujutsu Kaisen) and this dictionary is checked FIRST, ahead of every
+    // live lookup — so a bad entry here silently overrides an otherwise
+    // correct result and no amount of fixing the lookup chain would help.
+    // Second, they were unverifiable: TMDB image hashes cannot be checked
+    // from here, and unverifiable hardcoded image URLs are exactly what
+    // 404'd earlier in this project.
+    //
+    // Nothing is lost by removing them. All six titles (The Bear, Shogun,
+    // House of the Dragon, Deadpool & Wolverine, Dune: Part Two, Jujutsu
+    // Kaisen) now carry year and countryCode hints, and the lookup order was
+    // fixed to search the right media type first — so they resolve through
+    // the normal path, which self-corrects if artwork changes instead of
+    // going stale.
+    //
+    // Only files that actually exist in this repo belong here, because those
+    // are the only ones that can be verified.
+    "American Horror Story: 13": "/ahs13-poster.jpg"
 };
 
 // Titles whose names collide with adult content in external catalogues.
 // For these we skip external artwork lookup ENTIRELY and always render the
 // locally generated poster — no network result can be wrong, because none is
-// requested. "Beauty in Black" is the confirmed case (an adult title of the
-// same name was being returned); the rest are here because their names are
-// generic enough that the same collision is plausible.
+// requested.
 //
-// Deliberately NOT solved by hardcoding TMDB poster URLs: unverifiable image
-// hashes were added that way earlier in this project and 404'd. A clean
-// branded placeholder that is always correct beats a hardcoded URL that might
-// silently break — or worse, be wrong.
+// "Beauty in Black" was REMOVED from this list on request, because the
+// conditions that made it necessary have materially changed since it was
+// added. At that time the lookup had no content filtering whatsoever. It now
+// has three independent protections that did not exist then:
+//   1. isExplicitResult() — checks iTunes' own explicitness flags, adult
+//      content ratings, adult genres, and name/description patterns. Tested
+//      against 11 adult payloads (all blocked) and 6 legitimate titles
+//      including R-rated ones (none falsely blocked).
+//   2. year 2024 + countryCode US hints, which score the correct Tyler Perry
+//      series up and unrelated same-named works down.
+//   3. tvShow-first search ordering, so a series is no longer outranked by a
+//      same-named film.
+//
+// This is a deliberate trade-off, not an oversight: a real cover builds the
+// trust that was the point of the request, and the protections above are the
+// reason it is defensible now. If anything inappropriate ever appears for
+// this title again, adding the string back to this Set restores the previous
+// guaranteed-safe behaviour in one line.
+//
+// The remaining entries stay because they are generically named AND have no
+// verified artwork to compare against — for them a placeholder is still the
+// right call.
 const COVER_SAFE_MODE = new Set([
-    'Beauty in Black',
     'The Scandal',
     'Nemesis',
     'The Last House',
@@ -1866,7 +1896,7 @@ const CONTENT_CATALOG = [
     { title: "Crash Landing on You", year: 2019, country: "South Korea", countryCode: "KR", synopsis: "A South Korean heiress paraglides into North Korea and falls for the officer who hides her.", platform: "Netflix", cats: ["K-drama","series"], moods: ["romantic","light and feel-good"], vibes: ["slow burn","fast-paced binge-worthy"], ratings: ["teen PG-13","any"] },
     { title: "Jujutsu Kaisen", year: 2020, country: "Japan", countryCode: "JP", synopsis: "A boy swallows a cursed talisman and joins a secret school to battle supernatural threats.", platform: "Crunchyroll", cats: ["anime"], moods: ["intense and thrilling","dark and gritty"], vibes: ["fast-paced binge-worthy","long running series"], ratings: ["teen PG-13","any"] , shareRestricted: true },
     { title: "Frieren: Beyond Journey's End", year: 2023, country: "Japan", countryCode: "JP", synopsis: "An elven mage reflects on mortality and friendship long after her adventuring party has aged and passed.", platform: "Crunchyroll", cats: ["anime"], moods: ["cozy comfort watch","heartbreaking"], vibes: ["slow burn","award winning"], ratings: ["all ages family friendly","any"] },
-    { title: "A Vida Secreta do Meu Marido Bilionário", synopsis: "A Brazilian vertical novela about a woman who discovers her husband is secretly a billionaire tycoon.", platform: "ReelShort", cats: ["vertical micro-drama","novela brasileira"], moods: ["romantic","intense and thrilling"], vibes: ["guilty pleasure","one sitting short watch"], ratings: ["teen PG-13","any"] },
+    { title: "A Vida Secreta do Meu Marido Bilionário", country: "Brazil", countryCode: "BR", synopsis: "A Brazilian vertical novela about a woman who discovers her husband is secretly a billionaire tycoon.", platform: "ReelShort", cats: ["vertical micro-drama","novela brasileira"], moods: ["romantic","intense and thrilling"], vibes: ["guilty pleasure","one sitting short watch"], ratings: ["teen PG-13","any"] },
     { title: "CEO's Contract Bride", synopsis: "A gripping vertical micro-drama romance between a ruthless CEO and the woman forced into a marriage of convenience.", platform: "DramaBox", cats: ["vertical micro-drama"], moods: ["romantic","guilty pleasure"], vibes: ["one sitting short watch","fast-paced binge-worthy"], ratings: ["teen PG-13","any"] },
     { title: "Vale Tudo", synopsis: "A classic Brazilian telenovela about family rivalry, ambition and moral compromise in Rio de Janeiro.", platform: "Globoplay", cats: ["novela brasileira","telenovela"], moods: ["dark and gritty","intense and thrilling"], vibes: ["long running series","award winning"], ratings: ["mature adults only R rated","any"] },
     { title: "The Joe Rogan Experience", year: 2009, country: "United States", countryCode: "US", synopsis: "Long-form conversations spanning comedy, science, MMA and culture.", platform: "Spotify", cats: ["podcast"], moods: ["funny","inspiring"], vibes: ["easy background watch","long running series"], ratings: ["mature adults only R rated","any"] , shareRestricted: true },

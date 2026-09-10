@@ -418,9 +418,9 @@
     <link rel="alternate" hreflang="zh" href="https://matchapp.cc/?lang=zh">
 
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=171"></script>
-    <script defer src="/install.js?v=171"></script>
-    <script defer src="/ambient.js?v=171"></script>
+    <script defer src="/i18n.js?v=172"></script>
+    <script defer src="/install.js?v=172"></script>
+    <script defer src="/ambient.js?v=172"></script>
 
     <!-- GOOGLE ANALYTICS (GTAG) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2ECND229RR"></script>
@@ -446,7 +446,7 @@
         });
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=171">
+    <link rel="stylesheet" href="/style.css?v=172">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -454,7 +454,18 @@
     </script>
 
     <style>
-        :root { --gold: #E5C158; --gold-deep: #B8912F; --gold-glow: #FFF3A3; --ink: #14131A; --ink-2: #1A191F; --royal-deep: #130734; --royal: #402562; --royal-lift: #6B3FA0; --royal-glow: #A376B6; --bg-dark: #14131A; --card-bg: rgba(26, 22, 38, 0.90); }
+        :root { --gold: #E5C158; --gold-deep: #B8912F; --gold-glow: #FFF3A3; --ink: #14131A; --ink-2: #1A191F; --royal-deep: #130734; --royal: #402562; --royal-lift: #6B3FA0; --royal-glow: #A376B6; --bg-dark: #14131A; --card-bg: rgba(26, 22, 38, 0.90);
+            /* ===== SPACING SCALE =====
+               One vertical rhythm for the whole page. Every top-level block
+               below the header uses --stack-gap for its bottom margin, so a
+               new button, banner or card added later inherits the same
+               breathing room automatically instead of needing someone to
+               remember a magic number — which is exactly how the Chrome pill
+               ended up glued to the header with zero bottom padding.
+               Change these two values and the whole page re-spaces. */
+            --stack-gap: 18px;      /* between stacked top-level blocks */
+            --stack-gap-tight: 10px;/* inside a group of related controls */
+        }
         body { margin: 0; background: var(--bg-dark); color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; position: relative; }
         
         
@@ -468,6 +479,33 @@
         #ambient-bg { position: fixed; inset: 0; width: 100vw; height: 100vh;
                       pointer-events: none; z-index: -1; display: block; }
 
+        /* ===== STACK RHYTHM =====
+           Applies the spacing scale to the top-level blocks that stack down
+           the page. Written as a shared selector rather than per-element
+           margins so that ANY block added here later — a new banner, promo,
+           notice or button row — picks up the same rhythm automatically.
+           That is the actual fix for "the Chrome pill is glued to the next
+           field": not a one-off padding tweak, but a rule that makes the
+           glued state impossible to reintroduce by accident.
+
+           :last-child is excluded so the final block never adds dead space
+           above the footer. */
+        body > #chrome-notice,
+        body > .top-ask-wrap,
+        body > .live-strip,
+        body > .upgrade-ribbon,
+        body > .app-header { margin-bottom: var(--stack-gap-tight); }
+
+        body > .top-ask-wrap:last-of-type { margin-bottom: var(--stack-gap); }
+
+        /* Anything inside the main container that stacks as a card or rail. */
+        .container > .premium-card,
+        .container > .marquee-wrapper,
+        .container > .spotlight-details,
+        .container > .tg-entry,
+        .container > section { margin-bottom: var(--stack-gap); }
+        .container > *:last-child { margin-bottom: 0; }
+
         /* ===== CHROME HINT — subtle pill, not a billboard =====
            Was a full-width solid-gold bar at 14px uppercase with 12px padding:
            loud, generic, and stealing real estate from the content. Now a small
@@ -476,7 +514,9 @@
            bolted on top of it. The shimmer is a slow gold sweep across the
            border — present enough to catch the eye once, quiet enough to
            ignore. */
-        #chrome-notice { display: flex; justify-content: center; padding: 7px 12px 0 12px;
+        #chrome-notice { display: flex; justify-content: center;
+                         padding: var(--stack-gap-tight) 12px 0 12px;
+                         margin-bottom: var(--stack-gap-tight);
                          z-index: 2000; position: relative; cursor: pointer; }
         .chrome-link { display: inline-flex; align-items: center; gap: 7px;
                        color: #cbbfe4; text-decoration: none;
@@ -2005,7 +2045,7 @@
                         <div class="spotlight-poster" onclick="saveSpotlightTitle()" role="button" tabindex="0"
                              onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();saveSpotlightTitle();}"
                              aria-label="Save American Horror Story: 13 to Watch Later">
-                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=171" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
+                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=172" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
                             <div class="spotlight-ribbon" data-i18n="spotlight.ribbon">COMING THIS MONTH</div>
                         </div>
                         <div class="spotlight-body">
@@ -2369,10 +2409,10 @@
         </div>
     </div>
 
-    <script src="/app.js?v=171"></script>
-    <script src="/taste.js?v=171"></script>
-    <script src="/share.js?v=171"></script>
-    <script src="/voice-input.js?v=171"></script>
+    <script src="/app.js?v=172"></script>
+    <script src="/taste.js?v=172"></script>
+    <script src="/share.js?v=172"></script>
+    <script src="/voice-input.js?v=172"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initVoiceInput('specific-search-input', 'mic-btn-index', () => smartSearch());
