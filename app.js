@@ -1875,6 +1875,12 @@ if (supabaseClient) {
             isUserLoggedIn = false;
             window.isUserLoggedIn = false;
         }
+        // Auth resolves after first paint, so anything whose UI depends on
+        // membership (Lazy Mode's locked state, the avatar, member-only
+        // panels) has to be told rather than left to poll or guess.
+        document.dispatchEvent(new CustomEvent('matchapp:authchange', {
+            detail: { signedIn: window.isUserLoggedIn }
+        }));
     });
 }
 

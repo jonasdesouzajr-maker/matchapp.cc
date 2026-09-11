@@ -704,6 +704,101 @@
             .crit-chips { gap: 6px; }
         }
 
+        /* ===== LAZY MODE ===== (see lazy.js)
+           A returning visitor scrolls past a trending rail, an events rail,
+           two spotlights, a how-it-works panel and a concierge pitch to reach
+           the one thing they came back for. Lazy Mode folds all of it and
+           leaves the form. */
+        .lazy-bar { display: flex; justify-content: center; margin-bottom: var(--stack-gap-tight); }
+        .lazy-toggle { display: inline-flex; align-items: center; gap: 12px;
+                       background: linear-gradient(135deg, rgba(32,24,52,0.92), rgba(20,19,26,0.94));
+                       border: 1px solid rgba(255,255,255,0.14); border-radius: 999px;
+                       padding: 9px 18px 9px 12px; cursor: pointer; text-align: left;
+                       font: inherit; color: #cdc6dd;
+                       transition: border-color 0.2s, background 0.2s, transform 0.15s; }
+        .lazy-toggle:hover { border-color: rgba(229,193,88,0.55); transform: translateY(-1px); }
+        .lazy-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+        .lazy-switch { flex-shrink: 0; width: 42px; height: 24px; border-radius: 999px;
+                       background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18);
+                       position: relative; transition: background 0.22s, border-color 0.22s; }
+        .lazy-knob { position: absolute; top: 2px; left: 2px; width: 18px; height: 18px;
+                     border-radius: 50%; background: #b9b1cc;
+                     transition: transform 0.22s cubic-bezier(0.4,0,0.2,1), background 0.22s; }
+        .lazy-toggle.is-on .lazy-switch { background: linear-gradient(135deg, var(--gold), var(--gold-deep)); border-color: var(--gold); }
+        .lazy-toggle.is-on .lazy-knob { transform: translateX(18px); background: #1a1526; }
+
+        .lazy-toggle-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+        .lazy-title { font-size: 13px; font-weight: 900; letter-spacing: 0.7px;
+                      text-transform: uppercase; color: #efe7ff; }
+        .lazy-sub { font-size: 11.5px; color: #9c93b4; line-height: 1.35; }
+        .lazy-lock { display: none; font-size: 13px; }
+        .lazy-toggle.is-locked .lazy-lock { display: inline; }
+        .lazy-toggle.is-locked { border-style: dashed; }
+        .lazy-toggle.is-locked .lazy-switch { opacity: 0.45; }
+
+        /* The fold headers only exist inside Lazy Mode. */
+        .lazy-head { display: none; }
+        body.lazy-mode .lazy-head {
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
+            width: 100%; margin-bottom: 9px; padding: 13px 16px; cursor: pointer;
+            font: inherit; font-size: 13.5px; font-weight: 700; color: #cdc6dd; text-align: left;
+            background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 13px; transition: background 0.16s, border-color 0.16s, color 0.16s; }
+        body.lazy-mode .lazy-head:hover { background: rgba(255,255,255,0.07); border-color: rgba(229,193,88,0.42); color: #fff; }
+        body.lazy-mode .lazy-head:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+        .lazy-head-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .lazy-head-chevron { flex-shrink: 0; color: var(--gold); font-size: 17px; line-height: 1;
+                             transition: transform 0.22s; }
+        body.lazy-mode .lazy-head.is-open .lazy-head-chevron { transform: rotate(180deg); }
+        body.lazy-mode .lazy-head.is-open { border-color: rgba(229,193,88,0.5); color: #fff; }
+
+        body.lazy-mode .lazy-foldable:not(.lazy-open) { display: none !important; }
+
+        /* Everything that competes with the form for attention goes quiet.
+           The ad rails are deliberately NOT in this list — that is a revenue
+           decision, not a layout one. See FOLD_ADS in lazy.js. */
+        body.lazy-mode #chrome-notice,
+        body.lazy-mode #upgrade-ribbon,
+        body.lazy-mode .live-strip,
+        body.lazy-mode .home-h1-sub,
+        body.lazy-mode .tg-entry-body small,
+        body.lazy-mode .seo-footer .streaming-links,
+        body.lazy-mode .seo-footer-lede { display: none !important; }
+
+        body.lazy-mode .home-hero { margin-bottom: 4px; }
+        body.lazy-mode .home-h1 { font-size: 21px; letter-spacing: 0.3px; }
+        body.lazy-mode .premium-card { padding: 22px 20px; }
+        body.lazy-mode #questionnaire-box h2 { font-size: 19px; margin-bottom: 16px; }
+        body.lazy-mode .spotlight-details { margin-bottom: 10px; }
+
+        /* The ambient canvas is the single most distracting thing on screen
+           once the page is quiet, so it drops to a whisper rather than being
+           removed — removing it entirely makes the page feel dead. */
+        body.lazy-mode #ambient-bg { opacity: 0.25; }
+
+        /* LAZY FILTERS: two fields up front, the other four behind one tap.
+           Category (1) and Mood (3) — not Category and Platform, which is
+           what simply hiding from the third field onward would have given.
+           Mood is what the matcher actually leans on; platform is a
+           constraint someone in a hurry is happy to leave open. */
+        body.lazy-mode .q-grid > div:nth-child(2),
+        body.lazy-mode .q-grid > div:nth-child(n+4) { display: none; }
+        body.lazy-mode.lazy-filters-open .q-grid > div { display: block; }
+        .lazy-more-filters { display: none; }
+        body.lazy-mode .lazy-more-filters {
+            display: block; width: 100%; margin-top: 4px; padding: 11px;
+            background: transparent; border: 1px dashed rgba(255,255,255,0.22);
+            border-radius: 12px; color: #9c93b4; font: inherit; font-size: 12.5px;
+            font-weight: 700; cursor: pointer; transition: color 0.16s, border-color 0.16s; }
+        body.lazy-mode .lazy-more-filters:hover { color: #fff; border-color: rgba(229,193,88,0.5); }
+
+        @media (max-width: 600px) {
+            .lazy-toggle { padding: 8px 14px 8px 10px; gap: 10px; }
+            .lazy-sub { font-size: 10.5px; }
+            .lazy-title { font-size: 12px; }
+        }
+
         /* ===== HEADER ON A PHONE =====
            The header was wrapping onto three rows — brand, then the sound and
            language controls, then a full-width gold sign-in slab — and eating
@@ -1818,6 +1913,14 @@
                             </select>
                         </div>
                     </div>
+                    <!-- Only ever visible in Lazy Mode, where the last four
+                         criteria are folded away. Outside Lazy Mode all six
+                         fields are on screen and this would be a button that
+                         reveals nothing. -->
+                    <button type="button" class="lazy-more-filters"
+                            onclick="document.body.classList.toggle('lazy-filters-open'); this.textContent = document.body.classList.contains('lazy-filters-open') ? '− Fewer filters' : '+ More filters (platform, vibe, era, age)';"
+                            data-i18n="lazy.moreFilters">+ More filters (platform, vibe, era, age)</button>
+
                     <button onclick="triggerMatch(false)" class="gold-btn" style="margin-top: 30px; width: 100%; font-size: 22px; padding: 22px; text-transform: uppercase; letter-spacing: 2px;" data-i18n="q.submit">⚡ Consult AI Concierge</button>
                 </article>
 
@@ -2661,6 +2764,7 @@
          matcher, and non-deferred so the form is never briefly interactive as
          a plain single-choice select. -->
     <script src="/criteria.js?v=175"></script>
+    <script src="/lazy.js?v=175"></script>
     <script src="/taste.js?v=174"></script>
     <script src="/share.js?v=174"></script>
     <script src="/voice-input.js?v=174"></script>
