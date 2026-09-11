@@ -124,7 +124,9 @@ function buildDiscoverPrompt(question: string, langCode: string, country: string
     (audioIntent
       ? `This question is about audio content (podcasts, music, playlists, or audiobooks) — only suggest audio titles.`
       : `This question is about something to watch — only suggest movies, series, documentaries or similar visual titles, not podcasts or music, unless the user explicitly asked for audio.`) +
-    `\n\nCRITICAL: Write your "answer" field in ${lang}, matching the language the user asked in. ` +
+    `\n\nOnly recommend real, existing titles — never invent a film, series or show. Prefer titles that are currently streaming when you know a platform. ` +
+    `If you are not sure a title exists, omit it.\n` +
+    `CRITICAL: Write your "answer" field in ${lang}, matching the language the user asked in. ` +
     `Then list 3 to ${DISCOVER_MAX} real, existing titles that back up your answer, best match first. ` +
     `If the question is conversational rather than a request for titles, still answer warmly and you may ` +
     `return an empty results array.\n` +
@@ -147,7 +149,7 @@ function buildDiscoverPrompt(question: string, langCode: string, country: string
 // rather than merely requested in the prompt.
 function buildGenerationConfig(isDiscover: boolean) {
   const base = {
-    temperature: 0.8,
+    temperature: 0.65,
     maxOutputTokens: 8192,
     thinkingConfig: { thinkingBudget: 0 },
     responseMimeType: "application/json",
@@ -226,7 +228,7 @@ Deno.serve(async (req: Request) => {
         const report: Record<string, unknown> = {
             apiKeyPresent: !!apiKey,
             apiKeyLength: apiKey ? apiKey.length : 0,
-            functionVersion: "2026-09-four-working-models",
+            functionVersion: "2026-09-prompt-tighten-temp-065",
             supportsDiscoverMode: true,
             // Which models actually serve traffic, vs which are only probed.
             servingChain: MODEL_CHAIN,
