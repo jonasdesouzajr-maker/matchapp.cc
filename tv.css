@@ -1,0 +1,135 @@
+/* ============================================================
+   MATCHAPP — SMART TV STYLESHEET
+
+   Loaded on every page but scoped entirely under body.tv-mode, so it costs a
+   non-TV visitor one small file and changes nothing for them. See tv.js for
+   detection and for the remote-control navigation this styles.
+
+   The three rules everything here follows:
+     · ~3 metre viewing distance, so type and targets scale up, not down.
+     · No pointer, so focus — not hover — carries every affordance, and it
+       has to be visible from across a room.
+     · Overscan, so nothing sits flush to the viewport edge.
+   ============================================================ */
+
+body.tv-mode {
+    /* Base scale. Set once here and inherited by every rem/em on the page
+       rather than being re-specified per element. */
+    font-size: 20px;
+
+    /* TV-safe area. Many panels still crop 3-5% of every edge, so content
+       sits inside that margin — anything flush to the edge can be physically
+       off the screen on a real set. */
+    --tv-safe-x: 4.5vw;
+    --tv-safe-y: 3.5vh;
+    --shell-max: 1600px;
+    --shell-pad: 0px;
+}
+
+/* ---------- chrome ---------- */
+
+.tv-banner {
+    display: flex; align-items: center; gap: 16px;
+    padding: 14px var(--tv-safe-x);
+    background: linear-gradient(90deg, rgba(19, 7, 52, 0.98), rgba(64, 37, 98, 0.98));
+    border-bottom: 2px solid var(--gold);
+    font-size: 17px; font-weight: 700; color: #efe7ff;
+    position: sticky; top: 0; z-index: 2500;
+}
+.tv-banner-icon { font-size: 22px; }
+.tv-banner-text { flex: 1; min-width: 0; }
+.tv-banner-exit {
+    font: inherit; font-size: 16px; font-weight: 800;
+    padding: 10px 22px; border-radius: 999px; cursor: pointer;
+    background: transparent; color: var(--gold); border: 2px solid var(--gold);
+}
+
+body.tv-mode .app-header {
+    padding: 18px var(--tv-safe-x) !important;
+    position: static;           /* a sticky bar eats a third of a 720p panel */
+}
+body.tv-mode .brand-logo { width: 64px !important; height: 64px !important; }
+body.tv-mode .app-title-main { font-size: 34px !important; }
+body.tv-mode #nav-reg-btn { max-width: none; font-size: 18px !important; padding: 14px 28px !important; }
+
+body.tv-mode .main-layout {
+    grid-template-columns: minmax(0, 1fr) !important;   /* one column, always */
+    padding: var(--tv-safe-y) var(--tv-safe-x) 0 var(--tv-safe-x);
+    gap: 28px;
+}
+/* A 160px rail is roughly a postage stamp at three metres — unreadable, and
+   it steals width from the only column anyone can actually use. In-content
+   ad units are untouched and still serve. */
+body.tv-mode .sidebar-ad-left,
+body.tv-mode .sidebar-ad-right { display: none !important; }
+
+body.tv-mode .container { max-width: 1400px; margin: 0 auto; }
+
+/* ---------- reading at three metres ---------- */
+
+body.tv-mode .home-h1 { font-size: 46px !important; line-height: 1.15; }
+body.tv-mode .home-h1-sub { font-size: 21px !important; line-height: 1.6; max-width: 60ch; margin-inline: auto; }
+body.tv-mode #questionnaire-box h2 { font-size: 38px !important; }
+body.tv-mode .premium-card { padding: 40px 44px; border-radius: 24px; }
+body.tv-mode .q-grid { gap: 34px; }
+body.tv-mode .q-grid label { font-size: 19px !important; margin-bottom: 14px !important; }
+body.tv-mode .crit-group { font-size: 14px; margin: 14px 0 4px 2px; }
+body.tv-mode .res-title-el { font-size: 42px !important; }
+body.tv-mode #res-synopsis { font-size: 21px !important; line-height: 1.65; }
+body.tv-mode .seo-footer { font-size: 17px; padding-inline: var(--tv-safe-x); }
+
+/* ---------- targets ---------- */
+
+body.tv-mode .crit-chip { font-size: 19px; padding: 15px 24px; border-radius: 999px; }
+body.tv-mode .gold-btn { font-size: 24px !important; padding: 22px 34px !important; }
+body.tv-mode .lazy-head { font-size: 19px; padding: 20px 26px; }
+body.tv-mode .lazy-toggle { padding: 14px 26px 14px 18px; }
+body.tv-mode .lazy-title { font-size: 17px; }
+body.tv-mode .lazy-sub { font-size: 15px; }
+
+/* ---------- focus is the entire interface ---------- */
+
+/* Hover states are unreachable without a pointer, so every one of them is
+   re-expressed as a focus state. The ring is deliberately loud: from a sofa
+   it is the only thing telling the viewer where they are. */
+body.tv-mode *:focus { outline: none; }
+body.tv-mode *:focus-visible,
+body.tv-mode a:focus,
+body.tv-mode button:focus,
+body.tv-mode summary:focus,
+body.tv-mode [tabindex]:focus {
+    outline: 4px solid var(--gold) !important;
+    outline-offset: 4px !important;
+    border-radius: 10px;
+    box-shadow: 0 0 0 9px rgba(229, 193, 88, 0.22), 0 0 34px rgba(229, 193, 88, 0.4) !important;
+    position: relative;
+    z-index: 5;
+}
+body.tv-mode .crit-chip:focus { background: rgba(229, 193, 88, 0.2); color: #fff; }
+body.tv-mode .crit-chip.is-on:focus { background: linear-gradient(135deg, var(--gold-glow), var(--gold)); }
+
+/* ---------- motion ---------- */
+
+/* TV SoCs are roughly a decade behind a modern phone. Decorative animation is
+   where that shows up first, as dropped frames on an otherwise static page. */
+body.tv-mode .floating-orb,
+body.tv-mode .sf-item,
+body.tv-mode .chrome-link,
+body.tv-mode .app-title-main,
+body.tv-mode .pulse-ring,
+body.tv-mode .orbit-icon,
+body.tv-mode .eq-bars span { animation: none !important; }
+body.tv-mode .app-title-main { background: none; color: var(--gold); -webkit-text-fill-color: var(--gold); }
+body.tv-mode #chrome-notice { display: none; }   /* "open in Chrome" is meaningless on a TV */
+body.tv-mode .marquee-viewport { overflow-x: hidden; }
+
+/* ---------- 720p sets ---------- */
+
+@media (max-height: 800px) {
+    body.tv-mode { font-size: 18px; }
+    body.tv-mode .home-h1 { font-size: 36px !important; }
+    body.tv-mode #questionnaire-box h2 { font-size: 30px !important; }
+    body.tv-mode .premium-card { padding: 28px 32px; }
+    body.tv-mode .crit-chip { font-size: 17px; padding: 12px 20px; }
+    body.tv-mode .gold-btn { font-size: 20px !important; padding: 18px 28px !important; }
+}
