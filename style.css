@@ -163,6 +163,23 @@ input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow
                transition: 0.2s; align-items: center; gap: 6px; font-family: inherit; text-decoration: none;
                white-space: nowrap; }
 .install-btn:hover { background: rgba(229,193,88,0.26); transform: translateY(-1px); }
+/* ===== SHARED ICON BUTTON =====
+   One circular shape for every icon-only control in the header, so Home,
+   sound and anything added later line up exactly instead of each carrying
+   its own padding and font-size. The old Home button was a text+emoji pill
+   with different padding on every page (8px here, 11px there, 12px on
+   profile) sitting among round icon buttons — which is why it looked out of
+   place. The house is a drawn SVG rather than 🏠 for the same reason the mic
+   icon is: emoji render as whatever glyph the device ships, so they can't be
+   colour-matched to the brand and look different on every OS. */
+.icon-btn { display: inline-flex; align-items: center; justify-content: center;
+            width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; padding: 0;
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.22);
+            color: #ddd; cursor: pointer; text-decoration: none; transition: 0.2s; }
+.icon-btn:hover { border-color: var(--gold); color: var(--gold-glow);
+                  background: rgba(229,193,88,0.12); transform: translateY(-1px); }
+.home-btn { color: var(--gold-glow); border-color: rgba(229,193,88,0.42); }
+
 .sound-toggle-btn { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.22); color: #ddd;
                     width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 15px;
                     display: inline-flex; align-items: center; justify-content: center; transition: 0.2s;

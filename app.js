@@ -2465,6 +2465,38 @@ function rememberShownTitle(title) {
     localStorage.setItem('match_recentTitles', JSON.stringify(recentTitles));
 }
 
+// ----------------------------------------------------
+// OPT-IN ONLY CATEGORIES
+//
+// "Surprise me" (category = any) should answer "what do I watch tonight?".
+// It previously drew from the ENTIRE catalogue, so a meditation channel, a
+// fitness workout, a sleep podcast or a documentary could come back to
+// someone who just wanted a film — and with 61 YouTube channels now in the
+// catalogue, that was increasingly likely rather than a rare edge case.
+//
+// Everything listed here is still fully matchable — it just has to be ASKED
+// for by selecting that category, rather than arriving unrequested. Gospel &
+// Faith already worked this way for the same reason; this generalises the
+// rule instead of special-casing one category.
+// ----------------------------------------------------
+const OPT_IN_ONLY_CATEGORIES = new Set([
+    'Gospel & Faith',      // already opt-in; kept here so the rule lives in one place
+    'podcast',             // audio
+    'Spotify playlist',    // audio
+    'YouTube channel',     // fitness/meditation/creators — not "watch tonight" content
+    'YouTube Shorts',      // same
+    'documentary'          // includes news/reports, which shouldn't arrive unrequested
+]);
+
+function isOptInOnly(entry) {
+    if (!entry || !Array.isArray(entry.cats)) return false;
+    // Opt-in ONLY when EVERY category it carries is opt-in. A title tagged
+    // both "documentary" and "movie" is still a legitimate surprise result —
+    // this should exclude audio and creator content, not quietly shrink the
+    // pool of real films that happen to carry a second tag.
+    return entry.cats.every(c => OPT_IN_ONLY_CATEGORIES.has(c));
+}
+
 function pickFromCatalog(cat, plat, mood, vibe, rating) {
     const excluded = new Set([...seenList, ...dislikedList].map(i => i.title || i));
     const seenRecently = new Set(recentTitles);
@@ -2517,6 +2549,11 @@ function pickFromCatalog(cat, plat, mood, vibe, rating) {
         // tier instead of quietly keeping gospel content in.
         if (!wantsGospel) pool = pool.filter(e => !isGospelEntry(e));
 
+        // Opt-in categories only appear when the user actually chose that
+        // category. Keyed off `cat === 'any'` specifically: an explicit pick
+        // of "podcast" or "documentary" must still work normally.
+        if (cat === 'any') pool = pool.filter(e => !isOptInOnly(e));
+
         let freshPool = pool.filter(e => !seenRecently.has(e.title));
         if (freshPool.length > 0) pool = freshPool;
 
@@ -2555,7 +2592,8 @@ function pickFromCatalog(cat, plat, mood, vibe, rating) {
     //   4. The entire catalog, unfiltered — should only ever be reached if
     //      the user has both seen and disliked nearly all 99 titles.
     let lastPool = CONTENT_CATALOG.filter(e =>
-        !excluded.has(e.title) && !isBlockedEntry(e) && (wantsGospel || !isGospelEntry(e)));
+        !excluded.has(e.title) && !isBlockedEntry(e) && (wantsGospel || !isGospelEntry(e))
+        && (cat !== 'any' || !isOptInOnly(e)));
 
     if (lastPool.length === 0) {
         lastPool = CONTENT_CATALOG.filter(e => !excluded.has(e.title) && !isBlockedEntry(e));
