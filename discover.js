@@ -115,7 +115,10 @@ async function askAIConversational(question, history) {
     const country = localStorage.getItem('match_user_country') || '';
     const age = localStorage.getItem('match_user_age') || '';
     const lang = window.MATCH_LANG || 'en';
-    const body = { mode: 'discover', question, lang, country, age, history: history || [] };
+    // Nickname so the AI can address the user by name. Optional by design —
+    // an empty string simply means the AI stays neutral rather than guessing.
+    const nickname = (typeof window.getUserNickname === 'function') ? window.getUserNickname() : '';
+    const body = { mode: 'discover', question, lang, country, age, nickname, history: history || [] };
 
     // HARD TIMEOUT PER ATTEMPT. supabase-js's functions.invoke has no timeout
     // of its own, so if the Edge Function hangs — cold start, an upstream

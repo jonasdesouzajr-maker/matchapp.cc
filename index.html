@@ -428,9 +428,10 @@
     <link rel="alternate" hreflang="zh" href="https://matchapp.cc/?lang=zh">
 
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=173"></script>
-    <script defer src="/install.js?v=173"></script>
-    <script defer src="/ambient.js?v=173"></script>
+    <script defer src="/i18n.js?v=174"></script>
+    <script defer src="/install.js?v=174"></script>
+    <script defer src="/avatars.js?v=174"></script>
+    <script defer src="/ambient.js?v=174"></script>
 
     <!-- GOOGLE ANALYTICS (GTAG) -->
 <!-- GOOGLE ADSENSE SCRIPT ENGINE -->
@@ -449,7 +450,7 @@
         });
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=173">
+    <link rel="stylesheet" href="/style.css?v=174">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -1383,9 +1384,23 @@
             
             <span id="quota-badge" class="quota-badge" style="display:none;"></span>
             <div id="lang-switcher-host"></div>
-            <a id="profile-link-tab" href="/profile/profile.html" style="display: none; background: rgba(229,193,88,0.2); border: 1px solid var(--gold); color: var(--gold-glow); padding: 8px 16px; border-radius: 12px; font-weight: bold; text-decoration: none; font-size: 14px; align-items: center; gap: 8px;">
-                <img id="nav-avatar-img" src="" alt="Avatar" style="width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--gold); object-fit: cover; display: none;">
-                <span id="nav-profile-text" data-i18n="nav.profile">👤 Profile</span>
+            <!-- Avatar doubles as the profile link: one tap from anywhere on the
+                 page straight to profile, with an online dot while signed in.
+                 The empty circle is deliberately visible rather than hidden —
+                 it reads as an invitation to set a photo. -->
+            <a id="profile-link-tab" href="/profile/profile.html" class="nav-avatar-link"
+               style="display:none;" aria-label="Your profile" data-i18n-aria="nav.profile">
+                <span class="avatar-ring" data-avatar-slot>
+                    <img id="nav-avatar-img" src="" alt="" style="display:none;">
+                    <span class="avatar-empty" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="15" height="15">
+                            <circle cx="12" cy="8.5" r="3.8" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <path d="M4.8 20c0-4 3.2-6.2 7.2-6.2s7.2 2.2 7.2 6.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </span>
+                    <span class="avatar-online-dot" style="display:none;" title="Online"></span>
+                </span>
+                <span id="nav-profile-text" data-i18n="nav.profile">Profile</span>
             </a>
             <button id="nav-reg-btn" onclick="openAuthModal()" class="gold-btn" style="padding: 12px 20px; font-size: 14px; text-transform: uppercase;" data-i18n="nav.signin">👤 Sign In / Join</button>
             <button id="nav-logout-btn" onclick="doLogout()" style="display: none; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 12px 18px; border-radius: 12px; cursor: pointer; font-size: 13px;" data-i18n="nav.logout">Logout</button>
@@ -2053,7 +2068,7 @@
                         <div class="spotlight-poster" onclick="saveSpotlightTitle()" role="button" tabindex="0"
                              onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();saveSpotlightTitle();}"
                              aria-label="Save American Horror Story: 13 to Watch Later">
-                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=173" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
+                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=174" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
                             <div class="spotlight-ribbon" data-i18n="spotlight.ribbon">COMING THIS MONTH</div>
                         </div>
                         <div class="spotlight-body">
@@ -2418,10 +2433,10 @@
         </div>
     </div>
 
-    <script src="/app.js?v=173"></script>
-    <script src="/taste.js?v=173"></script>
-    <script src="/share.js?v=173"></script>
-    <script src="/voice-input.js?v=173"></script>
+    <script src="/app.js?v=174"></script>
+    <script src="/taste.js?v=174"></script>
+    <script src="/share.js?v=174"></script>
+    <script src="/voice-input.js?v=174"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initVoiceInput('specific-search-input', 'mic-btn-index', () => smartSearch());

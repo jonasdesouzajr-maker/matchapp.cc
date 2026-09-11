@@ -549,3 +549,94 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Re-sort the voice list toward the newly chosen language.
 document.addEventListener('matchapp:langchange', populateVoiceList);
+/* ============================================================
+   AVATAR PICKER + NICKNAME
+   Presets and resolution logic live in avatars.js; this is the profile-page
+   UI that drives them.
+   ============================================================ */
+
+function renderAvatarPicker() {
+    const grid = document.getElementById('avatar-preset-grid');
+    if (!grid || !window.AVATAR_PRESETS) return;
+    const current = localStorage.getItem('match_preset_avatar') || '';
+    grid.innerHTML = Object.entries(window.AVATAR_PRESETS).map(([key, p]) => `
+        <button type="button" class="avatar-opt" data-key="${key}"
+                aria-pressed="${key === current ? 'true' : 'false'}"
+                title="${escapeHtml(p.label)}" aria-label="${escapeHtml(p.label)}"
+                onclick="choosePresetAvatar('${key}')">
+            <img src="${window.avatarSVG(key, 64)}" alt="">
+        </button>`).join('');
+}
+
+window.choosePresetAvatar = function (key) {
+    if (!window.AVATAR_PRESETS || !window.AVATAR_PRESETS[key]) return;
+    try {
+        localStorage.setItem('match_preset_avatar', key);
+        // A preset is an explicit choice, so it should win over a previously
+        // uploaded file until the user clears it — otherwise picking one would
+        // appear to do nothing.
+        localStorage.removeItem('match_custom_avatar');
+    } catch (e) {}
+
+    const src = window.avatarSVG(key, 260);
+    const preview = document.getElementById('profile-pic-preview');
+    if (preview) preview.src = src;
+    if (typeof window.renderUserAvatar === 'function') window.renderUserAvatar();
+    renderAvatarPicker();
+
+    // Best-effort sync so the choice follows the account, not just this device.
+    if (window.supabaseClient) {
+        window.supabaseClient.auth.getUser().then(({ data }) => {
+            if (data && data.user) {
+                window.supabaseClient.from('profiles')
+                    .upsert({ id: data.user.id, avatar_url: src }, { onConflict: 'id' });
+            }
+        }).catch(() => {});
+    }
+};
+
+window.clearPresetAvatar = function () {
+    try { localStorage.removeItem('match_preset_avatar'); } catch (e) {}
+    const src = (typeof window.resolveUserAvatar === 'function') ? window.resolveUserAvatar() : null;
+    const preview = document.getElementById('profile-pic-preview');
+    if (preview && src) preview.src = src;
+    if (typeof window.renderUserAvatar === 'function') window.renderUserAvatar();
+    renderAvatarPicker();
+};
+
+let nicknameTimer = null;
+window.saveNickname = function (value) {
+    const clean = String(value || '').trim().slice(0, 30);
+    try { localStorage.setItem('match_user_nickname', clean); } catch (e) {}
+
+    const status = document.getElementById('pf-nickname-status');
+    // Debounced so it doesn't write to the database on every keystroke.
+    clearTimeout(nicknameTimer);
+    nicknameTimer = setTimeout(() => {
+        if (window.supabaseClient) {
+            window.supabaseClient.auth.getUser().then(({ data }) => {
+                if (data && data.user) {
+                    window.supabaseClient.from('profiles')
+                        .upsert({ id: data.user.id, nickname: clean }, { onConflict: 'id' })
+                        .then(() => {}, () => {}); // column may not exist yet; local copy still works
+                }
+            }).catch(() => {});
+        }
+        if (status) {
+            status.textContent = clean
+                ? (window.t ? t('pf.nicknameSaved') : `Our AI will call you ${clean}.`).replace('{n}', clean)
+                : '';
+            setTimeout(() => { if (status) status.textContent = ''; }, 2600);
+        }
+    }, 600);
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    renderAvatarPicker();
+    const nick = document.getElementById('pf-nickname');
+    if (nick) nick.value = localStorage.getItem('match_user_nickname') || '';
+    // Show whatever avatar currently resolves, including the Google photo.
+    const preview = document.getElementById('profile-pic-preview');
+    const src = (typeof window.resolveUserAvatar === 'function') ? window.resolveUserAvatar() : null;
+    if (preview && src) preview.src = src;
+});

@@ -1796,7 +1796,13 @@ async function hydrateProfileFromAuth(user) {
         if (googleAvatar && !(existing && existing.avatar_url)) patch.avatar_url = googleAvatar;
 
         if (Object.keys(patch).length) {
-            await supabaseClient.from('profiles').update(patch).eq('id', user.id);
+            // upsert, not update: update() matches zero rows and succeeds
+            // silently when no profiles row exists yet — which is exactly what
+            // happens if the handle_new_user trigger never ran (migration 001
+            // not applied, or an account created before it). The avatar would
+            // then be "saved" to nothing, with no error to notice.
+            await supabaseClient.from('profiles').upsert(
+                Object.assign({ id: user.id }, patch), { onConflict: 'id' });
         }
 
         const merged = Object.assign({}, existing || {}, patch);
@@ -1809,6 +1815,7 @@ async function hydrateProfileFromAuth(user) {
         if (merged.star_sign) localStorage.setItem('match_user_sign', merged.star_sign);
         if (merged.age != null) localStorage.setItem('match_user_age', String(merged.age));
         if (merged.avatar_url) localStorage.setItem('match_user_avatar', merged.avatar_url);
+        if (merged.nickname)  localStorage.setItem('match_user_nickname', merged.nickname);
         if (user.email) localStorage.setItem('match_user_email', user.email);
 
         const missing = REQUIRED_PROFILE_FIELDS.filter(f => {
@@ -1816,6 +1823,11 @@ async function hydrateProfileFromAuth(user) {
             return v === null || v === undefined || String(v).trim() === '';
         });
         window.profileMissingFields = missing;
+
+        // Paint the avatar now that the Google photo has actually landed.
+        // Without this the photo sat in localStorage unread — the whole
+        // reason the Google picture never appeared.
+        if (typeof window.renderUserAvatar === 'function') window.renderUserAvatar();
 
         if (missing.length) promptProfileCompletion(missing);
         return missing;
