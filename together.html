@@ -156,6 +156,53 @@
         .tg-share-apps a, .tg-share-apps button { flex:1; text-align:center; padding:12px; border-radius:10px; text-decoration:none; font-size:13px; font-weight:bold; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.05); color:#eee; cursor:pointer; font-family:inherit; }
         .tg-share-apps a:hover, .tg-share-apps button:hover { border-color:var(--gold); color:var(--gold-glow); }
 
+        /* ---- SEND DIRECTLY + SAVED CONTACTS ---- */
+        .tg-send-direct { margin-top:16px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.1); }
+        .tg-send-head { margin-bottom:11px; }
+        .tg-send-head strong { display:block; font-size:13px; font-weight:800; color:#efe7ff;
+                               text-transform:uppercase; letter-spacing:0.7px; }
+        .tg-send-head small { display:block; margin-top:3px; font-size:12px; color:#9c93b4; }
+
+        .tg-contacts { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:11px; }
+        .tg-contacts:empty { display:none; }
+        .tg-contact { display:inline-flex; align-items:center; gap:7px; padding:8px 12px;
+                      background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15);
+                      border-radius:999px; color:#cdc6dd; font:inherit; font-size:12.5px;
+                      font-weight:700; cursor:pointer; transition:border-color .16s, color .16s, background .16s; }
+        .tg-contact:hover { border-color:var(--gold); color:#fff; background:rgba(255,255,255,0.09); }
+        .tg-contact-x { margin-left:2px; padding:0 3px; color:#7e7594; font-size:14px; line-height:1;
+                        background:none; border:none; cursor:pointer; }
+        .tg-contact-x:hover { color:#ff5252; }
+
+        .tg-send-row { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+        .tg-channel-picker { display:flex; gap:5px; }
+        .tg-channel { width:38px; height:38px; display:inline-flex; align-items:center; justify-content:center;
+                      font-size:16px; border-radius:11px; cursor:pointer;
+                      background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15);
+                      transition:border-color .16s, background .16s; }
+        .tg-channel:hover { border-color:rgba(229,193,88,0.5); }
+        .tg-channel.is-on { background:rgba(229,193,88,0.16); border-color:var(--gold); }
+        .tg-send-input { flex:1; min-width:150px; padding:11px 13px; border-radius:11px;
+                         background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.18);
+                         color:#fff; font:inherit; font-size:14px; }
+        .tg-send-input:focus { outline:none; border-color:var(--gold); }
+        .tg-send-btn { padding:11px 18px; border-radius:11px; border:none; cursor:pointer;
+                       background:linear-gradient(135deg,var(--gold),var(--gold-deep));
+                       color:#1a1526; font:inherit; font-size:14px; font-weight:900; }
+        .tg-send-btn:hover { filter:brightness(1.08); }
+
+        /* The checkbox and its sentence are one unit — letting them wrap apart
+           left a stray tick floating on its own line above the label. */
+        .tg-save-row { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-top:12px; }
+        .tg-save-check { display:inline-flex; align-items:center; gap:8px; cursor:pointer;
+                         font-size:12px; font-weight:600; color:#9c93b4;
+                         text-transform:none !important; letter-spacing:normal !important; }
+        .tg-save-check input { flex-shrink:0; width:16px; height:16px; accent-color:var(--gold); cursor:pointer; }
+        .tg-save-name { flex:1; min-width:120px; padding:7px 10px; border-radius:9px;
+                        background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.14);
+                        color:#fff; font:inherit; font-size:12px; }
+        .tg-save-name:focus { outline:none; border-color:var(--gold); }
+
         .tg-people { margin:18px 0; }
         .tg-person { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.14); border-radius:12px; padding:12px 14px; margin-bottom:9px; }
         .tg-person-dot { width:9px; height:9px; border-radius:50%; background:#25D366; box-shadow:0 0 9px rgba(37,211,102,0.85); flex-shrink:0; }
@@ -415,6 +462,36 @@
                     <a id="tg-share-telegram" href="#" target="_blank" rel="noopener noreferrer" data-i18n="tg.telegram">✈️ Telegram</a>
                     <button onclick="tgShareNative()" data-i18n="tg.shareBtn">📤 Share</button>
                 </div>
+
+                <!-- SEND DIRECTLY.
+                     The invite — subject, message and link — is already
+                     written by buildInvite() in contacts.js. The only thing
+                     missing is who it goes to, so that is the only thing this
+                     asks for. -->
+                <div class="tg-send-direct">
+                    <div class="tg-send-head">
+                        <strong data-i18n="tg.sendTo">Send it straight to someone</strong>
+                        <small data-i18n="tg.sendToSub">Message and link are already written — just say who.</small>
+                    </div>
+
+                    <!-- People already saved. One tap and it goes out on the
+                         channel they were saved with. -->
+                    <div id="tg-contacts" class="tg-contacts" aria-label="Saved contacts"></div>
+
+                    <div class="tg-send-row">
+                        <div class="tg-channel-picker" id="tg-channel-picker" role="radiogroup" aria-label="How to send"></div>
+                        <input type="email" id="tg-send-value" class="tg-send-input" placeholder="name@example.com" aria-label="Who to send to">
+                        <button type="button" class="tg-send-btn" id="tg-send-btn" onclick="tgSendInvite()" data-i18n="tg.send">Send →</button>
+                    </div>
+
+                    <div class="tg-save-row">
+                        <label class="tg-save-check">
+                            <input type="checkbox" id="tg-save-contact" checked>
+                            <span data-i18n="tg.saveContact">Save them so I never have to type this again</span>
+                        </label>
+                        <input type="text" id="tg-save-name" class="tg-save-name" placeholder="Name (optional)" aria-label="Contact name">
+                    </div>
+                </div>
             </div>
 
             <div class="tg-people">
@@ -461,7 +538,8 @@
     <script src="/app.js?v=174"></script>
     <script src="/i18n.js?v=174"></script>
     <script defer src="/install.js?v=174"></script>
-    <script src="/together.js?v=174"></script>
+    <script src="/contacts.js?v=175"></script>
+    <script src="/together.js?v=175"></script>
     <script src="/tv.js?v=175"></script>
 </body>
 </html>

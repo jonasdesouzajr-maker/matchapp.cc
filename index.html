@@ -796,6 +796,47 @@
             font-weight: 700; cursor: pointer; transition: color 0.16s, border-color 0.16s; }
         body.lazy-mode .lazy-more-filters:hover { color: #fff; border-color: rgba(229,193,88,0.5); }
 
+        /* ===== SEND A MATCH TO ONE PERSON (share sheet) =====
+           Shares the class names with the Match Together share box so the two
+           send-to-a-person surfaces stay visually identical; the rules live
+           here because index.html is the page that loads this markup. */
+        .share-direct { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); text-align: left; }
+        .tg-send-head { margin-bottom: 11px; }
+        .tg-send-head strong { display: block; font-size: 12.5px; font-weight: 800; color: #efe7ff;
+                               text-transform: uppercase; letter-spacing: 0.7px; }
+        .tg-send-head small { display: block; margin-top: 3px; font-size: 11.5px; color: #9c93b4; }
+        .tg-contacts { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 11px; }
+        .tg-contacts:empty { display: none; }
+        .tg-contact { display: inline-flex; align-items: center; gap: 7px; padding: 8px 12px;
+                      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15);
+                      border-radius: 999px; color: #cdc6dd; font: inherit; font-size: 12.5px;
+                      font-weight: 700; cursor: pointer; transition: border-color .16s, color .16s; }
+        .tg-contact:hover { border-color: var(--gold); color: #fff; }
+        .tg-contact-x { margin-left: 2px; padding: 0 3px; color: #7e7594; font-size: 14px;
+                        line-height: 1; background: none; border: none; cursor: pointer; }
+        .tg-contact-x:hover { color: #ff5252; }
+        .tg-send-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .tg-channel-picker { display: flex; gap: 5px; }
+        .tg-channel { width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center;
+                      font-size: 16px; border-radius: 11px; cursor: pointer;
+                      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); }
+        .tg-channel.is-on { background: rgba(229,193,88,0.16); border-color: var(--gold); }
+        .tg-send-input { flex: 1; min-width: 150px; padding: 11px 13px; border-radius: 11px;
+                         background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.18);
+                         color: #fff; font: inherit; font-size: 14px; }
+        .tg-send-input:focus { outline: none; border-color: var(--gold); }
+        .tg-send-btn { padding: 11px 18px; border-radius: 11px; border: none; cursor: pointer;
+                       background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+                       color: #1a1526; font: inherit; font-size: 14px; font-weight: 900; }
+        .tg-save-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 12px; }
+        .tg-save-check { display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+                         font-size: 12px; font-weight: 600; color: #9c93b4; }
+        .tg-save-check input { flex-shrink: 0; width: 16px; height: 16px; accent-color: var(--gold); cursor: pointer; }
+        .tg-save-name { flex: 1; min-width: 120px; padding: 7px 10px; border-radius: 9px;
+                        background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.14);
+                        color: #fff; font: inherit; font-size: 12px; }
+        .tg-save-name:focus { outline: none; border-color: var(--gold); }
+
         @media (max-width: 600px) {
             .lazy-toggle { padding: 8px 14px 8px 10px; gap: 10px; }
             .lazy-sub { font-size: 10.5px; }
@@ -2704,6 +2745,31 @@
                 <button onclick="copyShareText()">📋 Copy Caption</button>
             </div>
 
+            <!-- SEND IT TO SOMEONE.
+                 The buttons above broadcast to a social feed. This sends it to
+                 one named person, with the subject and message already
+                 written, and remembers them on the channel they were reached
+                 on so the next one is a single tap. See contacts.js. -->
+            <div class="share-direct">
+                <div class="tg-send-head">
+                    <strong>Or send it to someone</strong>
+                    <small>Message written, link attached — just say who.</small>
+                </div>
+                <div id="share-contacts" class="tg-contacts" aria-label="Saved contacts"></div>
+                <div class="tg-send-row">
+                    <div class="tg-channel-picker" id="share-channel-picker" role="radiogroup" aria-label="How to send"></div>
+                    <input type="email" id="share-send-value" class="tg-send-input" placeholder="name@example.com" aria-label="Who to send to">
+                    <button type="button" class="tg-send-btn" onclick="shareSendInvite()">Send →</button>
+                </div>
+                <div class="tg-save-row">
+                    <label class="tg-save-check">
+                        <input type="checkbox" id="share-save-contact" checked>
+                        <span>Save them for next time</span>
+                    </label>
+                    <input type="text" id="share-save-name" class="tg-save-name" placeholder="Name (optional)" aria-label="Contact name">
+                </div>
+            </div>
+
             <details class="share-how">
                 <summary>How the bonus works</summary>
                 <ul>
@@ -2770,7 +2836,8 @@
     <script src="/lazy.js?v=175"></script>
     <script src="/tv.js?v=175"></script>
     <script src="/taste.js?v=174"></script>
-    <script src="/share.js?v=174"></script>
+    <script src="/contacts.js?v=175"></script>
+    <script src="/share.js?v=175"></script>
     <script src="/voice-input.js?v=174"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {

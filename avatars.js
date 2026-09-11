@@ -130,3 +130,13 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(renderUserAvatar, 1200);
     setTimeout(renderUserAvatar, 3000);
 });
+
+// The timers above are a guess at when auth will land; this is the actual
+// signal. Kept alongside them rather than replacing them, because the photo
+// itself is written to localStorage by profile hydration, which can finish
+// after the auth event — belt and braces on the one element that told the
+// user whether they are signed in at all.
+document.addEventListener('matchapp:authchange', () => {
+    renderUserAvatar();
+    setTimeout(renderUserAvatar, 900);
+});
