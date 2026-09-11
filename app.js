@@ -2081,6 +2081,69 @@ const CONTENT_CATALOG = [
     { title: "Earle Meets World", year: 2026, country: "United States", countryCode: "US", synopsis: "Reality series following Alix Earle, tracking the daily reality behind one of social media's most-followed lives.", platform: "Netflix", cats: ["reality show"], moods: ["light and feel-good"], vibes: ["guilty pleasure","easy background watch"], ratings: ["teen PG-13","any"] },
     { title: "The Great British Baking Show", year: 2026, country: "United Kingdom", countryCode: "GB", synopsis: "Amateur bakers compete in a tent in the English countryside — the gentlest competition format on television, and the reason comfort viewing has a name.", platform: "Netflix", cats: ["reality show"], moods: ["cozy comfort watch","light and feel-good"], vibes: ["easy background watch"], ratings: ["all ages family friendly","any"] },
     { title: "Untold: Raygun - Breaking Badly", year: 2026, country: "United States", countryCode: "US", synopsis: "The sports documentary series takes on the Olympic breakdancing routine that became a global meme overnight, and what it did to the academic behind it.", platform: "Netflix", cats: ["documentary"], moods: ["funny","heartbreaking"], vibes: ["fast-paced binge-worthy"], ratings: ["teen PG-13","any"] },
+
+    // ================================================================
+    // CLASSICAL MUSIC CHANNEL — video AND audio in one category.
+    //
+    // Deliberately mixed-medium: a classical listener does not separate
+    // "watching the Berlin Phil" from "putting on the Cello Suites" the way
+    // the rest of the catalogue separates film from podcast. Both live under
+    // one category so a single tick surfaces either.
+    //
+    // Never reachable from Surprise Me — see SURPRISE_ME_CATEGORIES. Someone
+    // asking "what should I watch tonight" is not asking for a Mahler cycle
+    // unless they said so.
+    // ================================================================
+    { title: "Digital Concert Hall — Berliner Philharmoniker", year: 2026, country: "Germany", countryCode: "DE", synopsis: "The Berlin Philharmonic streams its own concerts in full, live from the Philharmonie and from an archive going back decades — the closest thing to a season ticket from your sofa.", platform: "Digital Concert Hall", cats: ["Classical Music"], moods: ["inspiring","epic and adventurous"], vibes: ["prestige and critically acclaimed"], ratings: ["all ages family friendly","any"] },
+    { title: "Vienna Philharmonic New Year's Concert", year: 2026, country: "Austria", countryCode: "AT", synopsis: "Strauss waltzes and polkas from the Musikverein's Golden Hall every January 1st — broadcast to roughly ninety countries and unchanged in spirit since 1941.", platform: "YouTube", cats: ["Classical Music"], moods: ["light and feel-good","nostalgic"], vibes: ["prestige and critically acclaimed"], ratings: ["all ages family friendly","any"] },
+    { title: "BBC Proms", year: 2026, country: "United Kingdom", countryCode: "GB", synopsis: "Eight weeks of concerts from the Royal Albert Hall, from full symphonies to late-night jazz crossovers, ending in the Last Night singalong.", platform: "YouTube", cats: ["Classical Music"], moods: ["inspiring","epic and adventurous"], vibes: ["prestige and critically acclaimed"], ratings: ["all ages family friendly","any"] },
+    { title: "Yo-Yo Ma — Bach: The Six Unaccompanied Cello Suites", year: 2018, country: "United States", countryCode: "US", synopsis: "Ma's third recording of the suites he has played since he was four — the same notes, read by someone who has lived with them for sixty years.", platform: "Spotify", cats: ["Classical Music"], moods: ["cozy comfort watch","heartbreaking"], vibes: ["slow burn","prestige and critically acclaimed"], ratings: ["all ages family friendly","any"] },
+    { title: "Max Richter — Sleep", year: 2015, country: "United Kingdom", countryCode: "GB", synopsis: "An eight-hour lullaby written to be slept through rather than listened to, composed with a neuroscientist's input on what the sleeping brain does with sound.", platform: "Spotify", cats: ["Classical Music"], moods: ["cozy comfort watch"], vibes: ["slow burn"], ratings: ["all ages family friendly","any"] },
+    { title: "Ludovico Einaudi — Seven Days Walking", year: 2019, country: "Italy", countryCode: "IT", synopsis: "Seven albums of the same handful of themes, rewalked slightly differently each day — minimalist piano that works as a room as much as a record.", platform: "Spotify", cats: ["Classical Music"], moods: ["cozy comfort watch","nostalgic"], vibes: ["slow burn","easy background watch"], ratings: ["all ages family friendly","any"] },
+    { title: "Hilary Hahn — Bach: Violin Sonatas & Partitas", year: 2018, country: "United States", countryCode: "US", synopsis: "Hahn returns to the solo Bach she first recorded at seventeen, this time completing the set — technically immaculate and unusually warm with it.", platform: "Apple Music", cats: ["Classical Music"], moods: ["inspiring"], vibes: ["prestige and critically acclaimed","slow burn"], ratings: ["all ages family friendly","any"] },
+    { title: "Lang Lang — The Disney Book", year: 2022, country: "China", countryCode: "CN", synopsis: "Disney themes arranged for concert piano and orchestra — the gentlest possible on-ramp into classical playing for someone who thinks they don't like classical.", platform: "Spotify", cats: ["Classical Music"], moods: ["light and feel-good","nostalgic"], vibes: ["easy background watch"], ratings: ["kids","all ages family friendly","any"] },
+    { title: "TÁR", year: 2022, country: "United States", countryCode: "US", synopsis: "A celebrated conductor at the top of the classical world watches her life come apart, in a film that takes rehearsal-room craft as seriously as it takes the fall.", platform: "Peacock", cats: ["Classical Music","movie"], moods: ["dark and gritty","mind-bending"], vibes: ["prestige and critically acclaimed","award winning","slow burn"], ratings: ["mature adults only R rated","any"] },
+    { title: "Maestro", year: 2023, country: "United States", countryCode: "US", synopsis: "Leonard Bernstein's marriage to Felicia Montealegre across three decades, built around the music he conducted and the life he couldn't conduct as neatly.", platform: "Netflix", cats: ["Classical Music","movie"], moods: ["heartbreaking","inspiring"], vibes: ["prestige and critically acclaimed","award winning","based on a true story"], ratings: ["mature adults only R rated","any"] },
+    { title: "Amadeus", year: 1984, country: "United States", countryCode: "US", synopsis: "Salieri tells a priest how he destroyed Mozart, in the film that convinced a generation that classical music was gossip, rivalry and blood rather than homework.", platform: "Max", cats: ["Classical Music","movie"], moods: ["intense and thrilling","epic and adventurous"], vibes: ["award winning","prestige and critically acclaimed"], ratings: ["teen PG-13","any"] },
+    { title: "TwoSet Violin", year: 2026, country: "Australia", countryCode: "AU", synopsis: "Two conservatory-trained violinists make classical music funny without making it stupid — practice-room jokes, reaction videos and genuinely good playing.", platform: "YouTube", cats: ["Classical Music"], moods: ["funny","light and feel-good"], vibes: ["easy background watch"], ratings: ["all ages family friendly","any"] },
+    { title: "Rousseau", year: 2026, country: "United Kingdom", countryCode: "GB", synopsis: "Piano performances filmed from above with the notes falling down the screen — a visualiser that makes the structure of a piece visible while you listen.", platform: "YouTube", cats: ["Classical Music"], moods: ["cozy comfort watch"], vibes: ["easy background watch"], ratings: ["all ages family friendly","any"] },
+    { title: "Gustavo Dudamel & LA Phil — Beethoven Symphony No. 9", year: 2026, country: "United States", countryCode: "US", synopsis: "The Ninth under a conductor who came up through Venezuela's El Sistema — the Ode to Joy played by someone who was handed an instrument to keep him off the street.", platform: "YouTube", cats: ["Classical Music"], moods: ["inspiring","epic and adventurous"], vibes: ["prestige and critically acclaimed"], ratings: ["all ages family friendly","any"] },
+    { title: "Yuja Wang — The American Project", year: 2023, country: "China", countryCode: "CN", synopsis: "A new concerto written for Wang alongside Gershwin's Rhapsody in Blue, played with the ferocious clarity that has made her the most-argued-about pianist alive.", platform: "Spotify", cats: ["Classical Music"], moods: ["intense and thrilling","inspiring"], vibes: ["prestige and critically acclaimed"], ratings: ["all ages family friendly","any"] },
+    { title: "Joe Hisaishi — A Symphonic Celebration", year: 2023, country: "Japan", countryCode: "JP", synopsis: "The Studio Ghibli scores rearranged for full orchestra by the man who wrote them — Totoro and Spirited Away as concert repertoire rather than soundtrack.", platform: "Spotify", cats: ["Classical Music"], moods: ["nostalgic","inspiring","cozy comfort watch"], vibes: ["easy background watch"], ratings: ["kids","all ages family friendly","any"] },
+
+    // ================================================================
+    // WORLDWIDE NEWS — strictly opt-in.
+    //
+    // The rule the CEO set, and the right one: nobody opening an
+    // entertainment matcher on a Friday night wants a war bulletin handed to
+    // them unrequested. These appear if and only if News is ticked.
+    // ================================================================
+    { title: "BBC News at Ten", year: 2026, country: "United Kingdom", countryCode: "GB", synopsis: "The BBC's flagship evening bulletin — thirty minutes of the day's world and UK stories, reported straight.", platform: "YouTube", cats: ["News"], moods: [], vibes: [], ratings: ["teen PG-13","any"] },
+    { title: "DW News", year: 2026, country: "Germany", countryCode: "DE", synopsis: "Germany's international broadcaster, in English, free and unpaywalled — strongest on Europe, the EU and stories the Anglophone networks undercover.", platform: "YouTube", cats: ["News"], moods: [], vibes: [], ratings: ["teen PG-13","any"] },
+    { title: "Al Jazeera English — Newshour", year: 2026, country: "Qatar", countryCode: "QA", synopsis: "An hour built around the Middle East, Africa and South Asia rather than treating them as foreign-desk items at the end of the bulletin.", platform: "YouTube", cats: ["News"], moods: [], vibes: [], ratings: ["teen PG-13","any"] },
+    { title: "France 24 English", year: 2026, country: "France", countryCode: "FR", synopsis: "Rolling international news from Paris, with Francophone Africa and EU politics covered far more closely than most English-language networks bother with.", platform: "YouTube", cats: ["News"], moods: [], vibes: [], ratings: ["teen PG-13","any"] },
+    { title: "NHK World-Japan Newsline", year: 2026, country: "Japan", countryCode: "JP", synopsis: "Japan's public broadcaster in English — the reference source for Asia-Pacific news, disaster reporting and anything happening on the Japanese archipelago.", platform: "YouTube", cats: ["News"], moods: [], vibes: [], ratings: ["all ages family friendly","any"] },
+    { title: "PBS NewsHour", year: 2026, country: "United States", countryCode: "US", synopsis: "An hour of US and world news with the interviews run long rather than cut for pace — the least shouty hour on American television.", platform: "YouTube", cats: ["News"], moods: [], vibes: ["slow burn"], ratings: ["teen PG-13","any"] },
+    { title: "Jornal Nacional", year: 2026, country: "Brazil", countryCode: "BR", synopsis: "O telejornal mais assistido do Brasil — Brazil's main evening news, on air since 1969 and still the country's shared daily briefing.", platform: "Globoplay", cats: ["News"], moods: [], vibes: [], ratings: ["teen PG-13","any"] },
+    { title: "Euronews", year: 2026, country: "France", countryCode: "FR", synopsis: "European news broadcast simultaneously in a dozen languages, with the same footage read in each — useful precisely because the framing shifts between them.", platform: "YouTube", cats: ["News"], moods: [], vibes: [], ratings: ["teen PG-13","any"] },
+    { title: "CNA — Channel NewsAsia", year: 2026, country: "Singapore", countryCode: "SG", synopsis: "Singapore-based coverage of Southeast Asia and China, reported from inside the region rather than from a bureau flying in.", platform: "YouTube", cats: ["News"], moods: [], vibes: [], ratings: ["teen PG-13","any"] },
+    { title: "The Daily", year: 2026, country: "United States", countryCode: "US", synopsis: "The New York Times takes one story a morning and spends twenty-five minutes on it, usually with the reporter who wrote it.", platform: "Spotify", cats: ["News"], moods: [], vibes: ["slow burn"], ratings: ["teen PG-13","any"] },
+    { title: "Global News Podcast", year: 2026, country: "United Kingdom", countryCode: "GB", synopsis: "The BBC World Service's twice-daily world round-up in under half an hour — the fastest way to know what happened everywhere.", platform: "Apple Podcasts", cats: ["News"], moods: [], vibes: [], ratings: ["teen PG-13","any"] },
+    { title: "TLDR News Global", year: 2026, country: "United Kingdom", countryCode: "GB", synopsis: "Explainer videos that assume you missed the last six months of a story and want the whole arc, not today's increment.", platform: "YouTube", cats: ["News"], moods: [], vibes: ["easy background watch"], ratings: ["teen PG-13","any"] },
+
+    // ================================================================
+    // SPORTS — also strictly opt-in, same reasoning as News.
+    // ================================================================
+    { title: "Formula 1: Drive to Survive", year: 2026, country: "United Kingdom", countryCode: "GB", synopsis: "The paddock politics behind an F1 season, edited like a soap and responsible for most of the sport's new audience since 2019.", platform: "Netflix", cats: ["Sports"], moods: ["intense and thrilling"], vibes: ["fast-paced binge-worthy"], ratings: ["teen PG-13","any"] },
+    { title: "The Last Dance", year: 2020, country: "United States", countryCode: "US", synopsis: "Michael Jordan's final Bulls season, built from footage nobody was allowed to show for twenty years.", platform: "Netflix", cats: ["Sports"], moods: ["inspiring","intense and thrilling"], vibes: ["award winning","prestige and critically acclaimed"], ratings: ["mature adults only R rated","any"] },
+    { title: "Welcome to Wrexham", year: 2026, country: "United States", countryCode: "US", synopsis: "Two Hollywood actors buy a fifth-tier Welsh football club and discover a town's entire self-image came with it.", platform: "Hulu", cats: ["Sports"], moods: ["funny","inspiring","heartbreaking"], vibes: ["based on a true story"], ratings: ["mature adults only R rated","any"] },
+    { title: "Break Point", year: 2026, country: "United States", countryCode: "US", synopsis: "Tennis on tour at close range, following players through the Slams in the first season after the sport's old guard finally left.", platform: "Netflix", cats: ["Sports"], moods: ["intense and thrilling"], vibes: ["fast-paced binge-worthy"], ratings: ["teen PG-13","any"] },
+    { title: "Full Swing", year: 2026, country: "United States", countryCode: "US", synopsis: "Professional golf during the money war that split it in two — far more interesting than golf has any business being.", platform: "Netflix", cats: ["Sports"], moods: ["intense and thrilling"], vibes: ["fast-paced binge-worthy"], ratings: ["teen PG-13","any"] },
+    { title: "Quarterback", year: 2026, country: "United States", countryCode: "US", synopsis: "A season inside the helmet of NFL quarterbacks, mic'd through games and home life both.", platform: "Netflix", cats: ["Sports"], moods: ["intense and thrilling","inspiring"], vibes: ["fast-paced binge-worthy"], ratings: ["teen PG-13","any"] },
+    { title: "ESPN 30 for 30", year: 2026, country: "United States", countryCode: "US", synopsis: "The documentary strand that made sports films respectable — each one a different director on a story sport would rather have forgotten.", platform: "YouTube", cats: ["Sports"], moods: ["heartbreaking","inspiring"], vibes: ["award winning","prestige and critically acclaimed"], ratings: ["teen PG-13","any"] },
+    { title: "UEFA Champions League", year: 2026, country: "Switzerland", countryCode: "CH", synopsis: "Europe's club competition, midweek from September to the final — the matches the rest of the football calendar is arranged around.", platform: "Paramount+", cats: ["Sports"], moods: ["intense and thrilling","epic and adventurous"], vibes: [], ratings: ["all ages family friendly","any"] },
+    { title: "Globo Esporte", year: 2026, country: "Brazil", countryCode: "BR", synopsis: "Brazil's daily sports programme — Brasileirão, the state championships and whichever transfer rumour the country is arguing about today.", platform: "Globoplay", cats: ["Sports"], moods: [], vibes: ["easy background watch"], ratings: ["all ages family friendly","any"] },
+    { title: "Sunderland 'Til I Die", year: 2020, country: "United Kingdom", countryCode: "GB", synopsis: "A football club falls down the English leagues while the city that lives for it watches — the anti-Wrexham, and the better documentary.", platform: "Netflix", cats: ["Sports"], moods: ["heartbreaking"], vibes: ["based on a true story","slow burn"], ratings: ["mature adults only R rated","any"] },
 ];
 
 // Titles genuinely rooted in gospel/faith content, for quick lookup by other
@@ -2289,7 +2352,13 @@ function mediaForCategory(cat) {
     if (c.includes('audiobook')) return 'audiobook';
     if (c.includes('short film')) return 'shortFilm';
     if (c === 'movie' || c.includes('bollywood') || c.includes('nollywood') || c.includes('cinema')) return 'movie';
-    if (c === 'any') return 'all';
+    // 'all' was the second half of the Surprise Me leak, and the half the
+    // catalogue gating never covered: with no category ticked this asked
+    // iTunes for EVERY media type, so an unfiltered "what should I watch
+    // tonight" could come back with a podcast, an audiobook or an album
+    // straight off Apple's index — gated correctly in the catalogue and then
+    // handed over anyway by live discovery. Surprise Me means screen content.
+    if (c === 'any') return 'movie';
     return 'tvShow';
 }
 
@@ -2387,6 +2456,20 @@ function isBlockedText(text) {
 window.isBlockedText = isBlockedText;
 
 async function discoverFromITunes(cat, mood, vibe, decade, rating) {
+    // iTunes takes ONE search term, so a multi-ticked field has to be reduced
+    // to a single value here. The first ticked value wins rather than some
+    // blend: a query built from "funny cozy nostalgic epic" matches nothing
+    // well, and the catalogue tier above has already had the full set.
+    const one = (v, dflt) => {
+        const a = normCriteria(v);
+        return a.length ? a[0] : (dflt || 'any');
+    };
+    // Preserve the whole rating set — it is the one field where a stricter
+    // pick must not be silently dropped.
+    const ratingSet = normCriteria(rating);
+    cat = one(cat); mood = one(mood); vibe = one(vibe); decade = one(decade);
+    rating = ratingSet.length ? ratingSet[0] : 'any';
+
     // Vertical micro-dramas live entirely inside proprietary apps (ReelShort,
     // DramaBox, ShortMax, Globoplay's own line) and were never indexed by
     // iTunes — searching here doesn't come back empty, it comes back with
@@ -2491,25 +2574,73 @@ function rememberShownTitle(title) {
 // Faith already worked this way for the same reason; this generalises the
 // rule instead of special-casing one category.
 // ----------------------------------------------------
-const OPT_IN_ONLY_CATEGORIES = new Set([
-    'Gospel & Faith',      // already opt-in; kept here so the rule lives in one place
-    'podcast',             // audio
-    'Spotify playlist',    // audio
-    'YouTube channel',     // fitness/meditation/creators — not "watch tonight" content
-    'YouTube Shorts',      // same
-    'documentary'          // includes news/reports, which shouldn't arrive unrequested
+// This was a DENY list — every category that shouldn't show up unrequested had
+// to be remembered and added to it. That is backwards, and it failed exactly
+// the way deny lists always fail: News, Sports and Classical Music would each
+// have leaked into Surprise Me the day they were added, because nobody would
+// have thought to also edit a list living 600 lines away.
+//
+// Inverted to an ALLOW list. Surprise Me means "I want something to watch
+// tonight and I'm not going to tell you what" — so it draws from the narrow
+// set of things that answer that question and nothing else. Every category
+// added to the catalogue from now on is opt-in by default and has to be named
+// here on purpose to join the surprise pool. The safe direction is the default.
+const SURPRISE_ME_CATEGORIES = new Set([
+    'movie',
+    'series',
+    'limited series',
+    'K-drama',
+    'novela brasileira',
+    'telenovela'
 ]);
 
-function isOptInOnly(entry) {
+// True when the entry can appear in an unfiltered "surprise me" draw. It needs
+// only ONE surprise-eligible category: a film also tagged Classical Music is
+// still a film, and holding it back would quietly shrink the pool of real
+// movies over time as cross-tagging grows.
+function isSurpriseEligible(entry) {
     if (!entry || !Array.isArray(entry.cats)) return false;
-    // Opt-in ONLY when EVERY category it carries is opt-in. A title tagged
-    // both "documentary" and "movie" is still a legitimate surprise result —
-    // this should exclude audio and creator content, not quietly shrink the
-    // pool of real films that happen to carry a second tag.
-    return entry.cats.every(c => OPT_IN_ONLY_CATEGORIES.has(c));
+    return entry.cats.some(c => SURPRISE_ME_CATEGORIES.has(c));
+}
+
+// ----------------------------------------------------
+// MULTI-SELECT CRITERIA
+//
+// Every criterion is now a SET of acceptable answers rather than one answer.
+// "Netflix or Max", "funny or cozy", "movies or K-dramas" are all normal ways
+// to feel about an evening, and forcing one choice per field was making the
+// matcher ask a question nobody actually has a single answer to.
+//
+// normCriteria() is the single adapter for that change: it accepts the old
+// single string, the sentinel 'any', an array, or null, and always returns an
+// array. An EMPTY array means "no constraint" — the multi-select equivalent of
+// the old 'any'. Every call site keeps working unchanged, which is why this
+// could be done without touching the twenty-odd places that read a form value.
+// ----------------------------------------------------
+function normCriteria(v) {
+    if (v == null) return [];
+    const arr = Array.isArray(v) ? v : [v];
+    const out = arr
+        .map(x => (x == null ? '' : String(x).trim()))
+        .filter(x => x && x !== 'any');
+    return [...new Set(out)];
+}
+
+// Does this entry satisfy a criterion? An empty wanted-set always passes —
+// that is what "no constraint" means. Otherwise ANY overlap is enough: the
+// user said these are all acceptable, so one match is a match.
+function matchesAny(entryValues, wanted) {
+    if (!wanted.length) return true;
+    if (!Array.isArray(entryValues)) return wanted.includes(entryValues);
+    return entryValues.some(v => wanted.includes(v));
 }
 
 function pickFromCatalog(cat, plat, mood, vibe, rating) {
+    const cats    = normCriteria(cat);
+    const plats   = normCriteria(plat);
+    const moods   = normCriteria(mood);
+    const vibes   = normCriteria(vibe);
+    const ratings = normCriteria(rating);
     const excluded = new Set([...seenList, ...dislikedList].map(i => i.title || i));
     const seenRecently = new Set(recentTitles);
 
@@ -2533,18 +2664,26 @@ function pickFromCatalog(cat, plat, mood, vibe, rating) {
     // mood=any), where gospel remains part of the general pool unless held
     // back on purpose.
     const FAITH_PLATFORMS = ['Pure Flix', 'Angel Studios'];
-    const wantsGospel = cat === 'Gospel & Faith' || FAITH_PLATFORMS.includes(plat);
+    const wantsGospel = cats.includes('Gospel & Faith') || plats.some(p => FAITH_PLATFORMS.includes(p));
     const isGospelEntry = (e) => e.cats.includes('Gospel & Faith');
 
     // Tiered relaxation: try a full match first, then progressively relax filters
     // rather than ever falling back to one hardcoded title. Tier 0 is the only
     // tier where the platform constraint is actually honored — every other tier
     // drops it, so the caller must not display it as a confirmed platform.
+    //
+    // Vibe now takes part in the relaxation properly. It was accepted as an
+    // argument and then never used in a single tier test, so ticking "Slow
+    // Burn" changed precisely nothing about the result. It sits one tier below
+    // mood because when both are set and nothing satisfies both, pacing is the
+    // one people forgive being wrong.
     const tiers = [
-        { platformHonored: true,  test: (e) => (cat === 'any' || e.cats.includes(cat)) && (plat === 'any' || e.platform === plat) && (mood === 'any' || e.moods.includes(mood)) && (rating === 'any' || e.ratings.includes(rating)) },
-        { platformHonored: false, test: (e) => (cat === 'any' || e.cats.includes(cat)) && (mood === 'any' || e.moods.includes(mood)) && (rating === 'any' || e.ratings.includes(rating)) },
-        { platformHonored: false, test: (e) => (cat === 'any' || e.cats.includes(cat)) && (rating === 'any' || e.ratings.includes(rating)) },
-        { platformHonored: false, test: (e) => (rating === 'any' || e.ratings.includes(rating)) },
+        { platformHonored: true,  test: (e) => matchesAny(e.cats, cats) && matchesAny(e.platform, plats) && matchesAny(e.moods, moods) && matchesAny(e.vibes, vibes) && matchesAny(e.ratings, ratings) },
+        { platformHonored: true,  test: (e) => matchesAny(e.cats, cats) && matchesAny(e.platform, plats) && matchesAny(e.moods, moods) && matchesAny(e.ratings, ratings) },
+        { platformHonored: false, test: (e) => matchesAny(e.cats, cats) && matchesAny(e.moods, moods) && matchesAny(e.vibes, vibes) && matchesAny(e.ratings, ratings) },
+        { platformHonored: false, test: (e) => matchesAny(e.cats, cats) && matchesAny(e.moods, moods) && matchesAny(e.ratings, ratings) },
+        { platformHonored: false, test: (e) => matchesAny(e.cats, cats) && matchesAny(e.ratings, ratings) },
+        { platformHonored: false, test: (e) => matchesAny(e.ratings, ratings) },
         { platformHonored: false, test: () => true }
     ];
 
@@ -2562,9 +2701,11 @@ function pickFromCatalog(cat, plat, mood, vibe, rating) {
         if (!wantsGospel) pool = pool.filter(e => !isGospelEntry(e));
 
         // Opt-in categories only appear when the user actually chose that
-        // category. Keyed off `cat === 'any'` specifically: an explicit pick
-        // of "podcast" or "documentary" must still work normally.
-        if (cat === 'any') pool = pool.filter(e => !isOptInOnly(e));
+        // category. Keyed off "no category ticked" specifically: an explicit
+        // pick of News, Sports, Classical Music, podcasts or documentaries
+        // must still work normally — the rule is about what arrives
+        // unrequested, not about what is reachable.
+        if (!cats.length) pool = pool.filter(e => isSurpriseEligible(e));
 
         let freshPool = pool.filter(e => !seenRecently.has(e.title));
         if (freshPool.length > 0) pool = freshPool;
@@ -2573,13 +2714,13 @@ function pickFromCatalog(cat, plat, mood, vibe, rating) {
         // 'any' — an explicit choice always wins over inferred history, since
         // what someone just told you they want beats what they liked last week.
         if (typeof window.tasteBiasPool === 'function') {
-            try { pool = window.tasteBiasPool(pool, cat, mood) || pool; } catch (e) {}
+            try { pool = window.tasteBiasPool(pool, cats[0] || 'any', moods[0] || 'any') || pool; } catch (e) {}
         }
         if (pool.length > 0) {
             const pick = pool[Math.floor(Math.random() * pool.length)];
             // Only ever display the user's requested platform when this tier
             // actually filtered on it — never invent/echo it back otherwise.
-            const platformVerified = plat === 'any' || tier.platformHonored;
+            const platformVerified = plats.length === 0 || tier.platformHonored;
             return { title: pick.title, synopsis: pick.synopsis, platform: pick.platform, platformVerified, watchUrl: pick.watchUrl || null, source: 'catalog' };
         }
     }
@@ -2605,8 +2746,20 @@ function pickFromCatalog(cat, plat, mood, vibe, rating) {
     //      the user has both seen and disliked nearly all 99 titles.
     let lastPool = CONTENT_CATALOG.filter(e =>
         !excluded.has(e.title) && !isBlockedEntry(e) && (wantsGospel || !isGospelEntry(e))
-        && (cat !== 'any' || !isOptInOnly(e)));
+        && (cats.length > 0 || isSurpriseEligible(e)));
 
+    // Each rung below drops one more constraint. The surprise-eligibility gate
+    // is deliberately the LAST thing dropped rather than the first: running out
+    // of films is not a reason to hand someone a news bulletin they never asked
+    // for. Rejections and blocks give way before it does.
+    if (lastPool.length === 0) {
+        lastPool = CONTENT_CATALOG.filter(e =>
+            !isBlockedEntry(e) && (cats.length > 0 || isSurpriseEligible(e)));
+    }
+    if (lastPool.length === 0) {
+        lastPool = CONTENT_CATALOG.filter(e =>
+            cats.length > 0 || isSurpriseEligible(e));
+    }
     if (lastPool.length === 0) {
         lastPool = CONTENT_CATALOG.filter(e => !excluded.has(e.title) && !isBlockedEntry(e));
     }
@@ -2623,7 +2776,7 @@ function pickFromCatalog(cat, plat, mood, vibe, rating) {
     const lastFresh = lastPool.filter(e => !seenRecently.has(e.title));
     const finalPool = lastFresh.length ? lastFresh : lastPool;
     const pick = finalPool[Math.floor(Math.random() * finalPool.length)];
-    return { title: pick.title, synopsis: pick.synopsis, platform: pick.platform, platformVerified: (plat === 'any'), watchUrl: pick.watchUrl || null, source: 'catalog' };
+    return { title: pick.title, synopsis: pick.synopsis, platform: pick.platform, platformVerified: (plats.length === 0), watchUrl: pick.watchUrl || null, source: 'catalog' };
 }
 
 window.triggerMatch = async function(isSpecificSearch = false) {
@@ -2749,12 +2902,23 @@ window.triggerMatch = async function(isSpecificSearch = false) {
             }
         }
     } else {
-        let cat = document.getElementById('q-category')?.value || 'any';
-        let plat = document.getElementById('q-platform')?.value || 'any';
-        let mood = document.getElementById('q-mood')?.value || 'any';
-        let vibe = document.getElementById('q-vibe')?.value || 'any';
-        let rating = document.getElementById('q-rating')?.value || 'any';
-        let decade = document.getElementById('q-decade')?.value || 'any';
+        // Read the full ticked SET per field, not one value. getMatchCriteria
+        // is installed by criteria.js; the single-value fallback keeps the
+        // matcher working if that file fails to load for any reason, rather
+        // than leaving the form inert.
+        const picked = (typeof window.getMatchCriteria === 'function')
+            ? window.getMatchCriteria()
+            : {
+                cat:    [document.getElementById('q-category')?.value].filter(v => v && v !== 'any'),
+                plat:   [document.getElementById('q-platform')?.value].filter(v => v && v !== 'any'),
+                mood:   [document.getElementById('q-mood')?.value].filter(v => v && v !== 'any'),
+                vibe:   [document.getElementById('q-vibe')?.value].filter(v => v && v !== 'any'),
+                rating: [document.getElementById('q-rating')?.value].filter(v => v && v !== 'any'),
+                decade: [document.getElementById('q-decade')?.value].filter(v => v && v !== 'any')
+              };
+
+        let cat = picked.cat, plat = picked.plat, mood = picked.mood,
+            vibe = picked.vibe, rating = picked.rating, decade = picked.decade;
 
         // Tier 1: curated catalog. Every title/platform pairing here was
         // hand-verified, so when it can honor the exact platform requested,
@@ -2864,12 +3028,13 @@ function renderMatchCriteria() {
     if (!c) { wrap.style.display = 'none'; return; }
 
     const pretty = (v) => String(v || '').replace(/\b\w/g, ch => ch.toUpperCase());
+    // Criteria are sets now, so every ticked value gets its own chip rather
+    // than only the first — otherwise the card would quietly claim the user
+    // asked for less than they did.
     const parts = [];
-    if (c.cat && c.cat !== 'any') parts.push(pretty(c.cat));
-    if (c.plat && c.plat !== 'any') parts.push(pretty(c.plat));
-    if (c.mood && c.mood !== 'any') parts.push(pretty(c.mood));
-    if (c.vibe && c.vibe !== 'any') parts.push(pretty(c.vibe));
-    if (c.rating && c.rating !== 'any') parts.push(pretty(c.rating));
+    ['cat', 'plat', 'mood', 'vibe', 'rating'].forEach(k => {
+        normCriteria(c[k]).forEach(v => parts.push(pretty(v)));
+    });
 
     if (!parts.length) {
         chips.innerHTML = `<span>${window.t ? t('res.surpriseMe') : 'Surprise me — no filters set'}</span>`;
@@ -3360,7 +3525,7 @@ window.openNotForMeChooser = function() {
         options = [].concat(entry.moods || [], entry.cats || []);
     } else if (window.lastMatchCriteria) {
         const c = window.lastMatchCriteria;
-        options = [c.mood, c.cat].filter(v => v && v !== 'any');
+        options = [].concat(normCriteria(c.mood), normCriteria(c.cat));
     }
     options = [...new Set(options)].filter(o => o && o !== 'any').slice(0, 6);
 
