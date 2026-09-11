@@ -1,7 +1,7 @@
 /* ============================================================
    MATCHAPP AMBIENT BACKGROUND
 
-   Two layers on one canvas:
+   Three layers on one canvas:
 
    1. FLOWING AURORA — several independent sine waves, each with its own
       speed, amplitude and phase, stacked with additive blending so where
@@ -10,13 +10,24 @@
       other product's, and the motion is built from layered sine bands
       rather than any particular library's look — it should read as ours.
 
-   2. STREAMING LOGOS with REAL COLLISION. The previous version was a CSS
-      animation that floated logos straight up and let them pass through
-      each other. These are physics bodies: each carries a position,
-      velocity and radius, bounces off the viewport edges, and resolves
-      genuine circle-to-circle collisions with its neighbours using an
-      elastic impulse along the collision normal — so they visibly bump
-      and deflect rather than overlapping.
+   2. A PROJECTION BEAM WITH DUST IN IT.
+
+      This replaced eight brand-lettered bubbles that bounced around the
+      viewport with real collision physics. The physics were correct and the
+      effect was wrong: circles labelled N, M, D+ and P drifted straight
+      across the reading area and came to rest on top of headlines and
+      buttons, so the eye kept leaving the content to track them. A
+      background that recruits attention is not a background.
+
+      What replaces it is the oldest image the industry has: a projector
+      beam, and dust turning over inside it. It reads as cinema instantly,
+      it is anchored to one corner instead of roaming, it moves at the pace
+      of air in a still room, and at these alphas it registers as texture
+      rather than as objects. Nothing crosses the middle of the screen.
+
+      A little film grain sits on top — a pre-rendered noise tile, drawn at
+      very low alpha and re-offset a few times a second rather than
+      regenerated per frame, which is what makes it affordable.
 
    Performance and courtesy:
    - Respects prefers-reduced-motion by rendering ONE static frame and
@@ -25,7 +36,8 @@
    - Pauses entirely when the tab is hidden (no wasted battery).
    - Caps device pixel ratio at 2 — beyond that the cost climbs sharply
      for no visible gain.
-   - Reduces logo count on small screens where there's less room anyway.
+   - Halves the dust count on small screens, where there is less beam to
+     fill and less headroom to spend.
    ============================================================ */
 
 (function () {
@@ -54,11 +66,15 @@
     // hide inside a magic number again.
     //
     // dir is simply which way the band drifts (+1 / -1).
+    // Alphas roughly halved and every band pushed below the upper third.
+    // The top of the viewport is where the headline, the form and the result
+    // card live; a moving gradient behind body copy is legible-but-annoying,
+    // which is the worst place for a background to be.
     const BANDS = [
-        { colour: '229,193,88',  amp: 0.055, freq: 1.15, periodSec: 11, dir:  1, yOff: 0.34, alpha: 0.16, thick: 0.16 },
-        { colour: '107,63,160',  amp: 0.075, freq: 0.85, periodSec: 16, dir: -1, yOff: 0.52, alpha: 0.20, thick: 0.22 },
-        { colour: '163,118,182', amp: 0.045, freq: 1.55, periodSec:  9, dir:  1, yOff: 0.63, alpha: 0.13, thick: 0.14 },
-        { colour: '196,72,123',  amp: 0.065, freq: 0.65, periodSec: 14, dir: -1, yOff: 0.74, alpha: 0.11, thick: 0.18 }
+        { colour: '229,193,88',  amp: 0.055, freq: 1.15, periodSec: 13, dir:  1, yOff: 0.58, alpha: 0.075, thick: 0.18 },
+        { colour: '107,63,160',  amp: 0.075, freq: 0.85, periodSec: 19, dir: -1, yOff: 0.70, alpha: 0.105, thick: 0.24 },
+        { colour: '163,118,182', amp: 0.045, freq: 1.55, periodSec: 11, dir:  1, yOff: 0.80, alpha: 0.065, thick: 0.16 },
+        { colour: '196,72,123',  amp: 0.065, freq: 0.65, periodSec: 17, dir: -1, yOff: 0.90, alpha: 0.055, thick: 0.20 }
     ];
 
     function drawBands() {
@@ -99,143 +115,156 @@
         ctx.globalCompositeOperation = 'source-over';
     }
 
-    /* ---------- Streaming logos as physics bodies ---------- */
-    // Drawn as text glyphs rather than remote images: the old version
-    // hotlinked four SVGs from Wikimedia (an external dependency we don't
-    // control, and a request per logo). These are the real service marks
-    // rendered from their own wordmark initials in their brand colours.
-    const LOGOS = [
-        { label: 'N',  colour: '#E50914' }, // Netflix
-        { label: '♫',  colour: '#1DB954' }, // Spotify
-        { label: 'M',  colour: '#0074E4' }, // Max
-        { label: 'D+', colour: '#113CCF' }, // Disney+
-        { label: 'P',  colour: '#00A8E1' }, // Prime Video
-        { label: 'G',  colour: '#F5001E' }, // Globoplay
-        { label: 'A',  colour: '#FF9900' }, // Apple TV / Crunchyroll-ish accent
-        { label: 'C',  colour: '#F47521' }  // Crunchyroll
-    ];
+    /* ---------- Projection beam + dust ---------- */
 
-    let bodies = [];
+    // The beam is a soft wedge from just off the top-left corner down across
+    // the upper-left of the viewport — the geometry of a projector throwing
+    // over an audience. It breathes on a long period so it is never still and
+    // never obviously moving.
+    function drawBeam(seconds) {
+        const sway = Math.sin(seconds * (Math.PI * 2 / 34)) * 0.055;
+        const breathe = 0.78 + Math.sin(seconds * (Math.PI * 2 / 23)) * 0.22;
 
-    function makeBodies() {
-        const small = W < 700;
-        const count = small ? 5 : 8;
-        bodies = [];
+        const originX = -W * 0.06;
+        const originY = -H * 0.12;
+        const spread  = 0.42 + sway;
+
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+
+        const far = Math.hypot(W, H) * 1.25;
+        const a1 = Math.PI * (0.16 + sway * 0.3);
+        const a2 = a1 + Math.PI * spread * 0.5;
+
+        ctx.beginPath();
+        ctx.moveTo(originX, originY);
+        ctx.lineTo(originX + Math.cos(a1) * far, originY + Math.sin(a1) * far);
+        ctx.lineTo(originX + Math.cos(a2) * far, originY + Math.sin(a2) * far);
+        ctx.closePath();
+
+        const g = ctx.createRadialGradient(originX, originY, 0, originX, originY, far * 0.8);
+        g.addColorStop(0,    `rgba(255,243,163,${0.085 * breathe})`);
+        g.addColorStop(0.35, `rgba(229,193,88,${0.042 * breathe})`);
+        g.addColorStop(1,     'rgba(229,193,88,0)');
+        ctx.fillStyle = g;
+        ctx.fill();
+        ctx.restore();
+    }
+
+    // Dust motes. They live INSIDE the beam's reach and drift on a slow
+    // convection loop rather than bouncing: dust in still air rises, turns
+    // over and settles, it does not ricochet off walls.
+    let motes = [];
+
+    function makeMotes() {
+        const count = W < 700 ? 22 : 46;
+        motes = [];
         for (let i = 0; i < count; i++) {
-            const src = LOGOS[i % LOGOS.length];
-            const r = (small ? 15 : 21) + Math.random() * (small ? 6 : 10);
-            bodies.push({
-                x: r + Math.random() * Math.max(1, W - r * 2),
-                y: r + Math.random() * Math.max(1, H - r * 2),
-                // Slow drift — this is ambience, not a screensaver.
-                vx: (Math.random() - 0.5) * 0.34,
-                vy: (Math.random() - 0.5) * 0.34,
-                r,
-                label: src.label,
-                colour: src.colour,
-                spin: (Math.random() - 0.5) * 0.004,
-                angle: Math.random() * Math.PI * 2
+            motes.push({
+                x: Math.random() * W * 0.85,
+                y: Math.random() * H,
+                r: 0.6 + Math.random() * 1.7,
+                // Slow, mostly-downward drift with a lateral wander, so the
+                // field turns over instead of marching in one direction.
+                vy: 0.045 + Math.random() * 0.075,
+                phase: Math.random() * Math.PI * 2,
+                wobble: 0.18 + Math.random() * 0.5,
+                alpha: 0.10 + Math.random() * 0.26
             });
         }
     }
 
-    function stepBodies() {
-        // Move + bounce off viewport edges.
-        for (const b of bodies) {
-            b.x += b.vx;
-            b.y += b.vy;
-            b.angle += b.spin;
-
-            if (b.x - b.r < 0)      { b.x = b.r;      b.vx = Math.abs(b.vx); }
-            else if (b.x + b.r > W) { b.x = W - b.r;  b.vx = -Math.abs(b.vx); }
-            if (b.y - b.r < 0)      { b.y = b.r;      b.vy = Math.abs(b.vy); }
-            else if (b.y + b.r > H) { b.y = H - b.r;  b.vy = -Math.abs(b.vy); }
-        }
-
-        // Circle-to-circle collisions. This is the part the old CSS version
-        // could never do: logos genuinely bump off each other instead of
-        // sliding through. Equal-mass elastic response along the collision
-        // normal, plus a positional correction so overlapping pairs get
-        // pushed apart rather than sticking together.
-        for (let i = 0; i < bodies.length; i++) {
-            for (let j = i + 1; j < bodies.length; j++) {
-                const a = bodies[i], b = bodies[j];
-                const dx = b.x - a.x, dy = b.y - a.y;
-                const distSq = dx * dx + dy * dy;
-                const minDist = a.r + b.r;
-                if (distSq === 0 || distSq >= minDist * minDist) continue;
-
-                const dist = Math.sqrt(distSq);
-                const nx = dx / dist, ny = dy / dist;
-
-                // Separate them so they don't overlap next frame.
-                const overlap = (minDist - dist) / 2;
-                a.x -= nx * overlap; a.y -= ny * overlap;
-                b.x += nx * overlap; b.y += ny * overlap;
-
-                // Exchange velocity along the normal. For equal masses an
-                // elastic collision applies the FULL impulse to each body,
-                // which swaps their normal-direction velocities. An earlier
-                // version halved it, which is the perfectly INELASTIC case:
-                // a head-on pair stopped dead on contact, and total energy
-                // decayed toward zero, so the whole background would slowly
-                // freeze. Verified by simulation before and after.
-                const rvx = b.vx - a.vx, rvy = b.vy - a.vy;
-                const velAlongNormal = rvx * nx + rvy * ny;
-                if (velAlongNormal > 0) continue; // already separating
-                const impulse = -velAlongNormal;
-                a.vx -= impulse * nx; a.vy -= impulse * ny;
-                b.vx += impulse * nx; b.vy += impulse * ny;
-            }
+    function stepMotes(seconds) {
+        for (const m of motes) {
+            m.y += m.vy;
+            m.x += Math.sin(seconds * 0.35 + m.phase) * m.wobble * 0.22;
+            // Wrap rather than bounce — a mote leaving the frame is simply
+            // one more arriving at the top, which keeps the density constant
+            // without any edge behaviour to notice.
+            if (m.y - m.r > H) { m.y = -m.r; m.x = Math.random() * W * 0.85; }
+            if (m.x < -4) m.x = W * 0.85;
+            else if (m.x > W * 0.85 + 4) m.x = -4;
         }
     }
 
-    function drawBodies() {
-        for (const b of bodies) {
-            ctx.save();
-            ctx.translate(b.x, b.y);
-            ctx.rotate(b.angle);
-
-            // Soft brand-coloured halo
+    function drawMotes() {
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        for (const m of motes) {
+            // Brightest where the beam is strongest (upper left), fading to
+            // nothing outside it, so the dust only exists where light is.
+            const inBeam = Math.max(0, 1 - (m.x / (W * 0.9)) * 0.85 - (m.y / (H * 1.5)) * 0.35);
+            const a = m.alpha * inBeam;
+            if (a <= 0.004) continue;
             ctx.beginPath();
-            ctx.arc(0, 0, b.r, 0, Math.PI * 2);
-            const g = ctx.createRadialGradient(0, 0, b.r * 0.2, 0, 0, b.r);
-            g.addColorStop(0, b.colour + '55');
-            g.addColorStop(1, b.colour + '00');
-            ctx.fillStyle = g;
+            ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255,247,214,${a})`;
             ctx.fill();
-
-            // Ring
-            ctx.beginPath();
-            ctx.arc(0, 0, b.r * 0.82, 0, Math.PI * 2);
-            ctx.strokeStyle = b.colour + '66';
-            ctx.lineWidth = 1.4;
-            ctx.stroke();
-
-            // Mark
-            ctx.fillStyle = b.colour + 'cc';
-            ctx.font = `900 ${Math.round(b.r * 0.85)}px Inter, Arial, sans-serif`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(b.label, 0, 1);
-
-            ctx.restore();
         }
+        ctx.restore();
+    }
+
+    /* ---------- Film grain ---------- */
+
+    // A 128px noise tile, generated once and tiled. Regenerating noise per
+    // frame is what makes grain expensive; re-OFFSETTING one tile a few times
+    // a second is indistinguishable at this alpha and costs nothing.
+    let grainTile = null;
+    let grainPattern = null;   // built once; createPattern per frame is the
+                               // one genuinely wasteful call in this layer
+    let grainOffset = { x: 0, y: 0, at: 0 };
+
+    function makeGrain() {
+        const size = 128;
+        const off = document.createElement('canvas');
+        off.width = off.height = size;
+        const octx = off.getContext('2d');
+        const img = octx.createImageData(size, size);
+        for (let i = 0; i < img.data.length; i += 4) {
+            const v = 120 + Math.random() * 135;
+            img.data[i] = img.data[i + 1] = img.data[i + 2] = v;
+            img.data[i + 3] = 255;
+        }
+        octx.putImageData(img, 0, 0);
+        grainTile = off;
+        grainPattern = ctx.createPattern(off, 'repeat');
+    }
+
+    function drawGrain(seconds) {
+        if (!grainTile) return;
+        // ~8 reshuffles a second. Faster reads as static; slower reads as a
+        // texture stuck to the glass.
+        if (seconds - grainOffset.at > 0.125) {
+            grainOffset = { x: Math.random() * 128, y: Math.random() * 128, at: seconds };
+        }
+        if (!grainPattern) return;
+        ctx.save();
+        ctx.globalAlpha = 0.028;
+        ctx.globalCompositeOperation = 'overlay';
+        ctx.translate(-grainOffset.x, -grainOffset.y);
+        ctx.fillStyle = grainPattern;
+        ctx.fillRect(0, 0, W + 128, H + 128);
+        ctx.restore();
     }
 
     function frame(now) {
         t = now || 0;
+        const seconds = t / 1000;
         ctx.clearRect(0, 0, W, H);
+        drawBeam(seconds);
         drawBands();
-        stepBodies();
-        drawBodies();
+        stepMotes(seconds);
+        drawMotes();
+        drawGrain(seconds);
         rafId = requestAnimationFrame(frame);
     }
 
     function renderStaticFrame() {
         ctx.clearRect(0, 0, W, H);
+        drawBeam(0);
         drawBands();
-        drawBodies();
+        drawMotes();
+        drawGrain(0);
     }
 
     function resize() {
@@ -247,7 +276,9 @@
         canvas.style.width = W + 'px';
         canvas.style.height = H + 'px';
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        makeBodies();
+        makeMotes();
+        if (!grainTile) makeGrain();
+        else grainPattern = ctx.createPattern(grainTile, 'repeat'); // pattern is tied to the context's transform state
         if (reduceMotion) renderStaticFrame();
     }
 
