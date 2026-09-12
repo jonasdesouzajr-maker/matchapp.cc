@@ -428,10 +428,10 @@
     <link rel="alternate" hreflang="zh" href="https://matchapp.tv/?lang=zh">
 
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=132"></script>
-    <script defer src="/install.js?v=132"></script>
-    <script defer src="/avatars.js?v=132"></script>
-    <script defer src="/ambient.js?v=132"></script>
+    <script defer src="/i18n.js?v=133"></script>
+    <script defer src="/install.js?v=133"></script>
+    <script defer src="/avatars.js?v=133"></script>
+    <script defer src="/ambient.js?v=133"></script>
 
     <!-- GOOGLE ANALYTICS (GTAG) -->
 <!-- GOOGLE ADSENSE SCRIPT ENGINE -->
@@ -450,10 +450,10 @@
         });
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=132">
+    <link rel="stylesheet" href="/style.css?v=133">
     <!-- Smart TV stylesheet. Entirely scoped under body.tv-mode, so a
          non-TV visitor pays one small file and sees no change. -->
-    <link rel="stylesheet" href="/tv.css?v=132">
+    <link rel="stylesheet" href="/tv.css?v=133">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -1091,6 +1091,12 @@
         .auth-tabs { display: flex; border-bottom: 2px solid rgba(229,193,88,0.3); margin-bottom: 25px; }
         .auth-tab { flex: 1; text-align: center; padding: 15px; color: #bbb; cursor: pointer; font-weight: bold; }
         .auth-tab.active { color: var(--gold); border-bottom: 3px solid var(--gold); background: rgba(229,193,88,0.1); }
+        .auth-link-btn { display: block; width: 100%; margin-top: 14px; padding: 10px; background: none;
+            border: none; color: #9d95b0; font-family: inherit; font-size: 13.5px; font-weight: 600;
+            cursor: pointer; text-decoration: underline; text-underline-offset: 3px; transition: color .18s; }
+        .auth-link-btn:hover { color: var(--gold); }
+        .auth-link-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 6px; }
+        .auth-hint { color: #b9b1cc; font-size: 13.5px; line-height: 1.6; margin: 0 0 18px 0; text-align: center; }
         .auth-form-section { display: none; }
         .auth-form-section.active { display: block; }
 
@@ -2383,7 +2389,7 @@
                         <div class="spotlight-poster" onclick="saveSpotlightTitle()" role="button" tabindex="0"
                              onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();saveSpotlightTitle();}"
                              aria-label="Save American Horror Story: 13 to Watch Later">
-                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=132" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
+                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=133" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
                             <div class="spotlight-ribbon" data-i18n="spotlight.ribbon">COMING THIS MONTH</div>
                         </div>
                         <div class="spotlight-body">
@@ -2987,6 +2993,17 @@
                 <input type="email" id="login-email" placeholder="Email Address" style="width: 100%; padding: 16px; margin-bottom: 15px; border-radius: 12px; border: 1px solid var(--gold); background: #000; color: #fff;">
                 <input type="password" id="login-password" placeholder="Password" style="width: 100%; padding: 16px; margin-bottom: 25px; border-radius: 12px; border: 1px solid var(--gold); background: #000; color: #fff;">
                 <button onclick="handleEmailLogin()" class="gold-btn" style="width: 100%; padding: 18px; font-size: 20px;">Log In</button>
+                <button type="button" class="auth-link-btn" onclick="showForgotPassword()" data-i18n="auth.forgot">Forgot your password?</button>
+            </div>
+
+            <!-- PASSWORD RESET. Without this, anyone who forgets their password
+                 is permanently locked out of a paid account — there was no
+                 recovery path of any kind before. -->
+            <div id="form-forgot" class="auth-form-section">
+                <p class="auth-hint" data-i18n="auth.forgotHint">Enter the email you signed up with and we'll send you a secure link to set a new password.</p>
+                <input type="email" id="forgot-email" placeholder="Email Address" autocomplete="email" style="width: 100%; padding: 16px; margin-bottom: 25px; border-radius: 12px; border: 1px solid var(--gold); background: #000; color: #fff;">
+                <button onclick="handlePasswordReset()" id="btn-forgot" class="gold-btn" style="width: 100%; padding: 18px; font-size: 18px;" data-i18n="auth.sendReset">Send reset link</button>
+                <button type="button" class="auth-link-btn" onclick="switchAuthTab('login')" data-i18n="auth.backToLogin">← Back to log in</button>
             </div>
             <div id="form-signup" class="auth-form-section">
                 <input type="email" id="reg-email" placeholder="Email Address" style="width: 100%; padding: 16px; margin-bottom: 15px; border-radius: 12px; border: 1px solid var(--gold); background: #000; color: #fff;">
@@ -2997,20 +3014,20 @@
         </div>
     </div>
 
-    <script src="/app.js?v=132"></script>
+    <script src="/app.js?v=133"></script>
     <!-- Loads AFTER app.js so the chips it builds can call straight into the
          matcher, and non-deferred so the form is never briefly interactive as
          a plain single-choice select. -->
-    <script src="/tmdb.js?v=132"></script>
-    <script src="/criteria.js?v=132"></script>
-    <script src="/lazy.js?v=132"></script>
-    <script src="/tv.js?v=132"></script>
-    <script src="/taste.js?v=132"></script>
-    <script src="/contacts.js?v=132"></script>
-    <script src="/share.js?v=132"></script>
-    <script src="/pricing.js?v=132"></script>
-    <script src="/credits-ui.js?v=132"></script>
-    <script src="/voice-input.js?v=132"></script>
+    <script src="/tmdb.js?v=133"></script>
+    <script src="/criteria.js?v=133"></script>
+    <script src="/lazy.js?v=133"></script>
+    <script src="/tv.js?v=133"></script>
+    <script src="/taste.js?v=133"></script>
+    <script src="/contacts.js?v=133"></script>
+    <script src="/share.js?v=133"></script>
+    <script src="/pricing.js?v=133"></script>
+    <script src="/credits-ui.js?v=133"></script>
+    <script src="/voice-input.js?v=133"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initVoiceInput('specific-search-input', 'mic-btn-index', () => smartSearch());

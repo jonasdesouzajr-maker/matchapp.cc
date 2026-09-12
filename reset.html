@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set a New Password | MatchApp</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://matchapp.tv/reset.html">
+    <link rel="icon" href="/logo.jpeg" type="image/jpeg">
+
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-M7J3NNBN');</script>
+    <!-- End Google Tag Manager -->
+
+    <style>
+        :root { --gold:#E5C158; --gold-glow:#FFF3A3; --royal:#402562; --royal-lift:#6B3FA0; --ink:#14131A; }
+        * { box-sizing: border-box; }
+        body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
+               padding:24px; background: radial-gradient(circle at 50% 0%, #241a3d 0%, #14131A 60%);
+               color:#fff; font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif; line-height:1.6; }
+        .card { width:100%; max-width:440px; background: linear-gradient(160deg, rgba(32,24,52,0.94), rgba(20,19,26,0.96));
+                border:1px solid rgba(229,193,88,0.35); border-radius:18px; padding:34px 30px;
+                box-shadow:0 24px 70px rgba(0,0,0,0.6); }
+        .brand { display:flex; align-items:center; gap:12px; justify-content:center; margin-bottom:22px; text-decoration:none; }
+        .brand img { width:42px; height:42px; border-radius:10px; }
+        .brand span { font-size:20px; font-weight:900; color:var(--gold); letter-spacing:0.5px; }
+        h1 { font-size:22px; margin:0 0 8px 0; text-align:center; color:#fff; }
+        .sub { color:#9d95b0; font-size:14px; text-align:center; margin:0 0 26px 0; }
+        label { display:block; font-size:12px; text-transform:uppercase; letter-spacing:0.6px;
+                color:#b9b1cc; font-weight:700; margin-bottom:7px; }
+        input { width:100%; padding:15px; margin-bottom:16px; border-radius:12px;
+                border:1px solid rgba(229,193,88,0.5); background:#000; color:#fff; font-size:16px; font-family:inherit; }
+        input:focus { outline:2px solid var(--gold); outline-offset:1px; border-color:var(--gold); }
+        button { width:100%; padding:16px; border:none; border-radius:12px; cursor:pointer;
+                 background:linear-gradient(135deg,#BF953F,#FCF6BA,#B38728); color:#14131A;
+                 font-size:16px; font-weight:900; font-family:inherit; transition:transform .2s, opacity .2s; }
+        button:hover:not(:disabled) { transform:translateY(-2px); }
+        button:disabled { opacity:0.55; cursor:wait; }
+        .msg { display:none; margin-top:18px; padding:13px; border-radius:10px; font-size:14px; font-weight:600; text-align:center; }
+        .msg.ok  { display:block; color:#4ade80; background:rgba(74,222,128,0.1); }
+        .msg.bad { display:block; color:#ff6b6b; background:rgba(255,107,107,0.1); }
+        .hint { color:#8f88a5; font-size:12.5px; margin-top:16px; text-align:center; }
+        .hint a { color:var(--gold); }
+        @media (prefers-reduced-motion: reduce) { button { transition:none; } button:hover:not(:disabled) { transform:none; } }
+    </style>
+</head>
+<body>
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M7J3NNBN"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<main class="card">
+    <a href="/index.html" class="brand" aria-label="MatchApp home">
+        <img src="/logo.jpeg" alt="MatchApp logo">
+        <span>MatchApp</span>
+    </a>
+
+    <h1 id="head">Set a new password</h1>
+    <p class="sub" id="sub">Choose something you'll remember. At least 8 characters.</p>
+
+    <div id="form-area">
+        <label for="pw1">New password</label>
+        <input type="password" id="pw1" autocomplete="new-password" placeholder="At least 8 characters">
+
+        <label for="pw2">Confirm new password</label>
+        <input type="password" id="pw2" autocomplete="new-password" placeholder="Type it again">
+
+        <button id="save" onclick="savePassword()">Save new password</button>
+    </div>
+
+    <p id="msg" class="msg"></p>
+    <p class="hint">Didn't mean to do this? <a href="/index.html">Go back to MatchApp</a></p>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://zkymvqrmbabngsqblyye.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpreW12cXJtYmFibmdzcWJseXllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY4MDUyNDIsImV4cCI6MjEwMjM4MTI0Mn0._yEVFMfwVU6GBqQ8m3ljfOgA0HSLEDiKMOfYae6ZD8Q";
+
+let client = null;
+try { client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { detectSessionInUrl: true } }); } catch (e) {}
+
+function show(text, ok) {
+    const m = document.getElementById('msg');
+    m.className = 'msg ' + (ok ? 'ok' : 'bad');
+    m.textContent = text;
+}
+
+// Supabase puts the recovery token in the URL fragment and, with
+// detectSessionInUrl, exchanges it for a temporary session automatically.
+// If there's no valid session the link is stale or already used — say so
+// plainly rather than letting someone type a new password into a form that
+// was always going to fail on submit.
+(async function checkLink() {
+    if (!client) { show('Could not connect. Please refresh and try again.', false); return; }
+    const hasRecovery = window.location.hash.includes('type=recovery') || window.location.hash.includes('access_token');
+
+    // Give Supabase a moment to process the fragment before checking.
+    await new Promise(r => setTimeout(r, 400));
+    const { data } = await client.auth.getSession();
+
+    if (!data || !data.session) {
+        document.getElementById('form-area').style.display = 'none';
+        document.getElementById('head').textContent = 'This link has expired';
+        document.getElementById('sub').textContent = hasRecovery
+            ? 'Reset links are single-use and expire after a short while. Request a fresh one and it will work.'
+            : 'Open the link from your reset email to get here.';
+        show('Go back to MatchApp, tap Log In, then "Forgot your password?" to request a new link.', false);
+    }
+})();
+
+window.savePassword = async function() {
+    const p1 = document.getElementById('pw1').value;
+    const p2 = document.getElementById('pw2').value;
+    const btn = document.getElementById('save');
+
+    if (p1.length < 8) { show('Password must be at least 8 characters.', false); return; }
+    if (p1 !== p2)     { show("Those two passwords don't match.", false); return; }
+    if (!client)       { show('Could not connect. Please refresh and try again.', false); return; }
+
+    btn.disabled = true; const original = btn.textContent; btn.textContent = 'Saving…';
+
+    try {
+        const { error } = await client.auth.updateUser({ password: p1 });
+        if (error) {
+            show(error.message || 'Could not update the password. The link may have expired.', false);
+            btn.disabled = false; btn.textContent = original;
+            return;
+        }
+        document.getElementById('form-area').style.display = 'none';
+        document.getElementById('head').textContent = 'Password updated';
+        document.getElementById('sub').textContent = 'You can log in with your new password now.';
+        show('All set — taking you back to MatchApp…', true);
+        if (window.dataLayer) window.dataLayer.push({ event: 'password_reset_completed' });
+        setTimeout(() => { window.location.href = '/index.html?openAuth=1'; }, 2200);
+    } catch (e) {
+        show('Something went wrong. Please request a new reset link.', false);
+        btn.disabled = false; btn.textContent = original;
+    }
+};
+
+// Enter submits, since people expect that on a two-field form.
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && document.getElementById('form-area').style.display !== 'none') savePassword();
+});
+</script>
+</body>
+</html>

@@ -1600,8 +1600,65 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 window.closeAuthModal = function() { document.getElementById('main-auth-modal').style.display = 'none'; };
 window.switchAuthTab = function(tab) {
-    ['login', 'signup'].forEach(t => { document.getElementById(`tab-${t}`)?.classList.remove('active'); document.getElementById(`form-${t}`)?.classList.remove('active'); });
+    // 'forgot' is included so switching back to a tab always clears the reset
+    // panel — otherwise it stays visible stacked under the login form.
+    ['login', 'signup', 'forgot'].forEach(t => { document.getElementById(`tab-${t}`)?.classList.remove('active'); document.getElementById(`form-${t}`)?.classList.remove('active'); });
     document.getElementById(`tab-${tab}`)?.classList.add('active'); document.getElementById(`form-${tab}`)?.classList.add('active');
+    const msg = document.getElementById('auth-message');
+    if (msg) msg.style.display = 'none';
+};
+
+window.showForgotPassword = function() {
+    window.switchAuthTab('forgot');
+    // Carry over whatever they already typed so they don't retype it.
+    const typed = document.getElementById('login-email')?.value.trim();
+    const field = document.getElementById('forgot-email');
+    if (field) { if (typed) field.value = typed; field.focus(); }
+};
+
+// ----------------------------------------------------
+// PASSWORD RESET
+// Supabase emails a one-time link that returns the user to /reset.html with a
+// recovery token in the URL fragment, where they set a new password.
+//
+// The response is deliberately identical whether or not the address has an
+// account. Saying "no account with that email" turns this form into a way for
+// anyone to check which addresses are registered — a real privacy leak on a
+// site holding payment records.
+// ----------------------------------------------------
+window.handlePasswordReset = async function() {
+    const email = (document.getElementById('forgot-email')?.value || '').trim();
+    const msgEl = document.getElementById('auth-message');
+    const btn = document.getElementById('btn-forgot');
+
+    const show = (text, ok) => {
+        if (!msgEl) return;
+        msgEl.style.display = 'block';
+        msgEl.style.color = ok ? '#4ade80' : '#ff5252';
+        msgEl.style.background = ok ? 'rgba(74,222,128,0.1)' : 'rgba(255,0,0,0.1)';
+        msgEl.innerText = text;
+    };
+
+    if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+        show(window.t ? t('auth.badEmail') : 'Please enter a valid email address.', false);
+        return;
+    }
+    if (!supabaseClient) { show('Connection offline. Please try again shortly.', false); return; }
+
+    const original = btn ? btn.innerText : '';
+    if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; btn.innerText = '…'; }
+
+    try {
+        await supabaseClient.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin + '/reset.html'
+        });
+    } catch (e) {
+        // Swallowed on purpose — see the note above about not revealing
+        // whether an address is registered.
+    }
+
+    show(window.t ? t('auth.resetSent') : "If that email has an account, a reset link is on its way. Check your inbox and spam folder.", true);
+    if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.innerText = original; }
 };
 
 // ----------------------------------------------------
