@@ -48,7 +48,7 @@ For each one:
      payment succeeds and we have no idea whose account to credit. It is the
      single most common way this setup fails.
    - ✅ **Allow promotion codes** (optional, useful for launch campaigns)
-5. **After payment:** redirect to `https://matchapp.cc/profile/profile.html`
+5. **After payment:** redirect to `https://matchapp.tv/profile/profile.html`
 6. Save, then copy the link URL (`https://buy.stripe.com/…`)
 
 ---

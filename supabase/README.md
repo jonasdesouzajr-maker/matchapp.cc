@@ -86,7 +86,7 @@ No client_reference_id on session cs_... — cannot identify the user.
 
 On each Payment Link, set the confirmation page to redirect to:
 ```
-https://matchapp.cc/?checkout=success
+https://matchapp.tv/?checkout=success
 ```
 The app watches for that parameter and polls until the new tier appears,
 then fires a confirmation toast and confetti — so a buyer sees their upgrade
