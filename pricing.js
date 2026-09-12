@@ -1,5 +1,5 @@
 /* ============================================================
-   © 2026 MatchApp.cc — All Rights Reserved.
+   © 2026 MatchApp.tv — All Rights Reserved.
    Proprietary source code. Not licensed for reproduction, scraping,
    or reuse in competing products. See /terms.html Section 4.
    ============================================================ */
@@ -53,7 +53,7 @@ window.processCheckout = async function(planType) {
                 // Graceful behaviour before the Stripe link exists: send them to
                 // sales instead of a broken checkout.
                 if (!STRIPE_LINK_BUSINESS || STRIPE_LINK_BUSINESS.startsWith('PASTE_')) {
-                    window.location.href = 'mailto:support@matchapp.cc?subject=' +
+                    window.location.href = 'mailto:support@matchapp.tv?subject=' +
                         encodeURIComponent('MatchApp Business plan enquiry') +
                         '&body=' + encodeURIComponent("Hi MatchApp team,\n\nI'd like to know more about the Business plan.\n\nCompany:\nExpected monthly volume:\n\nThanks!");
                     if (btn) { btn.innerText = originalText; btn.disabled = false; btn.style.opacity = "1"; }
@@ -146,7 +146,7 @@ window.buyCredits = async function (packKey) {
 
     const link = STRIPE_LINK_CREDITS[packKey];
     if (!link || link.startsWith('PASTE_')) {
-        window.location.href = 'mailto:support@matchapp.cc?subject=' +
+        window.location.href = 'mailto:support@matchapp.tv?subject=' +
             encodeURIComponent(`MatchApp credits — ${pack.credits} pack`) +
             '&body=' + encodeURIComponent(
                 `Hi MatchApp team,\n\nI'd like to buy the ${pack.credits}-credit pack (${pack.price}).\n\nThanks!`);

@@ -107,7 +107,7 @@ That last check matters: a rule that matches too broadly can send `.tv` back to
 
 ## Don't change the support mailbox yet
 
-`support@matchapp.cc` is still used across the site and in the Stripe fallback
+`support@matchapp.tv` is still used across the site and in the Stripe fallback
 flows. It is left alone deliberately: switching it before a
 `support@matchapp.tv` mailbox actually exists and is monitored would bounce real
 customer emails, including people trying to pay. Once the `.tv` mailbox is live,
