@@ -49,8 +49,8 @@
     <meta name="twitter:image" content="https://matchapp.tv/og-image.jpg">
     <link rel="icon" href="/logo.jpeg" type="image/jpeg">
 
-    <script defer src="/i18n.js?v=154"></script>
-    <script defer src="/install.js?v=154"></script>
+    <script defer src="/i18n.js?v=160"></script>
+    <script defer src="/install.js?v=160"></script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9541435081010948" crossorigin="anonymous"></script>
     <script>
         // AUTO ADS — lets Google's own placement algorithm find additional
@@ -77,8 +77,8 @@
     }
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=154">
-    <link rel="stylesheet" href="/tv.css?v=154">
+    <link rel="stylesheet" href="/style.css?v=160">
+    <link rel="stylesheet" href="/tv.css?v=160">
     <style>
         :root { --gold: #E5C158; --gold-deep: #B8912F; --gold-glow: #FFF3A3; --ink: #14131A; --royal-deep: #130734; --royal: #402562; --royal-lift: #6B3FA0; --royal-glow: #A376B6; --bg-dark: #14131A; --card-bg: rgba(26, 22, 38, 0.90); }
         body { background: var(--bg-dark); color: #fff; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
@@ -92,7 +92,7 @@
         .discover-head h1 { color: var(--gold); font-size: 30px; margin: 0 0 8px 0; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
         #discover-query { color: var(--gold-glow); font-size: 20px; font-style: italic; display: block; margin-bottom: 14px; }
         #discover-answer { display: block; color: #ddd6ec; font-size: 17px; line-height: 1.7; margin: 0; flex: 1; }
-        .answer-row { display: flex; align-items: flex-start; gap: 14px; background: rgba(107,63,160,0.18); border-left: 4px solid var(--gold); padding: 16px 20px; border-radius: 12px; margin-top: 6px; }
+        .answer-row { display: flex; align-items: flex-start; gap: 14px; background: rgba(216,156,72,0.18); border-left: 4px solid var(--gold); padding: 16px 20px; border-radius: 12px; margin-top: 6px; }
         .offline-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,138,92,0.18); border: 1px solid #ff8a5c; color: #ffc9b0; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 5px 11px; border-radius: 20px; margin-bottom: 10px; }
         .discover-speak { flex-shrink: 0; background: rgba(229,193,88,0.15); border: 1px solid var(--gold); color: var(--gold-glow); width: 42px; height: 42px; border-radius: 50%; font-size: 18px; cursor: pointer; transition: 0.25s; display: inline-flex; align-items: center; justify-content: center; }
         .discover-speak:hover { background: rgba(229,193,88,0.3); transform: scale(1.08); }
@@ -133,7 +133,7 @@
         .chat-bubble { border-radius: 16px; padding: 15px 19px; animation: bubbleIn 0.4s cubic-bezier(0.22,1,0.36,1); }
         @keyframes bubbleIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform:none; } }
         .chat-user { align-self: flex-end; max-width: 85%; background: linear-gradient(135deg, var(--royal-lift), var(--royal)); color: #fff; font-weight: 600; font-size: 15px; border-bottom-right-radius: 5px; }
-        .chat-assistant { align-self: stretch; background: rgba(107,63,160,0.16); border-left: 4px solid var(--gold); border-bottom-left-radius: 5px; }
+        .chat-assistant { align-self: stretch; background: rgba(216,156,72,0.16); border-left: 4px solid var(--gold); border-bottom-left-radius: 5px; }
         .chat-answer-row { display: flex; align-items: flex-start; gap: 14px; }
         .chat-answer-text { color: #ddd6ec; font-size: 16.5px; line-height: 1.7; margin: 0; flex: 1; white-space: pre-wrap; }
         .chat-results-grid { display: none; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 18px; margin-top: 18px; }
@@ -144,7 +144,7 @@
         .chat-history-sub { color: #9d95b0; font-size: 13px; margin: 0 0 18px 0; }
         .chat-history-empty { color: #7d7590; font-size: 13.5px; font-style: italic; margin: 0; }
         .chat-thread-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 16px; border-radius: 12px; background: rgba(0,0,0,0.4); border: 1px solid rgba(229,193,88,0.2); margin-bottom: 9px; cursor: pointer; transition: 0.22s; }
-        .chat-thread-item:hover { border-color: var(--gold); background: rgba(107,63,160,0.24); transform: translateX(3px); }
+        .chat-thread-item:hover { border-color: var(--gold); background: rgba(216,156,72,0.24); transform: translateX(3px); }
         .chat-thread-item.active { border-color: var(--gold); background: rgba(229,193,88,0.14); }
         .chat-thread-title { color: #ddd6ec; font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .chat-thread-del { background: none; border: none; color: #7d7590; font-size: 15px; cursor: pointer; flex-shrink: 0; padding: 4px 6px; border-radius: 6px; }
@@ -163,7 +163,7 @@
 
         #discover-grid { display: none; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 22px; }
         .discover-card { display: flex; gap: 16px; background: linear-gradient(160deg, rgba(32,24,52,0.92), rgba(20,19,26,0.94)); border: 1px solid rgba(229,193,88,0.32); border-radius: 18px; padding: 16px; opacity: 0; animation: cardIn 0.6s cubic-bezier(0.22,1,0.36,1) forwards; transition: transform 0.35s, border-color 0.35s, box-shadow 0.35s; }
-        .discover-card:hover { transform: translateY(-6px); border-color: var(--gold); box-shadow: 0 16px 44px rgba(107,63,160,0.5); }
+        .discover-card:hover { transform: translateY(-6px); border-color: var(--gold); box-shadow: 0 16px 44px rgba(216,156,72,0.45); }
         @keyframes cardIn { from { opacity:0; transform: translateY(22px); } to { opacity:1; transform:none; } }
         .discover-poster { position: relative; flex-shrink: 0; width: 104px; height: 156px; border-radius: 11px; overflow: hidden; border: 1px solid var(--gold); background: var(--royal-deep); }
         .discover-poster img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -342,15 +342,15 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="/app.js?v=154"></script>
-    <script src="/discover.js?v=154"></script>
-    <script src="/voice-input.js?v=154"></script>
+    <script src="/app.js?v=160"></script>
+    <script src="/discover.js?v=160"></script>
+    <script src="/voice-input.js?v=160"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initVoiceInput('discover-new-input', 'mic-btn-discover', () => newDiscoverSearch());
         });
     </script>
-    <script src="/tv.js?v=154"></script>
-    <script src="/tmdb.js?v=154"></script>
+    <script src="/tv.js?v=160"></script>
+    <script src="/tmdb.js?v=160"></script>
 </body>
 </html>

@@ -34,8 +34,8 @@
         });
     </script>
     
-    <link rel="stylesheet" href="/style.css?v=153">
-    <link rel="stylesheet" href="/tv.css?v=153">
+    <link rel="stylesheet" href="/style.css?v=160">
+    <link rel="stylesheet" href="/tv.css?v=160">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --gold: #E5C158; --gold-deep: #B8912F; --gold-glow: #FFF3A3; --ink: #14131A; --royal-deep: #130734; --royal: #402562; --royal-lift: #6B3FA0; --royal-glow: #A376B6; --bg-dark: #14131A; --card-bg: rgba(26, 22, 38, 0.90); }
@@ -53,8 +53,8 @@
 
         /* ===== IDENTITY EXTRAS: avatar picker + nickname ===== */
         .identity-extras { max-width: 520px; margin: 0 auto 26px auto; }
-        .pf-fold { border: 1px solid rgba(163,118,182,0.45); border-radius: 14px;
-                   background: rgba(107,63,160,0.12); margin-bottom: 14px; overflow: hidden; }
+        .pf-fold { border: 1px solid rgba(168,108,36,0.50); border-radius: 14px;
+                   background: rgba(216,156,72,0.12); margin-bottom: 14px; overflow: hidden; }
         .pf-fold-head { display: flex; align-items: center; justify-content: space-between;
                         padding: 12px 15px; cursor: pointer; list-style: none;
                         color: #d9cff0; font-size: 13.5px; font-weight: 700; }
@@ -84,11 +84,11 @@
 
         /* Note badge + saved note text on history cards */
         .poster-cell { display: flex; flex-direction: column; }
-        .poster-note-badge { position: absolute; top: 8px; left: 8px; background: rgba(107,63,160,0.92);
+        .poster-note-badge { position: absolute; top: 8px; left: 8px; background: rgba(216,156,72,0.45);
                              color: var(--gold-glow); font-size: 11px; padding: 4px 7px; border-radius: 6px;
                              border: 1px solid rgba(229,193,88,0.55); z-index: 3; }
         .poster-note { color: #bdb2d4; font-size: 11.5px; line-height: 1.5; margin: 8px 2px 0 2px;
-                       background: rgba(107,63,160,0.14); border-left: 2px solid rgba(229,193,88,0.5);
+                       background: rgba(216,156,72,0.14); border-left: 2px solid rgba(229,193,88,0.5);
                        padding: 7px 9px; border-radius: 0 8px 8px 0; white-space: pre-wrap;
                        overflow-wrap: anywhere; }
         @media (max-width: 640px) {
@@ -137,7 +137,7 @@
         .blocked-chip:hover::after { content: '↺'; }
 
         /* ===== TASTE DNA ===== */
-        .taste-card { background: linear-gradient(150deg, rgba(107,63,160,0.24), rgba(20,19,26,0.96)); border: 2px solid rgba(229,193,88,0.55); border-radius: 22px; padding: 30px; margin-bottom: 30px; box-shadow: 0 12px 45px rgba(0,0,0,0.5); }
+        .taste-card { background: linear-gradient(150deg, rgba(216,156,72,0.24), rgba(20,19,26,0.96)); border: 2px solid rgba(229,193,88,0.55); border-radius: 22px; padding: 30px; margin-bottom: 30px; box-shadow: 0 12px 45px rgba(0,0,0,0.5); }
         .taste-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 20px; }
         .taste-header h3 { color: var(--gold-glow); margin: 0 0 5px 0; font-size: 23px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; }
         .taste-sub { color: #a99cc4; font-size: 12.5px; margin: 0; line-height: 1.55; }
@@ -282,7 +282,7 @@
         .premium-card { border: 1px solid rgba(255,255,255,0.09) !important;
                         background: rgba(26,22,38,0.72); padding: 26px; margin-bottom: 18px; }
         .taste-card { border: 1px solid rgba(255,255,255,0.09) !important;
-                      background: linear-gradient(158deg, rgba(107,63,160,0.14), rgba(20,19,26,0.92));
+                      background: linear-gradient(158deg, rgba(216,156,72,0.14), rgba(20,19,26,0.92));
                       box-shadow: none; margin-bottom: 18px; padding: 26px; }
         .portfolio-panel { border: 1px solid rgba(255,255,255,0.09) !important;
                            background: rgba(255,255,255,0.02) !important; padding: 26px !important;
@@ -302,8 +302,8 @@
 
         /* Core Identity was a red heading on a red-bordered card, which reads
            as an error state rather than as the page's most important section. */
-        .core-identity-card { border: 1px solid rgba(163,118,182,0.42) !important;
-                              background: rgba(107,63,160,0.1) !important; }
+        .core-identity-card { border: 1px solid rgba(168,108,36,0.50) !important;
+                              background: rgba(216,156,72,0.10) !important; }
         .core-identity-card > h3 { color: #efe7ff !important; font-size: 18px !important;
                                    letter-spacing: 0.4px !important; }
 
@@ -600,12 +600,12 @@
         <p><span data-i18n="support.ideas">💌 Got an idea for MatchApp? We read every email —</span> <a href="mailto:support@matchapp.tv">support@matchapp.tv</a> <span class="pf-support-sep">·</span> <a href="https://wa.me/5521974297919" target="_blank" rel="noopener noreferrer" class="pf-support-wa">WhatsApp</a></p>
     </footer>
 
-    <script src="/i18n.js?v=153"></script>
-    <script defer src="/install.js?v=153"></script>
-    <script defer src="/avatars.js?v=153"></script>
-    <script src="/app.js?v=153"></script>
-    <script src="/taste.js?v=153"></script>
-    <script src="/profile.js?v=153"></script>
-    <script src="/tv.js?v=153"></script>
+    <script src="/i18n.js?v=160"></script>
+    <script defer src="/install.js?v=160"></script>
+    <script defer src="/avatars.js?v=160"></script>
+    <script src="/app.js?v=160"></script>
+    <script src="/taste.js?v=160"></script>
+    <script src="/profile.js?v=160"></script>
+    <script src="/tv.js?v=160"></script>
 </body>
 </html>

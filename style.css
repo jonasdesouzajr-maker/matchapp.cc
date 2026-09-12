@@ -1,8 +1,8 @@
 :root {
     /* ===== BRAND PALETTE — sampled directly from the MatchApp logo ===== */
     /* Logo charcoal backdrop, royal purple orb, polished gold ring + play mark */
-    --ink:          #14131A;   /* deepest charcoal (logo backdrop) */
-    --ink-2:        #1A191F;   /* logo card charcoal               */
+    --ink:          #0A0A0A;   /* deepest charcoal (logo backdrop) */
+    --ink-2:        #181818;   /* logo card charcoal               */
     --royal-deep:   #130734;   /* darkest purple in the orb        */
     --royal:        #402562;   /* core royal purple                */
     --royal-lift:   #6B3FA0;   /* raised purple for gradients      */
@@ -11,31 +11,46 @@
     --gold-deep:    #B8912F;   /* gold shadow side                 */
     --gold-glow:    #FFF3A3;   /* brightest gold specular          */
 
-    /* ===== SEMANTIC LAYER =====
-       The palette above says what a colour IS. These say what it MEANS, so
-       a rule reads as intent rather than a hue and rebalancing the whole page
-       is a handful of edits here instead of hundreds across two files.
+    /* ===== SEMANTIC LAYER — derived from the actual logo =====
+       Sampled from the logo directly: 83% near-black field, 8.7% gold,
+       and ZERO purple or cyan pixels. An earlier pass moved decorative
+       surfaces to purple to fix "too much gold", which was the right
+       diagnosis and the wrong cure — purple is not in this brand at all.
 
-       The split matters because gold had stopped communicating anything: it
-       was carrying every border, every accent and every call to action at
-       once — 219 gold references against 10 purple — so "premium" looked
-       identical to "ordinary card". Purple is the brand and does the routine
-       work; gold is reserved for what is genuinely primary or paid. */
+       The real fix is that the logo's gold is not one colour. It runs a
+       five-stop range from deep bronze in the shadowed strokes up to a
+       near-white specular on the star. That range IS the hierarchy: quiet
+       structural work sits at the bronze end, primary actions at the bright
+       end. Same hue family throughout, so nothing looks imported, but an
+       edge and a CTA are no longer the same value competing for attention. */
 
-    /* Surfaces and edges — purple-tinted, the logo's own field colour. */
-    --edge:         rgba(163, 118, 182, 0.22);  /* default card/input border  */
-    --edge-strong:  rgba(163, 118, 182, 0.40);  /* hover / focus-within       */
-    --edge-subtle:  rgba(255, 255, 255, 0.08);  /* dividers, quiet separators */
+    /* Gold tonal scale, sampled pixel values from the logo. */
+    --gold-bronze:  #A86C24;   /* deepest shadowed stroke  */
+    --gold-dim:     #C0843C;   /* mid shadow               */
+    --gold-mid:     #D89C48;   /* body of the mark         */
+    --gold-core:    #E4C06C;   /* the brand gold           */
+    --gold-bright:  #F0D878;   /* specular highlight       */
 
-    /* Reserved: primary actions, VIP, and the brand mark itself. */
-    --accent:       var(--gold);
-    --accent-edge:  rgba(229, 193, 88, 0.55);
-    --accent-soft:  rgba(163,118,182,0.17);
+    /* Near-black field, also sampled. Warm-neutral, not blue-black. */
+    --space-0:      #080808;   /* deepest                  */
+    --space-1:      #101010;   /* page field               */
+    --space-2:      #181818;   /* raised surface           */
+    --space-3:      #1F1E1C;   /* card                     */
 
-    /* Interactive/brand — the default for anything not premium. */
-    --brand:        var(--royal-lift);
-    --brand-edge:   rgba(107, 63, 160, 0.45);
-    --brand-soft:   rgba(107, 63, 160, 0.18);
+    /* Structure — bronze end of the scale. Present, not shouting. */
+    --edge:         rgba(168, 108, 36, 0.34);   /* default card/input border */
+    --edge-strong:  rgba(216, 156, 72, 0.52);   /* hover / focus-within      */
+    --edge-subtle:  rgba(255, 255, 255, 0.07);  /* dividers                  */
+
+    /* Reserved: primary actions, VIP, the brand mark. Bright end. */
+    --accent:       var(--gold-core);
+    --accent-edge:  rgba(240, 216, 120, 0.62);
+    --accent-soft:  rgba(228, 192, 108, 0.13);
+
+    /* Interactive default — mid scale, below a CTA but above an edge. */
+    --brand:        var(--gold-mid);
+    --brand-edge:   rgba(216, 156, 72, 0.45);
+    --brand-soft:   rgba(216, 156, 72, 0.15);
 
     /* Motion scale. One set of durations so timings stop being ad hoc. */
     --t-micro: 160ms;   /* taps, hovers, toggles       */
@@ -43,7 +58,7 @@
     --t-slow:  420ms;   /* section transitions         */
     --ease:    cubic-bezier(0.22, 1, 0.36, 1);
 
-    --bg-dark: #14131A; --bg-card: rgba(26, 25, 31, 0.88);
+    --bg-dark: #101010; --bg-card: rgba(31, 30, 28, 0.90);
     /* Was gold at 38% opacity, which is what put a gold outline on every
        card, input and panel on the page. Purple-tinted by default now. */
     --border: var(--edge);
@@ -66,10 +81,10 @@ body.ad-free-mode .ad-placement, body.ad-free-mode .sidebar-ad { display: none !
 .real-time-clock { position: fixed; top: 10px; right: 12px; background: rgba(26, 21, 38, 0.9); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 20px; padding: 6px 14px; font-size: 11px; color: var(--gold-glow); font-weight: 700; z-index: 10000; backdrop-filter: blur(15px); box-shadow: 0 4px 20px rgba(0,0,0,0.8); }
 
 /* 🌍 BACKGROUND */
-.luxury-bg { position: fixed; inset: 0; background: radial-gradient(circle at 18% 28%, rgba(107, 63, 160, 0.55), transparent 58%), radial-gradient(circle at 82% 72%, rgba(64, 37, 98, 0.68), transparent 60%), radial-gradient(circle at 50% 108%, rgba(163,118,182,0.18), transparent 55%), linear-gradient(160deg, #14131A 0%, #1A1526 55%, #14131A 100%); z-index: -2; pointer-events: none; }
+.luxury-bg { position: fixed; inset: 0; background: radial-gradient(circle at 18% 28%, rgba(216,156,72,0.45), transparent 58%), radial-gradient(circle at 82% 72%, rgba(64, 37, 98, 0.68), transparent 60%), radial-gradient(circle at 50% 108%, rgba(168,108,36,0.30), transparent 55%), linear-gradient(160deg, #14131A 0%, #1A1526 55%, #14131A 100%); z-index: -2; pointer-events: none; }
 .floating-orb { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.65; animation: float 10s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); }
-.orb-1 { width: 300px; height: 300px; background: rgba(163,118,182,0.27); top: 5%; left: -10%; }
-.orb-2 { width: 350px; height: 350px; background: rgba(107, 63, 160, 0.38); bottom: -10%; right: -10%; animation-delay: -5s; }
+.orb-1 { width: 300px; height: 300px; background: rgba(168,108,36,0.39); top: 5%; left: -10%; }
+.orb-2 { width: 350px; height: 350px; background: rgba(216,156,72,0.38); bottom: -10%; right: -10%; animation-delay: -5s; }
 @keyframes float { 0% { transform: translateY(0px) scale(1); } 100% { transform: translateY(50px) scale(1.15); } }
 
 /* 🎬 STREAMING FLAGS */
@@ -161,7 +176,7 @@ input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow
 .top-ask-wrap { display: flex; flex-direction: column; align-items: center; gap: 7px;
                 padding: 0 12px; margin-bottom: 12px; }
 .top-ask { display: flex; align-items: center; gap: 9px; width: 100%; max-width: 520px;
-           background: linear-gradient(100deg, rgba(107,63,160,0.42), rgba(30,20,55,0.72), rgba(107,63,160,0.42));
+           background: linear-gradient(100deg, rgba(216,156,72,0.42), rgba(30,20,55,0.72), rgba(216,156,72,0.42));
            background-size: 220% 100%;
            border: 1px solid rgba(229,193,88,0.5); border-radius: 999px;
            padding: 6px 6px 6px 16px; box-shadow: 0 4px 18px rgba(0,0,0,0.45);
@@ -185,7 +200,7 @@ input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow
 /* Slow gold sweep — enough to draw the eye once, not enough to nag. */
 @keyframes askGlow {
     0%, 100% { background-position: 0% 50%; box-shadow: 0 4px 18px rgba(0,0,0,0.45); }
-    50%      { background-position: 100% 50%; box-shadow: 0 4px 22px rgba(163,118,182,0.27); }
+    50%      { background-position: 100% 50%; box-shadow: 0 4px 22px rgba(168,108,36,0.39); }
 }
 @media (prefers-reduced-motion: reduce) { .top-ask { animation: none; } }
 @media (max-width: 480px) {
@@ -295,9 +310,9 @@ input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow
 /* ===== AVATAR ===== */
 .nav-avatar-link { display: inline-flex; align-items: center; gap: 9px; text-decoration: none;
                    color: var(--gold-glow); font-weight: bold; font-size: 13.5px;
-                   background: rgba(163,118,182,0.17); border: 1px solid rgba(229,193,88,0.45);
+                   background: rgba(168,108,36,0.29); border: 1px solid rgba(229,193,88,0.45);
                    padding: 5px 14px 5px 5px; border-radius: 999px; transition: 0.2s; }
-.nav-avatar-link:hover { background: rgba(163,118,182,0.27); border-color: var(--gold); }
+.nav-avatar-link:hover { background: rgba(168,108,36,0.39); border-color: var(--gold); }
 .avatar-ring { position: relative; width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
                display: inline-flex; align-items: center; justify-content: center; overflow: visible;
                background: rgba(0,0,0,0.45); border: 1.5px solid var(--gold); }
@@ -328,7 +343,7 @@ input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow
             background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.22);
             color: #ddd; cursor: pointer; text-decoration: none; transition: 0.2s; }
 .icon-btn:hover { border-color: var(--gold); color: var(--gold-glow);
-                  background: rgba(163,118,182,0.17); transform: translateY(-1px); }
+                  background: rgba(168,108,36,0.29); transform: translateY(-1px); }
 .home-btn { color: var(--gold-glow); border-color: rgba(229,193,88,0.42); }
 
 .sound-toggle-btn { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.22); color: #ddd;
