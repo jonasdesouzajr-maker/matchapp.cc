@@ -837,6 +837,66 @@
                         color: #fff; font: inherit; font-size: 12px; }
         .tg-save-name:focus { outline: none; border-color: var(--gold); }
 
+
+        /* ===== OUT OF MATCHES + CREDIT PACKS INLINE ===== */
+        .oom-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 3300;
+                        align-items: center; justify-content: center; padding: 18px; overflow-y: auto; }
+        .oom-sheet { position: relative; max-width: 480px; width: 100%; text-align: center;
+                     padding: 34px 28px 26px 28px; }
+        .oom-close { position: absolute; top: 12px; right: 14px; background: none; border: none;
+                     color: #8f85a8; font-size: 19px; cursor: pointer; line-height: 1; }
+        .oom-close:hover { color: #fff; }
+        .oom-headline { color: #efe7ff; font-size: 21px; font-weight: 900; margin: 0 0 10px 0; }
+        .oom-sub { color: #a99cc4; font-size: 14px; line-height: 1.65; margin: 0 0 6px 0; }
+        .oom-share { color: var(--gold-glow); font-size: 13px; margin: 10px 0 0 0; }
+
+        .credits-inline-cta { margin: 22px 0 18px 0; padding-top: 18px;
+                              border-top: 1px solid rgba(255,255,255,0.1); }
+        .cic-lede { color: #cdc6dd; font-size: 13px; line-height: 1.6; margin: 0 0 14px 0; }
+        .cic-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+        .cic-pack { display: flex; flex-direction: column; align-items: center; gap: 3px;
+                    padding: 14px 8px; border-radius: 13px; cursor: pointer; font: inherit;
+                    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.14);
+                    transition: border-color .16s, background .16s; }
+        .cic-pack:hover { border-color: var(--gold); background: rgba(229,193,88,0.1); }
+        .cic-pack strong { color: #fff; font-size: 20px; font-weight: 900; line-height: 1; }
+        .cic-pack span { color: var(--gold-glow); font-size: 13px; font-weight: 800; }
+        .cic-sub { display: inline-block; margin-top: 14px; color: #9c93b4; font-size: 12.5px;
+                   text-decoration: none; font-weight: 700; }
+        .cic-sub:hover { color: var(--gold-glow); }
+
+        .oom-vip { display: flex; align-items: center; gap: 13px; text-align: left;
+                   padding: 15px 16px; border-radius: 14px; text-decoration: none;
+                   background: rgba(229,193,88,0.08); border: 1px solid rgba(229,193,88,0.4);
+                   transition: border-color .16s, transform .16s; }
+        .oom-vip:hover { border-color: var(--gold); transform: translateY(-1px); }
+        .oom-vip-icon { font-size: 24px; flex-shrink: 0; }
+        .oom-vip-body { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
+        .oom-vip-body strong { color: var(--gold-glow); font-size: 14.5px; font-weight: 900; }
+        .oom-vip-body small { color: #a99cc4; font-size: 12px; line-height: 1.5; }
+        .oom-vip-arrow { color: var(--gold); font-size: 19px; flex-shrink: 0; }
+
+        .oom-later { margin-top: 14px; width: 100%; padding: 12px; border-radius: 12px;
+                     background: transparent; border: 1px solid rgba(255,255,255,0.14);
+                     color: #9c93b4; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+        .oom-later:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+
+        /* Header credit pill, drawn by credits-ui.js only when there IS a
+           balance — a permanent "0 credits" badge is an advert, not
+           information. */
+        .credit-badge { display: none; align-items: center; gap: 5px; padding: 7px 12px;
+                        border-radius: 999px; text-decoration: none; font-size: 12.5px;
+                        color: var(--gold-glow); background: rgba(229,193,88,0.12);
+                        border: 1px solid rgba(229,193,88,0.38); white-space: nowrap; }
+        .credit-badge strong { font-weight: 900; }
+        .credit-badge:hover { border-color: var(--gold); }
+
+        @media (max-width: 480px) {
+            .oom-sheet { padding: 28px 18px 20px 18px; }
+            .oom-headline { font-size: 18px; }
+            .cic-pack { padding: 12px 5px; }
+            .cic-pack strong { font-size: 17px; }
+        }
         @media (max-width: 600px) {
             .lazy-toggle { padding: 8px 14px 8px 10px; gap: 10px; }
             .lazy-sub { font-size: 10.5px; }
@@ -2782,6 +2842,32 @@
         </div>
     </div>
 
+    <!-- OUT OF MATCHES.
+         Replaces a toast-then-hard-redirect-to-pricing, which threw the user
+         off the page with no way to decline. Three real options, in place. -->
+    <div id="out-of-matches-modal" class="oom-backdrop" style="display:none;">
+        <div class="premium-card oom-sheet">
+            <button onclick="closeOutOfMatches()" class="oom-close" aria-label="Close">✕</button>
+            <h3 id="oom-headline" class="oom-headline">⚡ That's all your matches for today</h3>
+            <p id="oom-sub" class="oom-sub">Your allowance resets at midnight — or keep going now.</p>
+            <p id="oom-share" class="oom-share" style="display:none;"></p>
+
+            <!-- credits-ui.js injects the pack row here -->
+            <div id="quota-message"></div>
+
+            <a id="oom-vip" href="/pricing/pricing.html" class="oom-vip">
+                <span class="oom-vip-icon">💎</span>
+                <span class="oom-vip-body">
+                    <strong>Go VIP — $4.99/month</strong>
+                    <small>10 matches every day, no ads, and about 5× cheaper per match than credits.</small>
+                </span>
+                <span class="oom-vip-arrow">→</span>
+            </a>
+
+            <button onclick="closeOutOfMatches()" class="oom-later">I'll come back tomorrow</button>
+        </div>
+    </div>
+
     <!-- "NOT FOR ME" RE-MATCH MODAL -->
     <div id="rematch-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:3000; align-items:center; justify-content:center; padding:20px;">
         <div class="premium-card" style="max-width:480px; width:100%; text-align:center; animation: fadeIn 0.45s cubic-bezier(0.22,1,0.36,1);">
@@ -2838,6 +2924,8 @@
     <script src="/taste.js?v=174"></script>
     <script src="/contacts.js?v=175"></script>
     <script src="/share.js?v=175"></script>
+    <script src="/pricing.js?v=175"></script>
+    <script src="/credits-ui.js?v=175"></script>
     <script src="/voice-input.js?v=174"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {

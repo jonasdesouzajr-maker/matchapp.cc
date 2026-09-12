@@ -195,6 +195,64 @@
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
         }
+
+        /* ===== CREDIT PACKS ===== */
+        .credits-section { margin-top: 56px; padding-top: 40px;
+                           border-top: 1px solid rgba(255,255,255,0.1); text-align: center; }
+        .credits-h { color: #efe7ff; font-size: 26px; font-weight: 900; margin: 0 0 10px 0;
+                     letter-spacing: 0.4px; }
+        .credits-lede { color: #a99cc4; font-size: 14.5px; line-height: 1.7;
+                        max-width: 620px; margin: 0 auto 10px auto; }
+        .credits-lede em { color: var(--gold-glow); font-style: normal; font-weight: 700; }
+        .credits-balance { display: inline-flex; align-items: center; gap: 7px; margin: 14px 0 4px 0;
+                           padding: 8px 16px; border-radius: 999px; font-size: 13px; color: #cdc6dd;
+                           background: rgba(229,193,88,0.1); border: 1px solid rgba(229,193,88,0.34); }
+        .credits-balance strong { color: var(--gold-glow); font-size: 16px; font-weight: 900; }
+
+        /* Explicit column counts rather than auto-fit: with four packs,
+           auto-fit lands on 3+1 at intermediate widths, and one pack alone on
+           the second row reads as an afterthought rather than as the best
+           value it is. 2x2 or 1x4, never 3+1. */
+        .credits-grid { display: grid; gap: 16px; margin: 28px auto 0 auto; max-width: 980px;
+                        grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        @media (min-width: 900px) { .credits-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+        .credit-pack { position: relative; display: flex; flex-direction: column; gap: 6px;
+                       padding: 26px 20px 22px 20px; border-radius: 18px; text-align: center;
+                       background: rgba(26,22,38,0.75); border: 1px solid rgba(255,255,255,0.1);
+                       transition: border-color .18s, transform .18s; }
+        .credit-pack:hover { border-color: rgba(229,193,88,0.5); transform: translateY(-2px); }
+        .credit-pack.is-featured { border-color: rgba(229,193,88,0.55);
+                                   background: rgba(229,193,88,0.06); }
+        .credit-pack-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+                             background: linear-gradient(90deg, var(--gold), var(--gold-deep));
+                             color: #1a1526; font-size: 10px; font-weight: 900; letter-spacing: 1px;
+                             text-transform: uppercase; padding: 5px 14px; border-radius: 20px;
+                             white-space: nowrap; }
+        .credit-pack-amount { font-size: 34px; font-weight: 900; color: #fff; line-height: 1.1; }
+        .credit-pack-unit { font-size: 12px; font-weight: 800; letter-spacing: 1.4px;
+                            text-transform: uppercase; color: #9c93b4; }
+        .credit-pack-price { font-size: 21px; font-weight: 900; color: var(--gold-glow); margin-top: 10px; }
+        .credit-pack-each { font-size: 11.5px; color: #8f85a8; }
+        .credit-pack-btn { margin-top: 16px; width: 100%; padding: 13px; border-radius: 12px;
+                           border: 1px solid rgba(229,193,88,0.5); cursor: pointer;
+                           background: transparent; color: var(--gold-glow);
+                           font: inherit; font-size: 14px; font-weight: 800;
+                           transition: background .16s, color .16s; }
+        .credit-pack-btn:hover { background: linear-gradient(135deg, var(--gold), var(--gold-deep)); color: #1a1526; }
+        .credit-pack.is-featured .credit-pack-btn {
+            background: linear-gradient(135deg, var(--gold), var(--gold-deep)); color: #1a1526; border-color: var(--gold); }
+        .credits-note { color: #8f85a8; font-size: 13px; line-height: 1.7;
+                        max-width: 620px; margin: 26px auto 0 auto; }
+        .credits-note strong { color: #cdc6dd; }
+
+        @media (max-width: 600px) {
+            .credits-section { margin-top: 36px; padding-top: 28px; }
+            .credits-h { font-size: 21px; }
+            .credits-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+            .credit-pack { padding: 22px 12px 18px 12px; }
+            .credit-pack-amount { font-size: 27px; }
+            .credit-pack-price { font-size: 18px; }
+        }
     </style>
 </head>
 <body style="display: flex; flex-direction: column; min-height: 100vh;">
@@ -300,7 +358,42 @@
                         <p style="color:#8f88a5; font-size:11px; margin:12px 0 0 0; text-align:center;" data-i18n-html="pricing.biz.contact">Need more than 5 seats? <a href="mailto:support@matchapp.cc" style="color:var(--gold);">Talk to us</a></p>
                     </article>
 
-                </div></section>
+                </div>
+
+                <!-- ============================================================
+                     CREDIT PACKS — one-time top-ups
+
+                     Placed BELOW the subscriptions on purpose. Credits cost
+                     3.5x to 7x the VIP per-match rate, and that gap is the
+                     point: it is stated openly in the note under the grid, so
+                     the packs read as "keep going tonight" rather than as a
+                     cheaper alternative to subscribing. A one-time SKU next to
+                     a subscription should convert people INTO the
+                     subscription, not away from it.
+                     ============================================================ -->
+                <section class="credits-section" id="credits" aria-label="Credit packs">
+                    <h2 class="credits-h" data-i18n="credits.title">🎟️ Need more right now? Buy credits</h2>
+                    <p class="credits-lede" data-i18n="credits.lede">
+                        One credit = one AI action beyond your free daily allowance — a match
+                        <em>or</em> an Ask AI question. No subscription, no auto-renewal,
+                        and credits never expire.
+                    </p>
+
+                    <div id="credit-balance-line" class="credits-balance" style="display:none;">
+                        <span data-i18n="credits.youHave">You currently have</span>
+                        <strong id="credit-balance-value">0</strong>
+                        <span data-i18n="credits.creditsWord">credits</span>
+                    </div>
+
+                    <div class="credits-grid" id="credits-grid"></div>
+
+                    <p class="credits-note" data-i18n-html="credits.note">
+                        <strong>Watching most days?</strong> VIP works out about five times cheaper
+                        per match than credits — credits are here for the evening you run out and
+                        want to keep going, not as a way to pay more for the same thing.
+                    </p>
+                </section>
+            </section>
         </div>
     </main>
 
@@ -323,7 +416,8 @@
     </footer>
     
     <script src="/app.js"></script>
-    <script src="/pricing.js"></script>
+    <script src="/pricing.js?v=175"></script>
+    <script src="/credits-ui.js?v=175"></script>
     <script src="/tv.js?v=175"></script>
 </body>
 </html>

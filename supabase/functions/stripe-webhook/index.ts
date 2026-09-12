@@ -50,6 +50,54 @@ const PLAN_GRANTS: Record<PlanKey, Record<string, boolean>> = {
   business:    { is_business: true, is_vip: true, is_ad_free: true },
 };
 
+// ------------------------------------------------------------
+// CREDIT PACKS
+//
+// One-time top-ups. Keyed by amount in cents, exactly like the plans above,
+// because Payment Links do not carry a product key we can trust on the
+// session object.
+//
+// THE AMOUNTS MUST NOT COLLIDE WITH A PLAN AMOUNT. The Ad-Free Pass is 199
+// in `payment` mode, so no credit pack may be priced at $1.99, and credit
+// packs are checked FIRST so a future collision fails loudly in testing
+// rather than silently granting the wrong thing. If a price changes in
+// Stripe, change it here in the same commit.
+// ------------------------------------------------------------
+const CREDIT_PACKS: Record<number, { key: string; credits: number }> = {
+  299:  { key: "credits_25",  credits: 25 },
+  699:  { key: "credits_75",  credits: 75 },
+  1499: { key: "credits_200", credits: 200 },
+  2999: { key: "credits_500", credits: 500 },
+};
+
+function creditPackFromAmount(amountTotal: number | null, mode: string | null) {
+  if (amountTotal == null) return null;
+  // Credit packs are always one-time. A subscription at the same amount is a
+  // plan, not a top-up, and must not be mistaken for one.
+  if (mode === "subscription") return null;
+  return CREDIT_PACKS[amountTotal] ?? null;
+}
+
+async function grantCredits(
+  userId: string, amount: number, pack: string, eventId: string,
+): Promise<number | null> {
+  // grant_credits() is idempotent on the Stripe event id — the unique index
+  // on credit_ledger.stripe_event_id is what actually enforces it, so a
+  // retried delivery cannot double someone's balance even if this function
+  // is somehow called twice concurrently.
+  const { data, error } = await supabase.rpc("grant_credits", {
+    p_user_id: userId,
+    p_amount: amount,
+    p_pack: pack,
+    p_stripe_event_id: eventId,
+    p_reason: "purchase",
+  });
+  if (error) throw new Error(`Failed to grant ${amount} credits to ${userId}: ${error.message}`);
+  const balance = (data as { credits?: number } | null)?.credits ?? null;
+  log(`Granted ${amount} credits (${pack}) to user ${userId}; balance now ${balance}`);
+  return balance;
+}
+
 // Identify the plan from the amount paid (in cents) plus the checkout mode.
 // Amounts are unambiguous across MatchApp's current price list. If prices
 // ever change, update this map in the same commit as the Stripe change.
@@ -164,6 +212,16 @@ Deno.serve(async (req: Request) => {
           log(`No client_reference_id on session ${session.id} — cannot identify the user. ` +
               `Enable "Client reference ID" on the Stripe Payment Link.`);
           await recordEvent(event.id, event.type, null, null);
+          break;
+        }
+
+        // Credit packs are checked BEFORE plans. They are one-time purchases
+        // that grant a balance rather than a tier, and must never fall into
+        // planFromAmount's amount-only fallback branch.
+        const pack = creditPackFromAmount(session.amount_total, session.mode);
+        if (pack) {
+          await grantCredits(userId, pack.credits, pack.key, event.id);
+          await recordEvent(event.id, event.type, userId, pack.key);
           break;
         }
 

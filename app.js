@@ -81,16 +81,61 @@ function showQuotaMessage(kind, status) {
         if (window.showToast) showToast("🔒 That's your 3 free matches for today — register free to unlock 5 daily.");
         else alert("🔒 You've used your 3 free searches today!\n\nRegister for FREE to unlock 5 daily searches.");
         if (window.openAuthModal) window.openAuthModal();
-    } else if (kind === 'registered') {
-        const extra = (status && status.share_rewards_left > 0)
-            ? ` Share a match to earn ${status.share_rewards_left} more.`
-            : '';
-        if (window.showToast) showToast(`🔒 You've used all ${status ? status.limit : 5} matches today.${extra} Upgrade to VIP for 10 daily.`);
-        setTimeout(() => { window.location.href = '/pricing/pricing.html'; }, 2600);
     } else {
-        if (window.showToast) showToast(`💎 VIP limit reached — you've used all ${status ? status.limit : 10} matches today.`);
+        // Used to toast and then hard-redirect to /pricing after 2.6s. That
+        // threw the user off the page they were using, gave them no way to
+        // decline, and dropped them on a pricing page with no memory of why
+        // they were sent there. Now it opens a panel in place that offers the
+        // three real options — top up, subscribe, or come back tomorrow —
+        // and closing it leaves them where they were.
+        openOutOfMatches(kind, status);
     }
 }
+
+// The out-of-matches panel. Also the single best moment to offer credits:
+// the person reading it is, by definition, someone who wants another match
+// right now.
+function openOutOfMatches(kind, status) {
+    const modal = document.getElementById('out-of-matches-modal');
+    if (!modal) {
+        // No panel on this page — fall back to saying it rather than silently
+        // doing nothing.
+        if (window.showToast) showToast(`🔒 You've used all ${status ? status.limit : 5} matches today.`);
+        return;
+    }
+
+    const limit = status ? status.limit : 5;
+    const headline = document.getElementById('oom-headline');
+    const sub = document.getElementById('oom-sub');
+    const shareLine = document.getElementById('oom-share');
+    const vipLine = document.getElementById('oom-vip');
+
+    if (headline) {
+        headline.textContent = kind === 'vip'
+            ? `💎 That's all ${limit} VIP matches for today`
+            : `⚡ That's all ${limit} matches for today`;
+    }
+    if (sub) {
+        sub.textContent = kind === 'vip'
+            ? 'Your allowance resets at midnight. Credits carry you past it whenever you need more.'
+            : 'Your allowance resets at midnight — or keep going now.';
+    }
+    if (shareLine) {
+        const left = status && status.share_rewards_left;
+        shareLine.style.display = left > 0 ? 'block' : 'none';
+        if (left > 0) shareLine.textContent = `🎁 Or share a match to earn ${left} more, free.`;
+    }
+    // A VIP is already subscribed; offering them VIP is the fastest way to
+    // look like nobody is reading the account state.
+    if (vipLine) vipLine.style.display = kind === 'vip' ? 'none' : 'flex';
+
+    if (typeof window.injectCreditsCTA === 'function') window.injectCreditsCTA();
+    modal.style.display = 'flex';
+}
+window.closeOutOfMatches = function () {
+    const m = document.getElementById('out-of-matches-modal');
+    if (m) m.style.display = 'none';
+};
 
 async function checkDailyLimit() {
     // Logged out → local metering.
@@ -103,11 +148,19 @@ async function checkDailyLimit() {
         lastQuotaStatus = data;
         if (data && data.allowed) {
             updateQuotaBadge(data);
+            // The server spent a credit because the free allowance was gone.
+            // Say so plainly — a balance that drops without explanation is
+            // how a paid feature turns into a support ticket.
+            if (data.paid_with_credit && window.showToast) {
+                showToast(`⚡ Used 1 credit — ${data.credits} left.`);
+            }
+            if (typeof window.renderCreditBadge === 'function') window.renderCreditBadge(data.credits);
             return true;
         }
         if (data && data.reason === 'limit_reached') {
             showQuotaMessage(data.limit >= 10 ? 'vip' : 'registered', data);
             updateQuotaBadge(data);
+            if (typeof window.renderCreditBadge === 'function') window.renderCreditBadge(data.credits);
             return false;
         }
         // No profile row yet (e.g. mid-signup) — fall back rather than block.
