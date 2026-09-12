@@ -16,7 +16,7 @@ const STRIPE_LINK_VIP_ANNUAL = "https://buy.stripe.com/8x29ATdkB5dcgwCdwtcfK09";
 // Business plan — $49/mo, 50 AI sessions daily, up to 5 seats.
 // The email fallback below still guards against a blanked-out or broken link,
 // so the button can never dead-end on a checkout page that doesn't exist.
-const STRIPE_LINK_BUSINESS = "https://buy.stripe.com/aFa14n80h8poa8e1NLcfK05";
+const STRIPE_LINK_BUSINESS = "https://buy.stripe.com/4gM00ja8peNMdkq641cfK0e";
 
 window.processCheckout = async function(planType) {
     if (!isUserLoggedIn || !supabaseClient) {
