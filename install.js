@@ -178,7 +178,10 @@ function maybeShowInstallHint() {
 
     bubble.hidden = false;
     btn.classList.add('is-hinting');
-    positionInstallBubble();
+    // Measured on the next frame: the bubble was hidden until the line above,
+    // and getBoundingClientRect in the same frame can still report zero width,
+    // which would put the arrow at the clamp minimum instead of on the button.
+    requestAnimationFrame(positionInstallBubble);
 
     installHintTimer = setTimeout(() => { window.dismissInstallBubble(); }, 20000);
 }
@@ -200,6 +203,24 @@ function positionInstallBubble() {
     } else {
         bubble.style.top = ''; // desktop uses the CSS-anchored position
     }
+
+    // Point the arrow at the button's actual centre.
+    //
+    // This has to be measured, not assumed. The install button is the FIRST
+    // child of a justify-content:flex-end nav, which makes it the LEFTMOST
+    // item of the right-aligned cluster — so a hardcoded right-hand offset
+    // pointed at the avatar instead. Its real position also shifts with the
+    // language switcher's width, whether the quota badge is visible, and
+    // whether the header has wrapped to two rows.
+    const btnRect = btn.getBoundingClientRect();
+    const bubbleRect = bubble.getBoundingClientRect();
+    const btnCentre = btnRect.left + btnRect.width / 2;
+
+    // Clamp so the arrow can never sit on or past the bubble's rounded
+    // corners, where it would look detached from the bubble itself.
+    const MIN = 18, MAX = bubbleRect.width - 18;
+    const x = Math.max(MIN, Math.min(btnCentre - bubbleRect.left, MAX));
+    bubble.style.setProperty('--arrow-x', Math.round(x) + 'px');
 }
 
 window.addEventListener('resize', positionInstallBubble);

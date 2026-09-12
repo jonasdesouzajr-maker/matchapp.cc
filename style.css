@@ -231,7 +231,15 @@ input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow
                   box-shadow: 0 14px 36px rgba(0,0,0,0.6);
                   color: #F0E9FF; font-size: 12.8px; line-height: 1.5; text-align: left;
                   animation: bubbleIn .45s cubic-bezier(0.22,1,0.36,1); }
-.install-bubble::after { content: ""; position: absolute; top: -7px; right: 26px;
+/* The arrow is positioned from --arrow-x, which JS sets to the install
+   button's actual horizontal centre. It cannot be hardcoded: the button is
+   the FIRST child of a justify-content:flex-end nav, which makes it the
+   leftmost item of the right-aligned group — not the rightmost — and its
+   exact position shifts with the language switcher's width, whether the
+   quota badge is showing, and whether the avatar is signed in. A fixed
+   offset pointed at the avatar instead of the button. */
+.install-bubble::after { content: ""; position: absolute; top: -7px;
+                  left: var(--arrow-x, 50%); margin-left: -6px;
                   width: 12px; height: 12px; background: #2A1B4D;
                   border-left: 1px solid rgba(229,193,88,0.55);
                   border-top: 1px solid rgba(229,193,88,0.55);
@@ -282,7 +290,6 @@ input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow
         font-size: 13px;
         padding: 13px 38px 13px 15px;
     }
-    .install-bubble::after { right: 30px; }
 }
 
 /* ===== AVATAR ===== */
