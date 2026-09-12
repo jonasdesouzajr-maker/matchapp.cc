@@ -54,10 +54,36 @@ jobs:
           console.log("Submitting " + urls.length + " URLs:");
           urls.forEach(u => console.log("  " + u));
 
+          // Derive the host from the sitemap itself rather than hardcoding it.
+          // IndexNow rejects a submission whose `host` does not match the URLs
+          // being submitted, and this was hardcoded to the previous domain —
+          // so after the move to matchapp.tv every daily ping was being
+          // rejected for a host/URL mismatch while the job still appeared to
+          // run. Reading it from the same source as the URL list means the two
+          // can never disagree again, including on any future domain change.
+          let host;
+          try {
+            host = new URL(urls[0]).host;
+          } catch (e) {
+            console.error("Could not parse a host from the first sitemap URL: " + urls[0]);
+            process.exit(1);
+          }
+
+          const mismatched = urls.filter(u => {
+            try { return new URL(u).host !== host; } catch (e) { return true; }
+          });
+          if (mismatched.length) {
+            console.error("Sitemap mixes hosts — IndexNow requires one host per submission.");
+            mismatched.forEach(u => console.error("  unexpected host: " + u));
+            process.exit(1);
+          }
+
+          console.log("Host: " + host);
+
           const payload = JSON.stringify({
-            host: "matchapp.cc",
+            host: host,
             key: process.env.INDEX_KEY,
-            keyLocation: "https://matchapp.cc/" + process.env.INDEX_KEY + ".txt",
+            keyLocation: "https://" + host + "/" + process.env.INDEX_KEY + ".txt",
             urlList: urls
           });
 
