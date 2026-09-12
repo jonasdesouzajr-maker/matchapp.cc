@@ -3922,6 +3922,18 @@ window.smartSearch = function() {
 // share traffic returns. That is the data you optimise revenue on.
 // ----------------------------------------------------
 function track(event, params) {
+    // The site moved from gtag.js to a GTM container. GTM does NOT define a
+    // global gtag() function, so every `if (typeof gtag === 'function')` call
+    // here silently evaluated false and no custom event was ever recorded —
+    // pageviews kept working (GTM handles those) which is exactly why it
+    // looked fine. Push to dataLayer instead, which is what GTM listens on.
+    try {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push(Object.assign({ event: event }, params || {}));
+    } catch (e) { /* analytics must never break a user action */ }
+
+    // Kept for the case where gtag.js is ever loaded alongside GTM, so a
+    // future change back doesn't silently lose events again.
     if (typeof gtag === 'function') gtag('event', event, params || {});
 }
 window.track = track;
@@ -4028,7 +4040,7 @@ window.saveSpotlightTitle = function () {
     if (btn) { btn.textContent = window.t ? t('spotlight.saved') : '✓ Saved to Watch Later'; btn.classList.add('saved'); }
     if (window.showToast) showToast(`⭐ Saved "${SPOTLIGHT.title}" — we'll be here when it drops.`);
     if (typeof confetti === 'function') confetti({ particleCount: 70, spread: 60, origin: { y: 0.4 }, colors: ['#E5C158','#d32f2f','#ffffff'] });
-    if (typeof gtag === 'function') gtag('event', 'save_watch_later', { title: SPOTLIGHT.title, source: 'spotlight' });
+    track('save_watch_later', { title: SPOTLIGHT.title, source: 'spotlight' });
 };
 
 document.addEventListener('DOMContentLoaded', () => {

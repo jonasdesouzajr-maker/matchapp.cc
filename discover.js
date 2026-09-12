@@ -617,8 +617,10 @@ async function askAndRender(question) {
         payload.answer = window.sanitizeDisplayText(payload.answer, ['answer', 'synopsis', 'text']);
     }
 
-    if (typeof gtag === 'function') {
-        gtag('event', 'ai_search', { search_term: question, source: source, results: (payload.results || []).length });
+    // Routed through the shared track() helper so this reaches GTM's
+    // dataLayer — a direct gtag() call is a no-op under a GTM container.
+    if (typeof window.track === 'function') {
+        window.track('ai_search', { search_term: question, source: source, results: (payload.results || []).length });
     }
 
     if (loadEl) loadEl.style.display = 'none';

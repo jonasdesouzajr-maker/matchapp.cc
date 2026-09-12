@@ -466,7 +466,7 @@ window.matchAgainFromShare = function() {
 };
 
 async function afterShare(network) {
-    if (typeof gtag === 'function') gtag('event', 'share', { method: network, content_type: 'match', item_id: window.globalMatchTitle || '' });
+    if (typeof window.track === 'function') window.track('share', { method: network, content_type: 'match', item_id: window.globalMatchTitle || '' });
     if (_rewardedThisCard) return;
 
     const result = await grantShareReward();
