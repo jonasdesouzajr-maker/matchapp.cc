@@ -428,10 +428,10 @@
     <link rel="alternate" hreflang="zh" href="https://matchapp.tv/?lang=zh">
 
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=161"></script>
-    <script defer src="/install.js?v=161"></script>
-    <script defer src="/avatars.js?v=161"></script>
-    <script defer src="/ambient.js?v=161"></script>
+    <script defer src="/i18n.js?v=162"></script>
+    <script defer src="/install.js?v=162"></script>
+    <script defer src="/avatars.js?v=162"></script>
+    <script defer src="/ambient.js?v=162"></script>
 
     <!-- GOOGLE ANALYTICS (GTAG) -->
 <!-- GOOGLE ADSENSE SCRIPT ENGINE -->
@@ -450,10 +450,10 @@
         });
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=161">
+    <link rel="stylesheet" href="/style.css?v=162">
     <!-- Smart TV stylesheet. Entirely scoped under body.tv-mode, so a
          non-TV visitor pays one small file and sees no change. -->
-    <link rel="stylesheet" href="/tv.css?v=161">
+    <link rel="stylesheet" href="/tv.css?v=162">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -2406,7 +2406,7 @@
                         <div class="spotlight-poster" onclick="saveSpotlightTitle()" role="button" tabindex="0"
                              onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();saveSpotlightTitle();}"
                              aria-label="Save American Horror Story: 13 to Watch Later">
-                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=161" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
+                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=162" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
                             <div class="spotlight-ribbon" data-i18n="spotlight.ribbon">COMING THIS MONTH</div>
                         </div>
                         <div class="spotlight-body">
@@ -2856,6 +2856,42 @@
                 <a href="/terms.html">Terms of Service</a>
             </div>
 
+            <h3 class="seo-footer-sub" data-i18n="footer.byMood">🎭 Browse by Mood</h3>
+            <nav class="streaming-links" aria-label="🎭 Browse by Mood">
+                <a href="/moods/intense-and-thrilling/">Intense & Thrilling</a>
+                <a href="/moods/dark-and-gritty/">Dark & Gritty</a>
+                <a href="/moods/epic-and-adventurous/">Epic & Adventurous</a>
+                <a href="/moods/funny/">Funny</a>
+                <a href="/moods/romantic/">Romantic</a>
+                <a href="/moods/heartbreaking/">Heartbreaking</a>
+                <a href="/moods/light-and-feel-good/">Light & Feel Good</a>
+                <a href="/moods/cozy-comfort-watch/">Cozy Comfort Watch</a>
+                <a href="/moods/inspiring/">Inspiring</a>
+                <a href="/moods/mind-bending/">Mind Bending</a>
+                <a href="/moods/nostalgic/">Nostalgic</a>
+            </nav>
+
+            <h3 class="seo-footer-sub" data-i18n="footer.byCollection">🗂️ Browse Collections</h3>
+            <nav class="streaming-links" aria-label="🗂️ Browse Collections">
+                <a href="/collections/series/">Series</a>
+                <a href="/collections/movie/">Movie</a>
+                <a href="/collections/podcast/">Podcast</a>
+                <a href="/collections/documentary/">Documentary</a>
+                <a href="/collections/gospel-and-faith/">Gospel & Faith</a>
+                <a href="/collections/youtube-channel/">Youtube Channel</a>
+                <a href="/collections/youtube-shorts/">Youtube Shorts</a>
+                <a href="/collections/classical-music/">Classical Music</a>
+                <a href="/collections/news/">News</a>
+                <a href="/collections/sports/">Sports</a>
+            </nav>
+
+            <h3 class="seo-footer-sub" data-i18n="footer.byPlatform">📺 Browse by Platform</h3>
+            <nav class="streaming-links" aria-label="📺 Browse by Platform">
+                <a href="/platforms/netflix/">Netflix</a>
+                <a href="/platforms/spotify/">Spotify</a>
+                <a href="/platforms/youtube/">Youtube</a>
+            </nav>
+
             <h3 class="seo-footer-sub" data-i18n="footer.contact">📬 Contact &amp; Support</h3>
             <nav class="social-row" aria-label="Contact and social media">
                 <a class="social-btn social-instagram" href="https://instagram.com/matchapp.tv" target="_blank" rel="noopener noreferrer" aria-label="MatchApp on Instagram">
@@ -3031,20 +3067,20 @@
         </div>
     </div>
 
-    <script src="/app.js?v=161"></script>
+    <script src="/app.js?v=162"></script>
     <!-- Loads AFTER app.js so the chips it builds can call straight into the
          matcher, and non-deferred so the form is never briefly interactive as
          a plain single-choice select. -->
-    <script src="/tmdb.js?v=161"></script>
-    <script src="/criteria.js?v=161"></script>
-    <script src="/lazy.js?v=161"></script>
-    <script src="/tv.js?v=161"></script>
-    <script src="/taste.js?v=161"></script>
-    <script src="/contacts.js?v=161"></script>
-    <script src="/share.js?v=161"></script>
-    <script src="/pricing.js?v=161"></script>
-    <script src="/credits-ui.js?v=161"></script>
-    <script src="/voice-input.js?v=161"></script>
+    <script src="/tmdb.js?v=162"></script>
+    <script src="/criteria.js?v=162"></script>
+    <script src="/lazy.js?v=162"></script>
+    <script src="/tv.js?v=162"></script>
+    <script src="/taste.js?v=162"></script>
+    <script src="/contacts.js?v=162"></script>
+    <script src="/share.js?v=162"></script>
+    <script src="/pricing.js?v=162"></script>
+    <script src="/credits-ui.js?v=162"></script>
+    <script src="/voice-input.js?v=162"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initVoiceInput('specific-search-input', 'mic-btn-index', () => smartSearch());
