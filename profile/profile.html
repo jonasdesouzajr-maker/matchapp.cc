@@ -35,6 +35,7 @@
     </script>
     
     <link rel="stylesheet" href="/style.css?v=174">
+    <link rel="stylesheet" href="/tv.css?v=175">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --gold: #E5C158; --gold-deep: #B8912F; --gold-glow: #FFF3A3; --ink: #14131A; --royal-deep: #130734; --royal: #402562; --royal-lift: #6B3FA0; --royal-glow: #A376B6; --bg-dark: #14131A; --card-bg: rgba(26, 22, 38, 0.90); }
@@ -208,6 +209,115 @@
         @media (max-width: 400px) {
             .premium-card, .taste-card { padding: 13px 11px; }
         }
+
+        /* ============================================================
+           PROFILE POLISH — layout, folds, and a gold budget
+
+           THE LAYOUT BUG: the support line was a direct child of
+           .main-layout (display:flex), so it was a flex ITEM beside
+           .container and took roughly half the page for one sentence. Every
+           card was squeezed into ~440px with a vast empty gutter next to it.
+           It is a <footer> outside the flex row now. The grid below matches
+           the homepage's shell so the two pages share one measure.
+
+           THE GOLD BUDGET: gold was the border of every card, every portfolio
+           panel, every poster, both headings and the avatar ring. When
+           everything is the accent colour, nothing is — the eye has nowhere
+           to land and the page reads as decoration rather than structure.
+           Gold is now spent on three things only: the primary action, the
+           active state, and the one identity showcase the page is built
+           around. Everything else is a neutral hairline.
+           ============================================================ */
+
+        /* style.css puts 50px/12px padding on <body>, which inset the header
+           from the viewport edge and left dead space above the first element.
+           The shell handles gutters now. */
+        body { padding: 0 0 20px 0 !important; }
+        .app-header { border-radius: 0 !important; margin-bottom: 0 !important; }
+
+        .main-layout { display: block; max-width: 1000px; margin: 0 auto;
+                       padding: 26px 18px 0 18px; }
+        .container { max-width: 100%; width: 100%; }
+        .app-header { padding-left: max(18px, calc((100% - 1000px) / 2 + 18px));
+                      padding-right: max(18px, calc((100% - 1000px) / 2 + 18px)); }
+
+        .pf-support { max-width: 1000px; margin: 8px auto 0 auto; padding: 0 18px 40px 18px;
+                      text-align: center; color: #8f85a8; font-size: 12.5px; }
+        .pf-support a { color: #c9bfe0; text-decoration: none; font-weight: 700; }
+        .pf-support a:hover { color: #fff; }
+        .pf-support-wa { color: #25D366 !important; }
+        .pf-support-sep { color: #564f66; margin: 0 4px; }
+
+        /* ---- FOLDABLE CARDS ---- */
+        .pf-card { margin-bottom: 18px; }
+        .pf-card-bare { margin-bottom: 0; }
+        .pf-card-flush { padding: 0 !important; }
+        .pf-card-flush > .pf-card > .pf-card-head { padding: 22px 26px; }
+        .pf-card-flush > .pf-card > *:not(.pf-card-head) { padding-left: 26px; padding-right: 26px; }
+        .pf-card-flush > .pf-card[open] > *:last-child { padding-bottom: 24px; }
+
+        .pf-card-head { display: flex; align-items: center; gap: 12px; cursor: pointer;
+                        list-style: none; padding: 0; margin: 0; }
+        .pf-card-head::-webkit-details-marker { display: none; }
+        .pf-card-title { flex: 1; min-width: 0; font-size: 17px; font-weight: 800;
+                         color: #efe7ff; letter-spacing: 0.4px; }
+        .pf-card-chev { flex-shrink: 0; color: #9c93b4; font-size: 19px; line-height: 1;
+                        transition: transform 0.24s, color 0.24s; }
+        .pf-card[open] > .pf-card-head .pf-card-chev { transform: rotate(180deg); color: var(--gold); }
+        .pf-card-head:hover .pf-card-title { color: #fff; }
+        .pf-card-head:hover .pf-card-chev { color: var(--gold); }
+        .pf-card-sub { color: #9d95b0; font-size: 13px; line-height: 1.6; margin: 12px 0 20px 0; }
+
+        /* A stray text-align:center up the tree was centring every card
+           heading and sub. Headings belong on the same left edge as the
+           fields beneath them — centred labels read as decoration and give
+           the eye nothing to scan down. */
+        .pf-card-head, .pf-card-sub, .pf-card-title { text-align: left; }
+        .core-identity-card > h3, .core-identity-card > p { text-align: left; }
+        .portfolio-panel h3, .portfolio-panel > p { text-align: left; }
+        .taste-card .taste-label, .taste-card .taste-footnote { text-align: left; }
+        .pf-card:not([open]) > .pf-card-head { margin-bottom: 0; }
+
+        /* ---- THE GOLD BUDGET ---- */
+        .premium-card { border: 1px solid rgba(255,255,255,0.09) !important;
+                        background: rgba(26,22,38,0.72); padding: 26px; margin-bottom: 18px; }
+        .taste-card { border: 1px solid rgba(255,255,255,0.09) !important;
+                      background: linear-gradient(158deg, rgba(107,63,160,0.14), rgba(20,19,26,0.92));
+                      box-shadow: none; margin-bottom: 18px; padding: 26px; }
+        .portfolio-panel { border: 1px solid rgba(255,255,255,0.09) !important;
+                           background: rgba(255,255,255,0.02) !important; padding: 26px !important;
+                           margin-bottom: 18px !important; border-radius: 18px !important; }
+        .portfolio-panel h3 { color: #efe7ff !important; font-size: 19px !important;
+                              letter-spacing: 0.4px !important; }
+        .poster-card { border: 1px solid rgba(255,255,255,0.1) !important; }
+        .identity-showcase { border: 1px solid rgba(229,193,88,0.32) !important;
+                             background: linear-gradient(152deg, rgba(229,193,88,0.07), rgba(20,19,26,0.95));
+                             box-shadow: none; padding: 28px; margin-bottom: 22px; }
+        .identity-showcase-header h3 { color: #efe7ff; font-size: 20px; letter-spacing: 0.4px; }
+        .identity-tile { border-color: rgba(255,255,255,0.09); }
+        .identity-hint { color: #9c93b4; font-style: normal; }
+        .premium-ad-frame { border-color: rgba(255,255,255,0.1) !important; }
+        .premium-ad-frame::before { animation: none !important; box-shadow: none !important; }
+        #profile-pic-preview { border-color: rgba(255,255,255,0.16) !important; }
+
+        /* Core Identity was a red heading on a red-bordered card, which reads
+           as an error state rather than as the page's most important section. */
+        .core-identity-card { border: 1px solid rgba(163,118,182,0.42) !important;
+                              background: rgba(107,63,160,0.1) !important; }
+        .core-identity-card > h3 { color: #efe7ff !important; font-size: 18px !important;
+                                   letter-spacing: 0.4px !important; }
+
+        /* Gold survives exactly here: the primary action and the active tab. */
+        .portfolio-tab.active { border-color: var(--gold) !important; color: var(--gold-glow) !important; }
+
+        @media (max-width: 640px) {
+            .main-layout { padding: 16px 12px 0 12px; }
+            .pf-card-flush > .pf-card > .pf-card-head { padding: 16px 16px; }
+            .pf-card-flush > .pf-card > *:not(.pf-card-head) { padding-left: 16px; padding-right: 16px; }
+            .pf-card-title { font-size: 15px; }
+            .premium-card, .taste-card { padding: 18px 16px; }
+            .portfolio-panel { padding: 18px 16px !important; }
+        }
     </style>
 </head>
 <body>
@@ -311,8 +421,8 @@
                     </div>
                 </div>
 
-                <div style="background: rgba(0,0,0,0.8); padding: 30px; border-radius: 20px; border: 2px solid rgba(255,82,82,0.4); margin-bottom: 40px;">
-                    <h3 style="color: #ff5252; margin: 0 0 15px 0; font-size: 24px; text-transform: uppercase;" data-i18n="pf.coreTitle">🔒 Core Identity (AI Match Brain)</h3>
+                <div class="core-identity-card" style="padding: 26px; border-radius: 18px; margin-bottom: 22px;">
+                    <h3 style="margin: 0 0 12px 0; text-transform: uppercase;" data-i18n="pf.coreTitle">🔒 Core Identity (AI Match Brain)</h3>
                     <p id="profile-instructions-text" style="color: #bbb; font-size: 14px; line-height: 1.7; margin: 0 0 20px 0;">
                         Complete these once. Your country unlocks region-accurate streaming links, your age keeps results appropriate, and your star sign shapes the themes we surface.
                     </p>
@@ -350,9 +460,12 @@
                 <!-- ============================================ -->
                 <!-- VOICE & AI SETTINGS                          -->
                 <!-- ============================================ -->
-                <div class="premium-card" style="border: 2px solid var(--gold); margin-bottom: 40px;">
-                    <h3 style="color: var(--gold); margin: 0 0 6px 0; font-size: 24px; text-transform: uppercase; font-weight: 900;" data-i18n="voice.title">🔊 Voice &amp; AI Settings</h3>
-                    <p style="color:#9d95b0; font-size:13px; margin:0 0 26px 0;" data-i18n="voice.subtitle">Choose how MatchApp's AI concierge sounds when it reads answers aloud on the Ask AI page.</p>
+                <details class="pf-card premium-card">
+                    <summary class="pf-card-head">
+                        <span class="pf-card-title" data-i18n="voice.title">🔊 Voice &amp; AI Settings</span>
+                        <span class="pf-card-chev" aria-hidden="true">⌄</span>
+                    </summary>
+                    <p class="pf-card-sub" data-i18n="voice.subtitle">Choose how MatchApp's AI concierge sounds when it reads answers aloud on the Ask AI page.</p>
 
                     <div class="voice-setting-row">
                         <label for="voice-select" data-i18n="voice.pickVoice">Voice</label>
@@ -379,7 +492,7 @@
 
                     <button onclick="testVoiceSample()" class="gold-btn" style="margin-top:8px; padding:16px; font-size:15px;" data-i18n="voice.test">▶ Test This Voice</button>
                     <p id="voice-support-note" style="display:none; color:#ff8a5c; font-size:12px; margin:14px 0 0 0;" data-i18n="voice.unsupported">Your browser doesn't support voice playback — this feature needs a modern Chrome, Safari, or Edge browser.</p>
-                </div>
+                </details>
 
                 <!-- TOP BANNER — Google AdSense responsive (Adsterra removed: served popunders) -->
                 <div class="ad-banner-container premium-ad-frame">
@@ -395,24 +508,29 @@
                 <!-- TASTE DNA                                     -->
                 <!-- ============================================ -->
                 <!-- BLOCKED CATEGORIES — undoable, so a block is never a trap -->
-                <div id="blocked-card" class="taste-card" style="display:none;">
-                    <div class="taste-header">
-                        <div>
-                            <h3 data-i18n="blk.title">🚫 Categories You've Blocked</h3>
-                            <p class="taste-sub" data-i18n="blk.sub">These never appear in your matches. Tap any to allow it again.</p>
-                        </div>
-                    </div>
-                    <div id="blocked-list" class="blocked-chips"></div>
+                <!-- The card element and its id are unchanged: profile.js
+                     toggles display on #blocked-card itself, so the fold has
+                     to live INSIDE it or showing the card would fight the
+                     <details> state. -->
+                <div id="blocked-card" class="taste-card pf-card-flush" style="display:none;">
+                    <details class="pf-card pf-card-bare">
+                        <summary class="pf-card-head">
+                            <span class="pf-card-title" data-i18n="blk.title">🚫 Categories You've Blocked</span>
+                            <span class="pf-card-chev" aria-hidden="true">⌄</span>
+                        </summary>
+                        <p class="pf-card-sub" data-i18n="blk.sub">These never appear in your matches. Tap any to allow it again.</p>
+                        <div id="blocked-list" class="blocked-chips"></div>
+                    </details>
                 </div>
 
-                <div id="taste-dna-card" class="taste-card">
-                    <div class="taste-header">
-                        <div>
-                            <h3 data-i18n="pf.dnaTitle">🧬 Your Taste DNA</h3>
-                            <p class="taste-sub" data-i18n="pf.dnaSub">Built from what you save, watch and reject. It sharpens every match.</p>
-                        </div>
-                        <span class="taste-confidence" id="taste-confidence">—</span>
-                    </div>
+                <div id="taste-dna-card" class="taste-card pf-card-flush">
+                    <details class="pf-card pf-card-bare" open>
+                        <summary class="pf-card-head">
+                            <span class="pf-card-title" data-i18n="pf.dnaTitle">🧬 Your Taste DNA</span>
+                            <span class="taste-confidence" id="taste-confidence">—</span>
+                            <span class="pf-card-chev" aria-hidden="true">⌄</span>
+                        </summary>
+                        <p class="pf-card-sub" data-i18n="pf.dnaSub">Built from what you save, watch and reject. It sharpens every match.</p>
 
                     <div id="taste-empty" class="taste-empty" style="display:none;">
                         <span class="taste-empty-icon">🌱</span>
@@ -447,6 +565,7 @@
 
                         <p class="taste-footnote" id="taste-footnote"></p>
                     </div>
+                    </details>
                 </div>
 
                 <div class="portfolio-tabs">
@@ -475,8 +594,11 @@
             </article>
         </section>
     
-        <p style="text-align:center; color:#8f85a8; font-size:12.5px; margin:24px 0 4px 0;"><span data-i18n="support.ideas">💌 Got an idea for MatchApp? We read every email —</span> <a href="mailto:support@matchapp.cc" style="color:var(--gold); text-decoration:none; font-weight:bold;">support@matchapp.cc</a> <span style="color:#6f6880;">·</span> <a href="https://wa.me/5521974297919" target="_blank" rel="noopener noreferrer" style="color:#25D366; text-decoration:none; font-weight:bold;">WhatsApp</a></p>
     </main>
+
+    <footer class="pf-support">
+        <p><span data-i18n="support.ideas">💌 Got an idea for MatchApp? We read every email —</span> <a href="mailto:support@matchapp.cc">support@matchapp.cc</a> <span class="pf-support-sep">·</span> <a href="https://wa.me/5521974297919" target="_blank" rel="noopener noreferrer" class="pf-support-wa">WhatsApp</a></p>
+    </footer>
 
     <script src="/i18n.js?v=174"></script>
     <script defer src="/install.js?v=174"></script>
@@ -484,5 +606,6 @@
     <script src="/app.js?v=174"></script>
     <script src="/taste.js?v=174"></script>
     <script src="/profile.js?v=174"></script>
+    <script src="/tv.js?v=175"></script>
 </body>
 </html>

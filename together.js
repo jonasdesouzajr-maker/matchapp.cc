@@ -255,11 +255,119 @@ function tgRenderShare(code) {
     const codeEl = tgEl('tg-share-code');
     if (codeEl) codeEl.textContent = code;
 
+    // Every channel now carries the FULL invite — subject, message, link —
+    // rather than a bare URL with a six-word caption. Composed in one place
+    // (buildInvite, contacts.js) so no channel can drift out of sync.
+    const invite = tgInvite(link);
+
     const wa = tgEl('tg-share-whatsapp');
-    if (wa) wa.href = `https://wa.me/?text=${encodeURIComponent("Let's find something to watch together 🍿 " + link)}`;
+    if (wa) wa.href = `https://wa.me/?text=${encodeURIComponent(invite.text)}`;
     const tel = tgEl('tg-share-telegram');
-    if (tel) tel.href = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent("Let's find something to watch together 🍿")}`;
+    if (tel) tel.href = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(invite.message)}`;
+
+    tgMountChannels();
+    tgRenderContacts();
 }
+
+/* The host's own name, so the invite reads "Ana here!" rather than arriving
+   from nobody. Already collected on the previous step. */
+function tgHostName() {
+    const el = document.getElementById('tg-name');
+    return (el && el.value.trim()) || (window.MATCH_DISPLAY_NAME || '');
+}
+
+function tgInvite(link) {
+    link = link || (tgEl('tg-share-link') || {}).value || location.href;
+    return (typeof window.buildInvite === 'function')
+        ? window.buildInvite(link, { fromName: tgHostName(), kind: 'together' })
+        : { subject: "Let's watch something together", message: "Let's find something to watch together 🍿",
+            link, body: link, text: "Let's find something to watch together 🍿 " + link };
+}
+
+/* ---------- send directly / saved contacts ---------- */
+
+let tgChannel = 'email';
+
+function tgMountChannels() {
+    const host = tgEl('tg-channel-picker');
+    if (!host || !window.MATCH_CHANNELS) return;
+    host.innerHTML = Object.entries(window.MATCH_CHANNELS).map(([k, c]) =>
+        `<button type="button" class="tg-channel${k === tgChannel ? ' is-on' : ''}" data-ch="${k}" ` +
+        `role="radio" aria-checked="${k === tgChannel}" title="${c.label}" aria-label="${c.label}">${c.icon}</button>`
+    ).join('');
+
+    host.onclick = (ev) => {
+        const btn = ev.target.closest('[data-ch]');
+        if (!btn) return;
+        tgChannel = btn.dataset.ch;
+        const ch = window.MATCH_CHANNELS[tgChannel];
+        const input = tgEl('tg-send-value');
+        if (input && ch) {
+            input.type = ch.inputType;
+            input.placeholder = ch.placeholder;
+        }
+        tgMountChannels();
+    };
+}
+
+function tgRenderContacts() {
+    const host = tgEl('tg-contacts');
+    if (!host || typeof window.getWatchContacts !== 'function') return;
+    const list = window.getWatchContacts();
+    if (!list.length) { host.innerHTML = ''; return; }
+
+    host.innerHTML = list.slice(0, 8).map(c => {
+        const ch = (window.MATCH_CHANNELS || {})[c.channel] || { icon: '📤' };
+        const safe = String(c.name).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+        return `<span class="tg-contact" role="button" tabindex="0" data-send="${c.id}">` +
+               `${ch.icon} ${safe}` +
+               `<button type="button" class="tg-contact-x" data-remove="${c.id}" aria-label="Remove ${safe}">×</button></span>`;
+    }).join('');
+
+    host.onclick = (ev) => {
+        const rm = ev.target.closest('[data-remove]');
+        if (rm) { ev.stopPropagation(); window.removeWatchContact(rm.dataset.remove); return; }
+        const send = ev.target.closest('[data-send]');
+        if (send) tgSendToSaved(send.dataset.send);
+    };
+}
+
+function tgSendToSaved(id) {
+    const c = (window.getWatchContacts() || []).find(x => x.id === id);
+    if (!c) return;
+    window.touchWatchContact(id);
+    window.sendInvite(c.channel, c.value, tgInvite());
+    if (window.showToast) showToast(`📤 Invite ready for ${c.name} — the message is already written.`);
+}
+
+window.tgSendInvite = function () {
+    const input = tgEl('tg-send-value');
+    const value = input ? input.value.trim() : '';
+    if (!value) {
+        if (window.showToast) showToast('Enter who to send it to first.', true);
+        if (input) input.focus();
+        return;
+    }
+    if (tgChannel === 'email' && !/^[^@\s]+@[^@\s.]+\.[^@\s]+$/.test(value)) {
+        if (window.showToast) showToast("That doesn't look like an email address — check it and try again.", true);
+        input.focus();
+        return;
+    }
+
+    window.sendInvite(tgChannel, value, tgInvite());
+
+    const save = tgEl('tg-save-contact');
+    if (save && save.checked && typeof window.saveWatchContact === 'function') {
+        const nameEl = tgEl('tg-save-name');
+        window.saveWatchContact({ name: nameEl ? nameEl.value : '', channel: tgChannel, value });
+        if (nameEl) nameEl.value = '';
+        tgRenderContacts();
+        if (window.showToast) showToast('✅ Saved — next time they are one tap away.');
+    }
+    if (input) input.value = '';
+};
+
+document.addEventListener('matchapp:contactschange', tgRenderContacts);
 
 window.tgCopyLink = async function () {
     const el = tgEl('tg-share-link');
@@ -276,7 +384,8 @@ window.tgCopyLink = async function () {
 window.tgShareNative = async function () {
     const el = tgEl('tg-share-link');
     if (!el) return;
-    const text = "Let's find something to watch together 🍿";
+    // Same complete invite the other channels send, not a caption.
+    const text = tgInvite(el.value).message;
     try {
         if (navigator.share) {
             await navigator.share({ title: 'Match Together', text, url: el.value });

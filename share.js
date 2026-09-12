@@ -14,7 +14,7 @@
 const SHARE_WINDOW_MS = 6 * 60 * 60 * 1000;  // 6 hours
 const SHARE_MAX_REWARDS = 3;
 const SHARE_TAGS = '#MatchApp #WhatToWatch #StreamingAI #AIConcierge #MovieNight';
-const SHARE_URL = 'https://matchapp.cc/';
+const SHARE_URL = 'https://matchapp.tv/';
 
 /* ---------- Reward accounting ---------- */
 function getShareLog() {
@@ -108,7 +108,7 @@ window.buildShareCard = async function(title, posterUrl, platform, synopsis) {
     ctx.fillStyle = '#E5C158';
     ctx.font = '900 40px "Segoe UI", Arial, sans-serif';
     ctx.textAlign = 'left';
-    ctx.fillText('MATCHAPP.CC', 68, 108);
+    ctx.fillText('MATCHAPP.TV', 68, 108);
     ctx.fillStyle = '#A376B6';
     ctx.font = '600 25px "Segoe UI", Arial, sans-serif';
     ctx.fillText('AI STREAMING CONCIERGE', 68, 148);
@@ -170,7 +170,7 @@ window.buildShareCard = async function(title, posterUrl, platform, synopsis) {
     // Footer CTA
     ctx.fillStyle = '#E5C158';
     ctx.font = '900 33px "Segoe UI", Arial, sans-serif';
-    ctx.fillText('Find YOUR perfect match free →  matchapp.cc', W / 2, H - 74);
+    ctx.fillText('Find YOUR perfect match free →  matchapp.tv', W / 2, H - 74);
 
     return c;
 };
@@ -316,6 +316,108 @@ window.shareTo = function(network) {
         afterShare(network);
     }
 };
+
+/* ============================================================
+   SEND TO A PERSON
+
+   Everything above broadcasts to a feed. This sends the match to one named
+   person with the message already written, and remembers them on the channel
+   they were reached on — see contacts.js, which owns both the invite copy and
+   the address book so the Together flow and this sheet can never drift apart.
+   ============================================================ */
+
+let _shareChannel = 'email';
+
+function shareInvite() {
+    // Deep-link to the title itself rather than the homepage. discover.html
+    // already answers ?q=, so the recipient lands on the thing being
+    // recommended instead of on a form asking them what they feel like —
+    // which is not what someone who was just sent a recommendation wants.
+    const link = window.globalMatchTitle
+        ? SHARE_URL + 'discover.html?q=' + encodeURIComponent(window.globalMatchTitle)
+        : SHARE_URL;
+    if (typeof window.buildInvite !== 'function') {
+        return { subject: 'A pick from MatchApp', message: shareText(), link,
+                 body: shareText() + '\n\n' + link, text: shareText() + '\n' + link };
+    }
+    return window.buildInvite(link, {
+        kind: 'result',
+        title: window.globalMatchTitle || '',
+        platform: window.globalPlatform || '',
+        fromName: (typeof window.getUserNickname === 'function' ? window.getUserNickname() : '')
+    });
+}
+
+function shareMountChannels() {
+    const host = document.getElementById('share-channel-picker');
+    if (!host || !window.MATCH_CHANNELS) return;
+    host.innerHTML = Object.entries(window.MATCH_CHANNELS).map(([k, c]) =>
+        `<button type="button" class="tg-channel${k === _shareChannel ? ' is-on' : ''}" data-ch="${k}" ` +
+        `role="radio" aria-checked="${k === _shareChannel}" title="${c.label}" aria-label="${c.label}">${c.icon}</button>`
+    ).join('');
+    host.onclick = (ev) => {
+        const btn = ev.target.closest('[data-ch]');
+        if (!btn) return;
+        _shareChannel = btn.dataset.ch;
+        const ch = window.MATCH_CHANNELS[_shareChannel];
+        const input = document.getElementById('share-send-value');
+        if (input && ch) { input.type = ch.inputType; input.placeholder = ch.placeholder; }
+        shareMountChannels();
+    };
+}
+
+function shareRenderContacts() {
+    const host = document.getElementById('share-contacts');
+    if (!host || typeof window.getWatchContacts !== 'function') return;
+    const list = window.getWatchContacts();
+    if (!list.length) { host.innerHTML = ''; return; }
+    const esc = s => String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+    host.innerHTML = list.slice(0, 8).map(c => {
+        const ch = (window.MATCH_CHANNELS || {})[c.channel] || { icon: '📤' };
+        return `<span class="tg-contact" role="button" tabindex="0" data-send="${c.id}">${ch.icon} ${esc(c.name)}` +
+               `<button type="button" class="tg-contact-x" data-remove="${c.id}" aria-label="Remove ${esc(c.name)}">×</button></span>`;
+    }).join('');
+    host.onclick = (ev) => {
+        const rm = ev.target.closest('[data-remove]');
+        if (rm) { ev.stopPropagation(); window.removeWatchContact(rm.dataset.remove); return; }
+        const send = ev.target.closest('[data-send]');
+        if (!send) return;
+        const c = window.getWatchContacts().find(x => x.id === send.dataset.send);
+        if (!c) return;
+        window.touchWatchContact(c.id);
+        window.sendInvite(c.channel, c.value, shareInvite());
+        afterShare(c.channel);
+    };
+}
+
+window.shareSendInvite = function () {
+    const input = document.getElementById('share-send-value');
+    const value = input ? input.value.trim() : '';
+    if (!value) {
+        if (window.showToast) showToast('Enter who to send it to first.', true);
+        if (input) input.focus();
+        return;
+    }
+    if (_shareChannel === 'email' && !/^[^@\s]+@[^@\s.]+\.[^@\s]+$/.test(value)) {
+        if (window.showToast) showToast("That doesn't look like an email address — check it and try again.", true);
+        input.focus();
+        return;
+    }
+    window.sendInvite(_shareChannel, value, shareInvite());
+
+    const save = document.getElementById('share-save-contact');
+    if (save && save.checked && typeof window.saveWatchContact === 'function') {
+        const nameEl = document.getElementById('share-save-name');
+        window.saveWatchContact({ name: nameEl ? nameEl.value : '', channel: _shareChannel, value });
+        if (nameEl) nameEl.value = '';
+        shareRenderContacts();
+    }
+    if (input) input.value = '';
+    afterShare(_shareChannel);
+};
+
+document.addEventListener('matchapp:contactschange', shareRenderContacts);
+document.addEventListener('DOMContentLoaded', () => { shareMountChannels(); shareRenderContacts(); });
 
 let _rewardedThisCard = false;
 

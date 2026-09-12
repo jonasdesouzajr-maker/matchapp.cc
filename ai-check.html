@@ -58,6 +58,15 @@
        This page is <code>noindex</code> — not linked anywhere and not in the sitemap.</p>
 
     <div class="card">
+        <p style="margin:0 0 10px 0; font-size:13px; color:#9c93b4;">
+            Paste the <code>DIAGNOSTIC_TOKEN</code> secret from the gemini-proxy Edge Function.
+            Held in memory for this page view only — never stored, never sent anywhere else.
+        </p>
+        <input type="password" id="diag-token" placeholder="DIAGNOSTIC_TOKEN" autocomplete="off"
+               style="width:100%; max-width:380px; padding:11px 13px; margin-bottom:12px; border-radius:10px;
+                      border:1px solid rgba(255,255,255,0.2); background:rgba(0,0,0,0.45); color:#fff;
+                      font-family:inherit; font-size:14px;">
+        <br>
         <button id="run" onclick="runDiagnostic()">▶ Run full diagnostic</button>
         <div id="steps" style="margin-top:16px;"></div>
     </div>
@@ -129,7 +138,18 @@ async function runDiagnostic() {
     // 2. Can we reach the Edge Function at all?
     let selftest = null, reachError = null;
     try {
-        const { data, error } = await client.functions.invoke('gemini-proxy', { body: { mode: 'selftest' } });
+        // The diagnostic is no longer public — it fired six live Gemini calls per
+        // request with nothing stopping a loop. It now needs DIAGNOSTIC_TOKEN,
+        // which is set in the Edge Function secrets and typed in below. The token
+        // is held in memory for this page view only and never stored.
+        const token = (document.getElementById('diag-token') || {}).value || '';
+        if (!token) {
+            showVerdict('<span class="bad">Enter the diagnostic token above.</span> ' +
+                'It is the <code>DIAGNOSTIC_TOKEN</code> secret on the gemini-proxy Edge Function. ' +
+                'If it is not set yet, the diagnostic stays disabled — which is the safe default.');
+            return;
+        }
+        const { data, error } = await client.functions.invoke('gemini-proxy', { body: { mode: 'selftest', token } });
         if (error) reachError = error.message || String(error);
         else selftest = data;
         raw.selftest = data || error;

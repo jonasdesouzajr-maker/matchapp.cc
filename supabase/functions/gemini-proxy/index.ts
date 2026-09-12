@@ -49,6 +49,15 @@
 // real traffic whenever the primary is busy. If it performs well there it can
 // be promoted, but the main path shouldn't be moved onto a model proven only
 // to answer a ping.
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+// Service-role client, used ONLY to meter requests (migration 008). The key
+// lives in Edge Function secrets and never leaves the server.
+const adminDb = createClient(
+  Deno.env.get("SUPABASE_URL") ?? "",
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+);
+
 const MODEL_CHAIN = [
   "gemini-3.5-flash",       // PROVEN end-to-end on discover mode — primary
   "gemini-3.6-flash",       // confirmed reachable, newest generation
@@ -73,11 +82,40 @@ const DIAGNOSTIC_PROBE_MODELS = [
   "gemini-2.5-flash-lite",
 ];
 
-const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
+// ============================================================
+// CORS — ALLOW LIST, NOT "*"
+//
+// This was Access-Control-Allow-Origin: "*", which meant any page on the
+// internet could call this function from a visitor's browser and bill the
+// Gemini requests to us. The Supabase anon key is public by design (it ships
+// in our own client), so "*" left the only real cost control on the client
+// side, where it controls nothing.
+//
+// Non-browser callers (curl, scripts) ignore CORS entirely — that is what the
+// rate limiter below is for. This closes the drive-by-from-a-web-page vector;
+// the limiter closes the scripted one. Both are needed.
+// ============================================================
+const ALLOWED_ORIGINS = new Set([
+  "https://matchapp.cc",
+  "https://www.matchapp.cc",
+  "https://matchapp.tv",
+  "https://www.matchapp.tv",
+  "http://localhost:8899",
+  "http://127.0.0.1:8899",
+]);
+
+function corsHeaders(req: Request): Record<string, string> {
+  const origin = req.headers.get("origin") || "";
+  const headers: Record<string, string> = {
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Vary": "Origin",
+  };
+  // Echo back ONLY an origin we recognise. An unknown origin gets no
+  // Allow-Origin header at all, so the browser blocks the response.
+  if (ALLOWED_ORIGINS.has(origin)) headers["Access-Control-Allow-Origin"] = origin;
+  return headers;
+}
 
 const LANG_NAMES: Record<string, string> = {
   en: "English", "pt-BR": "Brazilian Portuguese", es: "Spanish", fr: "French",
@@ -86,6 +124,18 @@ const LANG_NAMES: Record<string, string> = {
 };
 
 const DISCOVER_MAX = 12;
+
+// Per-attempt deadline for an upstream Gemini call. The chain has four models,
+// so the worst case is bounded well inside the platform's own limit.
+const PER_MODEL_TIMEOUT_MS = 20_000;
+
+// INPUT CAPS. Gemini bills on input tokens, so an uncapped `prompt` was a
+// blank cheque: one caller could post a megabyte of text per request and we
+// would pay for every token of it. These bound the damage a single request can
+// do, and are far above anything MatchApp itself ever sends.
+const MAX_PROMPT_CHARS = 8_000;
+const MAX_QUESTION_CHARS = 600;
+const MAX_HISTORY_TURNS = 8;
 
 function detectAudioIntent(q: string): boolean {
   return /\b(podcast|playlist|song|songs|music|album|albums|single|singles|audiobook|spotify|listen|radio show)\b/i.test(q);
@@ -197,17 +247,104 @@ function buildGenerationConfig(isDiscover: boolean) {
   };
 }
 
+// Per-minute ceilings. Generous enough that no human using MatchApp normally
+// will ever see one, tight enough that a script cannot run up a bill. Signed-in
+// users get more headroom because they are identified and already metered by
+// consume_match() on the match flow itself.
+const RATE_LIMIT_AUTHED = 30;
+const RATE_LIMIT_ANON = 12;
+
+async function sha256Hex(input: string): Promise<string> {
+  const data = new TextEncoder().encode(input);
+  const digest = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+// Identifies the caller for metering only. Prefers the authenticated user id;
+// falls back to a SALTED hash of the forwarded address. The salt means the
+// stored value cannot be reversed into an address even with the whole table.
+async function bucketKeyFor(req: Request): Promise<{ key: string; limit: number }> {
+  const auth = req.headers.get("authorization") || "";
+  const jwt = auth.startsWith("Bearer ") ? auth.slice(7) : "";
+
+  if (jwt) {
+    try {
+      const { data } = await adminDb.auth.getUser(jwt);
+      if (data?.user?.id) return { key: `u:${data.user.id}`, limit: RATE_LIMIT_AUTHED };
+    } catch { /* fall through to address metering */ }
+  }
+
+  const fwd = req.headers.get("x-forwarded-for") || "";
+  const ip = (fwd.split(",")[0] || req.headers.get("cf-connecting-ip") || "unknown").trim();
+  const salt = Deno.env.get("RATE_LIMIT_SALT") || "matchapp-default-salt";
+  return { key: `ip:${await sha256Hex(salt + ip)}`, limit: RATE_LIMIT_ANON };
+}
+
+async function checkRateLimit(req: Request): Promise<{ allowed: boolean; retryAfter?: number }> {
+  try {
+    const { key, limit } = await bucketKeyFor(req);
+    const { data, error } = await adminDb.rpc("check_ai_rate_limit", { p_key: key, p_limit: limit });
+    if (error) {
+      console.error("[gemini-proxy] rate limiter unavailable, failing open:", error.message);
+      return { allowed: true };
+    }
+    const res = data as { allowed?: boolean; retry_after_seconds?: number } | null;
+    if (res && res.allowed === false) {
+      console.warn(`[gemini-proxy] rate limited ${key.slice(0, 12)}...`);
+      return { allowed: false, retryAfter: res.retry_after_seconds ?? 60 };
+    }
+    return { allowed: true };
+  } catch (e) {
+    console.error("[gemini-proxy] rate limiter threw, failing open:", e instanceof Error ? e.message : String(e));
+    return { allowed: true };
+  }
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: CORS_HEADERS });
+    return new Response("ok", { headers: corsHeaders(req) });
+  }
+
+  // Only POST does work. Anything else is either a probe or a mistake, and
+  // neither should reach the body parser.
+  if (req.method !== "POST") {
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405, headers: { ...corsHeaders(req), "Content-Type": "application/json" },
+    });
   }
 
   try {
+    // ============================================================
+    // RATE LIMIT — BEFORE ANY BILLED WORK
+    //
+    // Runs ahead of the API key read, the body parse and every upstream call,
+    // because the whole point is that an abusive caller costs us nothing. A
+    // signed-in user is metered on their id; everyone else on a salted hash
+    // of their address (see migration 008 — the raw address is never stored).
+    //
+    // FAILS OPEN, deliberately. If the limiter itself is unreachable, a real
+    // user asking a real question still gets an answer. An outage in the
+    // meter must not become an outage in the product, and the blast radius of
+    // failing open for the minutes that takes is far smaller than the blast
+    // radius of MatchApp going dark.
+    // ============================================================
+    const gate = await checkRateLimit(req);
+    if (!gate.allowed) {
+      return new Response(
+        JSON.stringify({ error: "Too many requests. Please slow down.", retryAfter: gate.retryAfter ?? 60 }),
+        { status: 429, headers: {
+            ...corsHeaders(req),
+            "Content-Type": "application/json",
+            "Retry-After": String(gate.retryAfter ?? 60),
+        } }
+      );
+    }
+
     const apiKey = Deno.env.get("GEMINI_API_KEY");
     if (!apiKey) {
       return new Response(
         JSON.stringify({ error: "GEMINI_API_KEY secret is not set on this Edge Function." }),
-        { status: 500, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } }
+        { status: 500, headers: { ...corsHeaders(req), "Content-Type": "application/json" } }
       );
     }
 
@@ -223,10 +360,31 @@ Deno.serve(async (req: Request) => {
     // the problem was a missing secret, a retired model, a quota limit, or
     // a bad key — all of which look identical from the browser.
     if (body && body.mode === "selftest") {
+        // ============================================================
+        // DIAGNOSTIC — NOW GATED. This was fully public, and it was the
+        // cheapest way to burn our Gemini budget that existed: one unauth'd
+        // POST fired SIX live generateContent calls, and nothing stopped a
+        // loop of them. It also reported the API key's length, the function
+        // version and every model name we use — free reconnaissance.
+        //
+        // It is genuinely useful when Ask AI breaks, so it is gated rather
+        // than deleted. Set DIAGNOSTIC_TOKEN in the Edge Function secrets and
+        // pass it as { mode: "selftest", token: "..." }. With no token
+        // configured the diagnostic is OFF entirely — fail closed, so
+        // forgetting to set the secret cannot leave it open.
+        // ============================================================
+        const expected = Deno.env.get("DIAGNOSTIC_TOKEN");
+        const provided = typeof body.token === "string" ? body.token : "";
+        if (!expected || provided !== expected) {
+            // 404, not 403: an unauthenticated caller should not be able to
+            // confirm the diagnostic exists at all.
+            return new Response(JSON.stringify({ error: "Not found" }), {
+                status: 404, headers: { ...corsHeaders(req), "Content-Type": "application/json" },
+            });
+        }
         const report: Record<string, unknown> = {
             apiKeyPresent: !!apiKey,
-            apiKeyLength: apiKey ? apiKey.length : 0,
-            functionVersion: "2026-09-four-working-models",
+            functionVersion: "2026-09-hardened",
             supportsDiscoverMode: true,
             // Which models actually serve traffic, vs which are only probed.
             servingChain: MODEL_CHAIN,
@@ -236,10 +394,13 @@ Deno.serve(async (req: Request) => {
 
         for (const model of DIAGNOSTIC_PROBE_MODELS) {
             try {
+                const pac = new AbortController();
+                const ptimer = setTimeout(() => pac.abort(), PER_MODEL_TIMEOUT_MS);
                 const r = await fetch(
                     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
                     {
                         method: "POST",
+                        signal: pac.signal,
                         headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
                         body: JSON.stringify({
                             contents: [{ parts: [{ text: "Reply with exactly: OK" }] }],
@@ -247,6 +408,7 @@ Deno.serve(async (req: Request) => {
                         }),
                     }
                 );
+                clearTimeout(ptimer);
                 if (r.ok) {
                     models[model] = "WORKING";
                 } else {
@@ -271,28 +433,49 @@ Deno.serve(async (req: Request) => {
                 : "API key is set but NO model is reachable. Check the key at aistudio.google.com/apikey and confirm the Generative Language API is enabled for that project.";
 
         return new Response(JSON.stringify(report, null, 2), {
-            headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+            headers: { ...corsHeaders(req), "Content-Type": "application/json" },
         });
     }
 
     if (body && body.mode === "discover" && typeof body.question === "string") {
       // AI Concierge path: build the real prompt here, server-side.
       isDiscoverMode = true;
+      // Every field is truncated before it reaches the prompt. A question is
+      // a sentence; history is a few turns. Anything larger is either a bug
+      // or someone using our Gemini budget as their own, and in both cases
+      // the right answer is to bound it rather than to bill it.
       prompt = buildDiscoverPrompt(
-        body.question,
-        typeof body.lang === "string" ? body.lang : "en",
-        typeof body.country === "string" ? body.country : "",
-        typeof body.age === "string" || typeof body.age === "number" ? String(body.age) : "",
-        Array.isArray(body.history) ? body.history : []
+        body.question.slice(0, MAX_QUESTION_CHARS),
+        typeof body.lang === "string" ? body.lang.slice(0, 8) : "en",
+        typeof body.country === "string" ? body.country.slice(0, 60) : "",
+        typeof body.age === "string" || typeof body.age === "number" ? String(body.age).slice(0, 4) : "",
+        Array.isArray(body.history)
+          ? body.history.slice(-MAX_HISTORY_TURNS).map((h: { role?: string; text?: string }) => ({
+              role: h?.role === "user" ? "user" : "assistant",
+              text: String(h?.text ?? "").slice(0, MAX_QUESTION_CHARS),
+            }))
+          : []
       );
     } else if (typeof body?.prompt === "string") {
       // Legacy path: the main questionnaire match engine still sends a
       // pre-built prompt directly. Kept for backward compatibility.
+      //
+      // This field is the one genuinely open door in the API — it is
+      // free-form text that goes straight to a billed model. Reject an
+      // oversized one outright rather than truncating it: a caller sending
+      // 200KB is not a MatchApp client having a bad day, and silently
+      // trimming would hide that from the logs.
+      if (body.prompt.length > MAX_PROMPT_CHARS) {
+        return new Response(
+          JSON.stringify({ error: "Prompt too long." }),
+          { status: 413, headers: { ...corsHeaders(req), "Content-Type": "application/json" } }
+        );
+      }
       prompt = body.prompt;
     } else {
       return new Response(
         JSON.stringify({ error: "Request body must include either a string 'prompt' field, or mode:'discover' with a 'question' field." }),
-        { status: 400, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } }
+        { status: 400, headers: { ...corsHeaders(req), "Content-Type": "application/json" } }
       );
     }
 
@@ -300,20 +483,33 @@ Deno.serve(async (req: Request) => {
 
     for (const model of MODEL_CHAIN) {
       try {
-        const geminiRes = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "x-goog-api-key": apiKey,
-            },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: prompt }] }],
-              generationConfig: buildGenerationConfig(isDiscoverMode),
-            }),
-          }
-        );
+        // A hung upstream used to hold this function open until the platform
+        // killed it, with the user staring at a spinner the whole time and
+        // the rest of the chain never getting a turn. Each attempt now has
+        // its own deadline, so a slow model costs one timeout and falls
+        // through to the next instead of costing the whole request.
+        const ac = new AbortController();
+        const timer = setTimeout(() => ac.abort(), PER_MODEL_TIMEOUT_MS);
+        let geminiRes: Response;
+        try {
+          geminiRes = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+            {
+              method: "POST",
+              signal: ac.signal,
+              headers: {
+                "Content-Type": "application/json",
+                "x-goog-api-key": apiKey,
+              },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: buildGenerationConfig(isDiscoverMode),
+              }),
+            }
+          );
+        } finally {
+          clearTimeout(timer);
+        }
 
         if (geminiRes.ok) {
           const data = await geminiRes.json();
@@ -340,7 +536,7 @@ Deno.serve(async (req: Request) => {
             _servedByModel: model,
             _finishReason: finish,
           }), {
-            headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+            headers: { ...corsHeaders(req), "Content-Type": "application/json" },
           });
         }
 
@@ -352,10 +548,15 @@ Deno.serve(async (req: Request) => {
           continue;
         }
 
+        // Upstream error bodies can carry project identifiers, quota details
+        // and key metadata. Log them where only we can read them; tell the
+        // browser the status and nothing more.
         const errBody = await geminiRes.text();
+        console.error(`[gemini-proxy] ${model} -> ${geminiRes.status}: ${errBody.slice(0, 500)}`);
         return new Response(
-          JSON.stringify({ error: `Gemini API error on ${model}: ${geminiRes.status}`, detail: errBody }),
-          { status: geminiRes.status, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } }
+          JSON.stringify({ error: "AI service unavailable", status: geminiRes.status }),
+          { status: geminiRes.status === 429 ? 429 : 502,
+            headers: { ...corsHeaders(req), "Content-Type": "application/json" } }
         );
       } catch (e) {
         lastError = `${model}: ${e instanceof Error ? e.message : String(e)}`;
@@ -363,14 +564,18 @@ Deno.serve(async (req: Request) => {
     }
 
     // Every model in the chain failed.
+    console.error(`[gemini-proxy] whole chain failed: ${lastError}`);
     return new Response(
-      JSON.stringify({ error: "All Gemini models in the fallback chain failed.", detail: lastError }),
-      { status: 502, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } }
+      JSON.stringify({ error: "All Gemini models in the fallback chain failed." }),
+      { status: 502, headers: { ...corsHeaders(req), "Content-Type": "application/json" } }
     );
   } catch (e) {
+    // Internal exception text can name env vars, file paths and library
+    // internals. It belongs in the logs, not in a response body.
+    console.error("[gemini-proxy] unhandled:", e instanceof Error ? e.stack || e.message : String(e));
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : String(e) }),
-      { status: 500, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } }
+      JSON.stringify({ error: "Internal error" }),
+      { status: 500, headers: { ...corsHeaders(req), "Content-Type": "application/json" } }
     );
   }
 });

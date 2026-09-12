@@ -75,3 +75,94 @@ window.processCheckout = async function(planType) {
         if (btn) { btn.innerText = originalText; btn.disabled = false; btn.style.opacity = "1"; }
     }
 };
+// ============================================================
+// 🎟️ CREDIT PACKS — one-time top-ups
+//
+// WHAT A CREDIT IS: one AI action beyond the free daily allowance. A match
+// and an Ask AI question cost the same, deliberately — a two-currency system
+// ("3 match tokens, 1 AI token") feels clever on a pricing page and generates
+// support email forever.
+//
+// HOW THESE ARE PRICED, AND WHY
+//
+// VIP is $4.99/month for 10 matches a day: roughly 300 a month, about
+// $0.017 each. Credits are priced at 3.5x to 7x that. That gap is the whole
+// point and is not an accident:
+//
+//   * Credits are for the person who hit today's limit and wants to keep
+//     going RIGHT NOW. That is an impulse purchase, and impulse purchases
+//     are priced on the moment, not on the unit.
+//   * If credits were priced near the subscription rate they would
+//     cannibalise it — someone would buy 300 credits for $5 instead of
+//     subscribing, and MatchApp would lose the recurring revenue AND the
+//     retention that comes with it.
+//   * Because the gap is large and visible, the pricing page can say
+//     honestly that subscribing is five times cheaper per match. The packs
+//     therefore convert people INTO VIP rather than away from it, which is
+//     the correct job for a one-time SKU sitting next to a subscription.
+//
+// Volume discount runs from $0.120/credit down to $0.060 — enough to make
+// the bigger packs feel like a deal, not so much that the top pack
+// undercuts the subscription.
+//
+// THE AMOUNTS ARE LOAD-BEARING. supabase/functions/stripe-webhook/index.ts
+// identifies a pack by the amount paid, because Stripe Payment Links carry no
+// product key we can trust on the session. Change a price in Stripe and you
+// MUST change CREDIT_PACKS there in the same commit, or the purchase will
+// complete and grant nothing.
+// ============================================================
+
+const CREDIT_PACKS = [
+    { key: 'credits_25',  credits: 25,  priceCents: 299,  price: '$2.99',  link: '' },
+    { key: 'credits_75',  credits: 75,  priceCents: 699,  price: '$6.99',  link: '', badge: 'Most popular' },
+    { key: 'credits_200', credits: 200, priceCents: 1499, price: '$14.99', link: '' },
+    { key: 'credits_500', credits: 500, priceCents: 2999, price: '$29.99', link: '', badge: 'Best value' }
+];
+window.CREDIT_PACKS = CREDIT_PACKS;
+
+// Paste the four Payment Link URLs here once they exist in Stripe. Until
+// then buyCredits() routes to sales rather than to a broken checkout — the
+// same guard the Business plan already uses, for the same reason: a dead
+// checkout button costs more than a missing one.
+const STRIPE_LINK_CREDITS = {
+    credits_25:  "",
+    credits_75:  "",
+    credits_200: "",
+    credits_500: ""
+};
+
+window.buyCredits = async function (packKey) {
+    const pack = CREDIT_PACKS.find(p => p.key === packKey);
+    if (!pack) return;
+
+    if (!window.isUserLoggedIn || !window.supabaseClient) {
+        // Credits are granted to an account by the webhook via
+        // client_reference_id. Without a signed-in user there is nothing to
+        // grant them TO, so this has to be a hard stop rather than a nudge.
+        if (window.showToast) showToast('Create a free account first — credits are tied to your profile so they are never lost.');
+        if (typeof window.openAuthModal === 'function') window.openAuthModal();
+        return;
+    }
+
+    const link = STRIPE_LINK_CREDITS[packKey];
+    if (!link || link.startsWith('PASTE_')) {
+        window.location.href = 'mailto:support@matchapp.cc?subject=' +
+            encodeURIComponent(`MatchApp credits — ${pack.credits} pack`) +
+            '&body=' + encodeURIComponent(
+                `Hi MatchApp team,\n\nI'd like to buy the ${pack.credits}-credit pack (${pack.price}).\n\nThanks!`);
+        return;
+    }
+
+    try {
+        const { data: { user } } = await window.supabaseClient.auth.getUser();
+        if (!user) {
+            if (window.showToast) showToast('Session expired — please sign in again.', true);
+            return;
+        }
+        // client_reference_id is how the webhook knows whose balance to top
+        // up. Without it the payment succeeds and the credits go nowhere.
+        window.location.href = `${link}?client_reference_id=${user.id}`;
+    } catch (e) {
+        if (window.showToast) showToast('Could not start checkout — check your connection and try again.', true);
+    }
+};
