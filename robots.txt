@@ -1,4 +1,4 @@
-# MatchApp — https://matchapp.cc
+# MatchApp — https://matchapp.tv
 User-agent: *
 Allow: /
 
@@ -48,4 +48,4 @@ Allow: /
 User-agent: YandexBot
 Allow: /
 
-Sitemap: https://matchapp.cc/sitemap.xml
+Sitemap: https://matchapp.tv/sitemap.xml

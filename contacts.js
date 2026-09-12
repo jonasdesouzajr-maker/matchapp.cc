@@ -193,7 +193,7 @@
                 subject,
                 message,
                 link,
-                body: `${message}\n\n${link}\n\n— sent from MatchApp, the free AI streaming concierge\nhttps://matchapp.cc`,
+                body: `${message}\n\n${link}\n\n— sent from MatchApp, the free AI streaming concierge\nhttps://matchapp.tv`,
                 text: `${message}\n${link}`
             };
         }
@@ -207,7 +207,7 @@
             subject,
             message,
             link,
-            body: `${message}\n\n${link}\n\n— sent from MatchApp, the free AI streaming concierge\nhttps://matchapp.cc`,
+            body: `${message}\n\n${link}\n\n— sent from MatchApp, the free AI streaming concierge\nhttps://matchapp.tv`,
             text: `${message}\n${link}`
         };
     };

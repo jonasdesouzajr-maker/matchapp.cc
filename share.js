@@ -14,7 +14,7 @@
 const SHARE_WINDOW_MS = 6 * 60 * 60 * 1000;  // 6 hours
 const SHARE_MAX_REWARDS = 3;
 const SHARE_TAGS = '#MatchApp #WhatToWatch #StreamingAI #AIConcierge #MovieNight';
-const SHARE_URL = 'https://matchapp.cc/';
+const SHARE_URL = 'https://matchapp.tv/';
 
 /* ---------- Reward accounting ---------- */
 function getShareLog() {
@@ -108,7 +108,7 @@ window.buildShareCard = async function(title, posterUrl, platform, synopsis) {
     ctx.fillStyle = '#E5C158';
     ctx.font = '900 40px "Segoe UI", Arial, sans-serif';
     ctx.textAlign = 'left';
-    ctx.fillText('MATCHAPP.CC', 68, 108);
+    ctx.fillText('MATCHAPP.TV', 68, 108);
     ctx.fillStyle = '#A376B6';
     ctx.font = '600 25px "Segoe UI", Arial, sans-serif';
     ctx.fillText('AI STREAMING CONCIERGE', 68, 148);
@@ -170,7 +170,7 @@ window.buildShareCard = async function(title, posterUrl, platform, synopsis) {
     // Footer CTA
     ctx.fillStyle = '#E5C158';
     ctx.font = '900 33px "Segoe UI", Arial, sans-serif';
-    ctx.fillText('Find YOUR perfect match free →  matchapp.cc', W / 2, H - 74);
+    ctx.fillText('Find YOUR perfect match free →  matchapp.tv', W / 2, H - 74);
 
     return c;
 };

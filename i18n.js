@@ -610,7 +610,7 @@ window.t = t;
  *
  * Why this is necessary: every page ships a static canonical pointing at the
  * clean URL. Once ?lang= URLs became crawlable, Google would fetch
- * /?lang=pt-BR, read canonical="https://matchapp.cc/", conclude the Portuguese
+ * /?lang=pt-BR, read canonical="https://matchapp.tv/", conclude the Portuguese
  * variant is just a duplicate of the English one, and drop it — silently
  * cancelling the whole hreflang cluster. An hreflang alternate has to be
  * self-canonical to be treated as a real alternate, so when a valid ?lang= is

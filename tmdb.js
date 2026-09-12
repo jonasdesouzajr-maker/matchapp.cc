@@ -1,0 +1,157 @@
+/* ============================================================
+   MATCHAPP — TMDB COVERS & METADATA
+
+   WHY THIS EXISTS
+
+   Covers came from iTunes and TVMaze. Both are free and neither was built for
+   this: iTunes indexes what Apple SELLS, so anything Apple never carried —
+   most novelas, a lot of K-drama, most non-US series — simply is not there,
+   and TVMaze's singlesearch returns its best guess for almost any string and
+   essentially never comes back empty. That combination is exactly how a
+   telenovela ended up wearing an unrelated show's poster.
+
+   TMDB is the canonical open database for film and television. It has the
+   novelas, the dramas and the anime, it exposes a real year and a real type to
+   disambiguate against, and its artwork is the artwork everyone else uses.
+
+   WHERE THE KEY IS
+
+   Not here. The v4 token is a credential and anything in browser JavaScript is
+   public, so it lives in Supabase Edge Function secrets and this file talks to
+   tmdb-proxy. That also gets us edge caching, so the same cover is not fetched
+   again for every visitor who draws the same title.
+
+   WHAT THIS DELIBERATELY DOES NOT DO
+
+   Streaming availability. TMDB has a providers endpoint and it is regional,
+   frequently stale and licence-dependent. MatchApp only ever shows a platform
+   as verified when a canonical source confirms it, and a maybe-stale third
+   party is not that. Artwork, titles, years, overviews — nothing about where
+   to watch.
+   ============================================================ */
+
+(function () {
+    'use strict';
+
+    const CACHE = Object.create(null);
+
+    // Maps MatchApp's catalogue categories onto TMDB's two indexes. Passing the
+    // right one is the single biggest accuracy win available: searching a
+    // series against the film index is how a show ends up with a film's poster.
+    function kindForCats(cats) {
+        if (!Array.isArray(cats) || !cats.length) return '';
+        const joined = cats.join(' ').toLowerCase();
+        // Anything episodic.
+        if (/series|drama|novela|telenovela|dizi|anime|reality|documentary series/.test(joined)) return 'tv';
+        if (/movie|film|cinema|bollywood|nollywood/.test(joined)) return 'movie';
+        return '';
+    }
+    window.tmdbKindForCats = kindForCats;
+
+    // TMDB has no useful notion of a podcast, a playlist or a YouTube channel,
+    // so asking it about one can only return something unrelated that happens
+    // to share a word. Skip outright rather than search and then reject.
+    function isSearchable(cats) {
+        if (!Array.isArray(cats) || !cats.length) return true;
+        const joined = cats.join(' ').toLowerCase();
+        return !/youtube|podcast|playlist|album|single|audiobook|music/.test(joined);
+    }
+    window.tmdbIsSearchable = isSearchable;
+
+    /**
+     * Searches TMDB and returns the best-scoring record, or null.
+     * Applies MatchApp's OWN relevance and explicit-content guards on top of
+     * TMDB's — the existing checks in app.js stay authoritative, because they
+     * are the ones that were hardened against the real failures we have seen.
+     */
+    window.tmdbLookup = async function (title, hints) {
+        if (!title || !window.supabaseClient) return null;
+        hints = hints || {};
+        if (!isSearchable(hints.cats)) return null;
+
+        const kind = hints.kind || kindForCats(hints.cats);
+        const cacheKey = `${title}::${hints.year || ''}::${kind}`;
+        if (cacheKey in CACHE) return CACHE[cacheKey];
+
+        let best = null;
+        try {
+            const { data, error } = await window.supabaseClient.functions.invoke('tmdb-proxy', {
+                body: {
+                    query: title,
+                    year: hints.year || '',
+                    kind: kind || '',
+                    lang: window.MATCH_LANG === 'pt-BR' ? 'pt-BR' : 'en-US'
+                }
+            });
+            if (error || !data || !Array.isArray(data.results)) { CACHE[cacheKey] = null; return null; }
+
+            let scored = data.results
+                .map(r => ({ r, score: scoreCandidate(title, hints, r) }))
+                .filter(x => x.score > 0)
+                .sort((a, b) => b.score - a.score);
+
+            best = scored.length ? scored[0].r : null;
+        } catch (e) {
+            best = null;
+        }
+
+        CACHE[cacheKey] = best;
+        return best;
+    };
+
+    /**
+     * Scores a candidate. Returns 0 to reject outright.
+     *
+     * Reuses isRelevantMatch() from app.js rather than inventing a second
+     * notion of "close enough" — that function already encodes the lessons
+     * from the wrong-cover bugs (a shared common word like "vale" is not a
+     * match), and a competing implementation here would drift away from it.
+     */
+    function scoreCandidate(query, hints, r) {
+        if (!r || !r.poster) return 0;
+        if (r.adult === true) return 0;
+
+        const names = [r.title, r.originalTitle].filter(Boolean);
+        const relevant = typeof window.isRelevantMatch === 'function'
+            ? names.some(n => window.isRelevantMatch(query, n))
+            // Fallback if app.js has not loaded yet: exact, case-insensitive.
+            : names.some(n => n.toLowerCase() === String(query).toLowerCase());
+        if (!relevant) return 0;
+
+        if (typeof window.isExplicitResult === 'function') {
+            try {
+                if (window.isExplicitResult({
+                    trackName: r.title, collectionName: r.originalTitle,
+                    longDescription: r.overview, primaryGenreName: ''
+                })) return 0;
+            } catch (e) { /* guard unavailable — TMDB's own adult flag already applied */ }
+        }
+
+        let score = 10;
+
+        // An exact title match is far stronger evidence than a fuzzy one.
+        if (names.some(n => n.toLowerCase() === String(query).toLowerCase())) score += 40;
+
+        // Year agreement. A two-year window absorbs the usual festival-vs-
+        // release and season-premiere discrepancies without accepting a
+        // remake thirty years apart.
+        if (hints.year && r.year) {
+            const diff = Math.abs(parseInt(r.year, 10) - parseInt(hints.year, 10));
+            if (diff === 0) score += 30;
+            else if (diff <= 2) score += 12;
+            else if (diff > 8) return 0;  // almost certainly a different work
+        }
+
+        // Popularity as a tie-break only — never enough on its own to
+        // outweigh an exact title or a matching year.
+        score += Math.min(10, (r.popularity || 0) / 50);
+
+        return score;
+    }
+
+    /** Cover URL only — the common case, and what getRealCoverImage wants. */
+    window.tmdbCover = async function (title, hints) {
+        const r = await window.tmdbLookup(title, hints);
+        return r ? (r.posterLarge || r.poster) : null;
+    };
+})();

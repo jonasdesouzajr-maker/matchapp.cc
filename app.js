@@ -623,6 +623,9 @@ function isExplicitResult(r) {
     return false;
 }
 window.isExplicitResult = isExplicitResult;
+// Exported so tmdb.js scores candidates with the SAME rule, rather than
+// growing a second definition of "close enough" that drifts from this one.
+window.isRelevantMatch = isRelevantMatch;
 
 // Scores an iTunes result against catalog hints, mirroring scoreCandidate()
 // used for TVMaze below — same philosophy, adapted to what iTunes actually
@@ -945,7 +948,29 @@ async function getRealCoverImage(title, hints) {
     const exactKey = Object.keys(OFFLINE_COVERS).find(k => k.toLowerCase() === title.toLowerCase());
     if (exactKey) return cacheAndReturn(OFFLINE_COVERS[exactKey]);
 
-    // 2. iTunes across several media types — itunesLookup now scores multiple
+    // 2. TMDB — the canonical open database for film and television, and the
+    //    right first stop for anything with a screen.
+    //
+    //    It goes AHEAD of iTunes because iTunes indexes what Apple SELLS: most
+    //    novelas, a lot of K-drama and most non-US series simply are not in it,
+    //    so the old chain fell through to TVMaze — whose singlesearch returns a
+    //    best guess for almost any string and essentially never comes back
+    //    empty. That is precisely how a telenovela ended up wearing an
+    //    unrelated show's poster.
+    //
+    //    TMDB also takes a TYPE and a YEAR, so a series is searched against the
+    //    television index rather than the film one. tmdbLookup applies this
+    //    file's own isRelevantMatch/isExplicitResult before accepting anything,
+    //    so a miss here falls through to the chain below exactly as before
+    //    rather than returning something confident and wrong.
+    if (typeof window.tmdbCover === 'function') {
+        try {
+            const tmdbArt = await window.tmdbCover(title, hints);
+            if (tmdbArt) return cacheAndReturn(tmdbArt);
+        } catch (e) { /* fall through to the existing chain */ }
+    }
+
+    // 3. iTunes across several media types — itunesLookup now scores multiple
     //    candidates against hints (year/country) when we have them, instead of
     //    trusting iTunes' single top-ranked guess outright. Fetched concurrently
     //    (bounded by fetchWithTimeout per-call) instead of sequentially; the
@@ -953,7 +978,7 @@ async function getRealCoverImage(title, hints) {
     const arts = await Promise.all(['movie', 'tvShow', 'podcast', 'music'].map(media => itunesLookup(title, media, hints)));
     for (const art of arts) { if (art) return cacheAndReturn(art); }
 
-    // 3. TVMaze (strong for international + K-drama series).
+    // 4. TVMaze (strong for international + K-drama series).
     //    THIS WAS THE ACTUAL BUG: TVMaze's singlesearch endpoint returns its
     //    single best guess for almost any non-garbage query — it essentially
     //    never comes back empty — and this call had no check that the result
@@ -1193,7 +1218,7 @@ function generateLocalPosterSVG(title, meta) {
         ${tspans}
         <line x1="200" y1="700" x2="400" y2="700" stroke="${theme.accent}" stroke-width="2" opacity="0.6"/>
         ${platformTag}
-        <text x="300" y="812" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#FFF0B3" text-anchor="middle" letter-spacing="2.5">matchapp.cc</text>
+        <text x="300" y="812" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#FFF0B3" text-anchor="middle" letter-spacing="2.5">matchapp.tv</text>
         <text x="300" y="840" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" opacity="0.55">AI Concierge for Entertainment</text>
     </svg>`;
     return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
