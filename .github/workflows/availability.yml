@@ -1,0 +1,59 @@
+name: Refresh Streaming Availability
+
+# Availability changes on the scale of weeks, not minutes, so a weekly refresh
+# is the right cadence: frequent enough that pages stay honest, infrequent
+# enough that we stay well inside TMDB's free-tier limits (~370 calls a run).
+on:
+  schedule:
+    - cron: '0 5 * * 1'        # Mondays, 05:00 UTC
+  workflow_dispatch:            # and on demand
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch availability from TMDB
+        env:
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+        run: |
+          if [ -z "$TMDB_API_KEY" ]; then
+            echo "::error::TMDB_API_KEY secret is not set."
+            echo "Add it under Settings -> Secrets and variables -> Actions."
+            echo "Get a free v3 key at https://www.themoviedb.org/settings/api"
+            exit 1
+          fi
+          node tools/fetch-availability.js
+
+      - name: Rebuild availability pages
+        run: node tools/build-watch-pages.js
+
+      - name: Rebuild collection pages
+        run: node tools/build-seo-pages.js
+
+      - name: Update sitemap
+        run: node tools/update-sitemap.js
+
+      - name: Commit if anything changed
+        run: |
+          git config user.name  "MatchApp Bot"
+          git config user.email "bot@matchapp.tv"
+          git add -A
+          # Only commit when there is a real change — a no-op commit every week
+          # would churn the repo and re-trigger Pages builds for nothing.
+          if git diff --staged --quiet; then
+            echo "No availability changes this run."
+          else
+            git commit -m "Refresh streaming availability from TMDB [skip ci]"
+            git push
+          fi
