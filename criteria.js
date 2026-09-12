@@ -223,6 +223,26 @@
             count.textContent = picked.length ? picked.length : '';
             count.style.display = picked.length ? 'inline-flex' : 'none';
         }
+
+        // Keep the collapsed row's summary honest — a field that is folded
+        // shut still has to say what is ticked inside it, or the user has to
+        // open all six to find out what they chose. Names come from the same
+        // label lookup the chips use, so a translation change can't desync it.
+        const summary = sel.parentElement.querySelector('.crit-toggle-summary');
+        if (summary) {
+            if (!picked.length) {
+                summary.textContent = tr('crit.anyLabel', 'Any');
+                summary.classList.add('is-empty');
+            } else {
+                const names = picked.map(v => {
+                    const opt = Array.from(sel.options).find(o => o.value === v);
+                    return opt ? opt.textContent.trim() : v;
+                });
+                const shown = names.slice(0, 2).join(', ');
+                summary.textContent = names.length > 2 ? shown + ' +' + (names.length - 2) : shown;
+                summary.classList.remove('is-empty');
+            }
+        }
     }
 
     // i18n.js returns an empty string for a key it has no entry for — not the
@@ -268,6 +288,38 @@
         host.setAttribute('role', 'group');
         if (label) host.setAttribute('aria-label', label.textContent.trim());
         sel.insertAdjacentElement('afterend', host);
+
+        // COLLAPSE THE FIELD ITSELF.
+        // Six fields with twenty-plus chips each is well over a hundred
+        // buttons stacked down the page — the form reads as a wall, and the
+        // Match button ends up far below the fold. Each field now collapses
+        // to a single row showing what is ticked, and opens on tap to choose.
+        // The chips are unchanged underneath, so selection behaviour, the
+        // "+N more" expander and the counter badge all keep working.
+        if (label && !wrap.querySelector('.crit-toggle')) {
+            const toggleBtn = document.createElement('button');
+            toggleBtn.type = 'button';
+            toggleBtn.className = 'crit-toggle';
+            toggleBtn.setAttribute('aria-expanded', 'false');
+
+            // Move the existing label inside the button so the whole row is
+            // one hit target, rather than a label sitting next to a control.
+            const labelText = label.textContent.trim();
+            label.style.display = 'none';
+
+            toggleBtn.innerHTML =
+                '<span class="crit-toggle-label">' + labelText + '</span>' +
+                '<span class="crit-toggle-summary"></span>' +
+                '<span class="crit-toggle-chevron" aria-hidden="true">⌄</span>';
+
+            wrap.insertBefore(toggleBtn, label);
+            wrap.classList.add('crit-collapsible');
+
+            toggleBtn.addEventListener('click', () => {
+                const open = wrap.classList.toggle('crit-open');
+                toggleBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+        }
 
         host.addEventListener('click', (ev) => {
             const btn = ev.target.closest('button');
