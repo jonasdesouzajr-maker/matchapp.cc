@@ -11,11 +11,49 @@
     --gold-deep:    #B8912F;   /* gold shadow side                 */
     --gold-glow:    #FFF3A3;   /* brightest gold specular          */
 
+    /* ===== SEMANTIC LAYER =====
+       The palette above says what a colour IS. These say what it MEANS, so
+       a rule reads as intent rather than a hue and rebalancing the whole page
+       is a handful of edits here instead of hundreds across two files.
+
+       The split matters because gold had stopped communicating anything: it
+       was carrying every border, every accent and every call to action at
+       once — 219 gold references against 10 purple — so "premium" looked
+       identical to "ordinary card". Purple is the brand and does the routine
+       work; gold is reserved for what is genuinely primary or paid. */
+
+    /* Surfaces and edges — purple-tinted, the logo's own field colour. */
+    --edge:         rgba(163, 118, 182, 0.22);  /* default card/input border  */
+    --edge-strong:  rgba(163, 118, 182, 0.40);  /* hover / focus-within       */
+    --edge-subtle:  rgba(255, 255, 255, 0.08);  /* dividers, quiet separators */
+
+    /* Reserved: primary actions, VIP, and the brand mark itself. */
+    --accent:       var(--gold);
+    --accent-edge:  rgba(229, 193, 88, 0.55);
+    --accent-soft:  rgba(163,118,182,0.17);
+
+    /* Interactive/brand — the default for anything not premium. */
+    --brand:        var(--royal-lift);
+    --brand-edge:   rgba(107, 63, 160, 0.45);
+    --brand-soft:   rgba(107, 63, 160, 0.18);
+
+    /* Motion scale. One set of durations so timings stop being ad hoc. */
+    --t-micro: 160ms;   /* taps, hovers, toggles       */
+    --t-base:  240ms;   /* reveals, expands            */
+    --t-slow:  420ms;   /* section transitions         */
+    --ease:    cubic-bezier(0.22, 1, 0.36, 1);
+
     --bg-dark: #14131A; --bg-card: rgba(26, 25, 31, 0.88);
-    --border: rgba(229, 193, 88, 0.38);
+    /* Was gold at 38% opacity, which is what put a gold outline on every
+       card, input and panel on the page. Purple-tinted by default now. */
+    --border: var(--edge);
     --text-main: #FFFFFF; --text-muted: #B3AEC4;
     --netflix-red: #E50914; --prime-blue: #00A8E1; --max-purple: #9A5CFF; --disney-blue: #113CCF;
     --spotify-green: #1DB954; --globoplay-orange: #FF5A00;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :root { --t-micro: 0ms; --t-base: 0ms; --t-slow: 0ms; }
 }
 
 * { box-sizing: border-box; }
@@ -28,9 +66,9 @@ body.ad-free-mode .ad-placement, body.ad-free-mode .sidebar-ad { display: none !
 .real-time-clock { position: fixed; top: 10px; right: 12px; background: rgba(26, 21, 38, 0.9); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 20px; padding: 6px 14px; font-size: 11px; color: var(--gold-glow); font-weight: 700; z-index: 10000; backdrop-filter: blur(15px); box-shadow: 0 4px 20px rgba(0,0,0,0.8); }
 
 /* 🌍 BACKGROUND */
-.luxury-bg { position: fixed; inset: 0; background: radial-gradient(circle at 18% 28%, rgba(107, 63, 160, 0.55), transparent 58%), radial-gradient(circle at 82% 72%, rgba(64, 37, 98, 0.68), transparent 60%), radial-gradient(circle at 50% 108%, rgba(229, 193, 88, 0.13), transparent 55%), linear-gradient(160deg, #14131A 0%, #1A1526 55%, #14131A 100%); z-index: -2; pointer-events: none; }
+.luxury-bg { position: fixed; inset: 0; background: radial-gradient(circle at 18% 28%, rgba(107, 63, 160, 0.55), transparent 58%), radial-gradient(circle at 82% 72%, rgba(64, 37, 98, 0.68), transparent 60%), radial-gradient(circle at 50% 108%, rgba(163,118,182,0.18), transparent 55%), linear-gradient(160deg, #14131A 0%, #1A1526 55%, #14131A 100%); z-index: -2; pointer-events: none; }
 .floating-orb { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.65; animation: float 10s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); }
-.orb-1 { width: 300px; height: 300px; background: rgba(229, 193, 88, 0.22); top: 5%; left: -10%; }
+.orb-1 { width: 300px; height: 300px; background: rgba(163,118,182,0.27); top: 5%; left: -10%; }
 .orb-2 { width: 350px; height: 350px; background: rgba(107, 63, 160, 0.38); bottom: -10%; right: -10%; animation-delay: -5s; }
 @keyframes float { 0% { transform: translateY(0px) scale(1); } 100% { transform: translateY(50px) scale(1.15); } }
 
@@ -147,7 +185,7 @@ input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow
 /* Slow gold sweep — enough to draw the eye once, not enough to nag. */
 @keyframes askGlow {
     0%, 100% { background-position: 0% 50%; box-shadow: 0 4px 18px rgba(0,0,0,0.45); }
-    50%      { background-position: 100% 50%; box-shadow: 0 4px 22px rgba(229,193,88,0.22); }
+    50%      { background-position: 100% 50%; box-shadow: 0 4px 22px rgba(163,118,182,0.27); }
 }
 @media (prefers-reduced-motion: reduce) { .top-ask { animation: none; } }
 @media (max-width: 480px) {
@@ -250,9 +288,9 @@ input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow
 /* ===== AVATAR ===== */
 .nav-avatar-link { display: inline-flex; align-items: center; gap: 9px; text-decoration: none;
                    color: var(--gold-glow); font-weight: bold; font-size: 13.5px;
-                   background: rgba(229,193,88,0.12); border: 1px solid rgba(229,193,88,0.45);
+                   background: rgba(163,118,182,0.17); border: 1px solid rgba(229,193,88,0.45);
                    padding: 5px 14px 5px 5px; border-radius: 999px; transition: 0.2s; }
-.nav-avatar-link:hover { background: rgba(229,193,88,0.22); border-color: var(--gold); }
+.nav-avatar-link:hover { background: rgba(163,118,182,0.27); border-color: var(--gold); }
 .avatar-ring { position: relative; width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
                display: inline-flex; align-items: center; justify-content: center; overflow: visible;
                background: rgba(0,0,0,0.45); border: 1.5px solid var(--gold); }
@@ -283,7 +321,7 @@ input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow
             background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.22);
             color: #ddd; cursor: pointer; text-decoration: none; transition: 0.2s; }
 .icon-btn:hover { border-color: var(--gold); color: var(--gold-glow);
-                  background: rgba(229,193,88,0.12); transform: translateY(-1px); }
+                  background: rgba(163,118,182,0.17); transform: translateY(-1px); }
 .home-btn { color: var(--gold-glow); border-color: rgba(229,193,88,0.42); }
 
 .sound-toggle-btn { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.22); color: #ddd;
