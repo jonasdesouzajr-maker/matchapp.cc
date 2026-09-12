@@ -6,19 +6,50 @@
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#14131A",
-  "theme_color": "#14131A",
-  "categories": ["entertainment", "lifestyle", "utilities"],
+  "background_color": "#101010",
+  "theme_color": "#101010",
+  "categories": [
+    "entertainment",
+    "lifestyle",
+    "utilities"
+  ],
   "lang": "en",
   "dir": "auto",
   "icons": [
-    { "src": "/logo-192.jpeg", "sizes": "192x192", "type": "image/jpeg", "purpose": "any" },
-    { "src": "/logo.jpeg", "sizes": "512x512", "type": "image/jpeg", "purpose": "any" },
-    { "src": "/logo.jpeg", "sizes": "512x512", "type": "image/jpeg", "purpose": "maskable" }
+    {
+      "src": "/logo-192.jpeg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "maskable"
+    }
   ],
   "shortcuts": [
-    { "name": "Get a match", "short_name": "Match", "url": "/?utm_source=pwa_shortcut#questionnaire-box" },
-    { "name": "Ask the AI", "short_name": "Ask AI", "url": "/discover.html?utm_source=pwa_shortcut" },
-    { "name": "My library", "short_name": "Library", "url": "/profile/profile.html?utm_source=pwa_shortcut" }
+    {
+      "name": "Get a match",
+      "short_name": "Match",
+      "url": "/?utm_source=pwa_shortcut#questionnaire-box"
+    },
+    {
+      "name": "Ask the AI",
+      "short_name": "Ask AI",
+      "url": "/discover.html?utm_source=pwa_shortcut"
+    },
+    {
+      "name": "My library",
+      "short_name": "Library",
+      "url": "/profile/profile.html?utm_source=pwa_shortcut"
+    }
   ]
 }
