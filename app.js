@@ -4,7 +4,7 @@
    or reuse in competing products. See /terms.html Section 4.
    ============================================================ */
 
-console.log("Mastercode 102: OS-Level DeepLinks, Never-Fail Covers, & Premium FX Active");
+console.log("Mastercode 103: Quota fallback hardening (logged-in RPC outage)");
 
 const SUPABASE_URL = 'https://zkymvqrmbabngsqblyye.supabase.co'; 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpreW12cXJtYmFibmdzcWJseXllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY4MDUyNDIsImV4cCI6MjEwMjM4MTI0Mn0._yEVFMfwVU6GBqQ8m3ljfOgA0HSLEDiKMOfYae6ZD8Q';
@@ -163,13 +163,57 @@ async function checkDailyLimit() {
             if (typeof window.renderCreditBadge === 'function') window.renderCreditBadge(data.credits);
             return false;
         }
-        // No profile row yet (e.g. mid-signup) — fall back rather than block.
-        return anonLimitCheck();
+        // No profile row yet (e.g. mid-signup) — do not meter against the
+        // anonymous localStorage counter. That would lock a VIP out after 3
+        // matches (or grant extras if they already hit their server limit).
+        return loggedInFallbackAllow();
     } catch (e) {
-        // Network/RPC failure must not lock a paying user out of the product.
-        console.warn('Quota RPC unavailable, falling back to local metering:', e.message || e);
-        return anonLimitCheck();
+        // Network/RPC failure must not lock a paying user out of the product,
+        // and must not treat them as anonymous either.
+        console.warn('Quota RPC unavailable, using last known status:', e.message || e);
+        return loggedInFallbackAllow();
     }
+}
+
+// When consume_match() cannot be reached, honour the last match_status()
+// snapshot if we have one. If remaining was already 0, still block.
+// If we have no snapshot, allow — never lock a logged-in user out because
+// the network blipped.
+function loggedInFallbackAllow() {
+    const s = lastQuotaStatus;
+    if (s && typeof s.remaining === 'number' && !s.anon) {
+        if (s.remaining <= 0) {
+            // Credits change what "out of matches" means. Someone who PAID for
+            // a balance must not be turned away just because consume_match()
+            // was unreachable — that is the one group for whom being blocked
+            // on a network blip is not merely annoying but wrong. The server
+            // will reconcile the spend on the next reachable call; letting one
+            // match through on a stale snapshot is far cheaper than telling a
+            // paying customer their credits do not work.
+            if (typeof s.credits === 'number' && s.credits > 0) {
+                const withCredit = Object.assign({}, s, {
+                    credits: s.credits - 1, allowed: true, fallback: true, paid_with_credit: true
+                });
+                lastQuotaStatus = withCredit;
+                if (typeof window.renderCreditBadge === 'function') window.renderCreditBadge(withCredit.credits);
+                return true;
+            }
+            const kind = (s.is_vip || s.limit >= 10) ? 'vip' : 'registered';
+            showQuotaMessage(kind, s);
+            updateQuotaBadge(s);
+            return false;
+        }
+        const next = Object.assign({}, s, {
+            used: (s.used || 0) + 1,
+            remaining: Math.max(0, s.remaining - 1),
+            allowed: true,
+            fallback: true
+        });
+        lastQuotaStatus = next;
+        updateQuotaBadge(next);
+        return true;
+    }
+    return true;
 }
 window.checkDailyLimit = checkDailyLimit;
 

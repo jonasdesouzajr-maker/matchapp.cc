@@ -207,8 +207,10 @@ Deno.serve(async (req: Request) => {
         const userId = session.client_reference_id;
 
         if (!userId) {
-          // This is the failure mode to watch for: it means "Client reference
-          // ID" isn't enabled on the Payment Link, so we can't tell who paid.
+          // REQUIRED CONFIG: Stripe Dashboard → Payment Links → each link →
+          // Edit → enable "Client reference ID". Without it, checkout succeeds
+          // but we cannot grant VIP / Ad-Free / Business because we do not
+          // know which profile paid. Check this first if upgrades do not land.
           log(`No client_reference_id on session ${session.id} — cannot identify the user. ` +
               `Enable "Client reference ID" on the Stripe Payment Link.`);
           await recordEvent(event.id, event.type, null, null);

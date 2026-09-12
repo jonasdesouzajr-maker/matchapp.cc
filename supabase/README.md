@@ -66,6 +66,10 @@ put it in the `STRIPE_WEBHOOK_SECRET` secret from Step 2.
 
 ### Step 5 — Turn on Client reference ID (critical)
 
+This is the most common reason a successful Stripe payment does not upgrade
+the user's profile. The webhook cannot grant a plan without knowing *who*
+paid.
+
 For **each** of your four Payment Links: Stripe → Payment Links → open the
 link → **⋯** → Edit → under options, enable **"Client reference ID"**.
 
