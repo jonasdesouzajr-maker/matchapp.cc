@@ -56,10 +56,15 @@ window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredInstallPrompt = e;
     showInstallButtons();
+    // Fires after page load on Chrome/Edge, so the hint is triggered here
+    // rather than in initInstall — at init time the button is still hidden
+    // and hinting at a hidden button would point at nothing.
+    setTimeout(maybeShowInstallHint, 900);
 });
 
 window.addEventListener('appinstalled', () => {
     deferredInstallPrompt = null;
+    if (window.dismissInstallBubble) window.dismissInstallBubble();
     hideInstallButtons();
     if (window.showToast) {
         showToast(window.t ? t('install.done') : '🎉 MatchApp installed — find it on your home screen.');
@@ -114,6 +119,11 @@ window.closeInstallModal = function () {
 };
 
 window.installMatchApp = async function () {
+    // Acting on the hint is the strongest possible signal it was seen — clear
+    // it immediately so it never sits on top of the native prompt or the iOS
+    // instructions modal.
+    if (window.dismissInstallBubble) window.dismissInstallBubble();
+
     // Path 1: a real native prompt is available (Chrome/Edge/Android/Desktop).
     if (deferredInstallPrompt) {
         deferredInstallPrompt.prompt();
@@ -127,6 +137,51 @@ window.installMatchApp = async function () {
     modal.style.display = 'flex';
 };
 
+// ----------------------------------------------------
+// FIRST-VISIT INSTALL HINT
+//
+// The install button lives in a crowded header next to the sound toggle and
+// language switcher, so most visitors never register what it is. A small
+// bubble points at it for 20 seconds on a first visit, then removes itself.
+//
+// Rules, so this never becomes an annoyance:
+//   • once per visitor, ever (remembered in localStorage)
+//   • never if they dismissed it
+//   • never if the app is already installed
+//   • never if the button itself isn't visible — a hint pointing at nothing
+//     is worse than no hint
+//   • auto-clears after 20s whether or not it's interacted with
+// ----------------------------------------------------
+const INSTALL_HINT_KEY = 'match_installHintSeen';
+let installHintTimer = null;
+
+window.dismissInstallBubble = function () {
+    const bubble = document.getElementById('install-bubble');
+    if (installHintTimer) { clearTimeout(installHintTimer); installHintTimer = null; }
+    document.querySelectorAll('.install-btn').forEach(b => b.classList.remove('is-hinting'));
+    if (!bubble || bubble.hidden) return;
+
+    bubble.classList.add('is-leaving');
+    setTimeout(() => { bubble.hidden = true; bubble.classList.remove('is-leaving'); }, 300);
+    try { localStorage.setItem(INSTALL_HINT_KEY, '1'); } catch (e) {}
+};
+
+function maybeShowInstallHint() {
+    try { if (localStorage.getItem(INSTALL_HINT_KEY)) return; } catch (e) {}
+
+    const bubble = document.getElementById('install-bubble');
+    const btn = document.querySelector('.install-btn');
+    if (!bubble || !btn) return;
+
+    // Only hint at a button the visitor can actually see and press.
+    if (btn.offsetParent === null) return;
+
+    bubble.hidden = false;
+    btn.classList.add('is-hinting');
+
+    installHintTimer = setTimeout(() => { window.dismissInstallBubble(); }, 20000);
+}
+
 function initInstall() {
     const { isIOS, isMac, isStandalone } = platformInfo();
 
@@ -135,7 +190,7 @@ function initInstall() {
 
     // iOS and desktop Safari have no install event to wait for, but the
     // manual path always exists, so the button is meaningful immediately.
-    if (isIOS || isMac) { showInstallButtons(); return; }
+    if (isIOS || isMac) { showInstallButtons(); setTimeout(maybeShowInstallHint, 1200); return; }
 
     // Everyone else: stay hidden until beforeinstallprompt actually fires.
     // If it never does (Firefox, an already-dismissed prompt this session,

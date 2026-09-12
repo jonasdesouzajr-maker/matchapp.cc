@@ -158,11 +158,69 @@ input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow
 }
 
 /* 📲 INSTALL & 🔊 SOUND TOGGLE — header buttons */
-.install-btn { background: rgba(229,193,88,0.14); border: 1px solid var(--gold); color: var(--gold-glow);
-               padding: 8px 14px; border-radius: 12px; font-weight: 700; font-size: 12px; cursor: pointer;
-               transition: 0.2s; align-items: center; gap: 6px; font-family: inherit; text-decoration: none;
-               white-space: nowrap; }
-.install-btn:hover { background: rgba(229,193,88,0.26); transform: translateY(-1px); }
+
+/* Positioning context for the attention bubble. */
+.install-wrap { position: relative; display: inline-flex; }
+
+/* Solid gold fill rather than the previous faint 14%-opacity wash. At that
+   opacity it read as another disabled-looking utility icon sitting next to the
+   sound toggle, which is exactly why nobody noticed it. This is the only
+   gold-filled control in the header, so it reads as the one thing to press. */
+.install-btn { background: linear-gradient(135deg, #E5C158, #C9A227); border: none; color: #1a1526;
+               padding: 9px 16px; border-radius: 12px; font-weight: 800; font-size: 12.5px; cursor: pointer;
+               transition: transform .18s, box-shadow .18s; align-items: center; gap: 6px;
+               font-family: inherit; text-decoration: none; white-space: nowrap;
+               box-shadow: 0 3px 14px rgba(229,193,88,0.35); }
+.install-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(229,193,88,0.5); }
+.install-btn:focus-visible { outline: 2px solid var(--gold-glow); outline-offset: 3px; }
+
+/* ATTENTION BUBBLE — 20 seconds, once per visitor, dismissible.
+   Anchored under the button with a pointer arrow so there is no question
+   about what it refers to. position:absolute keeps it out of the header's
+   flex flow entirely, so showing or hiding it never reflows the nav. */
+.install-bubble { position: absolute; top: calc(100% + 12px); right: 0; z-index: 120;
+                  width: max-content; max-width: 250px; padding: 12px 34px 12px 14px;
+                  background: linear-gradient(145deg, #2A1B4D, #1B1230);
+                  border: 1px solid rgba(229,193,88,0.55); border-radius: 13px;
+                  box-shadow: 0 14px 36px rgba(0,0,0,0.6);
+                  color: #F0E9FF; font-size: 12.8px; line-height: 1.5; text-align: left;
+                  animation: bubbleIn .45s cubic-bezier(0.22,1,0.36,1); }
+.install-bubble::after { content: ""; position: absolute; top: -7px; right: 26px;
+                  width: 12px; height: 12px; background: #2A1B4D;
+                  border-left: 1px solid rgba(229,193,88,0.55);
+                  border-top: 1px solid rgba(229,193,88,0.55);
+                  transform: rotate(45deg); }
+.install-bubble-x { position: absolute; top: 5px; right: 7px; width: 24px; height: 24px;
+                  background: none; border: none; color: #9d95b0; font-size: 20px; line-height: 1;
+                  cursor: pointer; border-radius: 6px; padding: 0; font-family: inherit; }
+.install-bubble-x:hover { color: #fff; background: rgba(255,255,255,0.1); }
+.install-bubble-x:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+.install-bubble.is-leaving { animation: bubbleOut .3s ease-in forwards; }
+
+@keyframes bubbleIn  { from { opacity: 0; transform: translateY(-8px) scale(0.94); } to { opacity: 1; transform: none; } }
+@keyframes bubbleOut { to   { opacity: 0; transform: translateY(-6px) scale(0.96); } }
+
+/* A gentle pulse draws the eye to the button itself while the bubble is up,
+   then stops — a permanently animating header control is just noise. */
+.install-btn.is-hinting { animation: installPulse 2.1s ease-in-out infinite; }
+@keyframes installPulse {
+    0%, 100% { box-shadow: 0 3px 14px rgba(229,193,88,0.35); }
+    50%      { box-shadow: 0 3px 22px rgba(229,193,88,0.75); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .install-bubble, .install-bubble.is-leaving { animation: none; }
+    .install-btn.is-hinting { animation: none; }
+    .install-btn { transition: none; }
+    .install-btn:hover { transform: none; }
+}
+
+/* On narrow screens the bubble would overflow the viewport if it kept hugging
+   the button's right edge, so it spans the width instead. */
+@media (max-width: 430px) {
+    .install-bubble { right: -6px; max-width: min(74vw, 250px); font-size: 12px; }
+}
+
 /* ===== AVATAR ===== */
 .nav-avatar-link { display: inline-flex; align-items: center; gap: 9px; text-decoration: none;
                    color: var(--gold-glow); font-weight: bold; font-size: 13.5px;
