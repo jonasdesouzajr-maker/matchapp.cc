@@ -1777,6 +1777,20 @@ function goToQuestionnaire() {
     // looked like the button was "telling" the user something without ever
     // taking them anywhere. Re-show the form before attempting to scroll.
     if (box.style.display === 'none') box.style.display = '';
+
+    // Lazy Mode folds this section behind `display:none !important`, which
+    // beats the inline style just cleared above. Every path back to the form
+    // funnels through here, so unfolding at this one point is what makes the
+    // form safe to fold at all — without it a user in Lazy Mode could tap
+    // "New Criteria" and land on nothing.
+    if (box.classList.contains('lazy-foldable') && !box.classList.contains('lazy-open')) {
+        box.classList.add('lazy-open');
+        const head = box.previousElementSibling;
+        if (head && head.classList.contains('lazy-head')) {
+            head.setAttribute('aria-expanded', 'true');
+            head.classList.add('is-open');
+        }
+    }
     const resultBox = document.getElementById('result-box');
     if (resultBox && resultBox.style.display !== 'none') resultBox.style.display = 'none';
 
@@ -4104,14 +4118,44 @@ async function syncAfterCheckout() {
 
     const before = {
         vip: localStorage.getItem('match_isVIP') === 'true',
-        business: localStorage.getItem('match_isBusiness') === 'true'
+        business: localStorage.getItem('match_isBusiness') === 'true',
+        credits: parseInt(localStorage.getItem('match_credits') || '0', 10)
     };
 
     if (window.showToast) showToast('⏳ Confirming your purchase…');
 
+    // Reads the credit balance, which lives on a separate RPC from the plan
+    // status. Without this, a credit top-up could never be confirmed here —
+    // the loop only watched is_vip/is_business, so someone who bought credits
+    // saw "confirming…" and then the vague fallback message, even though
+    // their credits had actually arrived. Silent on failure so a hiccup here
+    // never blocks plan confirmation.
+    async function readCredits() {
+        try {
+            const { data, error } = await supabaseClient.rpc('match_credits');
+            if (error || !data) return null;
+            return typeof data.credits === 'number' ? data.credits : null;
+        } catch (e) { return null; }
+    }
+
     // Up to ~10s of polling; webhooks are usually far faster than this.
     for (let attempt = 0; attempt < 6; attempt++) {
         const status = await window.refreshQuotaStatus();
+        const credits = await readCredits();
+
+        // A credit top-up: balance went up.
+        if (credits !== null && credits > before.credits) {
+            const added = credits - before.credits;
+            localStorage.setItem('match_credits', String(credits));
+            if (window.showToast) showToast(`🎉 ${added} credits added — you now have ${credits}. Thank you!`);
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 160, spread: 90, origin: { y: 0.6 }, colors: ['#E5C158','#FFF3A3','#6B3FA0','#ffffff'] });
+            }
+            document.dispatchEvent(new CustomEvent('matchapp:creditschanged', { detail: { credits } }));
+            return;
+        }
+
+        // A plan upgrade: tier flags changed.
         if (status && (status.is_vip !== before.vip || status.is_business !== before.business)) {
             const tier = status.is_business ? 'Business' : (status.is_vip ? 'VIP' : 'your new plan');
             if (window.showToast) showToast(`🎉 ${tier} unlocked — thank you! You now have ${status.limit} sessions a day.`);

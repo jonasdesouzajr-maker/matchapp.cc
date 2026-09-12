@@ -38,6 +38,14 @@
        Labels fall back to the section's own heading when one exists, so a
        copy change in the HTML does not silently desync from this list. */
     const FOLDABLE = [
+        // The match form itself folds now too. It was previously excluded
+        // because app.js shows/hides it during the match flow and the fold
+        // CSS uses display:none !important, which would win over app.js's
+        // inline display and strand the user with an invisible form. That is
+        // solved at the other end: goToQuestionnaire() in app.js — the single
+        // choke point every "back to the form" path goes through — now clears
+        // the fold before scrolling, so the two systems can't fight.
+        { sel: '#questionnaire-box',    label: '🎯 Curate your perfect match', icon: '🎯', openByDefault: true },
         { sel: '#search-box',           label: '🔎 Search a specific title',  icon: '🔎' },
         { sel: '#trending-rail',        label: '🔥 Trending now',             icon: '🔥' },
         { sel: '.events-wrapper',       label: '🎪 Events happening now',     icon: '🎪' },
@@ -45,9 +53,10 @@
         { sel: '#ai-concierge-section', label: '🤖 About the AI concierge',   icon: '🤖' }
     ];
 
-    /* Panels app.js shows and hides itself. Folding these would fight the
-       match flow — see the design note above. */
-    const NEVER_FOLD = ['#questionnaire-box', '#loading-box', '#result-box'];
+    /* Panels app.js shows and hides itself as part of the match flow. Folding
+       these would fight that — the loading meter and the result card are
+       transient states, not sections a user browses. */
+    const NEVER_FOLD = ['#loading-box', '#result-box'];
 
     let mounted = false;
 
@@ -157,6 +166,16 @@
                 head.classList.toggle('is-open', open);
                 if (open) section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             });
+
+            // The match form is the whole point of the page — starting it
+            // collapsed would put the primary action behind an extra tap,
+            // which is the opposite of what Lazy Mode is for. Everything
+            // else starts folded.
+            if (cfg.openByDefault) {
+                section.classList.add('lazy-open');
+                head.setAttribute('aria-expanded', 'true');
+                head.classList.add('is-open');
+            }
 
             section.parentNode.insertBefore(head, section);
         });

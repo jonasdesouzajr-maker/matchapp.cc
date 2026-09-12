@@ -9,14 +9,14 @@ console.log("Mastercode 87.0: Live Stripe Payments Engine Initialized");
 // ==========================================
 // 💳 LIVE STRIPE PAYMENT LINKS
 // ==========================================
-const STRIPE_LINK_AD_FREE = "https://buy.stripe.com/fZu4gz6nEaDHbpY7k0gEg01";
-const STRIPE_LINK_VIP_MONTHLY = "https://buy.stripe.com/fZu3cvbHY13779I47OgEg03";
-const STRIPE_LINK_VIP_ANNUAL = "https://buy.stripe.com/7sY28reUa137dy65bSgEg02";
+const STRIPE_LINK_AD_FREE = "https://buy.stripe.com/bJe8wP94lfRQfsycspcfK07";
+const STRIPE_LINK_VIP_MONTHLY = "https://buy.stripe.com/bJe7sL6WdfRQ94adwtcfK08";
+const STRIPE_LINK_VIP_ANNUAL = "https://buy.stripe.com/8x29ATdkB5dcgwCdwtcfK09";
 
 // Business plan — $49/mo, 50 AI sessions daily, up to 5 seats.
 // The email fallback below still guards against a blanked-out or broken link,
 // so the button can never dead-end on a checkout page that doesn't exist.
-const STRIPE_LINK_BUSINESS = "https://buy.stripe.com/eVqcN5dQ66nr51AgUAgEg04";
+const STRIPE_LINK_BUSINESS = "https://buy.stripe.com/aFa14n80h8poa8e1NLcfK05";
 
 window.processCheckout = async function(planType) {
     if (!isUserLoggedIn || !supabaseClient) {
@@ -125,10 +125,10 @@ window.CREDIT_PACKS = CREDIT_PACKS;
 // same guard the Business plan already uses, for the same reason: a dead
 // checkout button costs more than a missing one.
 const STRIPE_LINK_CREDITS = {
-    credits_25:  "",
-    credits_75:  "",
-    credits_200: "",
-    credits_500: ""
+    credits_25:  "https://buy.stripe.com/14A9ATdkB8po4NU641cfK0a",
+    credits_75:  "https://buy.stripe.com/aFaeVdeoF9ts4NU9gdcfK0b",
+    credits_200: "https://buy.stripe.com/8x2aEXgwN5dc4NUakhcfK0c",
+    credits_500: "https://buy.stripe.com/5kQcN50xP35494afEBcfK0d"
 };
 
 window.buyCredits = async function (packKey) {
