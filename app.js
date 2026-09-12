@@ -1325,14 +1325,26 @@ document.addEventListener('DOMContentLoaded', hydrateMarqueeCovers);
 // direct-search path, so it consumes one match via checkDailyLimit() ->
 // consume_match, exactly like any other AI lookup.
 window.selectMarqueeItem = function(titleName) {
-    const searchInput = document.getElementById('specific-search-input');
-    if (searchInput) searchInput.value = titleName;
+    if (!titleName) return;
 
-    const searchBox = document.getElementById('search-box');
-    if (searchBox) searchBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Clicking a trending poster used to run the MATCH engine on it, which is
+    // the wrong tool: matching exists to pick something FOR you, and someone
+    // who tapped a specific poster has already picked. What they actually want
+    // is to find out about that title — what it is, whether it's any good,
+    // where they can watch it.
+    //
+    // So it goes to the AI Concierge with a question phrased to get exactly
+    // that back, which is also the one path that can answer follow-ups
+    // ("is it scary?", "how long is it?") in the same thread.
+    const question =
+        `Tell me about "${titleName}" — a short spoiler-free synopsis, what year it's from ` +
+        `and what genre, roughly how it was received by critics and audiences, ` +
+        `and which streaming platforms I can watch it on. Keep it concise.`;
 
-    // Let the scroll settle so the loading sequence is actually on screen.
-    setTimeout(() => { window.triggerMatch(true); }, 320);
+    if (typeof window.track === 'function') {
+        window.track('trending_click', { title: titleName });
+    }
+    window.location.href = '/discover.html?q=' + encodeURIComponent(question);
 };
 
 // ----------------------------------------------------

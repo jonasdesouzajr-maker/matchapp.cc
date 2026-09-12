@@ -428,10 +428,10 @@
     <link rel="alternate" hreflang="zh" href="https://matchapp.tv/?lang=zh">
 
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=133"></script>
-    <script defer src="/install.js?v=140"></script>
-    <script defer src="/avatars.js?v=133"></script>
-    <script defer src="/ambient.js?v=133"></script>
+    <script defer src="/i18n.js?v=141"></script>
+    <script defer src="/install.js?v=141"></script>
+    <script defer src="/avatars.js?v=141"></script>
+    <script defer src="/ambient.js?v=141"></script>
 
     <!-- GOOGLE ANALYTICS (GTAG) -->
 <!-- GOOGLE ADSENSE SCRIPT ENGINE -->
@@ -450,10 +450,10 @@
         });
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=133">
+    <link rel="stylesheet" href="/style.css?v=141">
     <!-- Smart TV stylesheet. Entirely scoped under body.tv-mode, so a
          non-TV visitor pays one small file and sees no change. -->
-    <link rel="stylesheet" href="/tv.css?v=133">
+    <link rel="stylesheet" href="/tv.css?v=141">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -1920,6 +1920,81 @@
                     <p class="home-h1-sub" data-i18n="home.h1sub">Tell MatchApp your mood and get one perfect pick — movies, series, K-dramas, anime, novelas, micro-dramas, podcasts and YouTube — plus exactly where to stream it.</p>
                 </header>
 
+                <div class="marquee-wrapper" id="trending-rail">
+                    <h4 style="color: var(--gold); font-size: 15px; text-transform: uppercase; text-align: center; margin: 0 0 15px 0; letter-spacing: 2px;" data-i18n="marquee.title">🔥 Most Watched Right Now — Tap Any Title</h4>
+                    <button class="marquee-arrow marquee-arrow--left" onclick="marqueeNudge(-1)" aria-label="Scroll trending titles left">‹</button>
+                    <button class="marquee-arrow marquee-arrow--right" onclick="marqueeNudge(1)" aria-label="Scroll trending titles right">›</button>
+                    <div class="marquee-viewport" id="marquee-viewport">
+                    <div class="marquee-track" id="marquee-track">
+                        <!-- LIVE TRENDING: pinned first, scrolls to the spotlight card above instead of a title match -->
+                        <div class="marquee-item" onclick="document.getElementById('rock-in-rio-hub').scrollIntoView({behavior:'smooth', block:'start'})" style="border-color: var(--gold-glow); box-shadow: 0 0 18px rgba(229,193,88,0.55);">
+                            <img data-title="#RockInRio 2026" src="" alt="#RockInRio 2026" loading="lazy">
+                            <div style="position:absolute; top:4px; left:4px; background:#E5C158; color:#000; font-size:8px; font-weight:900; padding:2px 6px; border-radius:5px; text-transform:uppercase; z-index:4;">🔥 Live Now</div>
+                            <div class="marquee-title">#RockInRio 2026</div>
+                        </div>
+                        <!-- NEVER-FAIL IMAGE GENERATORS (ONERROR TRIGGERS DYNAMIC COVER) -->
+                        <div class="marquee-item" onclick="selectMarqueeItem('The Whisper Man')">
+                            <img data-title="The Whisper Man" src="" alt="The Whisper Man" loading="lazy">
+                            <div class="marquee-title">The Whisper Man</div>
+                        </div>
+                        <div class="marquee-item" onclick="selectMarqueeItem(&quot;Death of the Pastor's Wife&quot;)">
+                            <img data-title="Death of the Pastor's Wife" src="" alt="Death of the Pastor's Wife" loading="lazy">
+                            <div class="marquee-title">Death of the Pastor's Wife</div>
+                        </div>
+                        <div class="marquee-item" onclick="selectMarqueeItem('Beauty in Black')">
+                            <img data-title="Beauty in Black" src="" alt="Beauty in Black" loading="lazy">
+                            <div class="marquee-title">Beauty in Black</div>
+                        </div>
+                        <div class="marquee-item" onclick="selectMarqueeItem('Outer Banks')">
+                            <img data-title="Outer Banks" src="" alt="Outer Banks" loading="lazy">
+                            <div class="marquee-title">Outer Banks</div>
+                        </div>
+                        <div class="marquee-item" onclick="selectMarqueeItem('A Vida Secreta do Meu Marido Bilionário')">
+                            <img data-title="A Vida Secreta do Meu Marido Bilionário" src="" alt="A Vida Secreta do Meu Marido Bilionário" loading="lazy">
+                            <div class="marquee-title">Marido Bilionário</div>
+                        </div>
+                        <div class="marquee-item" onclick="selectMarqueeItem('Queen of Tears')">
+                            <img data-title="Queen of Tears" src="" alt="Queen of Tears" loading="lazy">
+                            <div class="marquee-title">Queen of Tears</div>
+                        </div>
+                        <div class="marquee-item" onclick="selectMarqueeItem('Jujutsu Kaisen')">
+                            <img data-title="Jujutsu Kaisen" src="" alt="Jujutsu Kaisen" loading="lazy">
+                            <div class="marquee-title">Jujutsu Kaisen</div>
+                        </div>
+                        <div class="marquee-item" onclick="selectMarqueeItem('The Chosen')">
+                            <img data-title="The Chosen" src="" alt="The Chosen" loading="lazy">
+                            <div class="marquee-title">The Chosen</div>
+                        </div>
+                        <div class="marquee-item" onclick="selectMarqueeItem('Love Is Blind: UK')">
+                            <img data-title="Love Is Blind: UK" src="" alt="Love Is Blind: UK" loading="lazy">
+                            <div class="marquee-title">Love Is Blind: UK</div>
+                        </div>
+                        <div class="marquee-item" onclick="selectMarqueeItem('The Joe Rogan Experience')">
+                            <img data-title="The Joe Rogan Experience" src="" alt="The Joe Rogan Experience" loading="lazy">
+                            <div class="marquee-title">Joe Rogan</div>
+                        </div>
+
+                        <!-- Duplicated Loop for Marquee -->
+                        <div class="marquee-item" onclick="selectMarqueeItem('The Whisper Man')">
+                            <img data-title="The Whisper Man" src="" alt="The Whisper Man" loading="lazy">
+                            <div class="marquee-title">The Whisper Man</div>
+                        </div>
+                        <div class="marquee-item" onclick="selectMarqueeItem(&quot;Death of the Pastor's Wife&quot;)">
+                            <img data-title="Death of the Pastor's Wife" src="" alt="Death of the Pastor's Wife" loading="lazy">
+                            <div class="marquee-title">Death of the Pastor's Wife</div>
+                        </div>
+                        <div class="marquee-item" onclick="selectMarqueeItem('Beauty in Black')">
+                            <img data-title="Beauty in Black" src="" alt="Beauty in Black" loading="lazy">
+                            <div class="marquee-title">Beauty in Black</div>
+                        </div>
+                        <div class="marquee-item" onclick="selectMarqueeItem('The Chosen')">
+                            <img data-title="The Chosen" src="" alt="The Chosen" loading="lazy">
+                            <div class="marquee-title">The Chosen</div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
                 <article id="questionnaire-box" class="premium-card">
                     <h2 style="margin: 0 0 25px 0; font-size: 34px; color: var(--gold); text-align: center; font-weight: 900; text-transform: uppercase;" data-i18n="q.title">Curate Your Perfect Match</h2>
                     <div class="q-grid">
@@ -2301,80 +2376,6 @@
                     </div>
                 </article>
 
-                <div class="marquee-wrapper" id="trending-rail">
-                    <h4 style="color: var(--gold); font-size: 15px; text-transform: uppercase; text-align: center; margin: 0 0 15px 0; letter-spacing: 2px;" data-i18n="marquee.title">🔥 Most Watched Right Now — Tap Any Title</h4>
-                    <button class="marquee-arrow marquee-arrow--left" onclick="marqueeNudge(-1)" aria-label="Scroll trending titles left">‹</button>
-                    <button class="marquee-arrow marquee-arrow--right" onclick="marqueeNudge(1)" aria-label="Scroll trending titles right">›</button>
-                    <div class="marquee-viewport" id="marquee-viewport">
-                    <div class="marquee-track" id="marquee-track">
-                        <!-- LIVE TRENDING: pinned first, scrolls to the spotlight card above instead of a title match -->
-                        <div class="marquee-item" onclick="document.getElementById('rock-in-rio-hub').scrollIntoView({behavior:'smooth', block:'start'})" style="border-color: var(--gold-glow); box-shadow: 0 0 18px rgba(229,193,88,0.55);">
-                            <img data-title="#RockInRio 2026" src="" alt="#RockInRio 2026" loading="lazy">
-                            <div style="position:absolute; top:4px; left:4px; background:#E5C158; color:#000; font-size:8px; font-weight:900; padding:2px 6px; border-radius:5px; text-transform:uppercase; z-index:4;">🔥 Live Now</div>
-                            <div class="marquee-title">#RockInRio 2026</div>
-                        </div>
-                        <!-- NEVER-FAIL IMAGE GENERATORS (ONERROR TRIGGERS DYNAMIC COVER) -->
-                        <div class="marquee-item" onclick="selectMarqueeItem('The Whisper Man')">
-                            <img data-title="The Whisper Man" src="" alt="The Whisper Man" loading="lazy">
-                            <div class="marquee-title">The Whisper Man</div>
-                        </div>
-                        <div class="marquee-item" onclick="selectMarqueeItem(&quot;Death of the Pastor's Wife&quot;)">
-                            <img data-title="Death of the Pastor's Wife" src="" alt="Death of the Pastor's Wife" loading="lazy">
-                            <div class="marquee-title">Death of the Pastor's Wife</div>
-                        </div>
-                        <div class="marquee-item" onclick="selectMarqueeItem('Beauty in Black')">
-                            <img data-title="Beauty in Black" src="" alt="Beauty in Black" loading="lazy">
-                            <div class="marquee-title">Beauty in Black</div>
-                        </div>
-                        <div class="marquee-item" onclick="selectMarqueeItem('Outer Banks')">
-                            <img data-title="Outer Banks" src="" alt="Outer Banks" loading="lazy">
-                            <div class="marquee-title">Outer Banks</div>
-                        </div>
-                        <div class="marquee-item" onclick="selectMarqueeItem('A Vida Secreta do Meu Marido Bilionário')">
-                            <img data-title="A Vida Secreta do Meu Marido Bilionário" src="" alt="A Vida Secreta do Meu Marido Bilionário" loading="lazy">
-                            <div class="marquee-title">Marido Bilionário</div>
-                        </div>
-                        <div class="marquee-item" onclick="selectMarqueeItem('Queen of Tears')">
-                            <img data-title="Queen of Tears" src="" alt="Queen of Tears" loading="lazy">
-                            <div class="marquee-title">Queen of Tears</div>
-                        </div>
-                        <div class="marquee-item" onclick="selectMarqueeItem('Jujutsu Kaisen')">
-                            <img data-title="Jujutsu Kaisen" src="" alt="Jujutsu Kaisen" loading="lazy">
-                            <div class="marquee-title">Jujutsu Kaisen</div>
-                        </div>
-                        <div class="marquee-item" onclick="selectMarqueeItem('The Chosen')">
-                            <img data-title="The Chosen" src="" alt="The Chosen" loading="lazy">
-                            <div class="marquee-title">The Chosen</div>
-                        </div>
-                        <div class="marquee-item" onclick="selectMarqueeItem('Love Is Blind: UK')">
-                            <img data-title="Love Is Blind: UK" src="" alt="Love Is Blind: UK" loading="lazy">
-                            <div class="marquee-title">Love Is Blind: UK</div>
-                        </div>
-                        <div class="marquee-item" onclick="selectMarqueeItem('The Joe Rogan Experience')">
-                            <img data-title="The Joe Rogan Experience" src="" alt="The Joe Rogan Experience" loading="lazy">
-                            <div class="marquee-title">Joe Rogan</div>
-                        </div>
-
-                        <!-- Duplicated Loop for Marquee -->
-                        <div class="marquee-item" onclick="selectMarqueeItem('The Whisper Man')">
-                            <img data-title="The Whisper Man" src="" alt="The Whisper Man" loading="lazy">
-                            <div class="marquee-title">The Whisper Man</div>
-                        </div>
-                        <div class="marquee-item" onclick="selectMarqueeItem(&quot;Death of the Pastor's Wife&quot;)">
-                            <img data-title="Death of the Pastor's Wife" src="" alt="Death of the Pastor's Wife" loading="lazy">
-                            <div class="marquee-title">Death of the Pastor's Wife</div>
-                        </div>
-                        <div class="marquee-item" onclick="selectMarqueeItem('Beauty in Black')">
-                            <img data-title="Beauty in Black" src="" alt="Beauty in Black" loading="lazy">
-                            <div class="marquee-title">Beauty in Black</div>
-                        </div>
-                        <div class="marquee-item" onclick="selectMarqueeItem('The Chosen')">
-                            <img data-title="The Chosen" src="" alt="The Chosen" loading="lazy">
-                            <div class="marquee-title">The Chosen</div>
-                        </div>
-                    </div>
-                    </div>
-                </div>
 
                 <!-- TOP BANNER — Google AdSense responsive (Adsterra removed: served popunders) -->
                 <div class="ad-banner-container premium-ad-frame">
@@ -2389,7 +2390,7 @@
                         <div class="spotlight-poster" onclick="saveSpotlightTitle()" role="button" tabindex="0"
                              onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();saveSpotlightTitle();}"
                              aria-label="Save American Horror Story: 13 to Watch Later">
-                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=133" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
+                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=141" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
                             <div class="spotlight-ribbon" data-i18n="spotlight.ribbon">COMING THIS MONTH</div>
                         </div>
                         <div class="spotlight-body">
@@ -3014,20 +3015,20 @@
         </div>
     </div>
 
-    <script src="/app.js?v=133"></script>
+    <script src="/app.js?v=141"></script>
     <!-- Loads AFTER app.js so the chips it builds can call straight into the
          matcher, and non-deferred so the form is never briefly interactive as
          a plain single-choice select. -->
-    <script src="/tmdb.js?v=133"></script>
-    <script src="/criteria.js?v=133"></script>
-    <script src="/lazy.js?v=133"></script>
-    <script src="/tv.js?v=133"></script>
-    <script src="/taste.js?v=133"></script>
-    <script src="/contacts.js?v=133"></script>
-    <script src="/share.js?v=133"></script>
-    <script src="/pricing.js?v=133"></script>
-    <script src="/credits-ui.js?v=133"></script>
-    <script src="/voice-input.js?v=133"></script>
+    <script src="/tmdb.js?v=141"></script>
+    <script src="/criteria.js?v=141"></script>
+    <script src="/lazy.js?v=141"></script>
+    <script src="/tv.js?v=141"></script>
+    <script src="/taste.js?v=141"></script>
+    <script src="/contacts.js?v=141"></script>
+    <script src="/share.js?v=141"></script>
+    <script src="/pricing.js?v=141"></script>
+    <script src="/credits-ui.js?v=141"></script>
+    <script src="/voice-input.js?v=141"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initVoiceInput('specific-search-input', 'mic-btn-index', () => smartSearch());
