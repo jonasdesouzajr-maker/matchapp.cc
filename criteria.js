@@ -296,18 +296,26 @@
         // to a single row showing what is ticked, and opens on tap to choose.
         // The chips are unchanged underneath, so selection behaviour, the
         // "+N more" expander and the counter badge all keep working.
+        // A distinct icon per field. With six rows collapsed to one line each,
+        // an icon lets the eye find the row it wants by shape instead of
+        // reading six labels top to bottom every time.
+        const FIELD_ICONS = {
+            'q-category': '🎬', 'q-platform': '📺', 'q-mood': '💫',
+            'q-vibe': '⚡', 'q-decade': '🕰️', 'q-rating': '🔞'
+        };
+
         if (label && !wrap.querySelector('.crit-toggle')) {
             const toggleBtn = document.createElement('button');
             toggleBtn.type = 'button';
             toggleBtn.className = 'crit-toggle';
             toggleBtn.setAttribute('aria-expanded', 'false');
 
-            // Move the existing label inside the button so the whole row is
-            // one hit target, rather than a label sitting next to a control.
             const labelText = label.textContent.trim();
             label.style.display = 'none';
 
+            const icon = FIELD_ICONS[sel.id] || '•';
             toggleBtn.innerHTML =
+                '<span class="crit-toggle-icon" aria-hidden="true">' + icon + '</span>' +
                 '<span class="crit-toggle-label">' + labelText + '</span>' +
                 '<span class="crit-toggle-summary"></span>' +
                 '<span class="crit-toggle-chevron" aria-hidden="true">⌄</span>';

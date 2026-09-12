@@ -45,7 +45,13 @@
         // solved at the other end: goToQuestionnaire() in app.js — the single
         // choke point every "back to the form" path goes through — now clears
         // the fold before scrolling, so the two systems can't fight.
-        { sel: '#questionnaire-box',    label: '🎯 Curate your perfect match', icon: '🎯', openByDefault: true },
+        // Folded like everything else. Lazy Mode is for someone who already
+        // knows MatchApp and wants the shortest possible page — showing the
+        // full form expanded defeats that. Tapping the row opens it, and
+        // goToQuestionnaire() opens it automatically whenever the app needs
+        // the form (Match Again, New Criteria, the header jump button), so
+        // nobody can get stranded looking at a collapsed row.
+        { sel: '#questionnaire-box',    label: '🎯 Curate your perfect match', icon: '🎯' },
         { sel: '#search-box',           label: '🔎 Search a specific title',  icon: '🔎' },
         { sel: '#trending-rail',        label: '🔥 Trending now',             icon: '🔥' },
         { sel: '.events-wrapper',       label: '🎪 Events happening now',     icon: '🎪' },
