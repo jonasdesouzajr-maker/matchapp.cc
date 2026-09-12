@@ -146,8 +146,29 @@ function initInstall() {
 if ('serviceWorker' in navigator) {
     // Registered for installability only — see sw.js for why it deliberately
     // caches nothing.
+
+    // Captured BEFORE registering. controllerchange fires on first install too
+    // (clients.claim takes control of an uncontrolled page), and checking the
+    // controller inside the handler can't tell the two cases apart because by
+    // then it is set either way. Only a page that already had a controller is
+    // one where a worker is being *replaced* — the case worth reloading for.
+    const hadControllerAtStart = !!navigator.serviceWorker.controller;
+
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').catch(() => {});
+        navigator.serviceWorker.register('/sw.js').then((reg) => {
+            // Force an update check on every load. Browsers only re-check
+            // sw.js periodically on their own, which meant a user stuck
+            // behind a broken worker could stay stuck for hours. Checking
+            // explicitly makes recovery happen on the next visit instead.
+            try { reg.update(); } catch (e) {}
+        }).catch(() => {});
+
+        let reloading = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (reloading || !hadControllerAtStart) return; // first install: nothing to replace
+            reloading = true;
+            window.location.reload();
+        });
     });
 }
 
