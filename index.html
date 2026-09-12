@@ -428,10 +428,10 @@
     <link rel="alternate" hreflang="zh" href="https://matchapp.tv/?lang=zh">
 
     <!-- NATIVE I18N (defer = runs before DOMContentLoaded, no English flash) -->
-    <script defer src="/i18n.js?v=150"></script>
-    <script defer src="/install.js?v=150"></script>
-    <script defer src="/avatars.js?v=150"></script>
-    <script defer src="/ambient.js?v=150"></script>
+    <script defer src="/i18n.js?v=151"></script>
+    <script defer src="/install.js?v=151"></script>
+    <script defer src="/avatars.js?v=151"></script>
+    <script defer src="/ambient.js?v=151"></script>
 
     <!-- GOOGLE ANALYTICS (GTAG) -->
 <!-- GOOGLE ADSENSE SCRIPT ENGINE -->
@@ -450,10 +450,10 @@
         });
     </script>
 
-    <link rel="stylesheet" href="/style.css?v=150">
+    <link rel="stylesheet" href="/style.css?v=151">
     <!-- Smart TV stylesheet. Entirely scoped under body.tv-mode, so a
          non-TV visitor pays one small file and sees no change. -->
-    <link rel="stylesheet" href="/tv.css?v=150">
+    <link rel="stylesheet" href="/tv.css?v=151">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -1833,7 +1833,7 @@
                  previously indistinguishable from them. The wrapper is the
                  positioning context for the attention bubble below it. -->
             <div class="install-wrap">
-                <button class="install-btn" style="display:none;" onclick="installMatchApp()" aria-label="Install MatchApp" data-i18n-aria="install.aria">📲 <span class="install-label" data-i18n="install.btn">Install</span></button>
+                <button class="install-btn" style="display:none;" onclick="installMatchApp()" aria-label="Install MatchApp" data-i18n-aria="install.aria"><svg class="install-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M4 19h16"/></svg><span class="install-label" data-i18n="install.btn">Install</span></button>
 
                 <!-- Shown once per visitor for 20 seconds, then removed. Points
                      at the button rather than floating loose, so there is no
@@ -2406,7 +2406,7 @@
                         <div class="spotlight-poster" onclick="saveSpotlightTitle()" role="button" tabindex="0"
                              onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();saveSpotlightTitle();}"
                              aria-label="Save American Horror Story: 13 to Watch Later">
-                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=150" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
+                            <img id="spotlight-poster-img" src="/ahs13-poster.jpg?v=151" alt="American Horror Story: 13 — premieres September 24, 2026 on FX and Hulu">
                             <div class="spotlight-ribbon" data-i18n="spotlight.ribbon">COMING THIS MONTH</div>
                         </div>
                         <div class="spotlight-body">
@@ -3031,20 +3031,20 @@
         </div>
     </div>
 
-    <script src="/app.js?v=150"></script>
+    <script src="/app.js?v=151"></script>
     <!-- Loads AFTER app.js so the chips it builds can call straight into the
          matcher, and non-deferred so the form is never briefly interactive as
          a plain single-choice select. -->
-    <script src="/tmdb.js?v=150"></script>
-    <script src="/criteria.js?v=150"></script>
-    <script src="/lazy.js?v=150"></script>
-    <script src="/tv.js?v=150"></script>
-    <script src="/taste.js?v=150"></script>
-    <script src="/contacts.js?v=150"></script>
-    <script src="/share.js?v=150"></script>
-    <script src="/pricing.js?v=150"></script>
-    <script src="/credits-ui.js?v=150"></script>
-    <script src="/voice-input.js?v=150"></script>
+    <script src="/tmdb.js?v=151"></script>
+    <script src="/criteria.js?v=151"></script>
+    <script src="/lazy.js?v=151"></script>
+    <script src="/tv.js?v=151"></script>
+    <script src="/taste.js?v=151"></script>
+    <script src="/contacts.js?v=151"></script>
+    <script src="/share.js?v=151"></script>
+    <script src="/pricing.js?v=151"></script>
+    <script src="/credits-ui.js?v=151"></script>
+    <script src="/voice-input.js?v=151"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initVoiceInput('specific-search-input', 'mic-btn-index', () => smartSearch());

@@ -168,11 +168,19 @@ input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow
    gold-filled control in the header, so it reads as the one thing to press. */
 .install-btn { background: linear-gradient(135deg, #E5C158, #C9A227); border: none; color: #1a1526;
                padding: 9px 16px; border-radius: 12px; font-weight: 800; font-size: 12.5px; cursor: pointer;
-               transition: transform .18s, box-shadow .18s; align-items: center; gap: 6px;
+               transition: transform .18s, box-shadow .18s; display: none; align-items: center; gap: 7px;
                font-family: inherit; text-decoration: none; white-space: nowrap;
                box-shadow: 0 3px 14px rgba(229,193,88,0.35); }
 .install-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(229,193,88,0.5); }
 .install-btn:focus-visible { outline: 2px solid var(--gold-glow); outline-offset: 3px; }
+
+/* The arrow-into-tray glyph every app store uses for install/download. An
+   emoji was there before, which renders as a different picture on every OS
+   (and as a blank box on some TV browsers) and never matched the button's
+   weight. An inline SVG inherits currentColor, so it stays legible against
+   the gold fill on every platform. */
+.install-icon { flex-shrink: 0; transition: transform .18s; }
+.install-btn:hover .install-icon { transform: translateY(2px); }
 
 /* ATTENTION BUBBLE — 20 seconds, once per visitor, dismissible.
    Anchored under the button with a pointer arrow so there is no question
@@ -213,12 +221,30 @@ input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow
     .install-btn.is-hinting { animation: none; }
     .install-btn { transition: none; }
     .install-btn:hover { transform: none; }
+    .install-icon { transition: none; }
+    .install-btn:hover .install-icon { transform: none; }
 }
 
-/* On narrow screens the bubble would overflow the viewport if it kept hugging
-   the button's right edge, so it spans the width instead. */
-@media (max-width: 430px) {
-    .install-bubble { right: -6px; max-width: min(74vw, 250px); font-size: 12px; }
+/* NARROW SCREENS — the bubble cannot be anchored to the button here.
+   html/body carries overflow-x:hidden, and the install button sits hard
+   against the right edge of a sticky header, so an absolutely-positioned
+   bubble hanging off it gets clipped by the viewport — which is exactly the
+   "only half shows" symptom. Switching to position:fixed takes it out of the
+   header's coordinate space entirely and pins it to the viewport with equal
+   margins, so it is always fully visible regardless of where the button is.
+   The arrow is repositioned to keep pointing at the button's corner. */
+@media (max-width: 560px) {
+    .install-bubble {
+        position: fixed;
+        top: auto;
+        right: 12px;
+        left: 12px;
+        width: auto;
+        max-width: none;
+        font-size: 13px;
+        padding: 13px 38px 13px 15px;
+    }
+    .install-bubble::after { right: 30px; }
 }
 
 /* ===== AVATAR ===== */

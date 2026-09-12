@@ -178,9 +178,32 @@ function maybeShowInstallHint() {
 
     bubble.hidden = false;
     btn.classList.add('is-hinting');
+    positionInstallBubble();
 
     installHintTimer = setTimeout(() => { window.dismissInstallBubble(); }, 20000);
 }
+
+// On narrow screens the bubble is position:fixed (see the CSS note — the
+// button sits against a clipped viewport edge, so anchoring to it cuts the
+// bubble in half). Fixed positioning needs a real top value, and the header
+// height changes when its contents wrap, so it is measured rather than
+// guessed. Re-measured on resize and orientation change so rotating the
+// phone doesn't leave it stranded.
+function positionInstallBubble() {
+    const bubble = document.getElementById('install-bubble');
+    const btn = document.querySelector('.install-btn');
+    if (!bubble || !btn || bubble.hidden) return;
+
+    if (window.matchMedia('(max-width: 560px)').matches) {
+        const r = btn.getBoundingClientRect();
+        bubble.style.top = Math.round(r.bottom + 10) + 'px';
+    } else {
+        bubble.style.top = ''; // desktop uses the CSS-anchored position
+    }
+}
+
+window.addEventListener('resize', positionInstallBubble);
+window.addEventListener('orientationchange', () => setTimeout(positionInstallBubble, 120));
 
 function initInstall() {
     const { isIOS, isMac, isStandalone } = platformInfo();
