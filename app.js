@@ -2708,7 +2708,7 @@ async function discoverFromITunes(cat, mood, vibe, decade, rating) {
         const data = await res.json();
         if (!data.results || data.results.length === 0) return null;
 
-        const excluded = new Set([...seenList, ...dislikedList].map(i => i.title || i));
+        const excluded = new Set([...seenList, ...dislikedList, ...SESSION_SHOWN].map(i => i.title || i));
         const seenRecently = new Set(recentTitles);
 
         // Only keep entries that actually have artwork, so covers never come back blank.
@@ -2765,7 +2765,25 @@ async function discoverFromITunes(cat, mood, vibe, decade, rating) {
     } catch (e) { return null; }
 }
 
+// SESSION-LEVEL REPEAT PREVENTION.
+//
+// recentTitles (capped at 6, persisted to localStorage) existed to prevent
+// short-term repeats, but it had a critical flaw: when the filtered pool
+// had only one matching title, freshPool would be empty, the code fell back
+// to the full pool, and it could return the same title on every consecutive
+// match — confirmed with a live simulation showing the exact user report of
+// a title appearing 4 times in a row.
+//
+// This Set grows with every match shown in the current page session and is
+// checked BEFORE the fallback. A title once shown this session is removed
+// from every pool before selection. It only resets on page reload, which is
+// the right granularity: within a single session a title must never repeat.
+// Across sessions the persistent seenList and recentTitles still apply.
+const SESSION_SHOWN = new Set();
+
 function rememberShownTitle(title) {
+    if (!title) return;
+    SESSION_SHOWN.add(title);
     recentTitles.unshift(title);
     recentTitles = recentTitles.slice(0, 6);
     localStorage.setItem('match_recentTitles', JSON.stringify(recentTitles));
@@ -2852,7 +2870,7 @@ function pickFromCatalog(cat, plat, mood, vibe, rating) {
     const moods   = normCriteria(mood);
     const vibes   = normCriteria(vibe);
     const ratings = normCriteria(rating);
-    const excluded = new Set([...seenList, ...dislikedList].map(i => i.title || i));
+    const excluded = new Set([...seenList, ...dislikedList, ...SESSION_SHOWN].map(i => i.title || i));
     const seenRecently = new Set(recentTitles);
 
     // GOSPEL CONTENT GATING.
@@ -2984,8 +3002,28 @@ function pickFromCatalog(cat, plat, mood, vibe, rating) {
                 : "You've blocked every category — showing anything. Unblock some in your Profile.");
         }
     }
-    const lastFresh = lastPool.filter(e => !seenRecently.has(e.title));
-    const finalPool = lastFresh.length ? lastFresh : lastPool;
+    // SESSION_SHOWN is the definitive "never repeat this session" guard.
+    // seenRecently is the softer "prefer something different" guide.
+    // Apply SESSION_SHOWN first — a title shown this session is excluded from
+    // every pool before random selection, even the last-resort one. Only if
+    // that produces literally zero candidates (the user has exhausted every
+    // title MatchApp knows about in this session) do we fall through.
+    const notSeenThisSession = lastPool.filter(e => !SESSION_SHOWN.has(e.title));
+    const withoutRecent = notSeenThisSession.filter(e => !seenRecently.has(e.title));
+    const finalPool = withoutRecent.length ? withoutRecent
+                    : notSeenThisSession.length ? notSeenThisSession
+                    : lastPool;
+
+    // If we genuinely exhausted every unseen title for this criteria set,
+    // tell the user instead of silently repeating — "Why Did I Get Married
+    // Again appeared 4 times" was the report, and it happened because the
+    // pool had only one eligible title after filtering. Transparent is better.
+    if (!notSeenThisSession.length) {
+        if (window.showToast) showToast(
+            window.t ? t('match.allSeen')
+            : "You've seen everything matching those filters! Try different criteria for something fresh."
+        );
+    }
     const pick = finalPool[Math.floor(Math.random() * finalPool.length)];
     return { title: pick.title, synopsis: pick.synopsis, platform: pick.platform, platformVerified: (plats.length === 0), watchUrl: pick.watchUrl || null, source: 'catalog' };
 }
